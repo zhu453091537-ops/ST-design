@@ -102,3 +102,21 @@
 3. 文件归属必须基于当前仓库实际结构，如 `apps/web-antd/src/views`、`apps/web-antd/src/components`、`packages/styles` 等，不能直接照搬外部示例路径。
 4. 如果截图信息不足以判断业务含义、数据来源、权限规则或交互边界，必须先提问确认。
 5. 未经用户确认前，不进入页面开发或代码修改。
+
+### 决策 6：平台组件源头统一放在 components/platform
+
+**决策内容**
+
+当前平台组件源头统一放在 `apps/web-antd/src/components/platform`，并通过 `apps/web-antd/src/components/platform/index.ts` 对外提供出口。典型页面验证场放在 `apps/web-antd/src/views/platform/typical-page/index.vue`，Mock 菜单路径为 `/platform/typical-page`。
+
+**原因**
+
+典型页面驱动平台组件改造需要一个稳定的源头目录和验证入口。如果 Button、Table、Tree、Form、Modal、Drawer、输入控件等薄封装散落在业务页面里，后续无法判断样式问题是否已经回到平台组件源头，也无法让新页面稳定复用。
+
+**影响**
+
+1. 后续通用组件样式问题优先回到 `components/platform` 下处理。
+2. `/platform/typical-page` 只作为组合验证场，不作为最终样式落点。
+3. 新增业务页面应优先从 `#/components/platform` 引用平台组件。
+4. 当前 `PlatformTable` 基于 ant-design-vue `Table` 薄封装；真实业务页大量使用 `useVbenVxeGrid`，表格核心迁移前必须先确认长期边界。
+5. 修改平台组件后，需要同步验证 `/platform/typical-page`，并在真实业务页接入后验证对应业务页。

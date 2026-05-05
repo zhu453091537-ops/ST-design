@@ -127,6 +127,31 @@ const mockBackendMenuList = [
     name: 'About',
     path: '/vben-admin/about',
   },
+  {
+    children: [
+      {
+        children: [],
+        component: 'platform/typical-page/index',
+        hidden: false,
+        meta: {
+          icon: 'lucide:table',
+          noCache: false,
+          title: '典型页面验证场',
+        },
+        name: 'PlatformTypicalPage',
+        path: '/platform/typical-page',
+      },
+    ],
+    component: 'Layout',
+    hidden: false,
+    meta: {
+      icon: 'lucide:table',
+      noCache: false,
+      title: '平台组件',
+    },
+    name: 'Platform',
+    path: '/platform',
+  },
 ] satisfies Menu[];
 
 function getMockBackendMenuList() {

@@ -281,6 +281,27 @@
 7. 当前未完成问题；
 8. 下一步建议。
 
+### 7.7 当前平台组件源头与验证页
+
+当前平台组件源头统一放在：
+
+1. `apps/web-antd/src/components/platform`
+2. `apps/web-antd/src/components/platform/index.ts`
+
+当前典型页面验证场统一放在：
+
+1. `apps/web-antd/src/views/platform/typical-page/index.vue`
+2. Mock 菜单路径：`/platform/typical-page`
+
+执行要求：
+
+1. 新增或改造 Button、Table、Tree、Form、Input、Select、DatePicker、Modal、Drawer、StatusTag 等通用能力时，优先从 `components/platform` 出口沉淀。
+2. `/platform/typical-page` 只作为组件组合验证场，不作为最终样式落点。
+3. 平台组件内部可以继续使用 ant-design-vue 原生组件，必须尽量透传 props、事件和插槽。
+4. 真实业务页后续应优先从 `#/components/platform` 引用平台组件。
+5. 修改平台组件后，至少验证 `/platform/typical-page`，并在有业务页接入后同步验证对应真实业务页。
+6. 当前真实业务页大量使用 `useVbenVxeGrid`，表格核心能力迁移前必须先确认 `PlatformTable` 与 Vben Vxe 表格的长期边界。
+
 ## 8. 截图与页面需求分析输出规则
 
 当用户提供截图、截图案例、页面描述，或要求分析列表页、查询页、表单页、弹窗、抽屉、详情页等后台管理页面时，必须先输出结构化分析，等待用户确认后再进入开发。
