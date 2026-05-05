@@ -106,7 +106,7 @@ function backMenuToVbenMenu(
      * 拼接path
      * menu.path为''(根目录路由) 则不拼接
      */
-    if (parentPath && menu.path) {
+    if (parentPath && menu.path && !menu.path.startsWith('/')) {
       menu.path = `${parentPath}/${menu.path}`;
     }
 

@@ -1,4 +1,4 @@
-import { isMockMode, mockBackendMenuList } from '#/mock';
+import { getMockBackendMenuList, isMockMode } from '#/mock';
 import { alovaInstance } from '#/utils/http';
 
 /**
@@ -43,7 +43,7 @@ export interface Menu {
  */
 export async function getAllMenusApi() {
   if (isMockMode()) {
-    return mockBackendMenuList;
+    return getMockBackendMenuList();
   }
 
   return alovaInstance.get<Menu[]>('/system/menu/getRouters');
