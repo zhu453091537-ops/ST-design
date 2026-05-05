@@ -20,6 +20,7 @@ import {
   PlatformSelect,
   PlatformStatusTag,
   PlatformTable,
+  PlatformTableToolbar,
   PlatformTree,
 } from '#/components/platform';
 
@@ -59,8 +60,9 @@ const columns = [
 ];
 
 const rows = ref<PlatformTypicalUser[]>([...typicalUsers]);
-const selectedDeptKeys = ref<string[]>([]);
+const selectedDeptKeys = ref<string[]>(['product']);
 const treeKeyword = ref('');
+const filterCollapsed = ref(false);
 const drawerOpen = ref(false);
 const detailOpen = ref(false);
 const editingId = ref<number | null>(null);
@@ -175,7 +177,7 @@ function handleReset() {
   submittedQuery.role = '';
   submittedQuery.status = '';
   submittedQuery.createDate = null;
-  selectedDeptKeys.value = [];
+  selectedDeptKeys.value = ['product'];
 }
 
 function resetForm(row?: PlatformTypicalUser) {
@@ -251,20 +253,16 @@ function handleDetail(row: PlatformTypicalUser) {
   detailRecord.value = row;
   detailOpen.value = true;
 }
+
+function toggleFilterCollapsed() {
+  filterCollapsed.value = !filterCollapsed.value;
+}
 </script>
 
 <template>
   <Page :auto-content-height="true">
-    <div class="flex h-full gap-4">
-      <aside class="flex w-[260px] shrink-0 flex-col rounded-lg bg-background p-4">
-        <div class="mb-3 flex items-center justify-between">
-          <div class="text-base font-semibold">组织树</div>
-          <PlatformButton size="small" @click="selectedDeptKeys = []">
-            <template #icon>
-              <VbenIcon icon="lucide:refresh-cw" />
-            </template>
-          </PlatformButton>
-        </div>
+    <div class="flex h-full min-h-0 gap-4">
+      <aside class="platform-surface flex w-[260px] shrink-0 flex-col p-4">
         <PlatformInput
           v-model:value="treeKeyword"
           allow-clear
@@ -275,13 +273,14 @@ function handleDetail(row: PlatformTypicalUser) {
           v-model:selected-keys="selectedDeptKeys"
           :tree-data="filteredTree"
           :virtual="false"
+          class="min-h-0 flex-1 overflow-auto"
           default-expand-all
           show-line
         />
       </aside>
 
       <section class="min-w-0 flex-1 space-y-4">
-        <div class="rounded-lg bg-background p-4">
+        <div class="platform-surface p-4">
           <PlatformSearchForm
             :model="query"
             class="grid grid-cols-1 gap-x-4 md:grid-cols-2 xl:grid-cols-4"
@@ -300,13 +299,13 @@ function handleDetail(row: PlatformTypicalUser) {
                 :options="typicalRoleOptions"
               />
             </PlatformFormItem>
-            <PlatformFormItem label="状态">
+            <PlatformFormItem v-show="!filterCollapsed" label="状态">
               <PlatformSelect
                 v-model:value="query.status"
                 :options="typicalStatusOptions"
               />
             </PlatformFormItem>
-            <PlatformFormItem label="创建日期">
+            <PlatformFormItem v-show="!filterCollapsed" label="创建日期">
               <PlatformDatePicker
                 v-model:value="query.createDate"
                 class="w-full"
@@ -331,18 +330,22 @@ function handleDetail(row: PlatformTypicalUser) {
               </template>
               查询
             </PlatformButton>
+            <PlatformButton scene="collapse" @click="toggleFilterCollapsed">
+              <template #icon>
+                <VbenIcon
+                  :icon="
+                    filterCollapsed ? 'lucide:chevrons-down' : 'lucide:chevrons-up'
+                  "
+                />
+              </template>
+              {{ filterCollapsed ? '展开' : '收起' }}
+            </PlatformButton>
           </div>
         </div>
 
-        <div class="rounded-lg bg-background p-4">
-          <div class="mb-4 flex items-center justify-between">
-            <div>
-              <div class="text-base font-semibold">用户列表</div>
-              <div class="text-sm text-muted-foreground">
-                当前命中 {{ filteredRows.length }} 条数据
-              </div>
-            </div>
-            <div class="flex gap-2">
+        <div class="platform-surface p-4">
+          <PlatformTableToolbar class="mb-4">
+            <template #actions>
               <PlatformButton scene="toolbar">
                 <template #icon>
                   <VbenIcon icon="lucide:download" />
@@ -355,8 +358,8 @@ function handleDetail(row: PlatformTypicalUser) {
                 </template>
                 新增
               </PlatformButton>
-            </div>
-          </div>
+            </template>
+          </PlatformTableToolbar>
 
           <PlatformTable
             :columns="columns"

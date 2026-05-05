@@ -9,6 +9,25 @@ import { findRootMenuByPath } from '@vben/utils';
 
 import { useNavigation } from './use-navigation';
 
+function getFirstChildMenuPath(menu?: MenuRecordRaw): string {
+  const children = menu?.children?.filter(
+    (item) => item.show !== false && !item.disabled,
+  );
+
+  if (!children?.length) {
+    return menu?.path ?? '';
+  }
+
+  for (const child of children) {
+    const childPath = getFirstChildMenuPath(child);
+    if (childPath) {
+      return childPath;
+    }
+  }
+
+  return menu?.path ?? '';
+}
+
 function useMixedMenu() {
   const { navigation, willOpenedByWindow } = useNavigation();
   const accessStore = useAccessStore();
@@ -19,11 +38,13 @@ function useMixedMenu() {
   const mixExtraMenus = ref<MenuRecordRaw[]>([]);
   /** 记录当前顶级菜单下哪个子菜单最后激活 */
   const defaultSubMap = new Map<string, string>();
-  const { isMixedNav, isHeaderMixedNav } = usePreferences();
+  const { isMixedNav, isHeaderMixedNav, isHeaderSidebarNav } =
+    usePreferences();
 
   const needSplit = computed(
     () =>
-      (preferences.navigation.split && isMixedNav.value) ||
+      (preferences.navigation.split &&
+        (isMixedNav.value || isHeaderSidebarNav.value)) ||
       isHeaderMixedNav.value,
   );
 
@@ -99,11 +120,14 @@ function useMixedMenu() {
 
     if (_splitSideMenus.length === 0) {
       navigation(key);
-    } else if (rootMenu && preferences.sidebar.autoActivateChild) {
+    } else if (
+      rootMenu &&
+      (preferences.sidebar.autoActivateChild || isHeaderSidebarNav.value)
+    ) {
       navigation(
         defaultSubMap.has(rootMenu.path)
           ? (defaultSubMap.get(rootMenu.path) as string)
-          : rootMenu.path,
+          : getFirstChildMenuPath(rootMenu),
       );
     }
   };

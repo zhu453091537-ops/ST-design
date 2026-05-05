@@ -20,10 +20,10 @@ defineOptions({
 }
 
 .platform-table :deep(.ant-table) {
-  border-radius: 8px;
+  border-radius: var(--st-radius-card);
 }
 
 .platform-table :deep(.ant-table-thead > tr > th) {
-  font-weight: 600;
+  font-weight: 500;
 }
 </style>

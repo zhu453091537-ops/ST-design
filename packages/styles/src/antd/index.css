@@ -8,6 +8,10 @@ body {
    */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  font-family: var(--font-family);
+  font-size: var(--st-font-size-base);
+  color: hsl(var(--foreground));
+  background: hsl(var(--background-deep));
 }
 
 .ant-app {
@@ -16,6 +20,402 @@ body {
   /* 会导致页面无法滚动 */
   /* overscroll-behavior: none; */
   color: inherit;
+}
+
+.ant-app,
+.ant-btn,
+.ant-input,
+.ant-input-affix-wrapper,
+.ant-select,
+.ant-picker,
+.ant-table,
+.ant-form,
+.ant-pagination {
+  font-family: var(--font-family);
+  font-size: var(--st-font-size-base);
+}
+
+.ant-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: var(--st-control-height);
+  padding-inline: 16px;
+  font-size: var(--st-font-size-base);
+  font-weight: 500;
+  line-height: var(--st-line-height-base);
+  border-radius: var(--st-radius-control);
+  box-shadow: none;
+  transition:
+    color 0.16s ease,
+    background-color 0.16s ease,
+    border-color 0.16s ease,
+    box-shadow 0.16s ease;
+}
+
+.ant-btn > .ant-btn-icon {
+  display: inline-flex;
+  align-items: center;
+}
+
+.ant-btn-circle {
+  width: var(--st-control-height);
+  min-width: var(--st-control-height);
+  padding-inline: 0;
+}
+
+.ant-btn-default.ant-btn-circle:not(.ant-btn-dangerous) {
+  color: hsl(var(--st-color-text-tertiary));
+  background: hsl(var(--card));
+  border-color: hsl(var(--st-color-border-subtle));
+}
+
+.ant-btn-default.ant-btn-circle:not(.ant-btn-dangerous):not(:disabled):not(
+    .ant-btn-disabled
+  ):hover,
+.ant-btn-default.ant-btn-circle:not(.ant-btn-dangerous):not(:disabled):not(
+    .ant-btn-disabled
+  ):focus-visible {
+  color: hsl(var(--primary));
+  background: hsl(var(--st-color-fill-selected));
+  border-color: hsl(var(--st-color-brand-outline));
+}
+
+.ant-btn-primary {
+  color: hsl(var(--primary-foreground));
+  background: hsl(var(--primary));
+  border-color: hsl(var(--primary));
+}
+
+.ant-btn-primary:not(:disabled):not(.ant-btn-disabled):hover,
+.ant-btn-primary:not(:disabled):not(.ant-btn-disabled):focus-visible {
+  color: hsl(var(--primary-foreground));
+  background: hsl(var(--st-color-brand-hover));
+  border-color: hsl(var(--st-color-brand-hover));
+}
+
+.ant-btn-primary:not(:disabled):not(.ant-btn-disabled):active {
+  background: hsl(var(--st-color-brand-active));
+  border-color: hsl(var(--st-color-brand-active));
+}
+
+.ant-btn-default:not(.ant-btn-dangerous) {
+  color: hsl(var(--primary));
+  background: hsl(var(--st-color-fill-selected));
+  border-color: hsl(var(--st-color-brand-outline));
+}
+
+.ant-btn-default:not(.ant-btn-dangerous):not(:disabled):not(
+    .ant-btn-disabled
+  ):hover,
+.ant-btn-default:not(.ant-btn-dangerous):not(:disabled):not(
+    .ant-btn-disabled
+  ):focus-visible {
+  color: hsl(var(--primary));
+  background: hsl(var(--primary) / 14%);
+  border-color: hsl(var(--primary) / 45%);
+}
+
+.ant-btn.platform-button--collapse:not(.ant-btn-dangerous) {
+  color: hsl(var(--primary));
+  background: transparent;
+  border-color: transparent;
+}
+
+.ant-btn.platform-button--collapse:not(.ant-btn-dangerous):not(:disabled):not(
+    .ant-btn-disabled
+  ):hover,
+.ant-btn.platform-button--collapse:not(.ant-btn-dangerous):not(:disabled):not(
+    .ant-btn-disabled
+  ):focus-visible {
+  color: hsl(var(--primary));
+  background: hsl(var(--st-color-fill-selected));
+  border-color: transparent;
+}
+
+.ant-btn-link {
+  height: auto;
+  padding-inline: 0;
+  color: hsl(var(--primary));
+}
+
+.ant-btn-link:not(:disabled):not(.ant-btn-disabled):hover {
+  color: hsl(var(--st-color-brand-hover));
+}
+
+.ant-btn-dangerous,
+.ant-btn-link.ant-btn-dangerous {
+  color: hsl(var(--st-color-danger));
+}
+
+.ant-btn:disabled,
+.ant-btn.ant-btn-disabled {
+  color: hsl(var(--st-color-text-disabled));
+  background: hsl(var(--st-color-fill-disabled) / 45%);
+  border-color: hsl(var(--st-color-border-control));
+}
+
+.ant-input,
+.ant-input-affix-wrapper,
+.ant-input-number,
+.ant-picker,
+.ant-select:not(.ant-select-customize-input) .ant-select-selector {
+  min-height: var(--st-control-height);
+  color: hsl(var(--foreground));
+  background: hsl(var(--background));
+  border-color: hsl(var(--input));
+  border-radius: var(--st-radius-control);
+  box-shadow: none;
+}
+
+.ant-input,
+.ant-input-affix-wrapper,
+.ant-picker {
+  padding-block: 0;
+}
+
+.ant-input,
+.ant-input-affix-wrapper .ant-input {
+  line-height: var(--st-line-height-base);
+}
+
+.ant-input::placeholder,
+.ant-input-affix-wrapper input::placeholder,
+.ant-picker-input > input::placeholder,
+.ant-select-selection-placeholder {
+  color: hsl(var(--input-placeholder));
+}
+
+.ant-input:hover,
+.ant-input-affix-wrapper:hover,
+.ant-input-number:hover,
+.ant-picker:hover,
+.ant-select:not(.ant-select-disabled):not(.ant-select-customize-input)
+  .ant-select-selector:hover {
+  border-color: hsl(var(--primary) / 45%);
+}
+
+.ant-input:focus,
+.ant-input-focused,
+.ant-input-affix-wrapper:focus,
+.ant-input-affix-wrapper-focused,
+.ant-input-number-focused,
+.ant-picker-focused,
+.ant-select-focused:not(.ant-select-customize-input) .ant-select-selector {
+  border-color: hsl(var(--primary));
+  box-shadow: 0 0 0 2px hsl(var(--primary) / 10%);
+}
+
+.ant-select-single {
+  min-height: var(--st-control-height);
+}
+
+.ant-select-single .ant-select-selector {
+  align-items: center;
+}
+
+.ant-select-single .ant-select-selector .ant-select-selection-item,
+.ant-select-single .ant-select-selector .ant-select-selection-placeholder {
+  line-height: calc(var(--st-control-height) - 2px);
+}
+
+.ant-select-arrow,
+.ant-picker-suffix,
+.ant-input-affix-wrapper .ant-input-suffix {
+  color: hsl(var(--st-color-text-tertiary));
+}
+
+.ant-select-disabled .ant-select-selector,
+.ant-input[disabled],
+.ant-input-affix-wrapper-disabled,
+.ant-picker-disabled {
+  color: hsl(var(--st-color-text-disabled));
+  background: hsl(var(--st-color-fill-disabled) / 35%);
+  border-color: hsl(var(--st-color-border-control));
+}
+
+.ant-form-item {
+  margin-bottom: 16px;
+}
+
+.ant-form-item .ant-form-item-label > label {
+  height: var(--st-line-height-base);
+  color: hsl(var(--st-color-text-secondary));
+  font-size: var(--st-font-size-base);
+  line-height: var(--st-line-height-base);
+}
+
+.ant-form-vertical .ant-form-item-label {
+  padding-bottom: 8px;
+}
+
+.ant-tree {
+  color: hsl(var(--foreground));
+  background: transparent;
+  font-size: var(--st-font-size-base);
+  line-height: var(--st-line-height-base);
+}
+
+.ant-tree .ant-tree-treenode {
+  min-height: var(--st-tree-node-height);
+  padding-block: 1px;
+}
+
+.ant-tree .ant-tree-node-content-wrapper {
+  min-height: calc(var(--st-tree-node-height) - 2px);
+  padding: 5px 8px;
+  color: hsl(var(--st-color-text-secondary));
+  line-height: var(--st-line-height-base);
+  border-radius: var(--st-radius-control);
+  transition:
+    color 0.16s ease,
+    background-color 0.16s ease;
+}
+
+.ant-tree .ant-tree-node-content-wrapper:hover {
+  color: hsl(var(--primary));
+  background: hsl(var(--st-color-fill-selected));
+}
+
+.ant-tree .ant-tree-node-content-wrapper.ant-tree-node-selected {
+  color: hsl(var(--primary));
+  font-weight: 500;
+  background: hsl(var(--st-color-fill-selected));
+}
+
+.ant-table-wrapper {
+  color: hsl(var(--foreground));
+}
+
+.ant-table-wrapper .ant-table {
+  overflow: hidden;
+  color: hsl(var(--foreground));
+  background: hsl(var(--card));
+  border-radius: var(--st-radius-card);
+}
+
+.ant-table-wrapper .ant-table-thead > tr > th {
+  height: var(--st-table-header-height);
+  color: hsl(var(--st-color-text-secondary));
+  font-size: var(--st-font-size-base);
+  font-weight: 500;
+  line-height: var(--st-line-height-base);
+  background: hsl(var(--st-color-border-subtle));
+  border-bottom-color: hsl(var(--st-color-border-subtle));
+}
+
+.ant-table-wrapper .ant-table-tbody > tr > td {
+  height: var(--st-table-row-height);
+  color: hsl(var(--st-color-text-secondary));
+  font-size: var(--st-font-size-base);
+  line-height: var(--st-line-height-base);
+  border-bottom-color: hsl(var(--st-color-border-subtle));
+}
+
+.ant-table-wrapper .ant-table-tbody > tr.ant-table-row:hover > td {
+  background: hsl(var(--st-color-fill-selected));
+}
+
+.ant-table-wrapper .ant-table-tbody > tr.ant-table-row-selected > td {
+  background: hsl(var(--st-color-fill-selected));
+}
+
+.ant-pagination {
+  color: hsl(var(--st-color-text-secondary));
+}
+
+.ant-pagination .ant-pagination-item,
+.ant-pagination .ant-pagination-prev,
+.ant-pagination .ant-pagination-next,
+.ant-pagination .ant-pagination-jump-prev,
+.ant-pagination .ant-pagination-jump-next {
+  min-width: var(--st-pagination-item-size);
+  height: var(--st-pagination-item-size);
+  line-height: calc(var(--st-pagination-item-size) - 2px);
+  border-radius: var(--st-radius-control);
+}
+
+.ant-pagination .ant-pagination-item {
+  background: hsl(var(--st-color-page-bg));
+  border-color: transparent;
+}
+
+.ant-pagination .ant-pagination-item a {
+  color: hsl(var(--st-color-text-secondary));
+}
+
+.ant-pagination .ant-pagination-item-active {
+  background: hsl(var(--primary));
+  border-color: hsl(var(--primary));
+}
+
+.ant-pagination .ant-pagination-item-active a {
+  color: hsl(var(--primary-foreground));
+  font-weight: 500;
+}
+
+.ant-pagination .ant-pagination-disabled,
+.ant-pagination .ant-pagination-disabled button {
+  color: hsl(var(--st-color-text-disabled));
+}
+
+.ant-modal .ant-modal-content,
+.ant-drawer .ant-drawer-content {
+  color: hsl(var(--foreground));
+  border-radius: var(--st-radius-card);
+}
+
+.ant-modal .ant-modal-header,
+.ant-drawer .ant-drawer-header {
+  border-bottom-color: hsl(var(--st-color-border-subtle));
+}
+
+.ant-modal .ant-modal-title,
+.ant-drawer .ant-drawer-title {
+  color: hsl(var(--foreground));
+  font-size: var(--st-font-size-lg);
+  font-weight: 600;
+  line-height: var(--st-line-height-lg);
+}
+
+.ant-tag {
+  min-height: 24px;
+  padding-inline: 8px;
+  line-height: 22px;
+  border-radius: var(--st-radius-control);
+}
+
+.platform-surface {
+  background: hsl(var(--card));
+  border-radius: var(--st-radius-card);
+  box-shadow: var(--st-shadow-card);
+}
+
+.platform-table-toolbar {
+  background: hsl(var(--st-color-table-toolbar-bg));
+  border-radius: var(--st-radius-card);
+}
+
+.platform-header-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 32px;
+  padding-inline: 10px;
+  color: hsl(var(--header-foreground) / 90%);
+  font-size: var(--st-font-size-base);
+  line-height: var(--st-line-height-base);
+  border-radius: var(--st-radius-control);
+  transition:
+    color 0.16s ease,
+    background-color 0.16s ease;
+}
+
+.platform-header-action:hover,
+.platform-header-action:focus-visible {
+  color: hsl(var(--header-foreground));
+  background: hsl(var(--st-color-nav-active-bg));
+  outline: none;
 }
 
 /* .ant-btn {

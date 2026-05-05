@@ -5,7 +5,7 @@ import { useRouter } from 'vue-router';
 import { AuthenticationLoginExpiredModal } from '@vben/common-ui';
 import { VBEN_DOC_URL, VBEN_GITHUB_URL } from '@vben/constants';
 import { useWatermark } from '@vben/hooks';
-import { BookOpenText, CircleHelp, GiteeIcon } from '@vben/icons';
+import { BookOpenText, CircleHelp, GiteeIcon, VbenIcon } from '@vben/icons';
 import {
   BasicLayout,
   LockScreen,
@@ -132,7 +132,19 @@ useVersionUpdate();
 
 <template>
   <BasicLayout @clear-preferences-and-logout="handleLogout">
-    <template #header-right-1>
+    <template #header-right-10>
+      <button class="platform-header-action" type="button">
+        <VbenIcon icon="lucide:bot" class="size-4" />
+        <span>AI 功能</span>
+      </button>
+    </template>
+    <template #header-right-20>
+      <button class="platform-header-action" type="button">
+        <VbenIcon icon="lucide:calendar-days" class="size-4" />
+        <span>日程管理</span>
+      </button>
+    </template>
+    <template #header-right-30>
       <TenantToggle />
     </template>
     <template #user-dropdown>

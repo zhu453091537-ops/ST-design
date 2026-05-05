@@ -39,7 +39,11 @@ const color = computed(() => {
 <style scoped>
 .platform-status-tag {
   min-width: 56px;
+  min-height: 24px;
+  padding-inline: 8px;
   margin-inline-end: 0;
+  line-height: 22px;
   text-align: center;
+  border-radius: var(--st-radius-control);
 }
 </style>

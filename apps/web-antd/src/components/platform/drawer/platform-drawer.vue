@@ -20,6 +20,6 @@ const open = defineModel<boolean>('open', {
 
 <style scoped>
 .platform-drawer :deep(.ant-drawer-content) {
-  border-radius: 8px 0 0 8px;
+  border-radius: var(--st-radius-card) 0 0 var(--st-radius-card);
 }
 </style>

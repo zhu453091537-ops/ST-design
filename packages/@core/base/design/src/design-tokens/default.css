@@ -2,36 +2,79 @@
   /** 弹出层的基础层级 **/
   --popup-z-index: 2000;
   --font-family:
-    -apple-system, blinkmacsystemfont, 'Segoe UI', roboto, 'Helvetica Neue',
-    arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-    'Segoe UI Symbol', 'Noto Color Emoji';
+    'PingFang SC', -apple-system, blinkmacsystemfont, 'Segoe UI', roboto,
+    'Helvetica Neue', arial, 'Noto Sans', sans-serif, 'Apple Color Emoji',
+    'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+
+  /* Shenzhen Metro platform design tokens from Figma */
+  --st-color-brand: 146 100% 30%;
+  --st-color-brand-hover: 146 100% 34%;
+  --st-color-brand-active: 146 100% 26%;
+  --st-color-brand-outline: 146 100% 30% / 30%;
+  --st-color-page-bg: 220 20% 95%;
+  --st-color-card-bg: 0 0% 100%;
+  --st-color-text-primary: 223 10% 13%;
+  --st-color-text-secondary: 220 9% 28%;
+  --st-color-text-tertiary: 222 5% 48%;
+  --st-color-text-placeholder: 223 10% 13% / 40%;
+  --st-color-text-disabled: 222 8% 78%;
+  --st-color-border-subtle: 220 23% 95%;
+  --st-color-border-control: 220 13% 91%;
+  --st-color-fill-selected: 146 100% 30% / 10%;
+  --st-color-fill-disabled: 218 13% 86%;
+  --st-color-nav-active-bg: 210 8% 5% / 26%;
+  --st-color-table-toolbar-bg: 220 38% 94%;
+  --st-color-table-tool-bg: 146 100% 30% / 10%;
+  --st-color-table-tool-border: 146 100% 30% / 30%;
+  --st-color-table-tool-icon: var(--st-color-brand);
+  --st-color-table-tool-hover-bg: var(--st-color-brand);
+  --st-color-table-tool-hover-border: var(--st-color-brand);
+  --st-color-table-tool-hover-icon: var(--primary-foreground);
+  --st-color-warning-action: 71 61% 54%;
+  --st-color-more-action: 25 33% 52%;
+  --st-color-danger: 355 76% 59%;
+  --st-radius-control: 4px;
+  --st-radius-card: 6px;
+  --st-radius-menu: 4px;
+  --st-control-height: 36px;
+  --st-table-header-height: 44px;
+  --st-table-row-height: 44px;
+  --st-tree-node-height: 32px;
+  --st-pagination-item-size: 32px;
+  --st-font-size-sm: 13px;
+  --st-font-size-base: 14px;
+  --st-font-size-lg: 16px;
+  --st-font-size-title: 18px;
+  --st-line-height-base: 18px;
+  --st-line-height-lg: 24px;
+  --st-shadow-card: 0 4px 8px hsl(146 100% 10% / 8%);
 
   /* Default background color of <body />...etc */
   --background: 0 0% 100%;
 
   /* 主体区域背景色 */
-  --background-deep: 216 20.11% 95.47%;
-  --foreground: 210 6% 21%;
+  --background-deep: var(--st-color-page-bg);
+  --foreground: var(--st-color-text-primary);
 
   /* Background color for <Card /> */
   --card: 0 0% 100%;
-  --card-foreground: 222.2 84% 4.9%;
+  --card-foreground: var(--st-color-text-primary);
 
   /* Background color for popovers such as <DropdownMenu />, <HoverCard />, <Popover /> */
   --popover: 0 0% 100%;
-  --popover-foreground: 222.2 84% 4.9%;
+  --popover-foreground: var(--st-color-text-primary);
 
   /* Muted backgrounds such as <TabsList />, <Skeleton /> and <Switch /> */
 
   /* --muted: 210 40% 96.1%;
   --muted-foreground: 215.4 16.3% 46.9%; */
 
-  --muted: 240 4.8% 95.9%;
-  --muted-foreground: 240 3.8% 46.1%;
+  --muted: var(--st-color-border-subtle);
+  --muted-foreground: var(--st-color-text-tertiary);
 
   /* 主题颜色 */
 
-  --primary: 215 100% 54%;
+  --primary: var(--st-color-brand);
   --primary-foreground: 0 0% 98%;
 
   /* Used for destructive actions such as <Button variant="destructive"> */
@@ -56,34 +99,34 @@
 
   /* Secondary colors for <Button /> */
 
-  --secondary: 240 5% 96%;
-  --secondary-foreground: 240 6% 10%;
+  --secondary: var(--st-color-border-subtle);
+  --secondary-foreground: var(--st-color-text-primary);
 
   /* Used for accents such as hover effects on <DropdownMenuItem>, <SelectItem>...etc */
-  --accent: 240 5% 96%;
-  --accent-dark: 216 14% 93%;
-  --accent-darker: 216 11% 91%;
+  --accent: var(--st-color-fill-selected);
+  --accent-dark: var(--st-color-border-subtle);
+  --accent-darker: var(--st-color-border-control);
   --accent-lighter: 240 0% 98%;
-  --accent-hover: 200deg 10% 90%;
-  --accent-foreground: 240 6% 10%;
+  --accent-hover: var(--st-color-fill-selected);
+  --accent-foreground: var(--st-color-text-primary);
 
   /* Darker color */
   --heavy: 192deg 9.43% 89.61%;
   --heavy-foreground: var(--accent-foreground);
 
   /* Default border color */
-  --border: 240 5.9% 90%;
+  --border: var(--st-color-border-subtle);
 
   /* Border color for inputs such as <Input />, <Select />, <Textarea /> */
-  --input: 240deg 5.88% 90%;
-  --input-placeholder: 217 10.6% 65%;
+  --input: var(--st-color-border-control);
+  --input-placeholder: var(--st-color-text-placeholder);
   --input-background: 0 0% 100%;
 
   /* Used for focus ring */
-  --ring: 222.2 84% 4.9%;
+  --ring: var(--st-color-brand);
 
   /* Border radius for card, input and buttons */
-  --radius: 0.5rem;
+  --radius: 0.25rem;
 
   /* ============= custom ============= */
 
@@ -92,8 +135,8 @@
   --overlay-content: 0 0% 95% / 45%;
 
   /* 基本文字大小 */
-  --font-size-base: 16px;
-  --menu-font-size: calc(var(--font-size-base) * 0.875);
+  --font-size-base: var(--st-font-size-base);
+  --menu-font-size: var(--st-font-size-base);
 
   /* =============component & UI============= */
 
@@ -103,7 +146,9 @@
   --menu: var(--sidebar);
 
   /* header */
-  --header: 0 0% 100%;
+  --header: var(--st-color-brand);
+  --header-foreground: 0 0% 100%;
+  --header-border: var(--st-color-brand);
 
   accent-color: var(--primary);
   color-scheme: light;
@@ -116,20 +161,20 @@
   --background: 0 0% 100%;
 
   /* 主体区域背景色 */
-  --background-deep: 216 20.11% 95.47%;
-  --foreground: 210 6% 21%;
+  --background-deep: var(--st-color-page-bg);
+  --foreground: var(--st-color-text-primary);
 
   /* Background color for <Card /> */
   --card: 0 0% 100%;
-  --card-foreground: 222.2 84% 4.9%;
+  --card-foreground: var(--st-color-text-primary);
 
   /* Background color for popovers such as <DropdownMenu />, <HoverCard />, <Popover /> */
   --popover: 0 0% 100%;
-  --popover-foreground: 222.2 84% 4.9%;
+  --popover-foreground: var(--st-color-text-primary);
 
   /* Muted backgrounds such as <TabsList />, <Skeleton /> and <Switch /> */
-  --muted: 240 4.8% 95.9%;
-  --muted-foreground: 240 3.8% 46.1%;
+  --muted: var(--st-color-border-subtle);
+  --muted-foreground: var(--st-color-text-tertiary);
 
   /* 主题颜色 */
   --primary-foreground: 0 0% 98%;
@@ -145,31 +190,31 @@
   --warning-foreground: 0 0% 98%;
 
   /* Secondary colors for <Button /> */
-  --secondary: 240 5% 96%;
-  --secondary-foreground: 240 6% 10%;
+  --secondary: var(--st-color-border-subtle);
+  --secondary-foreground: var(--st-color-text-primary);
 
   /* Used for accents such as hover effects on <DropdownMenuItem>, <SelectItem>...etc */
-  --accent: 240 5% 96%;
-  --accent-dark: 216 14% 93%;
-  --accent-darker: 216 11% 91%;
+  --accent: var(--st-color-fill-selected);
+  --accent-dark: var(--st-color-border-subtle);
+  --accent-darker: var(--st-color-border-control);
   --accent-lighter: 240 0% 98%;
-  --accent-hover: 200deg 10% 90%;
-  --accent-foreground: 240 6% 10%;
+  --accent-hover: var(--st-color-fill-selected);
+  --accent-foreground: var(--st-color-text-primary);
 
   /* Darker color */
   --heavy: 192deg 9.43% 89.61%;
   --heavy-foreground: var(--accent-foreground);
 
   /* Default border color */
-  --border: 240 5.9% 90%;
+  --border: var(--st-color-border-subtle);
 
   /* Border color for inputs such as <Input />, <Select />, <Textarea /> */
-  --input: 240deg 5.88% 90%;
-  --input-placeholder: 217 10.6% 65%;
+  --input: var(--st-color-border-control);
+  --input-placeholder: var(--st-color-text-placeholder);
   --input-background: 0 0% 100%;
 
   /* Used for focus ring */
-  --ring: 222.2 84% 4.9%;
+  --ring: var(--st-color-brand);
 
   /* ============= custom ============= */
 
@@ -185,7 +230,9 @@
   --menu: var(--sidebar);
 
   /* header */
-  --header: 0 0% 100%;
+  --header: var(--st-color-brand);
+  --header-foreground: 0 0% 100%;
+  --header-border: var(--st-color-brand);
 
   accent-color: var(--primary);
   color-scheme: light;

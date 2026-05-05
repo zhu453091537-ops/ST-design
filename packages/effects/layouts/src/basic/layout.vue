@@ -104,7 +104,10 @@ const logoCollapsed = computed(() => {
 const showHeaderNav = computed(() => {
   return (
     !isMobile.value &&
-    (isHeaderNav.value || isMixedNav.value || isHeaderMixedNav.value)
+    (isHeaderNav.value ||
+      isMixedNav.value ||
+      isHeaderMixedNav.value ||
+      isHeaderSidebarNav.value)
   );
 });
 

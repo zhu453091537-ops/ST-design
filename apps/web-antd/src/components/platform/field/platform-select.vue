@@ -13,3 +13,9 @@ defineOptions({
     </template>
   </Select>
 </template>
+
+<style scoped>
+.platform-select {
+  width: 100%;
+}
+</style>

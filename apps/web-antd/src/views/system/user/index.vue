@@ -107,12 +107,6 @@ const gridOptions: VxeGridProps = {
       },
     },
   },
-  headerCellConfig: {
-    height: 44,
-  },
-  cellConfig: {
-    height: 48,
-  },
   rowConfig: {
     keyField: 'userId',
   },

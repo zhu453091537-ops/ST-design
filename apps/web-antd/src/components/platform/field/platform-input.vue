@@ -13,3 +13,9 @@ defineOptions({
     </template>
   </Input>
 </template>
+
+<style scoped>
+.platform-input {
+  width: 100%;
+}
+</style>

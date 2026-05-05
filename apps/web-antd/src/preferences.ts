@@ -38,6 +38,7 @@ export const overridesPreferences = defineOverridesPreferences({
      * 不需要refresh token 由后端处理
      */
     enableRefreshToken: false,
+    layout: 'header-sidebar-nav',
     /**
      * 这里可以设置默认头像 url链接或vite导入的图片链接
      */
@@ -45,7 +46,7 @@ export const overridesPreferences = defineOverridesPreferences({
     /**
      * 在这里设置应用标题
      */
-    name: import.meta.env.VITE_APP_TITLE,
+    name: '深圳地铁智慧仓储管控平台',
     /**
      * 不支持modal模式 需要改动的地方太多
      * 1. 正常重新登录后不会再触发接口请求 即触发登录超时的页面为空数据
@@ -73,24 +74,44 @@ export const overridesPreferences = defineOverridesPreferences({
      * 按钮水波纹样式
      */
     buttonWaveMode: 'Default',
+    fontSize: 14,
     /**
-     * 浅色sidebar
+     * 顶部使用品牌色深色导航，侧边保持浅色菜单。
      */
+    semiDarkHeader: true,
     semiDarkSidebar: false,
     /**
      * 圆角大小 换算比例为1.6px = 0.1radius
-     * 这里为6px 与antd保持一致
+     * 这里为4px，与Figma控件圆角保持一致。
      */
-    radius: '0.375',
+    radius: '0.25',
     // 这些颜色和antd默认颜色保持一致 即hex -> hsl
     // 错误色
     colorDestructive: 'hsl(359, 100%, 65%)',
     // 主题色
-    colorPrimary: 'hsl(215, 100%, 54%)',
+    colorPrimary: 'hsl(146, 100%, 30%)',
     // 成功色
     colorSuccess: 'hsl(100, 77%, 44%)',
     // 警告色
     colorWarning: 'hsl(40, 96%, 53%)',
+  },
+  header: {
+    height: 56,
+  },
+  sidebar: {
+    collapseWidth: 48,
+    fixedButton: false,
+    width: 240,
+  },
+  widget: {
+    fullscreen: false,
+    globalSearch: false,
+    languageToggle: false,
+    notification: true,
+    refresh: false,
+    sidebarToggle: false,
+    themeToggle: false,
+    timezone: false,
   },
   /**
    * !!! 更改配置后请清空浏览器缓存
@@ -102,8 +123,8 @@ export const overridesPreferences = defineOverridesPreferences({
    *
    * !!! 更改配置后请清空浏览器缓存
    */
-  // logo: {
-  //   enable: true,
-  //   source: '',
-  // },
+  logo: {
+    enable: true,
+    source: '',
+  },
 });

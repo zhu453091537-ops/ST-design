@@ -1,8 +1,14 @@
-import type { VxeGridPropTypes } from '@vben/plugins/vxe-table';
+import type {
+  UseVbenVxeGrid,
+  VxeGridPropTypes,
+} from '@vben/plugins/vxe-table';
 
 import { h } from 'vue';
 
-import { setupVbenVxeTable, useVbenVxeGrid } from '@vben/plugins/vxe-table';
+import {
+  setupVbenVxeTable,
+  useVbenVxeGrid as useBaseVbenVxeGrid,
+} from '@vben/plugins/vxe-table';
 
 import { Button, Image } from 'antdv-next';
 
@@ -47,6 +53,12 @@ setupVbenVxeTable({
         columnConfig: {
           // 可拖拽列宽
           resizable: true,
+        },
+        headerCellConfig: {
+          height: 44,
+        },
+        cellConfig: {
+          height: 44,
         },
         // 右上角工具栏
         toolbarConfig: {
@@ -103,7 +115,48 @@ setupVbenVxeTable({
   useVbenForm,
 });
 
-export { useVbenVxeGrid };
+type VbenVxeGridOptions = Parameters<UseVbenVxeGrid>[0];
+
+function withPlatformVxeGridOptions(
+  options: VbenVxeGridOptions,
+): VbenVxeGridOptions {
+  const toolbarConfig = options.gridOptions?.toolbarConfig ?? {};
+  const headerCellConfig = options.gridOptions?.headerCellConfig ?? {};
+  const cellConfig = options.gridOptions?.cellConfig ?? {};
+
+  return {
+    ...options,
+    gridOptions: {
+      ...options.gridOptions,
+      headerCellConfig: {
+        height: 44,
+        ...headerCellConfig,
+      },
+      cellConfig: {
+        height: 44,
+        ...cellConfig,
+      },
+      toolbarConfig: {
+        custom: true,
+        refresh: true,
+        search: true,
+        zoom: true,
+        ...toolbarConfig,
+        customOptions: {
+          icon: 'vxe-icon-setting',
+          ...toolbarConfig.customOptions,
+        },
+        refreshOptions: {
+          code: 'query',
+          ...toolbarConfig.refreshOptions,
+        },
+      },
+    },
+  };
+}
+
+export const useVbenVxeGrid = ((options: any) =>
+  useBaseVbenVxeGrid(withPlatformVxeGridOptions(options))) as UseVbenVxeGrid;
 
 export type * from '@vben/plugins/vxe-table';
 

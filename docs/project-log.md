@@ -232,3 +232,243 @@
 1. 当前 `PlatformTable` 是基于 ant-design-vue `Table` 的薄封装，现有业务页面大量使用 `useVbenVxeGrid`，两条表格路线的长期边界仍需继续确认。
 2. 当前真实业务页面尚未接入 `#/components/platform`，还需要做引用关系审计和迁移优先级清单。
 3. 当前典型页面是验证场，后续用户指出视觉问题时，样式必须回到平台组件、主题变量或统一样式入口处理。
+
+### 任务名称
+
+Figma 典型页面全局样式与导航表格源组件改造
+
+### 完成内容
+
+1. 基于已读取的 Figma MCP Go 样式结果，将深圳地铁品牌色、文本、边框、背景、圆角、字号、行高、阴影等沉淀为全局设计变量。
+2. 将 `apps/web-antd` 全局品牌色改为 `#009943`，并将应用名称改为“深圳地铁智慧仓储管控平台”。
+3. 统一 ant-design-vue 原生 Button、Input、Select、DatePicker、Form、Tree、Table、Pagination、Modal、Drawer、Tag 的全局样式和交互状态。
+4. 调整 Vben 顶部导航和左侧导航：顶部显示一级功能菜单，左侧显示当前一级菜单下的二级、三级菜单。
+5. 新增 `PlatformTableToolbar`，将表格常规功能入口设置、刷新、搜索、全屏沉淀到平台源组件。
+6. 根据用户反馈调整筛选区“收起”按钮为无描边样式，调整表格四个圆形功能按钮默认白底弱边框、hover 进入品牌态。
+7. 同步 Vxe Grid 表格、工具栏和分页的全局样式变量，避免真实业务页与 Antdv Table 视觉割裂。
+
+### 修改了哪些文件
+
+1. `AGENTS.md`
+2. `apps/web-antd/src/preferences.ts`
+3. `apps/web-antd/src/layouts/basic.vue`
+4. `apps/web-antd/src/components/platform/button/platform-button.vue`
+5. `apps/web-antd/src/components/platform/table/index.ts`
+6. `apps/web-antd/src/components/platform/table/platform-table.vue`
+7. `apps/web-antd/src/components/platform/table/platform-table-toolbar.vue`
+8. `apps/web-antd/src/components/platform/tree/platform-tree.vue`
+9. `apps/web-antd/src/components/platform/form/platform-form.vue`
+10. `apps/web-antd/src/components/platform/field/platform-input.vue`
+11. `apps/web-antd/src/components/platform/field/platform-select.vue`
+12. `apps/web-antd/src/components/platform/field/platform-date-picker.vue`
+13. `apps/web-antd/src/components/platform/modal/platform-modal.vue`
+14. `apps/web-antd/src/components/platform/drawer/platform-drawer.vue`
+15. `apps/web-antd/src/components/platform/status/platform-status-tag.vue`
+16. `apps/web-antd/src/views/platform/typical-page/index.vue`
+17. `packages/@core/base/design/src/design-tokens/default.css`
+18. `packages/@core/base/design/src/design-tokens/dark.css`
+19. `packages/@core/ui-kit/layout-ui/src/components/layout-header.vue`
+20. `packages/@core/ui-kit/layout-ui/src/components/widgets/sidebar-collapse-button.vue`
+21. `packages/@core/ui-kit/menu-ui/src/components/menu.vue`
+22. `packages/effects/layouts/src/basic/layout.vue`
+23. `packages/effects/layouts/src/basic/menu/use-mixed-menu.ts`
+24. `packages/effects/plugins/src/vxe-table/style.css`
+25. `packages/styles/src/antd/index.css`
+26. `docs/project-log.md`
+27. `docs/decision-records.md`
+28. `docs/todo-next.md`
+
+### 涉及哪些页面或组件
+
+1. 页面：`/platform/typical-page`
+2. 布局：顶部导航栏、左侧导航栏、Vben `header-sidebar-nav` 菜单拆分逻辑
+3. 组件：PlatformButton、PlatformTable、PlatformTableToolbar、PlatformTree、PlatformSearchForm、PlatformInput、PlatformSelect、PlatformDatePicker、PlatformModal、PlatformDrawer、PlatformStatusTag
+4. 全局样式：ant-design-vue 原生组件、Vxe Grid 表格与分页
+
+### 验证结果
+
+1. 已执行 `git diff --check`，结果通过。
+2. 已执行 `../../node_modules/.bin/vue-tsc --noEmit --skipLibCheck`，本次新增/修改文件相关类型错误已处理；命令仍失败于项目既有类型错误。
+3. 已启动本地 Vite 服务，端口 `5670` 被占用后自动使用 `http://127.0.0.1:5671/`。
+4. 已通过浏览器验证 `/platform/typical-page`：顶部背景为 `rgb(0, 153, 66)`，Logo 文案为“深圳地铁智慧仓储管控平台”，顶部菜单显示一级“概览 / 平台组件 / 关于”，左侧只显示当前一级菜单下的“典型页面验证场”。
+5. 已通过浏览器验证表格工具栏来自 `.platform-table-toolbar`，四个圆形工具按钮默认白底弱边框，筛选区“收起”按钮描边为透明。
+6. 浏览器控制台未发现错误，验证截图保存在 `/private/tmp/st-design-menu-toolbar-source.png`。
+
+### 遗留问题
+
+1. 真实业务页仍需审计是否绕过 `#/components/platform` 或继续直接使用 `antdv-next`。
+2. Vxe Grid 仍是大量真实业务表格的主路径，后续需要确认是否新增更完整的 Vxe 平台表格封装。
+3. 当前仅验证了 `/platform/typical-page`，尚未逐个验证真实业务页面。
+
+### 任务名称
+
+真实业务页组件引用关系审计
+
+### 完成内容
+
+1. 按接续规则重新读取 `AGENTS.md`、`docs/project-log.md`、`docs/decision-records.md`、`docs/todo-next.md`，确认本阶段应先做引用关系审计。
+2. 扫描 `apps/web-antd/src/views` 和 `apps/web-antd/src/components` 中的 `useVbenVxeGrid`、`antdv-next`、`<a-*>`、`#/components/platform`、`useVbenForm`、`useVbenModal`、`useVbenDrawer` 和页面级 `.ant-*` / `.vxe-*` 覆盖。
+3. 确认真正业务列表页主要基于 `#/adapter/vxe-table` 的 `useVbenVxeGrid`，不能直接用当前基于 Antdv Table 的 `PlatformTable` 批量替换。
+4. 确认当前 `#/components/platform` 只在 `/platform/typical-page` 验证场接入，真实业务页尚未形成平台组件引用面。
+5. 抽查 `system/user`、`system/dept`、`system/user/dept-tree`、`workflow/task/taskWaiting` 等典型真实页面，确认存在 Vxe 表格、Antdv Tree、Antdv 原生 Button、Vben Modal/Drawer/Form、卡片列表等多种路径。
+6. 确认下一阶段应优先治理 Vxe 表格适配层、全局 Antdv 样式和表格工具栏入口，而不是大范围改业务页面逻辑。
+
+### 修改了哪些文件
+
+1. `docs/project-log.md`
+2. `docs/todo-next.md`
+
+### 涉及哪些页面或组件
+
+1. 页面：`system/user`、`system/dept`、`workflow/task/taskWaiting`、`/platform/typical-page`
+2. 组件/能力：`useVbenVxeGrid`、`useVbenForm`、`useVbenModal`、`useVbenDrawer`、`ActionButton`、Antdv `Button`、`Tree`、`Input`、`Form`、`Modal`、`Drawer`
+3. 平台组件：`#/components/platform` 当前仅覆盖典型页面验证场。
+
+### 验证结果
+
+1. 已用 `rg` 完成引用关系扫描。
+2. 审计结果：`useVbenVxeGrid` 命中 35 个文件，`antdv-next` 命中 115 个文件，`<a-*>` / 全局 Antdv 标签命中 57 个文件，`#/components/platform` 命中 1 个文件。
+3. Vben 能力路径：`useVbenForm` 命中 35 个文件，`useVbenModal` 命中 51 个文件，`useVbenDrawer` 命中 28 个文件。
+4. 页面或组件级 `.ant-*` / `.vxe-*` 覆盖命中 25 个文件，其中平台组件自身 6 个，其余多为业务特殊样式或历史局部覆盖。
+5. 已打开 `http://127.0.0.1:5671/platform/typical-page` 到浏览器；当前会话跳转到登录页，账号密码为默认预填状态，因登录会提交密码字段，未代替用户点击登录。
+
+### 遗留问题
+
+1. 需要新增或明确 Vxe 平台适配层策略，让真实业务表格继承表格工具栏、分页、行高、表头、按钮和交互规范。
+2. `system/user/dept-tree.vue` 仍直接使用 Antdv `Tree`、`Input`、`Skeleton` 等组件，适合作为树结构源组件迁移的第一批真实页面。
+3. 多个业务页在 `#toolbar-tools` 内直接手写 `<a-button>`，表格左侧业务按钮与右侧常规工具按钮的统一接入还未完成。
+4. 工作流任务页是卡片列表和浮层筛选模式，不应直接套用表格页迁移方案，需要单独建立列表/筛选类规范。
+
+### 任务名称
+
+Vxe 表格平台适配层一期
+
+### 完成内容
+
+1. 根据用户要求，将“每完成一个步骤后主动同步当前方案进度、已完成内容、剩余内容、风险和下一步”写入 `AGENTS.md`。
+2. 将阶段进度报告规则同步为长期决策，写入 `docs/decision-records.md`。
+3. 在 `apps/web-antd/src/adapter/vxe-table.ts` 中为所有通过 `#/adapter/vxe-table` 创建的 Vxe 表格补充平台默认配置：
+   - 默认启用设置、自定义列、刷新、搜索面板开关、全屏；
+   - 默认刷新行为保持为当前页查询；
+   - 默认表头高度和行高从适配层统一下发；
+   - 保留页面级 `toolbarConfig`、`headerCellConfig`、`cellConfig` 的覆盖能力。
+4. 在 `packages/effects/plugins/src/vxe-table/style.css` 中统一 Vxe 表格右上角圆形工具按钮默认态和 hover/focus 态。
+5. 新增表格工具按钮相关设计变量，沉淀到 `packages/@core/base/design/src/design-tokens/default.css` 和 `dark.css`。
+6. 将 `PlatformTableToolbar` 内的四个表格常规功能按钮明确标记为 `scene="toolbar"`，并在 `PlatformButton` 中统一它们的默认态和 hover/focus 态。
+7. 以 `system/user` 作为首批真实业务页验证点，移除页面内 Vxe 表头高度和行高局部配置，让其继承 Vxe 平台适配层。
+
+### 修改了哪些文件
+
+1. `AGENTS.md`
+2. `apps/web-antd/src/adapter/vxe-table.ts`
+3. `apps/web-antd/src/components/platform/button/platform-button.vue`
+4. `apps/web-antd/src/components/platform/table/platform-table-toolbar.vue`
+5. `apps/web-antd/src/views/system/user/index.vue`
+6. `docs/project-log.md`
+7. `docs/decision-records.md`
+8. `docs/todo-next.md`
+9. `packages/@core/base/design/src/design-tokens/default.css`
+10. `packages/@core/base/design/src/design-tokens/dark.css`
+11. `packages/effects/plugins/src/vxe-table/style.css`
+
+### 涉及哪些页面或组件
+
+1. 平台适配层：`#/adapter/vxe-table`
+2. Vxe 表格插件样式：`packages/effects/plugins/src/vxe-table/style.css`
+3. 平台组件：`PlatformButton`、`PlatformTableToolbar`
+4. 首批真实页面：`apps/web-antd/src/views/system/user/index.vue`
+
+### 验证结果
+
+1. 已执行 `git diff --check`，结果通过。
+2. 已执行 `../../node_modules/.bin/vue-tsc --noEmit --skipLibCheck`，本次新增/修改文件相关类型错误已处理；命令仍失败于项目既有类型错误。
+3. 浏览器已打开 `http://127.0.0.1:5671/system/user`，页面跳转到 `auth/login?redirect=%252Fsystem%252Fuser`，控制台无错误。
+4. 因登录会提交当前预填的密码字段，未代替用户点击登录，因此 `system/user` 登录后的真实视觉效果尚未完成浏览器验证。
+
+### 遗留问题
+
+1. 需要用户登录后继续验证 `system/user` 的 Vxe 工具栏按钮数量、默认态、hover 态、搜索面板开关、刷新、设置和全屏表现。
+2. `system/user/dept-tree.vue` 仍未平台化，下一步应处理左侧部门树的搜索框、树节点 hover/选中态、默认选中和刷新入口。
+3. 多个真实业务页仍直接在 `#toolbar-tools` 内写 `<a-button>`，业务按钮可保留，但常规工具入口后续应统一由 Vxe 平台适配层承载。
+
+### 任务名称
+
+顶部一级菜单默认子路由跳转修复
+
+### 完成内容
+
+1. 定位 `header-sidebar-nav` 布局下顶部一级菜单点击无效的原因：有子级的一级菜单点击后会停留在父级路径，父级路径通常只是布局容器，不一定有真实页面。
+2. 在 `packages/effects/layouts/src/basic/menu/use-mixed-menu.ts` 中新增首个可导航子菜单解析逻辑。
+3. 调整顶部一级菜单点击行为：点击有子级的一级菜单时，默认进入该一级菜单下第一个可导航子菜单，并同步驱动左侧导航选中。
+4. 保留无子级一级菜单原有行为，例如“关于”仍直接跳转自身路径。
+5. 将该导航交互规则沉淀到 `AGENTS.md` 和 `docs/decision-records.md`。
+
+### 修改了哪些文件
+
+1. `AGENTS.md`
+2. `docs/decision-records.md`
+3. `docs/project-log.md`
+4. `docs/todo-next.md`
+5. `packages/effects/layouts/src/basic/menu/use-mixed-menu.ts`
+
+### 涉及哪些页面或组件
+
+1. 布局：Vben `header-sidebar-nav`
+2. 源逻辑：`useMixedMenu`
+3. 顶部一级菜单：概览、平台组件、关于
+4. 左侧导航：当前一级菜单下的二级、三级菜单选中与展示
+
+### 验证结果
+
+1. 已执行 `git diff --check`，结果通过。
+2. 已执行 `node_modules/.bin/vue-tsc -p packages/effects/layouts/tsconfig.json --noEmit --pretty false`，结果通过。
+3. 已在浏览器验证 `http://127.0.0.1:5671/vben-admin/about`：
+   - 点击“概览”后跳转到 `http://127.0.0.1:5671/analytics`；
+   - 点击“平台组件”后跳转到 `http://127.0.0.1:5671/platform/typical-page`；
+   - 点击“关于”后跳转到 `http://127.0.0.1:5671/vben-admin/about`；
+   - 浏览器控制台错误为空。
+4. 验证截图保存在 `/private/tmp/st-nav-verify.png`。
+
+### 遗留问题
+
+1. 当前修复覆盖顶部一级菜单点击默认子路由跳转；真实业务菜单如果存在禁用、隐藏或外链混合场景，后续需要结合实际菜单数据继续抽查。
+2. Vxe 表格真实业务页登录后验证仍是上一阶段遗留事项，本次导航修复未处理该范围。
+
+### 任务名称
+
+今天结束：本轮平台组件与导航改造收尾
+
+### 完成内容
+
+1. 按“今天结束”流程重新读取 `AGENTS.md`、`docs/project-log.md`、`docs/decision-records.md`、`docs/todo-next.md`。
+2. 确认本轮已完成 Figma 典型页面全局样式、顶部/左侧导航拆分、表格工具栏源组件、Vxe 表格平台适配层一期、真实业务页引用关系审计和顶部一级菜单默认子路由跳转修复。
+3. 确认本轮产生的长期规则已经沉淀：
+   - 阶段进度报告规则已写入 `AGENTS.md` 和 `docs/decision-records.md`；
+   - 顶部一级菜单点击后默认进入第一个可导航子菜单已写入 `AGENTS.md` 和 `docs/decision-records.md`。
+4. 更新下一步待办，明确下次优先继续登录后验证 `system/user` 的 Vxe 表格工具栏和处理 `system/user/dept-tree.vue` 平台化。
+
+### 修改了哪些文件
+
+1. `docs/project-log.md`
+2. `docs/todo-next.md`
+
+### 涉及哪些页面或组件
+
+1. 页面：`/platform/typical-page`、`/system/user`
+2. 布局：顶部导航栏、左侧导航栏、Vben `header-sidebar-nav`
+3. 组件/能力：PlatformButton、PlatformTableToolbar、PlatformTree、PlatformSearchForm、Vxe 表格适配层、`useMixedMenu`
+
+### 验证结果
+
+1. 本轮此前已完成浏览器验证：
+   - `/platform/typical-page` 可渲染并完成新增抽屉、树筛选、表格工具栏视觉验证；
+   - 点击“概览”跳转 `/analytics`，点击“平台组件”跳转 `/platform/typical-page`，点击“关于”跳转 `/vben-admin/about`，控制台无错误。
+2. 本次“今天结束”收尾只更新接续文档，未重新做浏览器验证。
+3. 收尾后执行 `git diff --check`，结果通过。
+
+### 遗留问题
+
+1. `system/user` 登录后的 Vxe 表格工具栏真实视觉验证仍未完成。
+2. `system/user/dept-tree.vue` 尚未平台化，仍是下一步树结构源组件改造的第一候选。
+3. 真实业务页仍大量直接使用 `antdv-next` 和 Vben Vxe 能力，后续需要分批治理，不能一次性替换。
+4. 当前项目是平台母版、具体业务项目还是二者结合推进，仍需用户确认。

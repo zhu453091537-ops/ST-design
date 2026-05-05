@@ -102,7 +102,15 @@
   --menu: var(--sidebar);
 
   /* header */
-  --header: 222.34deg 10.43% 12.27%;
+  --header: var(--st-color-brand);
+  --header-foreground: 0 0% 100%;
+  --header-border: var(--st-color-brand);
+  --st-color-table-tool-bg: 146 100% 30% / 16%;
+  --st-color-table-tool-border: 146 100% 30% / 40%;
+  --st-color-table-tool-icon: var(--st-color-brand);
+  --st-color-table-tool-hover-bg: var(--st-color-brand);
+  --st-color-table-tool-hover-border: var(--st-color-brand);
+  --st-color-table-tool-hover-icon: var(--primary-foreground);
 
   color-scheme: dark;
 }

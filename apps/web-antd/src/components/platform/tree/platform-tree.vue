@@ -20,12 +20,12 @@ defineOptions({
 }
 
 .platform-tree :deep(.ant-tree-treenode) {
-  min-height: 32px;
+  min-height: var(--st-tree-node-height);
   align-items: center;
 }
 
 .platform-tree :deep(.ant-tree-node-content-wrapper) {
-  min-height: 28px;
+  min-height: calc(var(--st-tree-node-height) - 2px);
   display: inline-flex;
   align-items: center;
 }

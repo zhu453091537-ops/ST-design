@@ -7,7 +7,7 @@ defineOptions({
 
 withDefaults(
   defineProps<{
-    scene?: 'default' | 'toolbar' | 'action';
+    scene?: 'action' | 'collapse' | 'default' | 'toolbar';
   }>(),
   {
     scene: 'default',
@@ -31,11 +31,47 @@ withDefaults(
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  height: var(--st-control-height);
+  font-size: var(--st-font-size-base);
   font-weight: 500;
+  line-height: var(--st-line-height-base);
+  border-radius: var(--st-radius-control);
 }
 
 .platform-button--toolbar {
-  min-width: 76px;
+  min-width: calc(var(--st-control-height) * 2.1);
+}
+
+.platform-button--toolbar.ant-btn-circle {
+  min-width: var(--st-control-height);
+  color: hsl(var(--st-color-table-tool-icon));
+  background: hsl(var(--st-color-table-tool-bg));
+  border-color: hsl(var(--st-color-table-tool-border));
+}
+
+.platform-button--toolbar.ant-btn-circle:not(:disabled):not(
+    .ant-btn-disabled
+  ):hover,
+.platform-button--toolbar.ant-btn-circle:not(:disabled):not(
+    .ant-btn-disabled
+  ):focus-visible {
+  color: hsl(var(--st-color-table-tool-hover-icon));
+  background: hsl(var(--st-color-table-tool-hover-bg));
+  border-color: hsl(var(--st-color-table-tool-hover-border));
+}
+
+.platform-button--collapse {
+  min-width: calc(var(--st-control-height) * 2.1);
+  color: hsl(var(--primary));
+  background: transparent;
+  border-color: transparent;
+}
+
+.platform-button--collapse:not(:disabled):not(.ant-btn-disabled):hover,
+.platform-button--collapse:not(:disabled):not(.ant-btn-disabled):focus-visible {
+  color: hsl(var(--primary));
+  background: hsl(var(--st-color-fill-selected));
+  border-color: transparent;
 }
 
 .platform-button--action {

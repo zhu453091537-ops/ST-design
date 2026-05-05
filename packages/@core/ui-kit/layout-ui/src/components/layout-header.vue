@@ -64,7 +64,7 @@ const logoStyle = computed((): CSSProperties => {
   <header
     :class="theme"
     :style="style"
-    class="top-0 flex w-full flex-[0_0_auto] items-center border-b border-border bg-header pl-2 transition-[margin-top] duration-200"
+    class="vben-layout-header top-0 flex w-full flex-[0_0_auto] items-center border-b bg-header pl-2 transition-[margin-top] duration-200"
   >
     <div v-if="slots.logo" :style="logoStyle">
       <slot name="logo"></slot>
@@ -75,3 +75,21 @@ const logoStyle = computed((): CSSProperties => {
     <slot></slot>
   </header>
 </template>
+
+<style scoped>
+.vben-layout-header {
+  color: hsl(var(--header-foreground));
+  border-color: hsl(var(--header-border));
+}
+
+.vben-layout-header :deep(.text-foreground),
+.vben-layout-header :deep(.text-muted-foreground),
+.vben-layout-header :deep(.vben-icon-button) {
+  color: hsl(var(--header-foreground) / 90%);
+}
+
+.vben-layout-header :deep(.text-foreground:hover),
+.vben-layout-header :deep(.vben-icon-button:hover) {
+  color: hsl(var(--header-foreground));
+}
+</style>

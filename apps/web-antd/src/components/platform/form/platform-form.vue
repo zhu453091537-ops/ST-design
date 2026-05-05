@@ -30,7 +30,7 @@ withDefaults(
 
 .platform-form--search {
   display: grid;
-  gap: 16px;
+  gap: 16px 24px;
 }
 
 .platform-form--edit :deep(.ant-form-item) {

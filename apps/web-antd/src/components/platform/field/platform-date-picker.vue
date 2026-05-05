@@ -13,3 +13,9 @@ defineOptions({
     </template>
   </DatePicker>
 </template>
+
+<style scoped>
+.platform-date-picker {
+  width: 100%;
+}
+</style>

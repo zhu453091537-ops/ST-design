@@ -9,8 +9,8 @@
   --vxe-ui-font-disabled-color: hsl(var(--foreground) / 50%);
 
   /* base */
-  --vxe-ui-base-popup-border-color: hsl(var(--border));
-  --vxe-ui-input-disabled-color: hsl(var(--border) / 60%);
+  --vxe-ui-base-popup-border-color: hsl(var(--st-color-border-subtle));
+  --vxe-ui-input-disabled-color: hsl(var(--st-color-text-disabled));
 
   /* --vxe-ui-base-popup-box-shadow: 0px 12px 30px 8px rgb(0 0 0 / 50%); */
 
@@ -22,7 +22,7 @@
   --vxe-ui-table-fixed-right-scrolling-box-shadow: -8px 0px 10px -5px hsl(var(--accent)); */
 
   /* input */
-  --vxe-ui-input-border-color: hsl(var(--border));
+  --vxe-ui-input-border-color: hsl(var(--input));
 
   /* --vxe-ui-input-placeholder-color: #8d9095; */
 
@@ -32,21 +32,21 @@
   --vxe-ui-loading-background-color: hsl(var(--overlay-content));
 
   /* table */
-  --vxe-ui-table-header-background-color: hsl(0deg 0% 98%);
-  --vxe-ui-table-border-color: hsl(var(--border));
-  --vxe-ui-table-row-hover-background-color: hsl(var(--accent-hover));
-  --vxe-ui-table-row-striped-background-color: hsl(var(--accent) / 60%);
-  --vxe-ui-table-row-hover-striped-background-color: hsl(var(--accent));
-  --vxe-ui-table-row-radio-checked-background-color: hsl(var(--accent));
+  --vxe-ui-table-header-background-color: hsl(var(--st-color-border-subtle));
+  --vxe-ui-table-border-color: hsl(var(--st-color-border-subtle));
+  --vxe-ui-table-row-hover-background-color: hsl(var(--st-color-fill-selected));
+  --vxe-ui-table-row-striped-background-color: hsl(var(--primary) / 6%);
+  --vxe-ui-table-row-hover-striped-background-color: hsl(var(--st-color-fill-selected));
+  --vxe-ui-table-row-radio-checked-background-color: hsl(var(--st-color-fill-selected));
   --vxe-ui-table-row-hover-radio-checked-background-color: hsl(
-    var(--accent-hover)
+    var(--st-color-fill-selected)
   );
-  --vxe-ui-table-row-checkbox-checked-background-color: hsl(var(--accent));
+  --vxe-ui-table-row-checkbox-checked-background-color: hsl(var(--st-color-fill-selected));
   --vxe-ui-table-row-hover-checkbox-checked-background-color: hsl(
-    var(--accent-hover)
+    var(--st-color-fill-selected)
   );
-  --vxe-ui-table-row-current-background-color: hsl(var(--accent));
-  --vxe-ui-table-row-hover-current-background-color: hsl(var(--accent-hover));
+  --vxe-ui-table-row-current-background-color: hsl(var(--st-color-fill-selected));
+  --vxe-ui-table-row-hover-current-background-color: hsl(var(--st-color-fill-selected));
   --vxe-ui-font-primary-tinge-color: hsl(var(--primary));
   --vxe-ui-font-primary-lighten-color: hsl(var(--primary) / 60%);
   --vxe-ui-font-primary-darken-color: hsl(var(--primary));
@@ -74,10 +74,10 @@ html[data-vxe-ui-theme='dark'] .vxe-grid {
   .vxe-pager--num-btn:not(.is--disabled):focus,
   .vxe-pager--jump-prev:not(.is--disabled):focus,
   .vxe-pager--jump-next:not(.is--disabled):focus {
-    color: hsl(var(--accent-foreground));
-    background-color: hsl(var(--accent));
-    border: 1px solid hsl(var(--border));
-    box-shadow: 0 0 0 1px hsl(var(--border));
+    color: hsl(var(--primary));
+    background-color: hsl(var(--st-color-fill-selected));
+    border: 1px solid hsl(var(--st-color-brand-outline));
+    box-shadow: 0 0 0 1px hsl(var(--st-color-brand-outline));
   }
 
   .vxe-pager--wrapper {
@@ -88,6 +88,22 @@ html[data-vxe-ui-theme='dark'] .vxe-grid {
   .vxe-pager--sizes {
     margin-right: auto;
   }
+}
+
+.vxe-pager .vxe-pager--num-btn.is--active {
+  color: hsl(var(--primary-foreground));
+  background-color: hsl(var(--primary));
+  border-color: hsl(var(--primary));
+}
+
+.vxe-pager .vxe-pager--prev-btn,
+.vxe-pager .vxe-pager--next-btn,
+.vxe-pager .vxe-pager--num-btn,
+.vxe-pager .vxe-pager--jump-prev,
+.vxe-pager .vxe-pager--jump-next {
+  min-width: var(--st-pagination-item-size);
+  height: var(--st-pagination-item-size);
+  border-radius: var(--st-radius-control);
 }
 
 .vxe-pager--wrapper {
@@ -105,16 +121,18 @@ html[data-vxe-ui-theme='dark'] .vxe-grid {
 
 .vxe-toolbar {
   padding: 0;
+  color: hsl(var(--st-color-text-secondary));
+  background: transparent;
 }
 
 /** 关闭搜索表单 */
 .vxe-grid:not(.vxe-grid--form-wrapper form) .vxe-toolbar {
-  padding: 0.6em 0 !important;
+  padding: 10px 0 !important;
 }
 
 /** 开启搜索表单 */
 .vxe-grid:has(.vxe-grid--form-wrapper form) .vxe-toolbar {
-  padding: 0 0 0.6em !important;
+  padding: 0 0 10px !important;
 }
 
 .vxe-tools--operate:not(:has(button)) {
@@ -123,10 +141,73 @@ html[data-vxe-ui-theme='dark'] .vxe-grid {
 
 .vxe-grid--layout-header-wrapper {
   overflow: visible;
+  background: hsl(var(--st-color-table-toolbar-bg));
+  border-radius: var(--st-radius-card) var(--st-radius-card) 0 0;
 }
 
 .vxe-grid--layout-body-content-wrapper {
   overflow: hidden;
+  background: hsl(var(--card));
+  border-radius: var(--st-radius-card);
+}
+
+.vxe-grid .vxe-table--header-wrapper,
+.vxe-grid .vxe-table--body-wrapper {
+  font-size: var(--st-font-size-base);
+}
+
+.vxe-grid .vxe-header--column {
+  height: var(--st-table-header-height);
+  color: hsl(var(--st-color-text-secondary));
+  font-weight: 500;
+}
+
+.vxe-grid .vxe-body--column {
+  height: var(--st-table-row-height);
+  color: hsl(var(--st-color-text-secondary));
+}
+
+.vxe-grid .vxe-button.type--button,
+.vxe-grid .vxe-button.type--text,
+.vxe-grid .vxe-toolbar .vxe-button {
+  border-radius: var(--st-radius-control);
+}
+
+.vxe-grid .vxe-toolbar .vxe-button.is--circle,
+.vxe-grid .vxe-toolbar .vxe-tools--operate .vxe-button {
+  width: var(--st-control-height);
+  min-width: var(--st-control-height);
+  height: var(--st-control-height);
+  padding: 0;
+  color: hsl(var(--st-color-table-tool-icon));
+  background: hsl(var(--st-color-table-tool-bg));
+  border: 1px solid hsl(var(--st-color-table-tool-border));
+  border-radius: 50%;
+  box-shadow: none;
+  transition:
+    color 0.16s ease,
+    background-color 0.16s ease,
+    border-color 0.16s ease;
+}
+
+.vxe-grid .vxe-toolbar .vxe-button.is--circle:not(.is--disabled):hover,
+.vxe-grid .vxe-toolbar .vxe-button.is--circle:not(.is--disabled):focus,
+.vxe-grid
+  .vxe-toolbar
+  .vxe-tools--operate
+  .vxe-button:not(.is--disabled):hover,
+.vxe-grid
+  .vxe-toolbar
+  .vxe-tools--operate
+  .vxe-button:not(.is--disabled):focus {
+  color: hsl(var(--st-color-table-tool-hover-icon));
+  background: hsl(var(--st-color-table-tool-hover-bg));
+  border-color: hsl(var(--st-color-table-tool-hover-border));
+}
+
+.vxe-grid .vxe-toolbar .vxe-button.is--circle .vxe-button--icon,
+.vxe-grid .vxe-toolbar .vxe-tools--operate .vxe-button .vxe-button--icon {
+  color: inherit;
 }
 
 /* modal/drawer中使用 tooltip需要设置更高的z-index 防止被遮挡 */

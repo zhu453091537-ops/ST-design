@@ -374,6 +374,7 @@ $namespace: vben;
 
 @mixin menu-item-active {
   color: var(--menu-item-active-color);
+  font-weight: 600;
   text-decoration: none;
   cursor: pointer;
   background: var(--menu-item-active-background-color);
@@ -390,6 +391,7 @@ $namespace: vben;
     var(--menu-item-margin-x);
   font-size: var(--menu-font-size) !important;
   color: var(--menu-item-color);
+  font-weight: 400;
   white-space: nowrap;
   text-decoration: none;
   cursor: pointer;
@@ -415,7 +417,7 @@ $namespace: vben;
 
   &:hover {
     .#{$namespace}-menu__icon {
-      transform: scale(1.2);
+      transform: scale(1.05);
     }
   }
 
@@ -446,7 +448,7 @@ $namespace: vben;
 .#{$namespace}-menu {
   --menu-title-width: 140px;
   --menu-item-icon-size: var(--font-size-base, 16px);
-  --menu-item-height: 38px;
+  --menu-item-height: 44px;
   --menu-item-padding-y: 21px;
   --menu-item-padding-x: 12px;
   --menu-item-popup-padding-y: 20px;
@@ -457,7 +459,7 @@ $namespace: vben;
   --menu-item-collapse-padding-x: 0px;
   --menu-item-collapse-margin-y: 4px;
   --menu-item-collapse-margin-x: 0px;
-  --menu-item-radius: 0px;
+  --menu-item-radius: var(--st-radius-menu, 4px);
   --menu-item-indent: 16px;
 
   &.is-dark {
@@ -465,10 +467,10 @@ $namespace: vben;
     // --menu-submenu-opened-background-color: hsl(var(--menu-opened-dark));
     --menu-item-color: hsl(var(--foreground) / 80%);
     --menu-item-background-color: var(--menu-background-color);
-    --menu-item-hover-color: hsl(var(--accent-foreground));
-    --menu-item-hover-background-color: hsl(var(--accent));
-    --menu-item-active-color: hsl(var(--accent-foreground));
-    --menu-item-active-background-color: hsl(var(--accent));
+    --menu-item-hover-color: hsl(var(--header-foreground, var(--accent-foreground)));
+    --menu-item-hover-background-color: hsl(var(--st-color-nav-active-bg));
+    --menu-item-active-color: hsl(var(--header-foreground, var(--accent-foreground)));
+    --menu-item-active-background-color: hsl(var(--st-color-nav-active-bg));
     --menu-submenu-background-color: var(--menu-background-color);
     --menu-submenu-hover-color: hsl(var(--accent-foreground));
     --menu-submenu-hover-background-color: hsl(var(--accent));
@@ -481,13 +483,13 @@ $namespace: vben;
     // --menu-submenu-opened-background-color: hsl(var(--menu-opened));
     --menu-item-color: hsl(var(--accent-foreground));
     --menu-item-background-color: var(--menu-background-color);
-    --menu-item-hover-color: var(--menu-item-color);
-    --menu-item-hover-background-color: hsl(var(--accent));
+    --menu-item-hover-color: hsl(var(--primary));
+    --menu-item-hover-background-color: hsl(var(--st-color-fill-selected));
     --menu-item-active-color: hsl(var(--primary));
-    --menu-item-active-background-color: hsl(var(--primary) / 15%);
+    --menu-item-active-background-color: hsl(var(--st-color-fill-selected));
     --menu-submenu-background-color: var(--menu-background-color);
     --menu-submenu-hover-color: hsl(var(--primary));
-    --menu-submenu-hover-background-color: hsl(var(--accent));
+    --menu-submenu-hover-background-color: hsl(var(--st-color-fill-selected));
     --menu-submenu-active-color: hsl(var(--primary));
     --menu-submenu-active-background-color: transparent;
   }
@@ -495,17 +497,17 @@ $namespace: vben;
   &.is-rounded {
     --menu-item-margin-x: 8px;
     --menu-item-collapse-margin-x: 6px;
-    --menu-item-radius: 6px;
+    --menu-item-radius: var(--st-radius-menu, 4px);
   }
 
   &.is-horizontal:not(.is-rounded) {
     --menu-item-height: 40px;
-    --menu-item-radius: 6px;
+    --menu-item-radius: var(--st-radius-menu, 4px);
   }
 
   &.is-horizontal.is-rounded {
     --menu-item-height: 40px;
-    --menu-item-radius: 6px;
+    --menu-item-radius: var(--st-radius-menu, 4px);
     --menu-item-padding-x: 12px;
   }
 
@@ -518,33 +520,33 @@ $namespace: vben;
     --menu-background-color: transparent;
 
     &.is-dark {
-      --menu-background-color: hsl(var(--menu));
-      --menu-item-color: hsl(var(--foreground) / 80%);
+      --menu-background-color: transparent;
+      --menu-item-color: hsl(var(--header-foreground, var(--foreground)) / 86%);
       --menu-item-background-color: var(--menu-background-color);
-      --menu-item-hover-color: hsl(var(--accent-foreground));
-      --menu-item-hover-background-color: hsl(var(--accent));
-      --menu-item-active-color: hsl(var(--accent-foreground));
-      --menu-item-active-background-color: hsl(var(--accent));
+      --menu-item-hover-color: hsl(var(--header-foreground, var(--foreground)));
+      --menu-item-hover-background-color: hsl(var(--st-color-nav-active-bg));
+      --menu-item-active-color: hsl(var(--header-foreground, var(--foreground)));
+      --menu-item-active-background-color: hsl(var(--st-color-nav-active-bg));
       --menu-submenu-background-color: var(--menu-background-color);
-      --menu-submenu-hover-color: hsl(var(--accent-foreground));
-      --menu-submenu-hover-background-color: hsl(var(--accent));
-      --menu-submenu-active-color: hsl(var(--accent-foreground));
-      --menu-submenu-active-background-color: hsl(var(--accent));
+      --menu-submenu-hover-color: hsl(var(--header-foreground, var(--foreground)));
+      --menu-submenu-hover-background-color: hsl(var(--st-color-nav-active-bg));
+      --menu-submenu-active-color: hsl(var(--header-foreground, var(--foreground)));
+      --menu-submenu-active-background-color: hsl(var(--st-color-nav-active-bg));
     }
 
     &.is-light {
       --menu-background-color: hsl(var(--menu));
       --menu-item-color: hsl(var(--accent-foreground));
       --menu-item-background-color: var(--menu-background-color);
-      --menu-item-hover-color: var(--menu-item-color);
-      --menu-item-hover-background-color: hsl(var(--accent));
+      --menu-item-hover-color: hsl(var(--primary));
+      --menu-item-hover-background-color: hsl(var(--st-color-fill-selected));
       --menu-item-active-color: hsl(var(--primary));
-      --menu-item-active-background-color: hsl(var(--primary) / 15%);
+      --menu-item-active-background-color: hsl(var(--st-color-fill-selected));
       --menu-submenu-background-color: var(--menu-background-color);
       --menu-submenu-hover-color: hsl(var(--primary));
-      --menu-submenu-hover-background-color: hsl(var(--accent));
+      --menu-submenu-hover-background-color: hsl(var(--st-color-fill-selected));
       --menu-submenu-active-color: hsl(var(--primary));
-      --menu-submenu-active-background-color: hsl(var(--primary) / 15%);
+      --menu-submenu-active-background-color: hsl(var(--st-color-fill-selected));
     }
   }
 }
@@ -606,6 +608,11 @@ $namespace: vben;
       margin-right: 2px;
       // border-bottom: 2px solid transparent;
       border-radius: var(--menu-item-radius);
+    }
+
+    .#{$namespace}-menu-item.is-active,
+    .#{$namespace}-sub-menu.is-active > .#{$namespace}-sub-menu-content {
+      font-weight: 700;
     }
 
     & > .#{$namespace}-sub-menu {
