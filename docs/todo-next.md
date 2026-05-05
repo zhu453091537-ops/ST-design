@@ -19,6 +19,7 @@
 
 | 日期 | 状态 | 说明 |
 | --- | --- | --- |
+| 2026-05-06 | 已收尾 | 已完成本轮收尾与接续更新；本地 Vite 服务已停止，下次需要重新启动后再访问典型页面。 |
 | 2026-05-05 | 已收尾 | 本轮完成项目长期协作规则、跨设备接续机制、ant-design-vue 组件改造默认规则、截图与页面需求分析输出规则的文档沉淀。 |
 | 2026-05-05 | 已完成 | 已完成典型页面驱动平台组件改造一期，新增平台组件源头和 `/platform/typical-page` 验证场。 |
 
@@ -26,7 +27,7 @@
 
 1. 用户输入“开工继续”或提出下一个开发需求后，先读取 `AGENTS.md`、`docs/project-log.md`、`docs/decision-records.md`、`docs/todo-next.md`。
 2. 输出项目接续摘要，明确当前项目目标、技术栈、最近完成内容、未完成事项、关键规则和建议执行顺序。
-3. 可以访问 `http://127.0.0.1:5667/platform/typical-page` 查看典型页面验证场。
+3. 如需继续查看典型页面，先重新启动 `apps/web-antd` 的 Vite 服务，再访问 `/platform/typical-page`。
 4. 围绕 `/platform/typical-page` 继续做视觉对齐，由用户指出 Button、Table、Tree、Form、Modal、Drawer 等具体样式问题后回到平台组件源头改造。
 5. 审计真实业务页面中直接使用 `a-button`、`antdv-next`、`Tree`、`useVbenVxeGrid`、`useVbenForm`、`useVbenModal`、`useVbenDrawer` 的情况，输出迁移优先级。
 6. 确认 `PlatformTable` 与现有 `useVbenVxeGrid` 的长期边界：是并存、逐步迁移，还是新增 Vben Vxe 平台适配组件。

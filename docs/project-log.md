@@ -2,6 +2,44 @@
 
 本文件记录项目阶段性工作日志，用于跨设备、跨聊天上下文恢复。只记录已经发生并完成的事项，不混入长期规则或下一步待办。
 
+## 2026-05-06
+
+### 任务名称
+
+本轮收尾与典型页面阶段接续更新
+
+### 完成内容
+
+1. 按“今天结束”流程核对 `AGENTS.md`、`docs/project-log.md`、`docs/decision-records.md`、`docs/todo-next.md` 当前状态。
+2. 确认本轮已完成典型页面驱动平台组件改造一期：平台组件源头目录已建立，典型页面验证场已接入 Mock 菜单。
+3. 确认长期规则和关键决策已同步沉淀：平台组件源头与验证页规则已写入 `AGENTS.md`，平台组件源头决策已写入 `docs/decision-records.md`。
+4. 停止本地 Vite 开发服务，避免后续接续时误认为 `5667` 端口仍是稳定运行状态。
+5. 更新下一步待办，明确下轮应先做真实业务页组件引用审计，而不是直接批量迁移业务页面。
+
+### 修改了哪些文件
+
+1. `docs/project-log.md`
+2. `docs/todo-next.md`
+
+### 涉及哪些页面或组件
+
+1. 页面：`/platform/typical-page`
+2. 组件：PlatformButton、PlatformTable、PlatformTree、PlatformSearchForm、PlatformEditForm、PlatformFormItem、PlatformInput、PlatformSelect、PlatformDatePicker、PlatformModal、PlatformDrawer、PlatformStatusTag
+3. 本次收尾未新增或修改运行时代码。
+
+### 验证结果
+
+1. 本次收尾前已完成浏览器验证：`/platform/typical-page` 可打开，典型页面可渲染 5 条 Mock 数据，新增抽屉可打开，树筛选可收敛表格数据，控制台无错误。
+2. 本次收尾只更新接续文档，未重新运行浏览器验证。
+3. 收尾后执行 `git diff --check`，结果通过。
+4. 收尾后执行 `lsof -i :5666` 与 `lsof -i :5667`，均无输出，确认本地预览端口未继续占用。
+
+### 遗留问题
+
+1. 真实业务页面尚未接入 `#/components/platform`，下一阶段需要输出引用关系审计和迁移优先级。
+2. `PlatformTable` 与现有 `useVbenVxeGrid` 的长期边界仍需确认，不能直接批量替换真实业务页表格。
+3. 当前项目定位仍需确认：平台母版、具体业务项目，还是二者结合推进。
+
 ## 2026-05-05
 
 ### 任务名称
