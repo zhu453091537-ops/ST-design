@@ -82,8 +82,8 @@ const disabledTopMenus = [
   meta: {
     disabled: true,
     icon: 'lucide:circle',
-    order: 20 + index,
     noCache: false,
+    order: 20 + index,
     title,
   },
   name: `PreviewMenu${index + 1}`,
@@ -110,8 +110,8 @@ const mockBackendMenuList = [
     hidden: false,
     meta: {
       icon: 'lucide:layout-dashboard',
-      order: 0,
       noCache: false,
+      order: 0,
       title: '工作台',
     },
     name: 'Platform',
@@ -160,8 +160,8 @@ const mockBackendMenuList = [
     hidden: false,
     meta: {
       icon: 'lucide:settings',
-      order: 1,
       noCache: false,
+      order: 1,
       title: '系统管理',
     },
     name: 'SystemManagement',
