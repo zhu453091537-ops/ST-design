@@ -195,10 +195,10 @@ if (enableShortcutKey.value) {
     {{ $t('ui.widgets.logoutTip') }}
   </LogoutModal>
 
-  <DropdownMenu v-model:open="openPopover">
+    <DropdownMenu v-model:open="openPopover">
     <DropdownMenuTrigger ref="refTrigger" :disabled="props.trigger === 'hover'">
-      <div class="mr-2 ml-1 cursor-pointer rounded-full p-1.5 hover:bg-accent">
-        <div class="flex-center hover:text-accent-foreground">
+      <div class="platform-header-icon-action mr-3 ml-1 cursor-pointer p-1.5">
+        <div class="flex-center">
           <VbenAvatar :alt="text" :src="avatar" class="size-8" dot />
         </div>
       </div>

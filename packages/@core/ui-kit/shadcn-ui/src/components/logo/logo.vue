@@ -101,8 +101,8 @@ const logoSrc = computed(() => {
 
 .vben-logo__text {
   color: hsl(var(--header-foreground, var(--foreground)));
-  font-size: var(--st-font-size-title, 18px);
-  line-height: var(--st-line-height-lg, 24px);
+  font-size: 24px;
+  line-height: 24px;
   letter-spacing: 0;
 }
 </style>

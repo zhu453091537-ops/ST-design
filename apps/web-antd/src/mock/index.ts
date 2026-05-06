@@ -65,45 +65,20 @@ const mockUserInfoResp = {
   },
 };
 
-const disabledTopMenus = [
-  '蓄电池',
-  '基本信息',
-  '劳保用品管理',
-  '统计查询',
-  '租户管理',
-  '系统监控',
-  '系统工具',
-  '更多菜单',
-].map((title, index) => ({
-  children: [],
-  component: 'Layout',
-  disabled: true,
-  hidden: false,
-  meta: {
-    disabled: true,
-    icon: 'lucide:circle',
-    noCache: false,
-    order: 20 + index,
-    title,
-  },
-  name: `PreviewMenu${index + 1}`,
-  path: `/preview-menu-${index + 1}`,
-}));
-
 const mockBackendMenuList = [
   {
     children: [
       {
         children: [],
-        component: 'platform/typical-page/index',
+        component: 'platform/blank/index',
         hidden: false,
         meta: {
           icon: 'lucide:layout-dashboard',
           noCache: false,
-          title: '典型页面验证场',
+          title: '空白占位',
         },
-        name: 'PlatformTypicalPage',
-        path: '/platform/typical-page',
+        name: 'WorkbenchIndex',
+        path: '/workbench/index',
       },
     ],
     component: 'Layout',
@@ -114,46 +89,70 @@ const mockBackendMenuList = [
       order: 0,
       title: '工作台',
     },
-    name: 'Platform',
+    name: 'WorkbenchMenu',
     path: '/workbench',
   },
   {
     children: [
       {
         children: [],
-        component: 'system/user/index',
+        component: 'platform/typical-page/index',
         hidden: false,
         meta: {
           icon: 'lucide:user',
           noCache: false,
           title: '用户管理',
         },
-        name: 'SystemUser',
-        path: '/system/user',
+        name: 'SystemUserMenu',
+        path: '/platform/typical-page',
       },
       {
         children: [],
-        component: 'system/post/index',
+        component: 'platform/blank/index',
         hidden: false,
         meta: {
-          icon: 'lucide:id-card',
+          icon: 'lucide:badge-check',
           noCache: false,
-          title: '岗位管理',
+          title: '角色管理',
         },
-        name: 'SystemPost',
-        path: '/system/post',
+        name: 'SystemRoleMenu',
+        path: '/system/role/index',
       },
       {
         children: [],
-        component: 'system/dept/index',
+        component: 'platform/blank/index',
+        hidden: false,
+        meta: {
+          icon: 'lucide:network',
+          noCache: false,
+          title: '菜单管理',
+        },
+        name: 'SystemMenuMenu',
+        path: '/system/menu/index',
+      },
+      {
+        children: [],
+        component: 'platform/blank/index',
         hidden: false,
         meta: {
           icon: 'lucide:network',
           noCache: false,
           title: '部门管理',
         },
-        name: 'SystemDept',
-        path: '/system/dept',
+        name: 'SystemDeptMenu',
+        path: '/system/dept/index',
+      },
+      {
+        children: [],
+        component: 'platform/blank/index',
+        hidden: false,
+        meta: {
+          icon: 'lucide:briefcase',
+          noCache: false,
+          title: '岗位管理',
+        },
+        name: 'SystemPostMenu',
+        path: '/system/post/index',
       },
     ],
     component: 'Layout',
@@ -164,10 +163,217 @@ const mockBackendMenuList = [
       order: 1,
       title: '系统管理',
     },
-    name: 'SystemManagement',
+    name: 'SystemManagementMenu',
     path: '/system',
   },
-  ...disabledTopMenus,
+  {
+    children: [
+      {
+        children: [],
+        component: 'platform/blank/index',
+        hidden: false,
+        meta: {
+          icon: 'lucide:battery',
+          noCache: false,
+          title: '空白占位',
+        },
+        name: 'BatteryIndex',
+        path: '/battery/index',
+      },
+    ],
+    component: 'Layout',
+    hidden: false,
+    meta: {
+      icon: 'lucide:battery',
+      noCache: false,
+      order: 20,
+      title: '蓄电池',
+    },
+    name: 'BatteryMenu',
+    path: '/battery',
+  },
+  {
+    children: [
+      {
+        children: [],
+        component: 'platform/blank/index',
+        hidden: false,
+        meta: {
+          icon: 'lucide:info',
+          noCache: false,
+          title: '空白占位',
+        },
+        name: 'BasicInfoIndex',
+        path: '/basic-info/index',
+      },
+    ],
+    component: 'Layout',
+    hidden: false,
+    meta: {
+      icon: 'lucide:info',
+      noCache: false,
+      order: 21,
+      title: '基本信息',
+    },
+    name: 'BasicInfoMenu',
+    path: '/basic-info',
+  },
+  {
+    children: [
+      {
+        children: [],
+        component: 'platform/blank/index',
+        hidden: false,
+        meta: {
+          icon: 'lucide:shield',
+          noCache: false,
+          title: '空白占位',
+        },
+        name: 'LaborSuppliesIndex',
+        path: '/labor-supplies/index',
+      },
+    ],
+    component: 'Layout',
+    hidden: false,
+    meta: {
+      icon: 'lucide:shield',
+      noCache: false,
+      order: 22,
+      title: '劳保用品管理',
+    },
+    name: 'LaborSuppliesMenu',
+    path: '/labor-supplies',
+  },
+  {
+    children: [
+      {
+        children: [],
+        component: 'platform/blank/index',
+        hidden: false,
+        meta: {
+          icon: 'lucide:bar-chart-3',
+          noCache: false,
+          title: '空白占位',
+        },
+        name: 'StatisticsIndex',
+        path: '/statistics/index',
+      },
+    ],
+    component: 'Layout',
+    hidden: false,
+    meta: {
+      icon: 'lucide:bar-chart-3',
+      noCache: false,
+      order: 23,
+      title: '统计查询',
+    },
+    name: 'StatisticsMenu',
+    path: '/statistics',
+  },
+  {
+    children: [
+      {
+        children: [],
+        component: 'platform/blank/index',
+        hidden: false,
+        meta: {
+          icon: 'lucide:building-2',
+          noCache: false,
+          title: '空白占位',
+        },
+        name: 'TenantIndex',
+        path: '/tenant/index',
+      },
+    ],
+    component: 'Layout',
+    hidden: false,
+    meta: {
+      icon: 'lucide:building-2',
+      noCache: false,
+      order: 24,
+      title: '租户管理',
+    },
+    name: 'TenantMenu',
+    path: '/tenant',
+  },
+  {
+    children: [
+      {
+        children: [],
+        component: 'platform/blank/index',
+        hidden: false,
+        meta: {
+          icon: 'lucide:shield-check',
+          noCache: false,
+          title: '空白占位',
+        },
+        name: 'MonitorIndex',
+        path: '/monitor/index',
+      },
+    ],
+    component: 'Layout',
+    hidden: false,
+    meta: {
+      icon: 'lucide:shield-check',
+      noCache: false,
+      order: 25,
+      title: '系统监控',
+    },
+    name: 'MonitorMenu',
+    path: '/monitor',
+  },
+  {
+    children: [
+      {
+        children: [],
+        component: 'platform/blank/index',
+        hidden: false,
+        meta: {
+          icon: 'lucide:tool',
+          noCache: false,
+          title: '空白占位',
+        },
+        name: 'ToolIndex',
+        path: '/tool/index',
+      },
+    ],
+    component: 'Layout',
+    hidden: false,
+    meta: {
+      icon: 'lucide:tool',
+      noCache: false,
+      order: 26,
+      title: '系统工具',
+    },
+    name: 'ToolMenu',
+    path: '/tool',
+  },
+  {
+    children: [
+      {
+        children: [],
+        component: 'platform/blank/index',
+        hidden: false,
+        meta: {
+          icon: 'lucide:ellipsis',
+          noCache: false,
+          title: '空白占位',
+        },
+        name: 'MoreIndex',
+        path: '/more/index',
+      },
+    ],
+    component: 'Layout',
+    hidden: false,
+    meta: {
+      icon: 'lucide:ellipsis',
+      noCache: false,
+      order: 27,
+      title: '更多菜单',
+    },
+    name: 'MoreMenu',
+    path: '/more',
+  },
 ] satisfies Menu[];
 
 function getMockBackendMenuList() {

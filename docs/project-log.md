@@ -6,6 +6,108 @@
 
 ### 任务名称
 
+今天结束：设计稿菜单骨架收敛阶段收尾
+
+### 完成内容
+
+1. 按“今天结束”流程复核当前工作区、`docs/project-log.md`、`docs/todo-next.md` 和 `docs/decision-records.md`。
+2. 当前导航目标已从“只保留平台组件模块”收敛为“按设计稿先搭顶部一级菜单骨架，未开发菜单使用空白占位页承接”。
+3. Mock 菜单源已调整为显示顶部一级菜单：工作台、系统管理、蓄电池、基本信息、劳保用品管理、统计查询、租户管理、系统监控、系统工具、更多菜单。
+4. 未开发菜单不再使用 `disabled` 作为控制流，改为每个菜单保留自己的 route path，并复用同一个 `platform/blank/index` 组件作为空白落点。
+5. 当前阶段只开发一个真实能力页：`系统管理 - 用户管理` 指向 `/platform/typical-page`，继续作为基于 `/system/user` 的典型页面验证场。
+6. 已新增通用空白占位页 `apps/web-antd/src/views/platform/blank/index.vue`，页面内容为空，不展示假业务数据。
+7. 当前没有继续修改 `use-mixed-menu.ts`、`packages/effects/layouts/**`、`packages/@core/ui-kit/menu-ui/**` 的核心菜单逻辑；导航仍通过 Vben 路由和 Mock 菜单源生成。
+8. 收尾时确认当前主要卡点是 `/system/user` 直访问没有正确进入原真实页面，需下次先做最小归因和修复方案，不能直接乱补路由逻辑。
+
+### 修改了哪些文件
+
+1. `apps/web-antd/src/mock/index.ts`
+2. `apps/web-antd/src/views/platform/blank/index.vue`
+3. `apps/web-antd/src/router/routes/modules/platform.ts`
+4. `apps/web-antd/src/layouts/basic.vue`
+5. `packages/styles/src/antd/index.css`
+6. `docs/project-log.md`
+7. `docs/todo-next.md`
+8. `docs/decision-records.md`
+
+### 涉及哪些页面或组件
+
+1. 顶部一级菜单：工作台、系统管理、蓄电池、基本信息、劳保用品管理、统计查询、租户管理、系统监控、系统工具、更多菜单。
+2. 左侧菜单：
+   - 工作台：空白占位；
+   - 系统管理：用户管理、角色管理、菜单管理、部门管理、岗位管理；
+   - 其他一级菜单：当前先显示空白占位子菜单。
+3. 页面：`/platform/typical-page`、`/workbench/index`、`/labor-supplies/index`、`/system/user`。
+4. 组件：`platform/blank/index`、`platform/typical-page/index`。
+
+### 验证结果
+
+1. 当前开发服务已在 `127.0.0.1:5173` 端口运行。
+2. 已通过浏览器验证 `/platform/typical-page` 可渲染典型用户管理页面。
+3. 已通过浏览器验证顶部一级菜单可见：工作台、系统管理、蓄电池、基本信息、劳保用品管理、统计查询、租户管理、系统监控、系统工具、更多菜单。
+4. 已通过浏览器验证系统管理左侧菜单包含：用户管理、角色管理、菜单管理、部门管理、岗位管理。
+5. 已通过浏览器验证 `/workbench/index`、`/labor-supplies/index` 等未开发路径可进入空白占位页，不再 404。
+6. 已发现 `/system/user` 直访问当前未正确进入原真实页面，表现为进入 fallback/空白类页面；此项未在收尾前继续修复。
+7. 收尾文档更新后已执行 `git diff --check`，结果通过。
+
+### 遗留问题
+
+1. `/system/user` 原路由文件仍存在，但直访问没有正确进入原真实页面；下次必须先排查 access mode、动态路由注入、mock 菜单与隐藏路由关系，再输出最小修复方案。
+2. 当前 `系统管理 - 用户管理` 暂时指向 `/platform/typical-page`，后续真实接口恢复或典型页成熟后，需要决定是否切回 `/system/user`。
+3. 当前 Blank 只作为未开发菜单落点，不承载业务内容；后续用户逐个提供截图后，应保留对应 path，仅替换 route component。
+4. 工作区仍包含较多前序平台样式、导航和文档改动，提交前需要再次做范围确认，避免把无关 `.DS_Store` 或临时目录纳入提交。
+
+### 任务名称
+
+导航组件统一样式微调：顶部/左侧菜单与头部右侧按钮 hover 对齐
+
+### 完成内容
+
+1. 按用户要求以最小改动处理导航组件统一样式问题，没有在 `/platform/typical-page` 写页面 scoped CSS。
+2. 将菜单字号和图标尺寸收敛到 `packages/@core/ui-kit/menu-ui/src/components/menu.vue` 的菜单 CSS 变量：
+   - 顶部一级菜单字号统一为 `14px`
+   - 左侧菜单字号统一为 `14px`
+   - 左侧菜单图标统一为 `20px * 20px`
+3. 将横向顶部菜单项高度从原本 40px 调整为跟随 `--st-header-height`，并把圆角置为 0，使选中态背景贴满顶部导航栏高度，不再上下留缝。
+4. 在 `packages/styles/src/antd/index.css` 新增 `platform-header-icon-action` 统一头部右侧图标按钮 hover/focus 样式。
+5. 将右上角设置、通知、用户头像触发器接入 `platform-header-icon-action`，让三者鼠标移入背景样式与左侧统一，而不改菜单逻辑和业务页面代码。
+6. 没有修改 ant-design-vue 源码、`node_modules`、`use-mixed-menu.ts`、route-to-menu、breadcrumb、tabs 等逻辑文件。
+
+### 修改了哪些文件
+
+1. `packages/@core/ui-kit/menu-ui/src/components/menu.vue`
+2. `packages/styles/src/antd/index.css`
+3. `packages/effects/layouts/src/widgets/notification/notification.vue`
+4. `packages/effects/layouts/src/widgets/user-dropdown/user-dropdown.vue`
+5. `packages/effects/layouts/src/widgets/preferences/preferences-button.vue`
+
+### 涉及哪些页面或组件
+
+1. 顶部一级导航菜单
+2. 左侧导航菜单
+3. 头部右侧设置按钮
+4. 头部右侧通知按钮
+5. 头部右侧用户头像触发器
+6. 验证页：`/platform/typical-page`
+
+### 验证结果
+
+1. 已在 Chrome 打开 `http://127.0.0.1:5173/platform/typical-page` 进行浏览器复核。
+2. 复核结果：
+   - 顶部一级菜单字号已变为 14px 视觉层级；
+   - 顶部选中态背景已贴满导航栏高度；
+   - 左侧菜单字号已变为 14px；
+   - 左侧菜单图标已放大为 20px；
+   - 右上角设置、通知、头像触发区已接入统一 hover 背景样式源头。
+3. 已执行 `git diff --check`，结果通过。
+
+### 遗留问题
+
+1. 本轮只做菜单样式层微调，未扩展到 breadcrumb、tabs 或更多头部组件。
+2. 右上角 hover 统一目前覆盖设置、通知、头像触发器；如后续还要把时区、主题切换等头部图标也统一到同一套 hover 规范，可继续沿用 `platform-header-icon-action`。
+
+### 任务名称
+
 `AGENTS.md` 长期规则去重与轻量化整理
 
 ### 完成内容

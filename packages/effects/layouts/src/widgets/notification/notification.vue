@@ -59,10 +59,10 @@ function handleClick(item: NotificationItem) {
 <template>
   <VbenPopover v-model:open="open" content-class="relative right-2 w-90 p-0">
     <template #trigger>
-      <div class="mr-2 flex-center h-full" @click.stop="toggle()">
-        <VbenIconButton class="bell-button relative text-foreground">
+      <div class="mr-1 flex-center h-full" @click.stop="toggle()">
+        <VbenIconButton class="platform-header-icon-action bell-button relative text-foreground">
           <span v-if="dot" class="absolute top-0.5 right-0.5 size-2 rounded-sm bg-primary"></span>
-          <Bell class="size-4" />
+          <Bell class="size-5" />
         </VbenIconButton>
       </div>
     </template>
@@ -75,7 +75,7 @@ function handleClick(item: NotificationItem) {
           :tooltip="$t('ui.widgets.markAllAsRead')"
           @click="handleMakeAll"
         >
-          <MailCheck class="size-4" />
+          <MailCheck class="size-5" />
         </VbenIconButton>
       </div>
       <VbenScrollbar v-if="notifications.length > 0">

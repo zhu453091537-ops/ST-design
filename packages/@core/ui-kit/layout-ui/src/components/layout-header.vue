@@ -91,7 +91,6 @@ const logoStyle = computed((): CSSProperties => {
 .vben-layout-header__logo {
   height: 100%;
   overflow: hidden;
-  border-right: 1px solid hsl(var(--st-color-nav-divider));
 }
 
 .vben-layout-header :deep(.text-foreground),

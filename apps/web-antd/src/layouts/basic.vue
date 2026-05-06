@@ -132,16 +132,13 @@ useVersionUpdate();
 
 <template>
   <BasicLayout @clear-preferences-and-logout="handleLogout">
-    <template #header-right-10>
-      <button class="platform-header-action" type="button">
-        <VbenIcon icon="lucide:bot" class="size-4" />
-        <span>AI 功能</span>
-      </button>
-    </template>
     <template #header-right-20>
-      <button class="platform-header-action" type="button">
-        <VbenIcon icon="lucide:calendar-days" class="size-4" />
-        <span>日程管理</span>
+      <button
+        aria-label="日程管理"
+        class="platform-header-icon-action"
+        type="button"
+      >
+        <VbenIcon icon="lucide:calendar-days" class="size-5" />
       </button>
     </template>
     <template #header-right-30>

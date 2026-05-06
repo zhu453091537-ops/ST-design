@@ -12,7 +12,7 @@ const props = withDefaults(
     tools?: TableTool[];
   }>(),
   {
-    tools: () => ['setting', 'refresh', 'search', 'fullscreen'],
+    tools: () => ['search', 'refresh', 'setting', 'fullscreen'],
   },
 );
 

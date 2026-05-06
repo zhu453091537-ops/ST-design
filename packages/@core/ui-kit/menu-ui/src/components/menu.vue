@@ -446,8 +446,9 @@ $namespace: vben;
 
 .#{$namespace}-menu__popup-container,
 .#{$namespace}-menu {
+  --menu-font-size: var(--st-font-size-base, var(--font-size-base, 14px));
   --menu-title-width: 140px;
-  --menu-item-icon-size: var(--font-size-base, 16px);
+  --menu-item-icon-size: 20px;
   --menu-item-height: 44px;
   --menu-item-padding-y: 21px;
   --menu-item-padding-x: 12px;
@@ -501,13 +502,13 @@ $namespace: vben;
   }
 
   &.is-horizontal:not(.is-rounded) {
-    --menu-item-height: 40px;
-    --menu-item-radius: var(--st-radius-menu, 4px);
+    --menu-item-height: var(--st-header-height, 56px);
+    --menu-item-radius: 0px;
   }
 
   &.is-horizontal.is-rounded {
-    --menu-item-height: 40px;
-    --menu-item-radius: var(--st-radius-menu, 4px);
+    --menu-item-height: var(--st-header-height, 56px);
+    --menu-item-radius: 0px;
     --menu-item-padding-x: 12px;
   }
 
@@ -515,7 +516,7 @@ $namespace: vben;
     --menu-item-padding-y: 0px;
     --menu-item-padding-x: 14px;
     --menu-item-margin-y: 0px;
-    --menu-item-margin-x: 2px;
+    --menu-item-margin-x: 0px;
     --menu-background-color: transparent;
 
     &.is-dark {
