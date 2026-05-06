@@ -472,3 +472,45 @@ Vxe 表格平台适配层一期
 2. `system/user/dept-tree.vue` 尚未平台化，仍是下一步树结构源组件改造的第一候选。
 3. 真实业务页仍大量直接使用 `antdv-next` 和 Vben Vxe 能力，后续需要分批治理，不能一次性替换。
 4. 当前项目是平台母版、具体业务项目还是二者结合推进，仍需用户确认。
+
+### 任务名称
+
+平台树筛选容器下沉与 `system/user` 最小接入
+
+### 完成内容
+
+1. 结合用户已确认的“平台母版 + 真实业务页验证”定位，先对 `/platform/typical-page` 和 `system/user` 做了结构分析、组件映射和平台/业务边界确认。
+2. 在 `apps/web-antd/src/components/platform/tree` 新增 `PlatformTreePanel`，将树筛选头部、搜索框、刷新按钮、骨架屏、空态和树主体组合沉淀到平台源头。
+3. 将 `apps/web-antd/src/views/system/user/dept-tree.vue` 切换为使用 `PlatformTreePanel`，保留部门树接口请求、筛选联动、节点高亮和 `reload/select` 业务事件不变。
+4. 将 `apps/web-antd/src/views/platform/typical-page/index.vue` 左侧组织树验证区切换为使用 `PlatformTreePanel`，让典型页和真实页共享同一套树筛选平台壳。
+5. 同步更新接续文档，记录“树筛选壳平台化、业务页保留查询与事件逻辑”的边界，方便后续继续扩展 `dept-tree`、真实页验证和 Figma 对齐。
+
+### 修改了哪些文件
+
+1. `apps/web-antd/src/components/platform/tree/index.ts`
+2. `apps/web-antd/src/components/platform/tree/platform-tree-panel.vue`
+3. `apps/web-antd/src/views/platform/typical-page/index.vue`
+4. `apps/web-antd/src/views/system/user/dept-tree.vue`
+5. `docs/project-log.md`
+6. `docs/decision-records.md`
+7. `docs/todo-next.md`
+
+### 涉及哪些页面或组件
+
+1. 页面：`/platform/typical-page`、`/system/user`
+2. 平台组件：`PlatformTree`、`PlatformTreePanel`
+3. 真实业务组件：`system/user/dept-tree.vue`
+4. 平台能力边界：树筛选头部、搜索、刷新、骨架屏、空态沉淀到平台层；树数据加载、查询联动、业务事件留在业务页
+
+### 验证结果
+
+1. 已执行 `git diff --check`，结果通过。
+2. 已执行 `./node_modules/.bin/eslint apps/web-antd/src/components/platform/tree/platform-tree-panel.vue apps/web-antd/src/views/system/user/dept-tree.vue apps/web-antd/src/views/platform/typical-page/index.vue`，结果通过。
+3. 已执行 `./node_modules/.bin/vue-tsc --noEmit --skipLibCheck -p apps/web-antd/tsconfig.json`，命令仍失败于项目既有类型错误；当前输出未命中本次新增或修改文件。
+4. 本阶段未启动浏览器验证，也未对照 Figma 复核视觉细节；原因是本次先收敛结构和组件边界，下一步再结合登录态真实页与 Figma 典型页做视觉验证。
+
+### 遗留问题
+
+1. `PlatformTreePanel` 已完成结构平台化，但真实页和典型页的视觉细节还未重新走浏览器验证。
+2. `system/user` 登录后的 Vxe 表格工具栏、树筛选区与典型页的视觉一致性仍需下一步联调验证。
+3. `PlatformTree` 本体仍是样式薄封装，后续如果还有组织树、菜单树、权限树等场景，需要继续判断哪些能力应沉淀到 `PlatformTree`，哪些保留在 `PlatformTreePanel`。

@@ -21,16 +21,16 @@ import {
   PlatformStatusTag,
   PlatformTable,
   PlatformTableToolbar,
-  PlatformTree,
+  PlatformTreePanel,
 } from '#/components/platform';
 
 import {
+  type PlatformTypicalDept,
+  type PlatformTypicalUser,
   typicalDeptTree,
   typicalRoleOptions,
   typicalStatusOptions,
   typicalUsers,
-  type PlatformTypicalDept,
-  type PlatformTypicalUser,
 } from './mock';
 
 const statusMap = {
@@ -65,8 +65,8 @@ const treeKeyword = ref('');
 const filterCollapsed = ref(false);
 const drawerOpen = ref(false);
 const detailOpen = ref(false);
-const editingId = ref<number | null>(null);
-const detailRecord = ref<PlatformTypicalUser | null>(null);
+const editingId = ref<null | number>(null);
+const detailRecord = ref<null | PlatformTypicalUser>(null);
 
 const query = reactive<{
   createDate: Dayjs | null;
@@ -211,29 +211,27 @@ function handleSave() {
   ].find((item) => item.key === formModel.deptId);
   formModel.deptName = dept?.title ?? '产品中心';
 
-  if (editingId.value) {
-    rows.value = rows.value.map((row) =>
-      row.id === editingId.value
-        ? ({ ...row, ...formModel } as PlatformTypicalUser)
-        : row,
-    );
-  } else {
-    rows.value = [
-      {
-        account: formModel.account || 'newuser',
-        createTime: dayjs().format('YYYY-MM-DD HH:mm:ss'),
-        deptId: formModel.deptId || 'product',
-        deptName: formModel.deptName || '产品中心',
-        email: formModel.email || 'newuser@example.com',
-        id: Math.max(...rows.value.map((row) => row.id)) + 1,
-        name: formModel.name || '新用户',
-        role: formModel.role || '运营人员',
-        status: (formModel.status ||
-          'enabled') as PlatformTypicalUser['status'],
-      },
-      ...rows.value,
-    ];
-  }
+  rows.value = editingId.value
+    ? rows.value.map((row) =>
+        row.id === editingId.value
+          ? ({ ...row, ...formModel } as PlatformTypicalUser)
+          : row,
+      )
+    : [
+        {
+          account: formModel.account || 'newuser',
+          createTime: dayjs().format('YYYY-MM-DD HH:mm:ss'),
+          deptId: formModel.deptId || 'product',
+          deptName: formModel.deptName || '产品中心',
+          email: formModel.email || 'newuser@example.com',
+          id: Math.max(...rows.value.map((row) => row.id)) + 1,
+          name: formModel.name || '新用户',
+          role: formModel.role || '运营人员',
+          status: (formModel.status ||
+            'enabled') as PlatformTypicalUser['status'],
+        },
+        ...rows.value,
+      ];
 
   drawerOpen.value = false;
 }
@@ -257,25 +255,27 @@ function handleDetail(row: PlatformTypicalUser) {
 function toggleFilterCollapsed() {
   filterCollapsed.value = !filterCollapsed.value;
 }
+
+function handleTreeReload() {
+  treeKeyword.value = '';
+  selectedDeptKeys.value = ['product'];
+}
 </script>
 
 <template>
   <Page :auto-content-height="true">
     <div class="flex h-full min-h-0 gap-4">
       <aside class="platform-surface flex w-[260px] shrink-0 flex-col p-4">
-        <PlatformInput
-          v-model:value="treeKeyword"
-          allow-clear
-          class="mb-3"
-          placeholder="搜索组织"
-        />
-        <PlatformTree
+        <PlatformTreePanel
+          v-model:search-value="treeKeyword"
           v-model:selected-keys="selectedDeptKeys"
           :tree-data="filteredTree"
           :virtual="false"
-          class="min-h-0 flex-1 overflow-auto"
+          class="min-h-0 flex-1"
           default-expand-all
+          search-placeholder="搜索组织"
           show-line
+          @reload="handleTreeReload"
         />
       </aside>
 

@@ -6,7 +6,7 @@
 
 | 优先级 | 事项 | 状态 | 说明 |
 | --- | --- | --- | --- |
-| 高 | 明确当前项目目标和业务范围 | 待确认 | 需要确认本项目是作为平台母版、具体业务项目，还是二者结合推进。 |
+| 高 | 明确当前项目目标和业务范围 | 已确认 | 当前已确认按“平台母版 + 真实业务页验证”二者结合推进。 |
 | 高 | 梳理当前技术栈和应用结构 | 部分完成 | 已确认仓库为 `vben-admin-monorepo`，主应用为 `apps/web-antd/src`；已新增平台组件源头，仍需审计真实业务页引用关系。 |
 | 高 | 典型页面驱动平台组件改造一期 | 已完成 | 已新增 `components/platform` 平台薄封装与 `/platform/typical-page` 验证场。 |
 | 高 | Figma 典型页面全局样式与导航表格源组件改造 | 已完成 | 已完成品牌 token、Antdv 全局样式、Vben 顶部/侧边菜单拆分、`PlatformTableToolbar` 和典型页验证。 |
@@ -14,7 +14,8 @@
 | 高 | 审计 ant-design-vue 与平台组件引用关系 | 已完成 | 已扫描真实业务页引用关系：`useVbenVxeGrid` 35 个文件，`antdv-next` 115 个文件，`<a-*>` / 全局 Antdv 标签 57 个文件，`#/components/platform` 仅 1 个文件。 |
 | 高 | 确认 `PlatformTable` 与 Vben Vxe 表格边界 | 部分完成 | 已确认真实业务页短期不能用 Antdv Table 版 `PlatformTable` 批量替换，下一步应先做 Vxe 平台适配层或扩展 `#/adapter/vxe-table`。 |
 | 高 | 建立 Vxe 表格平台适配层 | 部分完成 | 已完成一期：默认启用设置、刷新、搜索、全屏能力，并统一 Vxe 工具按钮样式、表头和行高；仍需登录后浏览器验证真实页。 |
-| 高 | 首批真实页面接入平台规范 | 部分完成 | `system/user` 已移除页面级 Vxe 表头高度和行高配置，改为继承适配层；左侧 `dept-tree` 尚未平台化。 |
+| 高 | 首批真实页面接入平台规范 | 部分完成 | `system/user` 已移除页面级 Vxe 表头高度和行高配置，左侧 `dept-tree` 已接入 `PlatformTreePanel`，仍需登录后浏览器验证。 |
+| 高 | 树筛选平台容器建设 | 部分完成 | 已新增 `PlatformTreePanel` 并接入典型页与 `system/user/dept-tree`；后续需继续验证视觉细节并评估是否扩展更多树场景。 |
 | 高 | 建立阶段进度报告规则 | 已完成 | 已写入 `AGENTS.md` 和 `docs/decision-records.md`，后续每完成一个步骤、阶段或代码修改后都要主动同步方案进度和剩余内容。 |
 | 高 | 对下一张截图或页面需求输出结构化分析 | 待执行 | 需先输出页面结构、组件映射、文件归属、自检表、交互状态，再等待确认。 |
 | 中 | 将接续文档链接到文档入口 | 待处理 | 可考虑在 `README.md` 或内部文档入口中增加 `AGENTS.md` 和 docs 接续文档说明。 |
@@ -30,6 +31,7 @@
 | 2026-05-06 | 已收尾 | 已完成今天结束收尾；长期规则已同步到 `AGENTS.md` 和 `docs/decision-records.md`，下一步优先登录后验证 `system/user` 的 Vxe 工具栏和处理 `dept-tree` 平台化。 |
 | 2026-05-06 | 已完成 | 已完成真实业务页组件引用关系审计，并打开 `http://127.0.0.1:5671/platform/typical-page` 到登录页供查看。 |
 | 2026-05-06 | 部分完成 | 已完成 Vxe 表格平台适配层一期和 `system/user` 首批接入，浏览器真实页验证停在登录页，等待用户登录或确认是否代点登录。 |
+| 2026-05-06 | 已完成 | 已完成 `PlatformTreePanel` 平台树筛选容器下沉，并让 `/platform/typical-page` 与 `system/user/dept-tree` 共享搜索、刷新、骨架屏和空态平台壳。 |
 | 2026-05-05 | 已收尾 | 本轮完成项目长期协作规则、跨设备接续机制、ant-design-vue 组件改造默认规则、截图与页面需求分析输出规则的文档沉淀。 |
 | 2026-05-05 | 已完成 | 已完成典型页面驱动平台组件改造一期，新增平台组件源头和 `/platform/typical-page` 验证场。 |
 
@@ -38,13 +40,13 @@
 1. 用户输入“开工继续”或提出下一个开发需求后，先读取 `AGENTS.md`、`docs/project-log.md`、`docs/decision-records.md`、`docs/todo-next.md`。
 2. 输出项目接续摘要，明确当前项目目标、技术栈、最近完成内容、未完成事项、关键规则和建议执行顺序。
 3. 如需继续查看典型页面，先确认当前 `5671` 服务是否仍在运行；跨设备或新会话不要假设端口仍可用，需要重新启动 `apps/web-antd` 后再访问 `/platform/typical-page`。
-4. 登录后验证 `system/user`：重点检查 Vxe 表格右上角设置、刷新、搜索、全屏按钮是否出现，默认态和 hover 态是否与典型页一致。
-5. 对 `system/user/dept-tree.vue` 提取或接入 `PlatformTree` 能力，逐步替换直接使用 Antdv `Tree`、`Input`、刷新按钮的局部实现。
-6. 对表格 `#toolbar-tools` 中直接手写的 `<a-button>` 建立统一规则：业务功能按钮保留权限和业务逻辑，常规工具按钮统一由平台表格工具栏或 Vxe 适配层承载。
-7. 围绕 `/platform/typical-page` 继续做视觉对齐，由用户指出 Button、Table、Tree、Form、Modal、Drawer 等具体样式问题后回到平台组件源头改造。
-8. 优先确认当前项目定位：平台母版、具体业务项目，还是二者结合推进。
+4. 重新启动 `apps/web-antd` 后，登录验证 `system/user`：重点检查 Vxe 表格右上角设置、刷新、搜索、全屏按钮是否出现，默认态和 hover 态是否与典型页一致。
+5. 打开 Figma MCP Go 的典型页面，对照 `PlatformTreePanel`、查询区和表格工具栏做视觉差异校准。
+6. 继续抽查 `system/user/dept-tree.vue` 是否还存在页面级视觉散点，如树节点间距、搜索区内边距、空态高度、刷新按钮尺寸等。
+7. 对表格 `#toolbar-tools` 中直接手写的 `<a-button>` 建立统一规则：业务功能按钮保留权限和业务逻辑，常规工具按钮统一由平台表格工具栏或 Vxe 适配层承载。
+8. 围绕 `/platform/typical-page` 继续做视觉对齐，由用户指出 Button、Table、Tree、Form、Modal、Drawer 等具体样式问题后回到平台组件源头改造。
 9. 如果用户提供截图或页面需求，先按 `AGENTS.md` 的截图与页面需求分析输出规则产出 Markdown 分析。
-10. 等用户确认后，再开始具体平台组件改造、方案设计或代码修改。
+10. 等用户确认后，再开始下一步具体平台组件改造、方案设计或代码修改。
 
 ## 暂时不处理的问题
 

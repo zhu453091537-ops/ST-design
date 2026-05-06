@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import type { Key } from 'antdv-next/dist/table/interface';
-
 import type { PropType } from 'vue';
 
 import type { DeptTree } from '#/api/system/user/model';
@@ -9,10 +7,8 @@ import { computed, onMounted, ref } from 'vue';
 
 import { cloneDeep, listToTree, treeToList } from '@vben/utils';
 
-import { SyncOutlined } from '@antdv-next/icons';
-import { Empty, Input, Skeleton, SpaceCompact, Tree } from 'antdv-next';
-
 import { getDeptTree } from '#/api/system/user';
+import { PlatformTreePanel } from '#/components/platform';
 
 defineOptions({ inheritAttrs: false });
 
@@ -95,80 +91,40 @@ async function handleReload() {
 
 onMounted(loadTree);
 
-function handleSelect(keys: Key[]) {
+function handleSelect(keys: Array<number | string>) {
   emit('select', keys as string[]);
 }
 </script>
 
 <template>
-  <div :class="$attrs.class">
-    <Skeleton
-      :loading="showTreeSkeleton"
-      :paragraph="{ rows: 8 }"
-      active
-      class="p-[8px]"
-    >
-      <div
-        class="flex h-full flex-col overflow-y-auto rounded-lg bg-background"
-      >
-        <!-- 固定在顶部 必须加上bg-background背景色 否则会产生'穿透'效果 -->
-        <div
-          v-if="showSearch"
-          class="sticky left-0 top-0 z-100 bg-background p-[8px]"
-        >
-          <SpaceCompact class="w-full">
-            <Input
-              v-model:value="searchValue"
-              :placeholder="$t('pages.common.search')"
-              size="small"
-              allow-clear
-            />
-            <a-button size="small" @click="handleReload">
-              <SyncOutlined class="text-primary" />
-            </a-button>
-          </SpaceCompact>
-        </div>
-        <div class="h-full overflow-x-hidden px-[8px]">
-          <Tree
-            v-bind="$attrs"
-            v-if="deptTreeComputed.length > 0"
-            v-model:selected-keys="selectDeptId"
-            :class="$attrs.class"
-            :field-names="{ title: 'label', key: 'id' }"
-            :show-line="{ showLeafIcon: false }"
-            :tree-data="deptTreeComputed"
-            :virtual="false"
-            default-expand-all
-            @select="handleSelect"
-            :styles="{
-              item: {
-                '--ant-tree-node-selected-bg':
-                  'var(--ant-color-primary-bg-hover)',
-              },
-            }"
-          >
-            <template #titleRender="{ label }">
-              <span v-if="label.includes(searchValue)">
-                {{ label.substring(0, label.indexOf(searchValue)) }}
-                <span class="text-primary">{{ searchValue }}</span>
-                {{
-                  label.substring(
-                    label.indexOf(searchValue) + searchValue.length,
-                  )
-                }}
-              </span>
-              <span v-else>{{ label }}</span>
-            </template>
-          </Tree>
-          <!-- 仅本人数据权限 可以考虑直接不显示 -->
-          <div v-else class="mt-5">
-            <Empty
-              :image="Empty.PRESENTED_IMAGE_SIMPLE"
-              description="无部门数据"
-            />
-          </div>
-        </div>
-      </div>
-    </Skeleton>
-  </div>
+  <PlatformTreePanel
+    v-model:search-value="searchValue"
+    v-model:selected-keys="selectDeptId"
+    :loading="showTreeSkeleton"
+    :show-search="showSearch"
+    :tree-data="deptTreeComputed"
+    :class="$attrs.class"
+    :field-names="{ title: 'label', key: 'id' }"
+    :show-line="{ showLeafIcon: false }"
+    :styles="{
+      item: {
+        '--ant-tree-node-selected-bg': 'var(--ant-color-primary-bg-hover)',
+      },
+    }"
+    :virtual="false"
+    default-expand-all
+    empty-description="无部门数据"
+    :search-placeholder="$t('pages.common.search')"
+    @reload="handleReload"
+    @select="handleSelect"
+  >
+    <template #titleRender="{ label }">
+      <span v-if="label.includes(searchValue)">
+        {{ label.substring(0, label.indexOf(searchValue)) }}
+        <span class="text-primary">{{ searchValue }}</span>
+        {{ label.substring(label.indexOf(searchValue) + searchValue.length) }}
+      </span>
+      <span v-else>{{ label }}</span>
+    </template>
+  </PlatformTreePanel>
 </template>
