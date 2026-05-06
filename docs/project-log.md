@@ -6,6 +6,62 @@
 
 ### 任务名称
 
+用户管理入口去重：解绑旧 `/system/user` 页面
+
+### 完成内容
+
+1. 按用户最新确认，将当前唯一真实用户管理页面收口为 `系统管理 - 用户管理 -> /platform/typical-page`。
+2. 删除原 `/system/user` 旧页面路由入口 `apps/web-antd/src/router/routes/modules/system.ts`，避免旧页面继续作为菜单或访问入口参与当前阶段目标。
+3. 删除原 `/system/user` 旧页面壳文件：
+   - `apps/web-antd/src/views/system/user/index.vue`
+   - `apps/web-antd/src/views/system/user/authRole.vue`
+   - `apps/web-antd/src/views/system/user/user-drawer.vue`
+   - `apps/web-antd/src/views/system/user/user-import-modal.vue`
+   - `apps/web-antd/src/views/system/user/user-info-modal.vue`
+   - `apps/web-antd/src/views/system/user/user-reset-pwd-modal.vue`
+4. 保留并继续复用仍被典型页和其他模块使用的共享文件，不删除：
+   - `apps/web-antd/src/api/system/user/index.ts`
+   - `apps/web-antd/src/api/system/user/model.ts`
+   - `apps/web-antd/src/views/system/user/data.tsx`
+   - `apps/web-antd/src/views/system/user/dept-tree.vue`
+5. 收敛菜单源，确保 `系统管理 - 用户管理` 只指向 `/platform/typical-page`，不再把 `/system/user` 作为菜单入口。
+6. 旧 `/system/user` 不再作为本阶段目标，后续不继续排查其旧页面显示问题。
+
+### 修改了哪些文件
+
+1. `apps/web-antd/src/router/routes/modules/system.ts`
+2. `apps/web-antd/src/views/system/user/index.vue`
+3. `apps/web-antd/src/views/system/user/authRole.vue`
+4. `apps/web-antd/src/views/system/user/user-drawer.vue`
+5. `apps/web-antd/src/views/system/user/user-import-modal.vue`
+6. `apps/web-antd/src/views/system/user/user-info-modal.vue`
+7. `apps/web-antd/src/views/system/user/user-reset-pwd-modal.vue`
+8. `apps/web-antd/src/mock/index.ts`
+9. `docs/project-log.md`
+10. `docs/todo-next.md`
+11. `docs/decision-records.md`
+
+### 涉及哪些页面或组件
+
+1. 菜单入口：`系统管理 - 用户管理`
+2. 真实页面：`/platform/typical-page`
+3. 旧页面：`/system/user`
+4. 共享资源：`#api/system/user/*`、`#views/system/user/data.tsx`、`#views/system/user/dept-tree.vue`
+
+### 验证结果
+
+1. 已通过浏览器确认 `http://127.0.0.1:5173/platform/typical-page` 仍可正常访问。
+2. 已确认顶部 `系统管理`、左侧 `用户管理` 仍指向典型页用户管理页面。
+3. 已确认 `workbench/index`、`labor-supplies/index` 等未开发菜单仍对应空白占位页。
+4. 已执行 `git diff --check`，结果通过。
+
+### 遗留问题
+
+1. 旧 `/system/user` 页面已解绑并删除壳文件，但共享 api/model/data/tree 仍保留，后续如果继续做其他系统页面，仍可复用这些共享资源。
+2. 当前项目里不应再出现两个“用户管理”入口，后续如再新增 URL 别名，需要先确认不会让菜单和路由同时出现双入口。
+
+### 任务名称
+
 今天结束：设计稿菜单骨架收敛阶段收尾
 
 ### 完成内容
