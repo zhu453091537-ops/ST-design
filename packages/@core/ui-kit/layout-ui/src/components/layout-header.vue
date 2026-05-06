@@ -54,8 +54,13 @@ const style = computed((): CSSProperties => {
 });
 
 const logoStyle = computed((): CSSProperties => {
+  const baseWidth = props.isMobile
+    ? 40
+    : `max(${props.sidebarWidth}px, var(--st-header-logo-width, 360px))`;
+
   return {
-    minWidth: `${props.isMobile ? 40 : props.sidebarWidth}px`,
+    flex: '0 0 auto',
+    minWidth: typeof baseWidth === 'number' ? `${baseWidth}px` : baseWidth,
   };
 });
 </script>
@@ -64,9 +69,9 @@ const logoStyle = computed((): CSSProperties => {
   <header
     :class="theme"
     :style="style"
-    class="vben-layout-header top-0 flex w-full flex-[0_0_auto] items-center border-b bg-header pl-2 transition-[margin-top] duration-200"
+    class="vben-layout-header top-0 flex w-full flex-[0_0_auto] items-center border-b bg-header transition-[margin-top] duration-200"
   >
-    <div v-if="slots.logo" :style="logoStyle">
+    <div v-if="slots.logo" class="vben-layout-header__logo" :style="logoStyle">
       <slot name="logo"></slot>
     </div>
 
@@ -80,6 +85,13 @@ const logoStyle = computed((): CSSProperties => {
 .vben-layout-header {
   color: hsl(var(--header-foreground));
   border-color: hsl(var(--header-border));
+  box-shadow: 0 1px 0 hsl(var(--st-color-nav-divider));
+}
+
+.vben-layout-header__logo {
+  height: 100%;
+  overflow: hidden;
+  border-right: 1px solid hsl(var(--st-color-nav-divider));
 }
 
 .vben-layout-header :deep(.text-foreground),

@@ -34,6 +34,7 @@ export const overridesPreferences = defineOverridesPreferences({
      * 然后路由会进行合并
      */
     accessMode: 'mixed',
+    defaultHomePath: '/platform/typical-page',
     /**
      * 不需要refresh token 由后端处理
      */
@@ -65,6 +66,7 @@ export const overridesPreferences = defineOverridesPreferences({
      * 标签tab 持久化 关闭
      */
     persist: false,
+    enable: false,
     // styleType: 'card',
   },
   theme: {

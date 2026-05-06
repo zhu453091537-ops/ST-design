@@ -511,20 +511,19 @@ $namespace: vben;
     --menu-item-padding-x: 12px;
   }
 
-  // .vben-menu__popup,
   &.is-horizontal {
     --menu-item-padding-y: 0px;
-    --menu-item-padding-x: 10px;
+    --menu-item-padding-x: 14px;
     --menu-item-margin-y: 0px;
-    --menu-item-margin-x: 1px;
+    --menu-item-margin-x: 2px;
     --menu-background-color: transparent;
 
     &.is-dark {
       --menu-background-color: transparent;
-      --menu-item-color: hsl(var(--header-foreground, var(--foreground)) / 86%);
+      --menu-item-color: hsl(var(--header-foreground, var(--foreground)) / 88%);
       --menu-item-background-color: var(--menu-background-color);
       --menu-item-hover-color: hsl(var(--header-foreground, var(--foreground)));
-      --menu-item-hover-background-color: hsl(var(--st-color-nav-active-bg));
+      --menu-item-hover-background-color: hsl(var(--st-color-nav-hover-bg));
       --menu-item-active-color: hsl(var(--header-foreground, var(--foreground)));
       --menu-item-active-background-color: hsl(var(--st-color-nav-active-bg));
       --menu-submenu-background-color: var(--menu-background-color);
@@ -596,6 +595,7 @@ $namespace: vben;
     flex-wrap: nowrap;
     max-width: 100%;
     height: var(--height-horizontal-height);
+    align-items: center;
     border-right: none;
 
     .#{$namespace}-menu-item {
@@ -603,11 +603,20 @@ $namespace: vben;
       align-items: center;
       justify-content: center;
       height: var(--menu-item-height);
-      padding-right: calc(var(--menu-item-padding-x) + 6px);
+      min-width: 72px;
+      padding-right: var(--menu-item-padding-x);
       margin: 0;
-      margin-right: 2px;
+      margin-right: var(--menu-item-margin-x);
       // border-bottom: 2px solid transparent;
       border-radius: var(--menu-item-radius);
+    }
+
+    .#{$namespace}-menu__icon {
+      display: none;
+    }
+
+    .#{$namespace}-menu-item__content {
+      justify-content: center;
     }
 
     .#{$namespace}-menu-item.is-active,
@@ -617,7 +626,7 @@ $namespace: vben;
 
     & > .#{$namespace}-sub-menu {
       height: var(--menu-item-height);
-      margin-right: 2px;
+      margin-right: var(--menu-item-margin-x);
 
       &:focus,
       &:hover {
@@ -626,9 +635,15 @@ $namespace: vben;
 
       & .#{$namespace}-sub-menu-content {
         height: 100%;
-        padding-right: 40px;
+        min-width: 72px;
+        justify-content: center;
+        padding-right: var(--menu-item-padding-x);
         // border-bottom: 2px solid transparent;
         border-radius: var(--menu-item-radius);
+      }
+
+      & .#{$namespace}-sub-menu-content__icon-arrow {
+        display: none;
       }
     }
 

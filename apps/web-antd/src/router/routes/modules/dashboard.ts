@@ -1,72 +1,61 @@
 import type { RouteRecordRaw } from 'vue-router';
 
-import { IFrameView } from '@vben/layouts';
-
-import { $t } from '#/locales';
-
-const {
-  version,
-  // vite inject-metadata 插件注入的全局变量
-} = __VBEN_ADMIN_METADATA__ || {};
+const PLATFORM_HOME_PATH = '/platform/typical-page';
 
 const routes: RouteRecordRaw[] = [
   {
     meta: {
+      hideInMenu: true,
       order: -1,
-      title: $t('page.dashboard.title'),
+      title: '旧概览入口',
     },
     name: 'Dashboard',
     path: '/dashboard',
-    redirect: '/analytics',
+    redirect: PLATFORM_HOME_PATH,
     children: [
       {
         name: 'Analytics',
         path: '/analytics',
-        component: () => import('#/views/dashboard/analytics/index.vue'),
+        redirect: PLATFORM_HOME_PATH,
         meta: {
-          affixTab: true,
-          title: $t('page.dashboard.analytics'),
+          hideInMenu: true,
+          title: '旧分析页入口',
         },
       },
       {
         name: 'Workspace',
         path: '/workspace',
-        component: () => import('#/views/dashboard/workspace/index.vue'),
+        redirect: PLATFORM_HOME_PATH,
         meta: {
-          title: $t('page.dashboard.workspace'),
+          hideInMenu: true,
+          title: '旧工作台入口',
         },
       },
       {
         name: 'VbenDocument',
         path: '/vben-admin/document',
-        component: IFrameView,
+        redirect: PLATFORM_HOME_PATH,
         meta: {
-          icon: 'lucide:book-open-text',
-          iframeSrc: 'https://dapdap.top',
-          keepAlive: true,
-          title: $t('demos.vben.document'),
+          hideInMenu: true,
+          title: '旧文档入口',
         },
       },
       {
         name: 'V5UpdateLog',
         path: '/changelog',
-        component: () => import('#/views/演示使用自行删除/changelog/index.vue'),
+        redirect: PLATFORM_HOME_PATH,
         meta: {
-          icon: 'lucide:book-open-text',
-          keepAlive: true,
-          title: '更新记录',
-          badge: `当前: ${version}`,
-          badgeVariants: 'bg-primary',
+          hideInMenu: true,
+          title: '旧更新记录入口',
         },
       },
     ],
   },
   {
-    component: () => import('#/views/_core/about/index.vue'),
+    redirect: PLATFORM_HOME_PATH,
     meta: {
-      icon: 'lucide:copyright',
-      order: 9999,
-      title: $t('demos.vben.about'),
+      hideInMenu: true,
+      title: '旧关于入口',
     },
     name: 'About',
     path: '/vben-admin/about',

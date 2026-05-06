@@ -23,6 +23,8 @@
   --st-color-fill-selected: 146 100% 30% / 10%;
   --st-color-fill-disabled: 218 13% 86%;
   --st-color-nav-active-bg: 210 8% 5% / 26%;
+  --st-color-nav-hover-bg: 210 8% 5% / 14%;
+  --st-color-nav-divider: 0 0% 100% / 20%;
   --st-color-table-toolbar-bg: 220 38% 94%;
   --st-color-table-tool-bg: 146 100% 30% / 10%;
   --st-color-table-tool-border: 146 100% 30% / 30%;
@@ -36,6 +38,9 @@
   --st-radius-control: 4px;
   --st-radius-card: 6px;
   --st-radius-menu: 4px;
+  --st-header-height: 56px;
+  --st-header-logo-width: 360px;
+  --st-header-action-size: 32px;
   --st-control-height: 36px;
   --st-table-header-height: 44px;
   --st-table-row-height: 44px;

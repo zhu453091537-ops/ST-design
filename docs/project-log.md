@@ -6,6 +6,79 @@
 
 ### 任务名称
 
+当前典型页去掉顶部 tabbar 区块
+
+### 完成内容
+
+1. 根据用户标注，移除典型页顶部“分析页 / 典型页面验证场”这一整块 tabbar 区域。
+2. 在 `apps/web-antd/src/preferences.ts` 中关闭 `tabbar.enable`，让该区域不再作为全局可见布局内容渲染。
+3. 保持平台组件页正文、左侧树、查询区、表格、抽屉和弹窗不变，仅收掉页面上方那块不需要的导航 tab 区。
+
+### 修改了哪些文件
+
+1. `apps/web-antd/src/preferences.ts`
+2. `docs/project-log.md`
+3. `docs/todo-next.md`
+
+### 涉及哪些页面或组件
+
+1. 页面：`/platform/typical-page`
+2. 布局能力：顶部 tabbar
+
+### 验证结果
+
+1. 已执行 `git diff --check`，结果通过。
+2. 已确认代码修改已热更新到开发服务配置中；本轮未再做完整浏览器回归。
+
+### 遗留问题
+
+1. 需要用户在本地页面刷新后确认顶部 tabbar 是否完全符合预期。
+2. 如果后续还想保留“平台组件”模块本身的可见页头，需要再单独设计一个轻量页面标题区，而不是恢复整条 tabbar。
+
+### 任务名称
+
+当前预览只保留平台组件模块
+
+### 完成内容
+
+1. 将项目默认首页从 `/analytics` 调整为 `/platform/typical-page`。
+2. 从 Mock 后端菜单源中移除“概览”和“关于”等 Vben 示例模块，只保留“平台组件 / 典型页面验证场”。
+3. 新增前端平台组件路由模块，保证 `mixed` 权限模式下平台组件路由可稳定生成。
+4. 将原 `dashboard.ts` 中的“概览、分析页、工作台、文档、更新记录、关于”改为隐藏旧入口重定向，避免当前浏览器停留在 `/analytics` 时刷新后进入 404。
+5. 同步沉淀“当前预览只保留平台组件模块”的长期规则和决策。
+
+### 修改了哪些文件
+
+1. `AGENTS.md`
+2. `apps/web-antd/src/preferences.ts`
+3. `apps/web-antd/src/mock/index.ts`
+4. `apps/web-antd/src/router/routes/modules/dashboard.ts`
+5. `apps/web-antd/src/router/routes/modules/platform.ts`
+6. `docs/project-log.md`
+7. `docs/decision-records.md`
+8. `docs/todo-next.md`
+
+### 涉及哪些页面或组件
+
+1. 页面：`/platform/typical-page`
+2. 导航模块：平台组件
+3. 旧入口：`/analytics`、`/workspace`、`/changelog`、`/vben-admin/about`
+
+### 验证结果
+
+1. 已执行 `git diff --check`，结果通过。
+2. 已执行 `../../node_modules/.bin/vite build --mode development`，构建通过；构建过程存在项目既有 CSS 压缩 warning。
+3. 已执行 `./node_modules/.bin/vue-tsc --noEmit --skipLibCheck -p apps/web-antd/tsconfig.json`，命令仍失败于项目既有类型错误，本次修改文件未出现在错误列表。
+4. 本次尝试通过 Codex 内置浏览器自动验证，但当前 in-app browser 后端未暴露可连接实例；未完成自动浏览器读屏验证。
+
+### 遗留问题
+
+1. 用户当前浏览器如果仍停留在 `/analytics`，刷新后应通过隐藏重定向回到 `/platform/typical-page`；如缓存了旧偏好，可手动访问 `/platform/typical-page` 或清理本地缓存。
+2. 真实业务页 `system/user` 的登录后浏览器验证仍待执行。
+3. 后续恢复真实业务模块时，应基于业务范围重新接入，不直接恢复 Vben 示例模块。
+
+### 任务名称
+
 本轮收尾与典型页面阶段接续更新
 
 ### 完成内容

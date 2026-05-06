@@ -399,9 +399,11 @@ body {
 .platform-header-action {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  height: 32px;
-  padding-inline: 10px;
+  justify-content: center;
+  gap: 4px;
+  min-width: var(--st-header-action-size);
+  height: var(--st-header-action-size);
+  padding-inline: 8px;
   color: hsl(var(--header-foreground) / 90%);
   font-size: var(--st-font-size-base);
   line-height: var(--st-line-height-base);
@@ -414,8 +416,15 @@ body {
 .platform-header-action:hover,
 .platform-header-action:focus-visible {
   color: hsl(var(--header-foreground));
-  background: hsl(var(--st-color-nav-active-bg));
+  background: hsl(var(--st-color-nav-hover-bg));
   outline: none;
+}
+
+.platform-header-action span {
+  max-width: 72px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 /* .ant-btn {

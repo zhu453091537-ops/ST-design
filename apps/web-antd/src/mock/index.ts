@@ -70,67 +70,6 @@ const mockBackendMenuList = [
     children: [
       {
         children: [],
-        component: 'dashboard/analytics/index',
-        hidden: false,
-        meta: {
-          icon: 'lucide:chart-line',
-          noCache: false,
-          title: '分析页',
-        },
-        name: 'Analytics',
-        path: '/analytics',
-      },
-      {
-        children: [],
-        component: 'dashboard/workspace/index',
-        hidden: false,
-        meta: {
-          icon: 'lucide:briefcase-business',
-          noCache: false,
-          title: '工作台',
-        },
-        name: 'Workspace',
-        path: '/workspace',
-      },
-      {
-        children: [],
-        component: '演示使用自行删除/changelog/index',
-        hidden: false,
-        meta: {
-          icon: 'lucide:book-open-text',
-          noCache: false,
-          title: '更新记录',
-        },
-        name: 'V5UpdateLog',
-        path: '/changelog',
-      },
-    ],
-    component: 'Layout',
-    hidden: false,
-    meta: {
-      icon: 'lucide:layout-dashboard',
-      noCache: false,
-      title: '概览',
-    },
-    name: 'Dashboard',
-    path: '/dashboard',
-  },
-  {
-    children: [],
-    component: '_core/about/index',
-    hidden: false,
-    meta: {
-      icon: 'lucide:copyright',
-      noCache: false,
-      title: '关于',
-    },
-    name: 'About',
-    path: '/vben-admin/about',
-  },
-  {
-    children: [
-      {
-        children: [],
         component: 'platform/typical-page/index',
         hidden: false,
         meta: {

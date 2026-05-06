@@ -66,11 +66,11 @@ const logoSrc = computed(() => {
 </script>
 
 <template>
-  <div :class="theme" class="flex h-full items-center text-lg">
+  <div :class="theme" class="vben-logo flex h-full items-center text-lg">
     <a
       :class="$attrs.class"
       :href="href"
-      class="flex h-full items-center gap-2 overflow-hidden px-3 text-lg leading-normal transition-all duration-500"
+      class="vben-logo__link flex h-full items-center gap-2 overflow-hidden text-lg leading-normal transition-all duration-500"
     >
       <VbenAvatar
         v-if="logoSrc"
@@ -82,7 +82,9 @@ const logoSrc = computed(() => {
       />
       <template v-if="!collapsed">
         <slot name="text">
-          <span class="text-foreground truncate font-semibold text-nowrap">
+          <span
+            class="vben-logo__text text-foreground truncate font-semibold text-nowrap"
+          >
             {{ text }}
           </span>
         </slot>
@@ -90,3 +92,17 @@ const logoSrc = computed(() => {
     </a>
   </div>
 </template>
+
+<style scoped>
+.vben-logo__link {
+  max-width: 100%;
+  padding-inline: 22px 18px;
+}
+
+.vben-logo__text {
+  color: hsl(var(--header-foreground, var(--foreground)));
+  font-size: var(--st-font-size-title, 18px);
+  line-height: var(--st-line-height-lg, 24px);
+  letter-spacing: 0;
+}
+</style>
