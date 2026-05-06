@@ -26,12 +26,13 @@
   --st-color-nav-hover-bg: 210 8% 5% / 14%;
   --st-color-nav-divider: 0 0% 100% / 20%;
   --st-color-table-toolbar-bg: 220 38% 94%;
-  --st-color-table-tool-bg: 146 100% 30% / 10%;
+  --st-color-table-tool-bg: 0 0% 100%;
   --st-color-table-tool-border: 146 100% 30% / 30%;
-  --st-color-table-tool-icon: var(--st-color-brand);
+  --st-color-table-tool-icon: 220 8% 28%;
   --st-color-table-tool-hover-bg: var(--st-color-brand);
   --st-color-table-tool-hover-border: var(--st-color-brand);
   --st-color-table-tool-hover-icon: var(--primary-foreground);
+  --st-color-tree-switcher: var(--st-color-text-tertiary);
   --st-color-warning-action: 71 61% 54%;
   --st-color-more-action: 25 33% 52%;
   --st-color-danger: 355 76% 59%;
@@ -46,6 +47,8 @@
   --st-table-row-height: 44px;
   --st-tree-node-height: 32px;
   --st-pagination-item-size: 32px;
+  --st-search-form-action-gap: 12px;
+  --st-search-form-action-margin-top: 0px;
   --st-font-size-sm: 13px;
   --st-font-size-base: 14px;
   --st-font-size-lg: 16px;

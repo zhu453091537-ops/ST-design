@@ -9,9 +9,11 @@ import { alovaInstance } from '#/utils/http';
  * @param link 外链链接
  */
 export interface MenuMeta {
+  disabled?: boolean;
   icon: string;
   link?: string;
   noCache: boolean;
+  order?: number;
   title: string;
 }
 
@@ -30,6 +32,7 @@ export interface Menu {
   alwaysShow?: boolean;
   children: Menu[];
   component: string;
+  disabled?: boolean;
   hidden: boolean;
   meta: MenuMeta;
   name: string;

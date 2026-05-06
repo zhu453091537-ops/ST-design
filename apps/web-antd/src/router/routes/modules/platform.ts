@@ -3,18 +3,19 @@ import type { RouteRecordRaw } from 'vue-router';
 const routes: RouteRecordRaw[] = [
   {
     meta: {
-      icon: 'lucide:table',
+      icon: 'lucide:layout-dashboard',
       order: -1,
-      title: '平台组件',
+      title: '工作台',
     },
     name: 'Platform',
-    path: '/platform',
+    path: '/workbench',
     redirect: '/platform/typical-page',
     children: [
       {
         component: () => import('#/views/platform/typical-page/index.vue'),
         meta: {
-          icon: 'lucide:table',
+          activePath: '/platform/typical-page',
+          icon: 'lucide:layout-dashboard',
           title: '典型页面验证场',
         },
         name: 'PlatformTypicalPage',

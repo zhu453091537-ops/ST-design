@@ -191,3 +191,115 @@
 2. 前端路由增加平台组件模块，确保混合权限模式下平台组件路由可稳定生成。
 3. 旧 `/analytics`、`/workspace`、`/changelog`、`/vben-admin/about` 等地址只保留隐藏重定向到 `/platform/typical-page`，不再显示为可见菜单。
 4. 后续如需恢复业务模块，应按真实业务范围重新接入，而不是恢复 Vben 示例模块作为默认导航。
+
+### 决策 11：Figma 连接默认使用本地非官方 Figma MCP Go
+
+**决策内容**
+
+本项目 Figma 连接默认使用用户本机的非官方 `@vkhanhqui/figma-mcp-go`，插件固定连接 `127.0.0.1:1994`，不默认使用官方 Figma MCP。本轮已验证成功的 Codex MCP 配置为直接执行本机缓存的 darwin arm64 二进制：
+
+```bash
+codex mcp remove figma-mcp-go
+codex mcp add figma-mcp-go -- /Users/zhuguangxiang/.npm/_npx/ae527a30157df656/node_modules/@vkhanhqui/figma-mcp-go/bin/darwin-arm64/figma-mcp-go
+codex mcp get figma-mcp-go
+```
+
+**原因**
+
+用户明确说明当前使用的不是官方 MCP，且 Figma 插件固定为 `127.0.0.1:1994`。之前通过 `npx -y @vkhanhqui/figma-mcp-go` 间接启动时，出现 `localhost`、`::1` 和服务角色判断相关问题，导致插件显示 `Disconnected`。改为让 Codex MCP 直接执行本机二进制后，插件已显示 `Connected`，并成功读取 Figma 文件、页面和选中节点。
+
+**影响**
+
+1. 后续 Figma 任务先检查 `figma-mcp-go` 本地连接，不要默认切换官方 MCP。
+2. Figma 插件必须显示 `127.0.0.1:1994 Connected` 后，再读取节点、截图或设计上下文。
+3. 如二进制缓存路径失效，应先在 `~/.npm/_npx` 下重新查找 `@vkhanhqui/figma-mcp-go/bin/darwin-arm64/figma-mcp-go`，再更新 Codex MCP 配置。
+4. 若再次出现 `Disconnected`，按 `AGENTS.md` 第 9 节排查。
+
+### 决策 12：典型页面 Demo 必须用真实业务内容验证 ant-design-vue 原生组件体系
+
+**决策内容**
+
+典型页面 Demo 的业务内容必须来自当前项目已有真实业务页面、路由、接口模型或当前 Mock，不得虚构字段、菜单、树节点、表格列和业务动作。组件实现路线必须基于 ant-design-vue 原生组件及其平台薄封装，例如 `a-form`、`a-input`、`a-select`、`a-date-picker`、`a-tree`、`a-table`、`a-pagination`、`a-modal`、`a-drawer`、`a-button`。
+
+**原因**
+
+当前项目需要一个能一眼暴露平台组件问题的真实业务验证场。如果直接复用 `useVbenVxeGrid` 的业务页面形态，无法有效验证 ant-design-vue 原生组件和平台薄封装的后续改造效果；如果虚构业务字段，又会脱离真实管理场景。
+
+**影响**
+
+1. `useVbenVxeGrid` 页面可以作为业务字段、交互和数据来源参考，但不能直接成为 ant-design-vue 典型 Demo 的最终组件形态。
+2. 已存在的平台薄封装优先复用，缺失组件先用 ant-design-vue 原生组件或极薄封装承接。
+3. 页面级只写布局样式，通用视觉问题后续回到平台组件、主题 token 或全局样式入口。
+4. 第一阶段必须先输出真实页面选择、模块清单、组件映射表、开发方案和风险说明，等用户确认后再实现。
+5. 后续用户提供原型截图时，必须先将截图元素映射到 ant-design-vue 原生组件和平台薄封装，保证页面之间组件口径一致。
+6. 当用户指定修改某个 ant-design-vue 原生组件样式时，默认在本项目全局样式层、主题 token 或平台薄封装源头改造，使同类组件自动全局生效；不得修改 `node_modules` 或 ant-design-vue 源码，也不得在业务页面逐页补丁。
+
+### 决策 13：通用组件样式反馈默认按全局源头处理
+
+**决策内容**
+
+后续用户提供原型截图、Figma 节点、截图案例或页面样式反馈时，只要问题涉及 Button、Table、Tree、Form、Input、Select、DatePicker、Pagination、Modal、Drawer、Tabs、SearchForm、工具栏、操作列、状态标签等通用组件，即使用户没有特别强调“全局修改”，也默认按平台级全局问题处理。
+
+**原因**
+
+用户明确要求避免后续因为没有重复强调而只改当前页面，导致其他页面同类组件没有同步变化。当前项目目标是通过典型页面建立统一组件改造靶场，再把通用样式沉淀到 ant-design-vue 全局样式层、主题 token 或平台薄封装源头，使后续页面自动继承。
+
+**影响**
+
+1. 通用组件样式问题默认优先落到对应平台组件、平台组件内部场景样式、主题变量或 Vben/Antdv 适配层。
+2. 未经用户明确确认“只改当前页面”，不得只改页面 scoped CSS。
+3. 修改后需要优先验证典型页面，并说明哪些真实业务页会同步受影响。
+4. 如果某个问题确实只是当前页面独有布局，应先询问用户确认，不得自行按局部样式处理。
+5. 不要轻易直接覆盖 `.ant-*` 全局选择器；只有明确属于全站基础 token、基础控件规范或所有同类 Antdv 组件都应该统一变化时，才允许进入 Antdv 全局样式层。
+
+### 决策 14：典型页面样式沉淀按平台组件边界优先
+
+**决策内容**
+
+典型页面 Demo 的样式沉淀必须优先按照平台组件边界处理，而不是把分页、操作列、状态开关等场景直接写入 Antdv 全局样式。分页优先归入 `PlatformTable` 的 pagination 场景，工具栏归入 `PlatformTableToolbar`，操作列归入 `PlatformTable` 的 action column / action renderer，表格状态切换归入 `PlatformTable` 的 status column 场景。
+
+**原因**
+
+直接覆盖 `.ant-pagination`、`.ant-switch` 等全局选择器风险较高，可能影响全项目所有原生 Antdv 使用场景。当前阶段的目标是用典型页面暴露平台组件边界问题，让真实业务页后续能通过平台组件统一继承，而不是扩大不必要的全局影响面。
+
+**影响**
+
+1. `/platform/typical-page` 的页面级 scoped CSS 只允许写布局，如左右分栏、间距、高度和滚动区域。
+2. 分页、工具栏、操作列、状态列、弹窗、抽屉等视觉样式优先回到对应平台组件或组件场景样式。
+3. 暂不新增 `PlatformSwitch`；只有后续多个页面在表格外也复用状态开关，或状态开关成为独立平台控件时，再抽成 `PlatformSwitch`。
+4. 只有品牌色、字体、基础字号、基础圆角、控件高度、基础边框色等全站基础规范，才允许沉淀到主题 token 或 Antdv 全局样式层。
+
+### 决策 15：典型页面后端不可用时采用专用受控数据源适配文件
+
+**决策内容**
+
+当后端 `8080` 不可用、`/system/user/list` 和 `/system/user/deptTree` 不能直接联调时，`/platform/typical-page` 第一版可以使用页面专用受控数据源适配文件 `apps/web-antd/src/views/platform/typical-page/user-demo-source.ts`。该文件只服务典型页面验证，不污染真实 `/system/user` 页面，不修改全局 mock server，也不把 Mock 数据写进 `index.vue`。
+
+**原因**
+
+用户明确允许在后端暂不可用时补一份“受控 Mock 数据”，但要求字段、columns、接口类型、表单 schema、树结构模型继续来自 `/system/user`，并且未来能无缝切回真实接口。如果把数据写入页面组件或全局 mock server，会让典型页和真实业务页边界变混，也不利于后续恢复真实接口。
+
+**影响**
+
+1. `/platform/typical-page/index.vue` 只依赖 `getTypicalUserList`、`getTypicalDeptTree`、`saveTypicalUser`、`removeTypicalUsers`、`changeTypicalUserStatus` 等数据源方法。
+2. 后端恢复后，优先在 `user-demo-source.ts` 内把这些方法切回 `userList`、`getDeptTree`、`userAdd`、`userUpdate`、`userRemove`、`changeUserStatus` 等真实接口，避免重写页面主体。
+3. 旧的 `typicalUsers` / `mock.ts` 假数据入口应停止使用并删除。
+4. 导入、导出、重置密码等后端不可用入口第一版只保留 UI 和交互入口，不调用不可用接口。
+
+### 决策 16：Vben 核心布局需先做分层归因后再改动
+
+**决策内容**
+
+Vben Layout / Menu / Breadcrumb / Tabs / Route-to-Menu 属于后台框架地基层，不允许为了单个页面效果随意修改。涉及顶部导航、左侧菜单、breadcrumb、tabs / keep-alive、mixed menu、route → menu 映射、权限菜单等能力时，必须先按页面使用方式、路由配置 / menu meta、mock 菜单源、layout / menu / theme 配置、token / CSS 变量、平台组件或项目侧适配层的顺序排查，最后才允许修改 Vben 核心源码。
+
+**原因**
+
+导航和路由映射属于整个平台的公共骨架。如果直接在核心布局层面大改，容易造成当前页面看起来正确，但其他页面、权限路由、标签页和 breadcrumb 同时失真。先分层归因，可以把能在路由、菜单源、token 和项目适配层解决的问题留在低风险层，减少回滚成本。
+
+**影响**
+
+1. 不允许未经确认就重写 Vben Layout 结构。
+2. 不允许未经确认就大改 `use-mixed-menu.ts`、route → menu 逻辑、breadcrumb、tabs / keep-alive。
+3. 不允许在业务页面手写顶部导航、左侧菜单或 breadcrumb。
+4. 通过全局覆盖 `.ant-menu`、`.ant-layout` 粗暴修改导航样式要被视为高风险行为。
+5. 如果确实需要修改 Vben 核心布局或菜单逻辑，开发前必须先输出问题归因、影响范围、回滚方案和验证方案。

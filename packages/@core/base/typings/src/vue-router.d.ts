@@ -44,6 +44,11 @@ interface RouteMeta {
     | 'warning'
     | string;
   /**
+   * 菜单展示但不可点击
+   * @default false
+   */
+  disabled?: boolean;
+  /**
    * 路由对应dom是否缓存起来
    */
   domCached?: boolean;

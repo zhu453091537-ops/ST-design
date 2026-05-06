@@ -42,6 +42,25 @@ withDefaults(
   min-width: calc(var(--st-control-height) * 2.1);
 }
 
+.platform-button--toolbar:not(.ant-btn-circle):not(.ant-btn-primary):not(
+    .ant-btn-dangerous
+  ) {
+  color: hsl(var(--primary));
+  background: hsl(var(--st-color-fill-selected));
+  border-color: hsl(var(--st-color-brand-outline));
+}
+
+.platform-button--toolbar:not(.ant-btn-circle):not(.ant-btn-primary):not(
+    .ant-btn-dangerous
+  ):not(:disabled):not(.ant-btn-disabled):hover,
+.platform-button--toolbar:not(.ant-btn-circle):not(.ant-btn-primary):not(
+    .ant-btn-dangerous
+  ):not(:disabled):not(.ant-btn-disabled):focus-visible {
+  color: hsl(var(--primary));
+  background: hsl(var(--primary) / 14%);
+  border-color: hsl(var(--primary) / 45%);
+}
+
 .platform-button--toolbar.ant-btn-circle {
   min-width: var(--st-control-height);
   color: hsl(var(--st-color-table-tool-icon));

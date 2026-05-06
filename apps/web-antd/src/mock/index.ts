@@ -65,6 +65,31 @@ const mockUserInfoResp = {
   },
 };
 
+const disabledTopMenus = [
+  '蓄电池',
+  '基本信息',
+  '劳保用品管理',
+  '统计查询',
+  '租户管理',
+  '系统监控',
+  '系统工具',
+  '更多菜单',
+].map((title, index) => ({
+  children: [],
+  component: 'Layout',
+  disabled: true,
+  hidden: false,
+  meta: {
+    disabled: true,
+    icon: 'lucide:circle',
+    order: 20 + index,
+    noCache: false,
+    title,
+  },
+  name: `PreviewMenu${index + 1}`,
+  path: `/preview-menu-${index + 1}`,
+}));
+
 const mockBackendMenuList = [
   {
     children: [
@@ -73,7 +98,7 @@ const mockBackendMenuList = [
         component: 'platform/typical-page/index',
         hidden: false,
         meta: {
-          icon: 'lucide:table',
+          icon: 'lucide:layout-dashboard',
           noCache: false,
           title: '典型页面验证场',
         },
@@ -84,13 +109,65 @@ const mockBackendMenuList = [
     component: 'Layout',
     hidden: false,
     meta: {
-      icon: 'lucide:table',
+      icon: 'lucide:layout-dashboard',
+      order: 0,
       noCache: false,
-      title: '平台组件',
+      title: '工作台',
     },
     name: 'Platform',
-    path: '/platform',
+    path: '/workbench',
   },
+  {
+    children: [
+      {
+        children: [],
+        component: 'system/user/index',
+        hidden: false,
+        meta: {
+          icon: 'lucide:user',
+          noCache: false,
+          title: '用户管理',
+        },
+        name: 'SystemUser',
+        path: '/system/user',
+      },
+      {
+        children: [],
+        component: 'system/post/index',
+        hidden: false,
+        meta: {
+          icon: 'lucide:id-card',
+          noCache: false,
+          title: '岗位管理',
+        },
+        name: 'SystemPost',
+        path: '/system/post',
+      },
+      {
+        children: [],
+        component: 'system/dept/index',
+        hidden: false,
+        meta: {
+          icon: 'lucide:network',
+          noCache: false,
+          title: '部门管理',
+        },
+        name: 'SystemDept',
+        path: '/system/dept',
+      },
+    ],
+    component: 'Layout',
+    hidden: false,
+    meta: {
+      icon: 'lucide:settings',
+      order: 1,
+      noCache: false,
+      title: '系统管理',
+    },
+    name: 'SystemManagement',
+    path: '/system',
+  },
+  ...disabledTopMenus,
 ] satisfies Menu[];
 
 function getMockBackendMenuList() {

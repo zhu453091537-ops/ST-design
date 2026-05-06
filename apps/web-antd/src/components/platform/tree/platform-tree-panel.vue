@@ -5,7 +5,7 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { computed, useAttrs } from 'vue';
+import { computed, useAttrs, useSlots } from 'vue';
 
 import { Empty, Skeleton } from 'antdv-next';
 
@@ -20,21 +20,25 @@ interface TreeNode {
   [key: string]: any;
 }
 
-withDefaults(
+const props = withDefaults(
   defineProps<{
     emptyDescription?: string;
     loading?: boolean;
     searchPlaceholder?: string;
     showRefresh?: boolean;
     showSearch?: boolean;
+    showTitle?: boolean;
+    title?: string;
     treeData?: TreeNode[];
   }>(),
   {
     emptyDescription: '无数据',
     loading: false,
     searchPlaceholder: '请输入关键词',
-    showRefresh: true,
+    showRefresh: false,
     showSearch: true,
+    showTitle: false,
+    title: '',
     treeData: () => [],
   },
 );
@@ -45,6 +49,7 @@ const emit = defineEmits<{
 }>();
 
 const attrs = useAttrs();
+const slots = useSlots();
 const selectedKeys = defineModel<TreeKey[]>('selectedKeys', {
   default: () => [],
 });
@@ -54,6 +59,14 @@ const searchValue = defineModel<string>('searchValue', {
 
 const rootClass = computed(() => attrs.class);
 const rootStyle = computed(() => attrs.style);
+const hasTitle = computed(() =>
+  Boolean(slots.title || (props.showTitle && props.title)),
+);
+const hasToolbar = computed(() => props.showSearch || props.showRefresh);
+const hasHeader = computed(() => hasTitle.value || hasToolbar.value);
+const treeSlotNames = computed(() =>
+  Object.keys(slots).filter((name) => name !== 'title'),
+);
 const treeAttrs = computed(() => {
   const { class: _class, style: _style, ...rest } = attrs;
   return rest;
@@ -73,23 +86,29 @@ function handleSelect(keys: TreeKey[]) {
       class="platform-tree-panel__skeleton"
     >
       <div class="platform-tree-panel__surface">
-        <div v-if="showSearch" class="platform-tree-panel__header">
-          <PlatformInput
-            v-model:value="searchValue"
-            allow-clear
-            :placeholder="searchPlaceholder"
-          />
-          <PlatformButton
-            v-if="showRefresh"
-            aria-label="刷新树结构"
-            scene="toolbar"
-            shape="circle"
-            @click="emit('reload')"
-          >
-            <template #icon>
-              <span class="i-lucide-refresh-cw text-[14px]"></span>
-            </template>
-          </PlatformButton>
+        <div v-if="hasHeader" class="platform-tree-panel__header">
+          <div v-if="hasTitle" class="platform-tree-panel__title">
+            <slot name="title">{{ title }}</slot>
+          </div>
+          <div v-if="hasToolbar" class="platform-tree-panel__toolbar">
+            <PlatformInput
+              v-if="showSearch"
+              v-model:value="searchValue"
+              allow-clear
+              :placeholder="searchPlaceholder"
+            />
+            <PlatformButton
+              v-if="showRefresh"
+              aria-label="刷新树结构"
+              scene="toolbar"
+              shape="circle"
+              @click="emit('reload')"
+            >
+              <template #icon>
+                <span class="i-lucide-refresh-cw text-[14px]"></span>
+              </template>
+            </PlatformButton>
+          </div>
         </div>
         <div class="platform-tree-panel__content">
           <PlatformTree
@@ -100,7 +119,7 @@ function handleSelect(keys: TreeKey[]) {
             :tree-data="treeData"
             @select="handleSelect"
           >
-            <template v-for="(_, name) in $slots" #[name]="slotProps">
+            <template v-for="name in treeSlotNames" #[name]="slotProps">
               <slot :name="name" v-bind="slotProps || {}"></slot>
             </template>
           </PlatformTree>
@@ -136,10 +155,24 @@ function handleSelect(keys: TreeKey[]) {
   top: 0;
   z-index: 1;
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  align-items: stretch;
   gap: 8px;
   padding: 8px;
   background: hsl(var(--background));
+}
+
+.platform-tree-panel__title {
+  color: hsl(var(--foreground));
+  font-size: var(--st-font-size-base);
+  font-weight: 600;
+  line-height: var(--st-line-height-base);
+}
+
+.platform-tree-panel__toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .platform-tree-panel__content {

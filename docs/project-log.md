@@ -6,6 +6,143 @@
 
 ### 任务名称
 
+受控数据源版 `/platform/typical-page` 第一版典型页面 Demo
+
+### 完成内容
+
+1. 按用户确认的“典型页专用数据源适配文件”方案，新增 `user-demo-source.ts`，只服务 `/platform/typical-page`。
+2. 将典型页业务字段、查询字段、表格 columns、状态切换、操作列、抽屉/弹窗入口切换为对齐 `/system/user` 的用户管理内容。
+3. 删除旧的 `mock.ts` / `typicalUsers` 假数据入口，避免典型页继续使用虚构字段和旧演示数据。
+4. 顶部导航、左侧导航、面包屑继续走 Vben 布局、路由和 Mock 菜单源，典型页页面内部没有手写导航。
+5. 典型页继续复用 `PlatformSearchForm`、`PlatformInput`、`PlatformSelect`、`PlatformTreePanel`、`PlatformTable`、`PlatformTableToolbar`、`PlatformDrawer`、`PlatformModal` 等平台薄封装。
+6. 补充 `PlatformRangePicker` 极薄封装，用于承载 `/system/user` 查询 schema 中的 `RangePicker`，避免典型页直接绕过平台字段组件。
+7. 导入、导出、重置密码保留 UI 和交互入口；当前后端不可用，因此不调用 `/system/user/importData`、`userExport`、`userResetPassword` 等真实接口。
+8. 页面文件未新增 scoped CSS；页面级只使用布局类处理左右分栏、间距、高度和滚动区域。
+9. 更新长期规则与决策记录，明确后端不可用时典型页只能通过专用受控数据源适配文件承接，不改全局 mock server。
+10. 按用户确认清理本轮构建生成/改写产物，`apps/web-antd/dist/` 与 `apps/web-antd/dist.zip` 已从工作区改动中移除，不纳入本次源码提交范围。
+
+### 修改了哪些文件
+
+1. `AGENTS.md`
+2. `docs/decision-records.md`
+3. `docs/project-log.md`
+4. `docs/todo-next.md`
+5. `apps/web-antd/src/views/platform/typical-page/index.vue`
+6. `apps/web-antd/src/views/platform/typical-page/user-demo-source.ts`
+7. `apps/web-antd/src/views/platform/typical-page/mock.ts`
+8. `apps/web-antd/src/components/platform/field/platform-range-picker.vue`
+9. `apps/web-antd/src/components/platform/field/index.ts`
+
+### 涉及哪些页面或组件
+
+1. 页面：`/platform/typical-page`
+2. 真实业务来源：`/system/user`
+3. 平台组件：`PlatformRangePicker`
+4. 平台组件复用：`PlatformSearchForm`、`PlatformFormItem`、`PlatformInput`、`PlatformSelect`、`PlatformTreePanel`、`PlatformTable`、`PlatformTableToolbar`、`PlatformDrawer`、`PlatformModal`、`PlatformEditForm`
+5. 复用现有全局组件：`ApiSwitch`
+
+### 验证结果
+
+1. 已执行 `git diff --check`，结果通过。
+2. 已执行 `../../node_modules/.bin/vue-tsc --noEmit --skipLibCheck`，本次典型页相关类型错误已清除；命令仍因项目既有类型问题失败，剩余错误集中在 `tenant-toggle`、`tinymce`、`tree-select-panel`、`workflow` 和 `演示使用自行删除` 等既有范围。
+3. 已执行 `../../node_modules/.bin/vite build`，构建成功；构建过程中仍有既有 `lightningcss minify` 对 `@reference` / `@apply` 的警告。
+4. 已启动本地开发服务 `../../node_modules/.bin/vite --mode development`，当前地址为 `http://localhost:5173/`。
+5. 已执行 `curl -I http://127.0.0.1:5173/platform/typical-page`，返回 `200 OK`。
+6. `npm run build:antd` 和 `pnpm -F @vben/web-antd run typecheck` 当前不可用，原因是本机 shell 中 `pnpm` 不在 PATH；已改用项目内本地二进制完成替代验证。
+7. 已通过 Chrome 打开 `http://127.0.0.1:5173/platform/typical-page`，本地 Mock 登录成功后进入典型页面验证场。
+8. 已完成浏览器交互抽查：页面渲染 4 条用户数据；点击左侧树节点“通号中心”后表格过滤为 1 条；点击“新增”后右侧用户表单抽屉可正常打开。
+9. 清理构建产物后重新执行 `curl -I http://127.0.0.1:5173/platform/typical-page`，返回 `200 OK`。
+
+### 遗留问题
+
+1. 后端 `8080` 恢复后，需要把 `user-demo-source.ts` 内方法切回真实 `/system/user` 接口。
+2. 真实业务页 `/system/user` 未在本轮被改造或污染；它仍走原有 Vben Vxe 页面与真实接口逻辑。
+3. 本轮构建生成并改写过 `apps/web-antd/dist` 和 `apps/web-antd/dist.zip`，现已按用户确认清理，不再作为遗留待处理项。
+4. `PlatformTable` 仍是 ant-design-vue Table 薄封装，操作列、状态列、分页场景还未抽出更强的 action/status renderer。
+
+### 任务名称
+
+典型页面 Demo 开发前真实数据源阻断检查
+
+### 完成内容
+
+1. 根据用户确认，准备开始 `/platform/typical-page` 第一版典型页面 Demo 开发。
+2. 开发前按用户要求优先检查 `/system/user` 真实接口和部门树数据源是否可用。
+3. 确认当前 `127.0.0.1:8080` 后端端口没有服务监听，`http://127.0.0.1:8080/system/user/list` 连接失败。
+4. 确认经 Vite 代理访问 `http://127.0.0.1:5174/api/system/user/list` 返回 `502 Bad Gateway`。
+5. 因用户明确要求“接口或数据源不可用时先停下来说明，不要自行造 mock”，本阶段未改造 `/platform/typical-page`，也未新造 `typicalUsers` 一类假数据。
+
+### 修改了哪些文件
+
+1. `docs/project-log.md`
+2. `docs/todo-next.md`
+
+### 涉及哪些页面或组件
+
+1. 待开发页面：`/platform/typical-page`
+2. 真实业务来源：`/system/user`
+3. 接口：`/system/user/list`
+4. 接口：`/system/user/deptTree`
+
+### 验证结果
+
+1. 已执行 `lsof -nP -iTCP:8080 -sTCP:LISTEN`，无服务监听。
+2. 已执行 `curl -I http://127.0.0.1:8080/system/user/list`，连接失败。
+3. 已执行 `curl -I http://127.0.0.1:5174/api/system/user/list`，返回 `502 Bad Gateway`。
+4. 已执行 `git diff --check`，结果通过。
+
+### 遗留问题
+
+1. 需要先启动或恢复后端 `8080` 服务，确保 `/system/user/list` 和 `/system/user/deptTree` 可访问。
+2. 如果当前阶段允许基于现有 `/system/user` 模型和页面配置补 Mock 数据，需要用户明确确认；未确认前不新增 Mock。
+3. 后端可用后，再继续把 `/system/user` 的真实字段、columns、树结构、表格数据和操作入口接入 `/platform/typical-page`。
+
+### 任务名称
+
+Figma MCP Go 连接规则沉淀与典型页面 Demo 一期审计方案
+
+### 完成内容
+
+1. 确认本地非官方 `@vkhanhqui/figma-mcp-go` 已通过 `127.0.0.1:1994` 连接成功，并将成功连接方案沉淀到长期规则和决策记录。
+2. 明确后续 Figma 任务不得默认切换官方 MCP，应优先使用本机 `figma-mcp-go` 直连二进制方案。
+3. 明确典型页面 Demo 的建设边界：业务内容必须来自当前真实业务页、路由、接口模型或 Mock；组件实现必须基于 ant-design-vue 原生组件及其平台薄封装。
+4. 明确用户后续提供原型截图时，应先映射到 ant-design-vue 原生组件和平台薄封装；用户指定组件样式不对时，应回到全局样式层、主题 token 或平台组件源头改造，避免逐页局部补丁。
+5. 审计当前真实业务页，确认 `/system/user` 最适合作为第一版典型页面 Demo 的业务来源，因为它同时包含左侧部门树、查询筛选、表格、选择、分页、工具栏、状态切换、操作列、抽屉和弹窗入口。
+6. 根据用户补充要求，进一步明确“即使用户后续没有特别强调全局修改，通用组件样式反馈也默认按全局源头处理”，避免只改当前页面导致其他页面不同步。
+7. 根据用户开发前补充意见，进一步收紧样式沉淀边界：分页、工具栏、操作列、表格状态切换优先进入 `PlatformTable`、`PlatformTableToolbar` 等平台组件场景，不轻易直接写入 Antdv 全局样式。
+8. 明确 `/platform/typical-page` 不是假数据页面，下一阶段必须继续复用 `/system/user` 的真实业务字段、接口、树结构、columns、表格数据和操作入口。
+9. 本阶段只完成规则沉淀和方案审计，未进入典型页面代码开发。
+
+### 修改了哪些文件
+
+1. `AGENTS.md`
+2. `docs/decision-records.md`
+3. `docs/project-log.md`
+4. `docs/todo-next.md`
+
+### 涉及哪些页面或组件
+
+1. 参考页面：`/system/user`
+2. 目标验证页：`/platform/typical-page`
+3. 组件范围：ant-design-vue 原生 `Form`、`Input`、`Select`、`DatePicker`、`Tree`、`Table`、`Pagination`、`Button`、`Dropdown`、`Popconfirm`、`Modal`、`Drawer`
+4. 平台薄封装范围：`PlatformSearchForm`、`PlatformInput`、`PlatformSelect`、`PlatformTreePanel`、`PlatformTable`、`PlatformTableToolbar`、`PlatformModal`、`PlatformDrawer`
+
+### 验证结果
+
+1. 已通过 Figma MCP Go 读取当前 Figma 文件、页面和选中节点，确认连接可用。
+2. 已静态审计 `apps/web-antd/src/views/system/user/index.vue`、`data.tsx`、`dept-tree.vue`、用户接口模型、路由和 Mock 菜单。
+3. 本阶段未运行浏览器验证，原因是用户要求先输出第一阶段方案并等待确认，不进入页面开发。
+
+### 遗留问题
+
+1. 等用户确认典型页面 Demo 开发方案后，再开始改造 `/platform/typical-page`。
+2. 下一阶段需要把 `/system/user` 的真实字段和操作抽取为 ant-design-vue 原生组件验证场，而不是直接照搬 Vxe 表格形态。
+3. 页面开发完成后，需要启动本地服务并验证 `/platform/typical-page` 的真实展示效果。
+4. 后续任何通用组件样式改造，都需要报告样式是否已沉淀到全局源头，以及哪些真实业务页会同步受影响。
+5. 后续具体开发时，需要避免新造 `typicalUsers` 一类虚构数据；如果真实接口不可用，必须先确认是否允许基于现有模型补 Mock。
+
+### 任务名称
+
 今天结束：接续复核阶段收尾
 
 ### 完成内容

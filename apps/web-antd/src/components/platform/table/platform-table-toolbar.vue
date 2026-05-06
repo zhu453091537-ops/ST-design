@@ -98,9 +98,13 @@ function handleToolClick(tool: TableTool) {
 <style scoped>
 .platform-table-toolbar {
   display: flex;
+  width: 100%;
+  box-sizing: border-box;
   align-items: center;
   justify-content: space-between;
-  padding: 8px 10px;
+  gap: 12px;
+  min-height: 56px;
+  padding: 10px 12px;
   background: hsl(var(--st-color-table-toolbar-bg));
   border-radius: var(--st-radius-card);
 }
@@ -110,5 +114,14 @@ function handleToolClick(tool: TableTool) {
   display: inline-flex;
   align-items: center;
   gap: 8px;
+}
+
+.platform-table-toolbar__actions {
+  min-width: 0;
+  flex-wrap: wrap;
+}
+
+.platform-table-toolbar__tools {
+  flex-shrink: 0;
 }
 </style>
