@@ -1,0 +1,1 @@
+import{Er as e,jr as t,mn as n,oi as r}from"./antdv-next-B71PqcBr.js";function i(n,r=500){let{businessId:i}=a();function o(){let e=i.value;e&&setTimeout(()=>{n==null||n(e),i.value=``},r)}t(o),e(o)}var a=n(()=>({businessId:r(``)}));export{i as n,a as t};

@@ -1,0 +1,1 @@
+@keyframes loading-rotation{0%{transform:rotate(0)}to{transform:rotate(360deg)}}.captcha-loading{box-sizing:border-box;border:2px solid #fff;border-bottom-color:transparent;border-radius:50%;width:18px;height:18px;animation:1s linear infinite loading-rotation;display:inline-block}

@@ -1,0 +1,2 @@
+import{Hn as e,bi as t,hr as n,vi as r,vr as i,yi as a}from"./antdv-next-B71PqcBr.js";var o=n({name:`RenderContent`,props:{content:{default:void 0,type:[Object,String,Function]},renderBr:{default:!1,type:Boolean}},setup(n,{attrs:o,slots:s}){return()=>{if(!n.content)return null;if(!((a(n.content)||r(n.content))&&n.content!==null))if(n.renderBr&&t(n.content)){let e=n.content.split(`
+`),t=[];for(let[n,r]of e.entries())t.push(i(`p`,{key:n},r));return t}else return n.content;return i(n.content,e(e({},o),{},{props:e(e({},n),o)}),s)}}});export{o as t};

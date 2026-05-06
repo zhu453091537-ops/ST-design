@@ -22,11 +22,6 @@ const NotFoundComponent = () => import('#/views/_core/fallback/not-found.vue');
  * 在这里定义映射
  */
 const routeMetaMapping: Record<string, Omit<RouteMeta, 'title'>> = {
-  '/system/role-auth/user/:roleId': {
-    activePath: '/system/role',
-    requireHomeRedirect: true,
-  },
-
   '/system/oss-config/index': {
     activePath: '/system/oss',
     requireHomeRedirect: true,

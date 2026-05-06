@@ -6,6 +6,232 @@
 
 ### 任务名称
 
+今天结束：接续复核阶段收尾
+
+### 完成内容
+
+1. 按“今天结束”流程复核 `docs/project-log.md`、`docs/todo-next.md`、`docs/decision-records.md` 和当前工作区状态。
+2. 确认本轮主要完成“典型页与角色删除后状态复核”，未进入新的平台组件代码改造。
+3. 确认 `角色管理` 页面入口删除改动仍在工作区中，`api/system/role` 与 `views/system/role/data.tsx` 仍按既定边界保留。
+4. 确认 `/platform/typical-page` 服务侧可达，`5174` 端口当前仍有 Vite 服务监听，但浏览器稳定视觉回归未完成。
+5. 确认本轮没有产生新的长期规则、关键决策或平台约束，因此未更新 `AGENTS.md` 和 `docs/decision-records.md`。
+6. 将本轮收尾状态、未完成事项和下次建议同步写入 `docs/todo-next.md`。
+
+### 修改了哪些文件
+
+1. `docs/project-log.md`
+2. `docs/todo-next.md`
+
+### 涉及哪些页面或组件
+
+1. 页面：`/platform/typical-page`
+2. 页面：`/system/user`
+3. 页面：`/system/post`
+4. 页面：`/system/dept`
+5. 已删除页面入口：`/system/role`
+
+### 验证结果
+
+1. 已执行 `lsof -i :5174`，确认当前 `5174` 端口仍有 Vite 服务监听。
+2. 本轮收尾前已完成 `curl -I http://127.0.0.1:5174/platform/typical-page`，返回 `200 OK`。
+3. 本轮收尾前已完成 `git diff --check`，结果通过。
+4. 本轮未新增代码修改，未重新运行构建或类型检查。
+5. 浏览器稳定视觉回归仍未完成，原因是 `agent-browser` 不可用、Playwright 浏览器二进制未下载、系统 Chrome headless 被本机权限或进程策略中断，手动 Chrome 又被活跃标签页和认证页打断。
+
+### 遗留问题
+
+1. `.DS_Store`、`apps/web-antd/dist/`、`apps/web-antd/dist.zip` 仍在工作区中，后续清理前需要用户确认。
+2. `api/system/role` 与 `views/system/role/data.tsx` 暂不清理，避免影响 `system/user` 用户新增/编辑抽屉中的角色配置。
+3. 自动化浏览器验证链路仍不稳定，下一轮如需视觉回归，应先修复或隔离浏览器验证环境。
+4. 当前 Vite 服务未在本轮收尾中停止；下次接续必须重新以 `lsof` 或新启动结果为准。
+
+### 任务名称
+
+继续接续：典型页与角色删除后状态复核
+
+### 完成内容
+
+1. 按接续规则读取 `AGENTS.md`、`docs/project-log.md`、`docs/decision-records.md`、`docs/todo-next.md`，确认当前任务应回到 `/platform/typical-page` 做平台组件源头与真实业务页验证接续。
+2. 检查当前工作区状态，确认 `角色管理` 页面删除改动、文档收尾改动、既有 `.DS_Store`、`apps/web-antd/dist/`、`apps/web-antd/dist.zip` 仍在工作区中。
+3. 确认本地 Vite 服务当前仍监听 `5174`，`/platform/typical-page` HTTP 返回 `200`，不是静态服务不可达或路由 404。
+4. 复核 `apps/web-antd/src/router/routes/modules/system.ts`，确认隐藏真实业务页当前只保留 `/system/user`、`/system/post`、`/system/dept`，已删除 `/system/role` 与 `role-auth` 页面级入口。
+5. 复核 `apps/web-antd/src/router/access.ts`，确认已移除 `/system/role-auth/user/:roleId` 的激活映射，避免指向已删除的 `system/role` 页面。
+6. 复核典型页源码，确认 `/platform/typical-page` 仍从 `#/components/platform` 引用平台组件，未在典型页新增直接绕过平台组件的 ant-design-vue 页面级实现。
+7. 复核 Mock 配置，确认 `apps/web-antd/.env.development` 仍为 `VITE_USE_MOCK=true`，菜单源当前只返回“平台组件 / 典型页面验证场”。
+
+### 修改了哪些文件
+
+1. `docs/project-log.md`
+2. `docs/todo-next.md`
+
+### 涉及哪些页面或组件
+
+1. 页面：`/platform/typical-page`
+2. 页面：`/system/user`
+3. 页面：`/system/post`
+4. 页面：`/system/dept`
+5. 已删除页面入口：`/system/role`
+6. 组件：`PlatformTableToolbar`、`PlatformTreePanel`、平台表单与表格薄封装
+
+### 验证结果
+
+1. 已执行 `lsof -i :5174`，确认本地 Vite 服务正在监听。
+2. 已执行 `curl -I http://127.0.0.1:5174/platform/typical-page`，返回 `200 OK`。
+3. 已执行 `git diff --check`，结果通过。
+4. 已尝试 `agent-browser`，当前 shell 未提供该命令。
+5. 已尝试 Playwright，项目依赖存在但浏览器二进制未下载；改用系统 Chrome headless 也被本机进程/权限策略中断。
+6. 已通过 Chrome 打开 `http://127.0.0.1:5174/platform/typical-page`，页面能进入应用加载壳，但本机活跃标签页和认证页多次打断，未形成稳定的最终视觉回归结论。
+
+### 遗留问题
+
+1. 下一轮如需继续视觉验收，建议先使用隔离浏览器上下文或手动固定到当前典型页标签，避免再次被 Chrome 其他活跃标签页打断。
+2. 当前没有进入平台组件代码修改；如果用户继续指出具体视觉偏差，再回到 `components/platform`、全局 token 或 Vxe 适配层处理。
+3. `api/system/role` 与 `views/system/role/data.tsx` 仍暂不清理，避免影响 `system/user` 用户抽屉的角色相关配置。
+4. `.DS_Store`、`apps/web-antd/dist/`、`apps/web-antd/dist.zip` 仍待用户确认后清理。
+
+### 任务名称
+
+今天结束：删除 `角色管理` 并完成本轮收尾
+
+### 完成内容
+
+1. 按“今天结束”流程回看 `AGENTS.md`、`docs/project-log.md`、`docs/decision-records.md`、`docs/todo-next.md` 的当前状态。
+2. 根据用户要求，删除不需要的真实业务页 `角色管理`，并移除其隐藏路由和页面文件。
+3. 保留 `system/post`、`system/dept` 等已验证的真实业务页，继续维持“平台组件模块 + 真实业务页抽查”的当前交付方向。
+4. 将本轮删除操作、浏览器抽查结果和剩余待办同步写入项目日志与下一步待办，作为本轮最终收口记录。
+
+### 修改了哪些文件
+
+1. `docs/project-log.md`
+2. `docs/todo-next.md`
+
+### 涉及哪些页面或组件
+
+1. 页面：`/system/role`
+2. 页面：`/system/post`
+3. 页面：`/system/dept`
+
+### 验证结果
+
+1. 已确认本轮没有新增长期规则或关键决策，因此未改动 `AGENTS.md` 和 `docs/decision-records.md`。
+2. 本轮代码删除与路由收口已完成，文档也已同步。
+3. 由于浏览器被其他活跃标签页打断，本轮未再做额外稳定回归。
+
+### 遗留问题
+
+1. 后续如需继续检查真实业务页，可从 `system/post`、`system/dept` 之外的页面继续抽查。
+2. 如后续希望连同 `api/system/role` 共用接口层一起清理，需要另起一轮确认范围后再处理。
+
+### 任务名称
+
+删除真实业务页 `角色管理`
+
+### 完成内容
+
+1. 根据用户要求，删除当前交付范围内不需要的 `角色管理` 页面入口。
+2. 从 `apps/web-antd/src/router/routes/modules/system.ts` 中移除隐藏路由 `/system/role`，避免它继续作为可访问验证页出现。
+3. 从 `apps/web-antd/src/router/access.ts` 中移除与 `role-auth` 相关的路由激活映射，避免留下失效的激活路径。
+4. 删除 `views/system/role` 下仅服务于页面本身的入口与弹窗文件，以及 `views/system/role-assign` 下配套页面文件。
+5. 保留 `apps/web-antd/src/views/system/role/data.tsx`，因为 `system/user/user-drawer.vue` 仍在复用其中的角色数据范围展示配置。
+
+### 修改了哪些文件
+
+1. `apps/web-antd/src/router/routes/modules/system.ts`
+2. `apps/web-antd/src/router/access.ts`
+3. `apps/web-antd/src/views/system/role/index.vue`
+4. `apps/web-antd/src/views/system/role/authUser.vue`
+5. `apps/web-antd/src/views/system/role/role-auth-modal.vue`
+6. `apps/web-antd/src/views/system/role/role-drawer.vue`
+7. `apps/web-antd/src/views/system/role-assign/index.vue`
+8. `apps/web-antd/src/views/system/role-assign/role-assign-drawer.vue`
+9. `docs/project-log.md`
+10. `docs/todo-next.md`
+
+### 涉及哪些页面或组件
+
+1. 页面：`/system/role`
+2. 页面：`/system/role-auth/user/:roleId`
+3. 保留的共用数据：`views/system/role/data.tsx`
+
+### 验证结果
+
+1. 已执行引用扫描，确认 `/system/role` 页面级路由和页面级 import 已从前端入口移除。
+2. 已执行 `git diff --check` 针对本次路由改动，结果通过。
+3. 浏览器侧完整回归被本机其他活跃标签页打断，本轮未形成稳定的最终读屏结论。
+
+### 遗留问题
+
+1. 如需进一步确认 `/system/role` 访问结果，可在页面稳定时重新打开本地预览做一次只读回归。
+2. `api/system/role` 仍保留，当前未继续清理后端接口层与共用数据层。
+
+### 任务名称
+
+真实业务页隐藏路由补齐与浏览器抽查
+
+### 完成内容
+
+1. 为真实业务页补齐隐藏前端路由：`/system/post`、`/system/role`、`/system/dept`，保持它们不进入可见菜单，只用于验证和回归。
+2. 通过浏览器逐个打开 `system/post`、`system/role`、`system/dept`，确认三页都能正常渲染而不是 404。
+3. 抽查结果显示三页都已继续沿用 Vxe 表格体系，右上角设置、刷新、搜索、全屏入口保持统一，左侧树筛选和部门联动也仍然由平台壳承载。
+4. 当前确认“角色管理”页签只是验证隐藏路由时打开的真实业务页，不是新增的可见模块；已将主视图切回 `/platform/typical-page`。
+
+### 修改了哪些文件
+
+1. `apps/web-antd/src/router/routes/modules/system.ts`
+2. `docs/project-log.md`
+3. `docs/todo-next.md`
+
+### 涉及哪些页面或组件
+
+1. 页面：`/system/post`、`/system/role`、`/system/dept`
+2. 组件：Vxe 表格工具栏、`DeptTree`、`PlatformTreePanel`
+
+### 验证结果
+
+1. 已通过浏览器确认 `system/post` 可正常渲染。
+2. 已通过浏览器确认 `system/role` 可正常渲染。
+3. 已通过浏览器确认 `system/dept` 可正常渲染。
+4. 本轮未跑额外构建或单测。
+
+### 遗留问题
+
+1. 仍可继续抽查更多真实业务页，确认是否存在同类页面级散点。
+2. 如后续需要恢复这些隐藏页到菜单，需重新评估是否符合当前“只保留平台组件模块”的预览范围。
+
+### 任务名称
+
+真实业务页 `system/user` 浏览器验证收尾
+
+### 完成内容
+
+1. 通过浏览器打开隐藏路由 `/system/user`，确认页面已从路由层正常命中，不再停留在 404 或空白页。
+2. 现场检查页面主体，确认部门树、查询表单、Vxe 表格工具栏、表格主体、操作列以及弹窗/抽屉入口均已渲染。
+3. 确认左侧树筛选已继续复用 `PlatformTreePanel`，表格右上角的设置、刷新、搜索、全屏入口仍由 Vxe 工具层承载，页面没有额外写死的局部样式补丁。
+4. 本轮未发现需要立刻回到代码层的小修，当前剩余工作转为继续抽查其他真实业务页是否也已接入平台规范。
+
+### 修改了哪些文件
+
+1. `docs/project-log.md`
+2. `docs/todo-next.md`
+
+### 涉及哪些页面或组件
+
+1. 页面：`/system/user`
+2. 组件：`PlatformTreePanel`、`useVbenVxeGrid`、Vxe 工具栏、用户列表页弹窗与抽屉入口
+
+### 验证结果
+
+1. 已通过浏览器成功访问 `/system/user`。
+2. 页面可正常渲染，无 404 或报错页。
+3. 本轮未运行额外构建或单测。
+
+### 遗留问题
+
+1. 仍需继续抽查其他真实业务页，确认是否也已统一接入平台组件和 Vxe 适配层。
+2. 如后续发现 `system/user` 的表格密度或工具栏间距有细微偏差，再回到平台适配层做统一修正。
+
+### 任务名称
+
 当前典型页去掉顶部 tabbar 区块
 
 ### 完成内容
@@ -587,3 +813,48 @@ Vxe 表格平台适配层一期
 1. `PlatformTreePanel` 已完成结构平台化，但真实页和典型页的视觉细节还未重新走浏览器验证。
 2. `system/user` 登录后的 Vxe 表格工具栏、树筛选区与典型页的视觉一致性仍需下一步联调验证。
 3. `PlatformTree` 本体仍是样式薄封装，后续如果还有组织树、菜单树、权限树等场景，需要继续判断哪些能力应沉淀到 `PlatformTree`，哪些保留在 `PlatformTreePanel`。
+
+### 任务名称
+
+Figma 截图驱动顶部导航栏源组件样式改造
+
+### 完成内容
+
+1. 按项目接续规则读取 `AGENTS.md`、`docs/project-log.md`、`docs/decision-records.md`、`docs/todo-next.md`，确认顶部导航属于平台布局源组件改造范围。
+2. 尝试读取 Figma MCP Go，当前 `127.0.0.1:1994` 无监听，MCP 资源列表为空；本阶段改为基于用户提供的 Figma 截图做源组件视觉对齐。
+3. 将顶部导航相关尺寸、分割线、hover 背景、右侧按钮尺寸沉淀到全局设计 token。
+4. 调整 `Vben` 顶部布局源组件，使顶部 Logo 区保持稳定宽度、白色分割线和 56px 品牌导航结构。
+5. 调整 `VbenLogo` 源组件，使“深圳地铁智慧仓储管控平台”以白色 18px 标题样式呈现。
+6. 调整菜单源组件水平态：顶部一级菜单隐藏图标，使用紧凑宽度、居中对齐、深色选中态和 hover 态。
+7. 调整全局 `.platform-header-action`，让 AI、日程等右侧入口尺寸、间距、hover 态和顶部菜单统一。
+
+### 修改了哪些文件
+
+1. `packages/@core/base/design/src/design-tokens/default.css`
+2. `packages/@core/ui-kit/layout-ui/src/components/layout-header.vue`
+3. `packages/@core/ui-kit/shadcn-ui/src/components/logo/logo.vue`
+4. `packages/@core/ui-kit/menu-ui/src/components/menu.vue`
+5. `packages/styles/src/antd/index.css`
+6. `docs/project-log.md`
+7. `docs/todo-next.md`
+
+### 涉及哪些页面或组件
+
+1. 页面：`/platform/typical-page`
+2. 布局：Vben `header-sidebar-nav` 顶部导航栏
+3. 源组件：`LayoutHeader`、`VbenLogo`、`Menu`
+4. 全局样式入口：设计 token、`.platform-header-action`
+
+### 验证结果
+
+1. 已执行 `git diff --check`，结果通过。
+2. 已执行 `./node_modules/.bin/vue-tsc --noEmit --skipLibCheck -p apps/web-antd/tsconfig.json`，命令仍失败于项目既有类型错误，输出未命中本次顶部导航改造文件。
+3. 已启动 Vite 开发服务，当前端口为 `http://127.0.0.1:5174/`。
+4. 已登录并打开 `http://127.0.0.1:5174/platform/typical-page` 做浏览器可视验证：顶部导航显示品牌绿背景、左侧白色平台标题、一级菜单“平台组件”、右侧 AI/日程/通知/用户入口，页面无 Vite 错误遮罩。
+5. 已执行 `../../node_modules/.bin/vite build --mode test`，构建成功；仅出现项目既有 lightningcss 对 `@reference` / `@apply` 的 warning。
+
+### 遗留问题
+
+1. Figma MCP Go 当前未连接，未能通过 MCP 读取节点结构、截图和切图资源；后续需要在 MCP 显示 connected 后补一次精确节点校准。
+2. 本次只处理顶部导航栏源组件视觉，不处理左侧菜单、树筛选、表格、查询区的进一步视觉差异。
+3. Vite 构建产生的 `apps/web-antd/dist` 与 `apps/web-antd/dist.zip` 是临时产物；本次尝试删除时审批服务 503，暂未删除，后续需要清理。

@@ -1,0 +1,1 @@
+@reference "@vben/tailwind-config/theme";.thin-scrollbar[data-v-ffbee600]::-webkit-scrollbar{width:5px}@apply thin-scrollbar;
