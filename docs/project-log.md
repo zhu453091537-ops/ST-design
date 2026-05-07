@@ -2,6 +2,772 @@
 
 本文件记录项目阶段性工作日志，用于跨设备、跨聊天上下文恢复。只记录已经发生并完成的事项，不混入长期规则或下一步待办。
 
+## 2026-05-07
+
+### 任务名称
+
+2026-05-07 今天结束收尾
+
+### 完成内容
+
+1. 复核本轮平台组件改造记录，确认表格边缘留白、外描边、模块间距和工具栏内边距均已写入接续文档。
+2. 复核长期决策，确认平台表格外描边、表格边缘列内边距、固定列 `scroll.x` 同步策略和平台模块 24px 间距已写入 `docs/decision-records.md`。
+3. 更新 `docs/todo-next.md`，将下一轮优先事项收敛到浏览器视觉复核和平台表格真实页面继续抽查。
+4. 本次收尾不新增代码变更，只做接续文档整理。
+
+### 修改了哪些文件
+
+1. `docs/project-log.md`
+2. `docs/todo-next.md`
+
+### 涉及哪些页面或组件
+
+1. 页面：`/workbench/index`、`/project/information`
+2. 平台组件：`PlatformTable`、`PlatformTableToolbar`、`PlatformStatCard`
+3. 平台 token：表格、模块间距和统计卡相关 token
+
+### 验证结果
+
+1. 收尾前已执行 `./node_modules/.bin/eslint apps/web-antd/src/components/platform/table/platform-table.vue`，结果通过。
+2. 收尾前已执行 `git diff --check`，结果通过。
+3. 收尾前已执行 `curl -I http://127.0.0.1:5173/project/information`，返回 `200 OK`。
+4. 收尾前已执行 `curl -I http://127.0.0.1:5173/workbench/index`，返回 `200 OK`。
+
+### 遗留问题
+
+1. 需要用户在内置浏览器刷新 `/workbench/index` 与 `/project/information` 后，人工确认横向滚动时表头与表体是否完全同步。
+2. 当前仍未做截图级自动化视觉回归；后续如果浏览器自动化链路可用，应补一次横向滚动、fixed 操作列 hover、边缘留白和工具栏内距的视觉回归。
+3. 未接入 `PlatformTable` 的 Vxe Grid 或原生 Antdv Table 页面，不继承本轮平台表格边缘内距与外描边规则。
+
+### 任务名称
+
+平台表格边缘列内边距统一为 24px
+
+### 完成内容
+
+1. 新增 `--st-table-edge-cell-padding: 24px` 表格边缘单元格内边距 token。
+2. 新增 `--st-table-action-column-width: 184px` 操作列默认宽度 token。
+3. 在 `PlatformTable` 源组件中统一第一列和最后一列 `th/td` 的左右内边距。
+4. 在 `PlatformTable` 源组件中识别 `key === 'action'` 或标题为“操作”的列，默认使用平台操作列宽度。
+5. 同步处理表头和表体，避免只调表头导致列内容错位。
+6. 修复横向滚动时表头错位晃动：不再用 `th:last-child` 命中 Antdv 表头 scrollbar 占位格，改为给平台操作列加专用 class。
+7. 固定列存在时，`PlatformTable` 自动按叶子列宽合成 `scroll.x`，让表头和表体共用稳定横向滚动模型。
+8. 操作列默认宽度在组件内使用数值 `184`，避免表格库列宽同步时读取 CSS var 字符串导致抖动。
+9. 本轮不在 `/project/information` 或 `/workbench/index` 写页面级样式。
+
+### 修改了哪些文件
+
+1. `apps/web-antd/src/components/platform/table/platform-table.vue`
+2. `packages/@core/base/design/src/design-tokens/default.css`
+3. `docs/decision-records.md`
+4. `docs/project-log.md`
+5. `docs/todo-next.md`
+
+### 涉及哪些页面或组件
+
+1. 平台组件：`PlatformTable`
+2. 当前验证页：`/project/information`
+3. 同类受益页：使用 `PlatformTable` 的页面，包括 `/workbench/index`
+
+### 验证结果
+
+1. 已执行 `./node_modules/.bin/eslint apps/web-antd/src/components/platform/table/platform-table.vue`，结果通过。
+2. 已执行 `git diff --check`，结果通过。
+3. 已执行 `curl -I http://127.0.0.1:5173/project/information`，返回 `200 OK`。
+4. 已执行 `curl -I http://127.0.0.1:5173/workbench/index`，返回 `200 OK`。
+5. 已复查 `PlatformTable` 源码，不再使用 `last-child` 命中末列表头，避免误作用到 Antdv 横向/纵向滚动时的表头 scrollbar 占位格。
+
+### 遗留问题
+
+1. 未接入 `PlatformTable` 的 Vxe Grid 或原生 Antdv Table 页面不继承本次边缘内边距，后续如需要统一需另走 Vxe 适配层或原生组件治理。
+
+### 任务名称
+
+平台表格外描边 token 与源组件样式补充
+
+### 完成内容
+
+1. 新增 `--st-color-table-outline` 表格外描边颜色 token。
+2. 明亮主题默认使用 `--st-color-border-control`，暗色主题覆盖为 `--border`。
+3. 在 `PlatformTable` 源组件中给 `.ant-table-container` 增加 1px 外描边和统一圆角。
+4. 本轮不在 `/project/information` 或 `/workbench/index` 写页面级边框补丁。
+
+### 修改了哪些文件
+
+1. `apps/web-antd/src/components/platform/table/platform-table.vue`
+2. `packages/@core/base/design/src/design-tokens/default.css`
+3. `packages/@core/base/design/src/design-tokens/dark.css`
+4. `docs/decision-records.md`
+5. `docs/project-log.md`
+6. `docs/todo-next.md`
+
+### 涉及哪些页面或组件
+
+1. 平台组件：`PlatformTable`
+2. 当前验证页：`/project/information`
+3. 同类受益页：使用 `PlatformTable` 的页面，包括 `/workbench/index`
+
+### 验证结果
+
+1. 已执行 `./node_modules/.bin/eslint apps/web-antd/src/components/platform/table/platform-table.vue`，结果通过。
+2. 已执行 `git diff --check`，结果通过。
+3. 已执行 `curl -I http://127.0.0.1:5173/project/information`，返回 `200 OK`。
+4. 已执行 `curl -I http://127.0.0.1:5173/workbench/index`，返回 `200 OK`。
+
+### 遗留问题
+
+1. 未接入 `PlatformTable`、仍直接使用原生 Antdv Table 或 Vxe Grid 的页面不会继承本次外描边，需要后续按平台接入情况分别处理。
+
+### 任务名称
+
+平台模块默认间距与内容内边距统一为 24px
+
+### 完成内容
+
+1. 新增平台间距 token：`--st-layout-section-gap: 24px`、`--st-module-content-padding: 24px`。
+2. 将 `Page` 默认内容容器从 Tailwind `p-4` 改为读取平台模块内容内边距变量。
+3. 将 `.platform-surface` 默认内容 padding 接入 `--st-module-content-padding`。
+4. 将 `PlatformTableToolbar` 默认 bleed 偏移、左右内边距、下方间距接入平台间距变量；工具栏上下内边距按原组件视觉节奏保持 `12px`。
+5. 将 `PlatformStatCard` 内容 padding 接入平台模块内容内边距变量。
+6. 将 `/workbench/index` 和 `/project/information` 的页面区块 gap、统计卡区块 gap 接入 `--st-layout-section-gap`，不在页面继续硬编码模块级 `16px`。
+
+### 修改了哪些文件
+
+1. `packages/@core/base/design/src/design-tokens/default.css`
+2. `packages/effects/common-ui/src/components/page/page.vue`
+3. `packages/effects/common-ui/src/components/page/__tests__/page.test.ts`
+4. `packages/styles/src/antd/index.css`
+5. `apps/web-antd/src/components/platform/table/platform-table-toolbar.vue`
+6. `apps/web-antd/src/components/platform/stat/platform-stat-card.vue`
+7. `apps/web-antd/src/views/project/overview/index.vue`
+8. `apps/web-antd/src/views/project/information/index.vue`
+9. `AGENTS.md`
+10. `docs/decision-records.md`
+11. `docs/project-log.md`
+12. `docs/todo-next.md`
+
+### 涉及哪些页面或组件
+
+1. 平台 token：设计 token 默认值。
+2. 通用 Page 内容容器：所有使用 `Page` 且未覆盖 `contentClass` padding 的页面。
+3. 平台模块容器：`.platform-surface`。
+4. 平台组件：`PlatformTableToolbar`、`PlatformStatCard`。
+5. 当前验证页：`/workbench/index`、`/project/information`。
+
+### 验证结果
+
+1. 已执行目标文件 ESLint，结果通过。
+2. 已执行 `git diff --check`，结果通过。
+3. 已执行 `curl -I http://127.0.0.1:5173/project/information`，返回 `200 OK`。
+4. 已执行 `curl -I http://127.0.0.1:5173/workbench/index`，返回 `200 OK`。
+
+### 遗留问题
+
+1. 仍有旧示例页、登录/个人中心、表单字段内部间距等非平台模块级 `p-4` / `gap-4`，本轮不作为平台模块间距清理范围。
+2. 本轮未做截图级浏览器自动化验证；已保持不操作用户当前 Chrome。
+
+### 任务名称
+
+左侧导航菜单项高度与左侧距离源组件修正
+
+### 完成内容
+
+1. 按用户批注修正左侧导航栏源组件样式，不在 `/project/information` 页面写局部样式。
+2. 在 `menu-ui` 源组件中将垂直展开态菜单项高度统一为 `52px`。
+3. 将垂直展开态一级菜单项和一级子菜单标题左侧距离统一为 `24px`。
+4. 修正范围限定在垂直展开态菜单，不影响顶部横向菜单和左侧收起态菜单。
+
+### 修改了哪些文件
+
+1. `packages/@core/ui-kit/menu-ui/src/components/menu.vue`
+2. `docs/project-log.md`
+3. `docs/todo-next.md`
+
+### 涉及哪些页面或组件
+
+1. 源组件：`@vben-core/menu-ui` 的 `Menu`
+2. 当前验证页：`/project/information`
+3. 同类受益页面：所有使用左侧展开菜单的页面
+
+### 验证结果
+
+1. 已执行 `./node_modules/.bin/eslint packages/@core/ui-kit/menu-ui/src/components/menu.vue`，结果通过。
+2. 已执行 `./node_modules/.bin/vue-tsc -p packages/@core/ui-kit/menu-ui/tsconfig.json --noEmit --skipLibCheck --pretty false`，结果通过。
+3. 已执行目标文件 `git diff --check`，结果通过。
+4. 已执行 `curl -I http://127.0.0.1:5173/project/information`，返回 `200 OK`。
+
+### 遗留问题
+
+1. 需要在当前内置浏览器刷新后确认批注位置：菜单项高度为 52px，内容左侧距离为 24px。
+
+### 任务名称
+
+平台表格固定操作列 hover 透明问题修复
+
+### 完成内容
+
+1. 排查 `/project/information` 鼠标移入表格行时，固定右侧操作列背景透明导致下方内容透出的视觉问题。
+2. 确认问题属于 `PlatformTable` 固定列通用样式，不在业务页面写局部覆盖。
+3. 新增 `--st-color-table-cell-bg`、`--st-color-table-header-bg`、`--st-color-table-row-hover-bg-solid`，为 fixed 列提供实心背景 token。
+4. 在 `PlatformTable` 源组件中覆盖 `.ant-table-cell-fix-left`、`.ant-table-cell-fix-right`、`.ant-table-cell-fix-left-last`、`.ant-table-cell-fix-right-first` 的默认、表头、hover、selected 和 `ant-table-cell-row-hover` 组合状态。
+5. 按用户补充判断，将 fixed 单元格拆成纯白/卡片实心底色层和 hover 实心浅绿层：`::before` 保持实心底色，`::after` 承载 hover/selected 背景。
+6. fixed 单元格默认背景、hover 背景和伪元素遮罩层均使用不透明背景色，不再使用透明色或 `color-mix`。
+7. 提升 fixed cell 层级，并让单元格内部操作按钮处于背景遮罩层之上。
+
+### 修改了哪些文件
+
+1. `apps/web-antd/src/components/platform/table/platform-table.vue`
+2. `packages/@core/base/design/src/design-tokens/default.css`
+3. `packages/@core/base/design/src/design-tokens/dark.css`
+4. `docs/project-log.md`
+5. `docs/todo-next.md`
+
+### 涉及哪些页面或组件
+
+1. 平台组件：`PlatformTable`
+2. 当前验证页：`/project/information`
+3. 同类受益页：使用 `PlatformTable` fixed 列的页面，包括 `/workbench/index`
+
+### 验证结果
+
+1. 已执行目标文件 ESLint，结果通过。
+2. 已执行目标文件 `git diff --check`，结果通过。
+3. 已执行 `curl -I http://127.0.0.1:5173/project/information`，返回 `200 OK`。
+4. 已执行 `curl -I http://127.0.0.1:5173/workbench/index`，返回 `200 OK`。
+5. 已执行应用级 `vue-tsc`，仍失败于项目既有 `tenant-toggle`、`tinymce`、`workflow`、演示页等类型错误；输出未指向本轮修改的 `PlatformTable`。
+
+### 遗留问题
+
+1. 本地 Playwright CLI 存在，但隔离 Chromium 未安装；申请下载 Chromium 被自动审批服务拒绝。本轮未使用用户系统 Chrome，截图级 hover 验证需用户刷新当前内置浏览器后确认。
+
+### 任务名称
+
+项目信息管理页面筛选入口平台化修正
+
+### 完成内容
+
+1. 按用户反馈移除 `/project/information` 工具栏中的 `全部状态`、`全部类型` 下拉筛选。
+2. 将 `项目类型`、`状态` 两列表头接入 `PlatformTable` 的表头筛选能力。
+3. 继续复用平台表头筛选的“全部”选项、点击即生效、无 Antdv 默认“重置 / 确定”按钮规则。
+4. 工具栏保留新建、搜索、刷新、设置和全屏，不照搬原型筛选布局。
+
+### 修改了哪些文件
+
+1. `apps/web-antd/src/views/project/information/index.vue`
+2. `docs/project-log.md`
+3. `docs/todo-next.md`
+
+### 涉及哪些页面或组件
+
+1. 页面：`/project/information`
+2. 平台组件：`PlatformTableToolbar`、`PlatformTable`
+
+### 验证结果
+
+1. 已执行目标文件 ESLint，结果通过。
+2. 已执行目标文件 `git diff --check`，结果通过。
+3. 已执行 `curl -I http://127.0.0.1:5173/project/information`，返回 `200 OK`。
+
+### 遗留问题
+
+1. 仍需在隔离浏览器可用后补一次点击级验证，确认表头筛选浮层视觉与项目总览一致。
+
+### 任务名称
+
+项目信息管理页面第一版开发
+
+### 完成内容
+
+1. 在 `项目全景管理` 左侧菜单中保留 `项目总览` 为第一项，并新增 `项目信息管理`。
+2. 新增 `/project/information` 页面，作为委外项目主数据管理入口。
+3. 新增页面专用 Mock 数据源，包含项目基础信息、招采信息和进场信息字段。
+4. 页面支持按项目名称、项目编号、负责人关键字搜索，并支持项目类型、项目状态筛选。
+5. 表格展示项目编号、项目名称、项目类型、承包商、合同金额、招采方式、状态和操作。
+6. 新建、编辑使用居中 `PlatformModal`；归档、删除均带二次确认；详情入口保留为轻提示，未过度开发复杂详情 UI。
+7. 其他项目菜单暂时复用 `platform/blank/index`，未新增业务页面。
+
+### 修改了哪些文件
+
+1. `apps/web-antd/src/mock/index.ts`
+2. `apps/web-antd/src/views/project/information/index.vue`
+3. `apps/web-antd/src/views/project/information/project-information-source.ts`
+4. `docs/project-log.md`
+5. `docs/todo-next.md`
+
+### 涉及哪些页面或组件
+
+1. 页面：`/project/information`
+2. 保留页面：`/workbench/index`
+3. 平台组件：`PlatformTableToolbar`、`PlatformTable`、`PlatformModal`、`PlatformEditForm`、`PlatformFormItem`、`PlatformInput`、`PlatformSelect`、`PlatformStatusTag`、`PlatformButton`
+
+### 验证结果
+
+1. 已执行目标文件 ESLint，结果通过。
+2. 已执行 `git diff --check`，结果通过。
+3. 已执行 `curl -I http://127.0.0.1:5173/workbench/index`，返回 `200 OK`。
+4. 已执行 `curl -I http://127.0.0.1:5173/project/information`，返回 `200 OK`。
+5. 已执行 `vue-tsc`，仍失败于项目既有 `tenant-toggle`、`tinymce`、`workflow`、演示页等类型错误；输出未指向本轮新增项目信息管理页面。
+
+### 遗留问题
+
+1. 本轮未做隔离浏览器点击级验证；待 Browser Use IAB 或隔离 Chromium 可用后，补查新建、编辑、删除确认和菜单切换。
+2. 详情入口当前只保留轻提示，后续需要结合详情页设计决定右侧抽屉或下钻详情页。
+3. 项目类型和状态当前为页面专用 Mock 数据，后续有正式字典接口后再切换。
+
+### 任务名称
+
+项目总览页组件映射文档补充与验证复核
+
+### 完成内容
+
+1. 将 `docs/decision-records.md` 中项目总览页决策压缩为一条简短长期决策。
+2. 新增 `docs/page-component-mapping.md`，记录 `/workbench/index` 的组件映射表、CSS 边界、已沉淀平台能力、暂留页面内容和后续可整理事项。
+3. 将 `PlatformTable` 筛选 helper、全屏下沉、`PlatformEntityCell`、`PlatformProgress`、`PlatformDescriptions` 等事项记录为后续待办，本轮未拆组件、未新增组件、未继续调 UI。
+
+### 修改了哪些文件
+
+1. `docs/decision-records.md`
+2. `docs/page-component-mapping.md`
+3. `docs/project-log.md`
+4. `docs/todo-next.md`
+
+### 涉及哪些页面或组件
+
+1. 页面：`/workbench/index`
+2. 平台组件：`PlatformStatCard`、`PlatformTableToolbar`、`PlatformTable`
+3. 暂不抽组件：`PlatformEntityCell`、`PlatformProgress`、`PlatformDescriptions`、`PlatformActionGroup`
+
+### 验证结果
+
+1. 已执行 `curl -I http://127.0.0.1:5173/workbench/index`，返回 `200 OK`。
+2. 已尝试 Browser Use IAB 隔离浏览器验证，但当前未发现可用 Codex IAB backend。
+3. 已检查本地 Playwright 命令存在，但隔离 Chromium 可执行文件未安装；安装授权未通过自动审批，本轮未绕路使用系统 Chrome。
+4. 已做源码级复核：搜索、类型/状态表头筛选、分页 change、新建/编辑弹窗、详情抽屉、归档/删除确认、自适应高度和全屏入口均有对应组件和事件接线。
+5. 已执行 `git diff --check`，结果通过。
+
+### 遗留问题
+
+1. 本轮未完成真实浏览器点击级验证；待 Browser Use IAB 恢复或用户明确允许安装隔离 Chromium 后，再补一次 `/workbench/index` 交互回归。
+
+### 任务名称
+
+项目总览页统计卡标题与趋势文字统一
+
+### 完成内容
+
+1. 将 `PlatformStatCard` 标题颜色改为黑色文本变量 `--foreground`。
+2. 将 `PlatformStatCard` 趋势文字统一加粗。
+3. 本轮修改在统计卡源组件生效，项目总览页 5 个统计卡同步变化。
+
+### 修改了哪些文件
+
+1. `apps/web-antd/src/components/platform/stat/platform-stat-card.vue`
+2. `docs/project-log.md`
+3. `docs/todo-next.md`
+
+### 涉及哪些页面或组件
+
+1. 页面：`/workbench/index`
+2. 平台组件：`PlatformStatCard`
+
+### 验证结果
+
+1. 已执行 `./node_modules/.bin/eslint apps/web-antd/src/components/platform/stat/platform-stat-card.vue`，结果通过。
+2. 已执行 `git diff --check -- apps/web-antd/src/components/platform/stat/platform-stat-card.vue`，结果通过。
+3. 已执行 `curl -I http://127.0.0.1:5173/workbench/index`，返回 `200 OK`。
+
+### 遗留问题
+
+1. 仍需在浏览器中视觉确认 5 个统计卡标题和趋势文字均已同步变化。
+
+### 任务名称
+
+项目总览页统计卡头部下间距移除
+
+### 完成内容
+
+1. 删除 `PlatformStatCard` 源组件中 `.platform-stat-card__header` 的 `margin-bottom: 10px;`。
+2. 本轮只修改统计卡平台组件源头，不在项目总览页 scoped CSS 中做覆盖。
+
+### 修改了哪些文件
+
+1. `apps/web-antd/src/components/platform/stat/platform-stat-card.vue`
+2. `docs/project-log.md`
+3. `docs/todo-next.md`
+
+### 涉及哪些页面或组件
+
+1. 页面：`/workbench/index`
+2. 平台组件：`PlatformStatCard`
+
+### 验证结果
+
+1. 已执行 `./node_modules/.bin/eslint apps/web-antd/src/components/platform/stat/platform-stat-card.vue`，结果通过。
+2. 已执行 `git diff --check -- apps/web-antd/src/components/platform/stat/platform-stat-card.vue`，结果通过。
+3. 已执行 `curl -I http://127.0.0.1:5173/workbench/index`，返回 `200 OK`。
+
+### 遗留问题
+
+1. 仍需在隔离浏览器链路恢复后截图复核统计卡标题、数值和图标之间的视觉间距。
+
+### 任务名称
+
+项目总览页表格高度浏览器自适应
+
+### 完成内容
+
+1. 在 `PlatformTable` 源组件中增加默认自适应高度计算。
+2. 表格 body 最大高度跟随浏览器视口和当前表格位置自动计算，内容超出时表格内部上下滚动。
+3. 如果调用方显式传入 `scroll.y`，优先使用调用方设置；默认列表页不需要在业务页面硬编码高度。
+
+### 修改了哪些文件
+
+1. `AGENTS.md`
+2. `apps/web-antd/src/components/platform/table/platform-table.vue`
+3. `docs/decision-records.md`
+4. `docs/project-log.md`
+5. `docs/todo-next.md`
+
+### 涉及哪些页面或组件
+
+1. 页面：`/workbench/index`
+2. 平台组件：`PlatformTable`
+
+### 验证结果
+
+1. 已执行 `./node_modules/.bin/eslint apps/web-antd/src/components/platform/table/platform-table.vue apps/web-antd/src/views/project/overview/index.vue apps/web-antd/src/components/platform/table/platform-table-toolbar.vue`，结果通过。
+2. 已执行 `git diff --check -- apps/web-antd/src/components/platform/table/platform-table.vue apps/web-antd/src/views/project/overview/index.vue docs/project-log.md docs/todo-next.md`，结果通过。
+3. 已执行 `curl -I http://127.0.0.1:5173/workbench/index`，返回 `200 OK`。
+
+### 遗留问题
+
+1. 仍需在隔离浏览器链路恢复后，确认长列表在不同浏览器高度下的内部滚动表现。
+
+### 任务名称
+
+项目总览页补回右侧全屏工具按钮
+
+### 完成内容
+
+1. 恢复 `PlatformTableToolbar` 默认的 `fullscreen` 工具按钮在项目总览页可见。
+2. 将项目总览页表格容器接入浏览器 Fullscreen API，点击全屏按钮后进入或退出全屏展示。
+3. 保持平台工具栏源组件默认四按钮存在，当前页面未显式隐藏全屏。
+
+### 修改了哪些文件
+
+1. `apps/web-antd/src/views/project/overview/index.vue`
+2. `docs/project-log.md`
+3. `docs/todo-next.md`
+
+### 涉及哪些页面或组件
+
+1. 页面：`/workbench/index`
+2. 平台组件：`PlatformTableToolbar`
+
+### 验证结果
+
+1. 已执行 `./node_modules/.bin/eslint apps/web-antd/src/views/project/overview/index.vue apps/web-antd/src/components/platform/table/platform-table-toolbar.vue`，结果通过。
+2. 已执行 `git diff --check -- apps/web-antd/src/views/project/overview/index.vue apps/web-antd/src/components/platform/table/platform-table-toolbar.vue docs/project-log.md docs/todo-next.md`，结果通过。
+3. 已执行 `curl -I http://127.0.0.1:5173/workbench/index`，返回 `200 OK`。
+
+### 遗留问题
+
+1. 仍需在隔离浏览器链路恢复后，截图确认全屏按钮是否回到四按钮默认态，并能正确进入/退出全屏。
+
+### 任务名称
+
+项目总览页搜索框展开高度调整
+
+### 完成内容
+
+1. 将 `PlatformTableToolbar` 展开后的搜索输入框高度约束为 `--st-control-height`。
+2. 该高度与设计 token 一致，当前默认值为 `36px`，不在页面 scoped CSS 中额外覆盖。
+
+### 修改了哪些文件
+
+1. `apps/web-antd/src/components/platform/table/platform-table-toolbar.vue`
+2. `docs/project-log.md`
+3. `docs/todo-next.md`
+
+### 涉及哪些页面或组件
+
+1. 页面：`/workbench/index`
+2. 平台组件：`PlatformTableToolbar`
+
+### 验证结果
+
+1. 已执行 `./node_modules/.bin/eslint apps/web-antd/src/components/platform/table/platform-table-toolbar.vue`，结果通过。
+2. 已执行 `git diff --check -- apps/web-antd/src/components/platform/table/platform-table-toolbar.vue docs/project-log.md docs/todo-next.md`，结果通过。
+3. 已执行 `curl -I http://127.0.0.1:5173/workbench/index`，返回 `200 OK`。
+
+### 遗留问题
+
+1. 仍需在隔离浏览器链路恢复后，确认搜索框展开后的实际高度与图标/占位文本对齐。
+
+### 任务名称
+
+项目总览页表格工具栏内距与工具间距微调
+
+### 完成内容
+
+1. 复核 `PlatformTableToolbar` 源组件，确认工具栏主体 `padding` 已为 `10px 12px`。
+2. 将 `PlatformTableToolbar` 的 actions / tools 按钮组间距从 `8px` 调整为 `12px`。
+3. 本轮只修改平台表格工具栏源组件，不在项目总览页 scoped CSS 中写局部覆盖。
+
+### 修改了哪些文件
+
+1. `apps/web-antd/src/components/platform/table/platform-table-toolbar.vue`
+2. `docs/project-log.md`
+3. `docs/todo-next.md`
+
+### 涉及哪些页面或组件
+
+1. 页面：`/workbench/index`
+2. 平台组件：`PlatformTableToolbar`
+
+### 验证结果
+
+1. 已执行 `./node_modules/.bin/eslint apps/web-antd/src/components/platform/table/platform-table-toolbar.vue`，结果通过。
+2. 已执行 `git diff --check -- apps/web-antd/src/components/platform/table/platform-table-toolbar.vue`，结果通过。
+3. 已执行 `curl -I http://127.0.0.1:5173/workbench/index`，返回 `200 OK`。
+
+### 遗留问题
+
+1. 仍需在隔离浏览器链路恢复后，对工具栏内距和按钮组间距做截图级复核。
+
+### 任务名称
+
+项目总览页统计卡图标尺寸组件化优化
+
+### 完成内容
+
+1. 将 `PlatformStatCard` 右上角图标外框尺寸从组件内硬编码调整为平台组件变量，默认读取设计 token。
+2. 新增统计卡图标尺寸 token：外框默认 `48px`，内部图标默认 `2rem`。
+3. 为 `PlatformStatCard` 增加可选 `iconBoxSize` / `iconSize` props，后续特殊场景可覆盖尺寸，但当前项目总览页不需要页面级样式。
+4. 保留统计卡原有 `type` / `color` 色彩逻辑、背景、边框、阴影和 hover 效果。
+5. 将统计卡图标尺寸平台化规则同步到 `AGENTS.md` 和 `docs/decision-records.md`。
+
+### 修改了哪些文件
+
+1. `AGENTS.md`
+2. `apps/web-antd/src/components/platform/stat/platform-stat-card.vue`
+3. `packages/@core/base/design/src/design-tokens/default.css`
+4. `docs/decision-records.md`
+5. `docs/project-log.md`
+6. `docs/todo-next.md`
+
+### 涉及哪些页面或组件
+
+1. 页面：`/workbench/index`
+2. 平台组件：`PlatformStatCard`
+3. 平台 token：`--st-stat-card-icon-box-size`、`--st-stat-card-icon-size`
+
+### 验证结果
+
+1. 已执行目标文件 ESLint，结果通过。
+2. 已执行 `git diff --check`，结果通过。
+3. 已执行 `curl -I http://127.0.0.1:5173/workbench/index`，返回 `200 OK`。
+4. Browser Use in-app backend 近期不可用，本轮未操作用户系统 Chrome，因此未做截图级视觉验证。
+
+### 遗留问题
+
+1. 仍需在隔离浏览器链路恢复后，对 `/workbench/index` 统计卡右上角图标外框 48px、内部图标 2rem 做截图级复核。
+
+### 任务名称
+
+项目总览页表头筛选全部项与无按钮交互统一
+
+### 完成内容
+
+1. 在 `PlatformTable` 源组件内接管 `column.filters` 的筛选面板渲染，统一加入“全部”选项。
+2. 让空筛选状态默认视为“全部”选中，避免筛选面板初次打开没有默认项。
+3. 去掉筛选面板里的 Antdv 默认“重置 / 确定”按钮，改为点击筛选项立即应用并关闭或保持面板。
+4. 将筛选项的 hover / 选中背景统一为品牌绿 10% 透明度，避免 hover 和选中两套背景不一致。
+5. 该交互已写入 `AGENTS.md` 和 `docs/decision-records.md`，作为后续列表页复用规则。
+
+### 修改了哪些文件
+
+1. `AGENTS.md`
+2. `apps/web-antd/src/components/platform/table/platform-table.vue`
+3. `docs/decision-records.md`
+4. `docs/project-log.md`
+5. `docs/todo-next.md`
+
+### 涉及哪些页面或组件
+
+1. 页面：`/workbench/index`
+2. 平台组件：`PlatformTable`
+
+### 验证结果
+
+1. 已执行 `./node_modules/.bin/eslint apps/web-antd/src/components/platform/table/platform-table.vue apps/web-antd/src/views/project/overview/index.vue`，结果通过。
+2. 已执行 `curl -I http://127.0.0.1:5173/workbench/index`，返回 `200 OK`。
+3. 已执行 `git diff --check`，结果通过。
+4. `vue-tsc` 仍存在项目既有错误，但本轮新增 `PlatformTable` 相关错误已清理完毕。
+
+### 遗留问题
+
+1. 仍需等隔离浏览器链路恢复后复核实际 dropdown 视觉，尤其是“全部”默认选中和 hover/选中背景一致性。
+
+### 任务名称
+
+项目总览页表格工具栏排序与搜索折叠平台化
+
+### 完成内容
+
+1. 按用户批注移除项目总览页表格工具栏标题，不再显示“项目列表”。
+2. 将 `PlatformTableToolbar` 的业务 actions 区移到工具栏最左侧，并通过源组件样式兜底 `type="primary"` 主按钮优先排序。
+3. 将项目总览页“新建项目”“导出”改为 `scene="toolbar"` 平台按钮场景，保持主按钮在左、次要按钮在后。
+4. 将工具栏搜索改为右侧圆形工具图标；点击搜索图标展开输入框，再次点击收起，搜索提交仍由输入框 change / enter 触发。
+5. 调整 `PlatformTableToolbar` 的默认 bleed 行为，让工具栏背景贴满承载容器的上、左、右边缘，下方表格仍保留原有间距。
+6. 调整 `PlatformButton` 的 toolbar circle 场景：刷新、设置等圆形工具按钮默认无描边，hover / focus 时出现品牌绿描边、品牌绿图标和 10% 绿底。
+7. 将表格工具栏主按钮排序和搜索折叠规则同步到 `AGENTS.md` 与 `docs/decision-records.md`。
+
+### 修改了哪些文件
+
+1. `AGENTS.md`
+2. `apps/web-antd/src/components/platform/table/platform-table-toolbar.vue`
+3. `apps/web-antd/src/components/platform/button/platform-button.vue`
+4. `apps/web-antd/src/views/project/overview/index.vue`
+5. `packages/@core/base/design/src/design-tokens/default.css`
+6. `packages/@core/base/design/src/design-tokens/dark.css`
+7. `docs/decision-records.md`
+8. `docs/project-log.md`
+9. `docs/todo-next.md`
+
+### 涉及哪些页面或组件
+
+1. 页面：`/workbench/index`，菜单名 `项目全景管理 - 项目总览`
+2. 平台组件：`PlatformTableToolbar`、`PlatformButton`
+3. 平台 token：`--st-color-table-tool-hover-*`
+
+### 验证结果
+
+1. 已执行 `git diff --check`，结果通过。
+2. 已执行 `./node_modules/.bin/eslint apps/web-antd/src/components/platform/table/platform-table-toolbar.vue apps/web-antd/src/components/platform/button/platform-button.vue apps/web-antd/src/views/project/overview/index.vue`，结果通过。
+3. 已执行 `curl -I http://127.0.0.1:5173/workbench/index`，返回 `200 OK`。
+4. 已执行 `./node_modules/.bin/vue-tsc -p apps/web-antd/tsconfig.json --noEmit --skipLibCheck --pretty false`，仍失败于项目既有类型错误；本轮修改文件未出现在错误列表中。
+5. 已尝试使用 Codex 内置 Browser Use 验证当前页，但 IAB backend 初始化超时；本地 Playwright 依赖存在但浏览器二进制未安装，未使用系统 Chrome，避免打断用户当前浏览器。
+
+### 遗留问题
+
+1. 仍需在隔离浏览器链路恢复后补一次截图级复核：工具栏背景贴边、业务按钮左对齐、搜索展开/收起、刷新/设置 hover 态。
+
+### 任务名称
+
+本地预览打开规则沉淀：5173 / 5174 优先，避开 5000
+
+### 完成内容
+
+1. 确认 `http://localhost:5000/` 当前返回 macOS AirTunes `403 Forbidden`，不是本项目 Vite 预览服务。
+2. 确认 `5173/5174` 均不可达时，应从 `apps/web-antd` 启动 Vite。
+3. 已使用 `../../node_modules/.bin/vite --mode development` 启动本项目开发服务，Vite 输出本地地址 `http://localhost:5173/`。
+4. 已将本地预览快速打开规则写入 `AGENTS.md`，并把长期决策同步到 `docs/decision-records.md`。
+
+### 修改了哪些文件
+
+1. `AGENTS.md`
+2. `docs/decision-records.md`
+3. `docs/project-log.md`
+4. `docs/todo-next.md`
+
+### 涉及哪些页面或组件
+
+1. 页面：`/workbench/index`、`/platform/typical-page`
+2. 运行入口：`apps/web-antd`
+
+### 验证结果
+
+1. 已执行 `curl -I http://127.0.0.1:5000/`，返回 `403 Forbidden`，服务标识为 AirTunes。
+2. 已执行 `curl -I http://127.0.0.1:5173/`，返回 `200 OK`。
+3. 用户已在 Codex 内置浏览器打开 `http://127.0.0.1:5173/workbench/index`，确认现在可以访问。
+4. 已执行 `git diff --check -- AGENTS.md`，结果通过。
+
+### 遗留问题
+
+1. Codex 内置浏览器自动化通道仍可能不可用；如果只是打开页面，后续先给出正确端口和服务状态，不围绕 IAB backend 长时间诊断。
+
+### 任务名称
+
+项目总览页表头筛选平台化：类型 / 状态列接入 Antdv Table 原生 filter
+
+### 完成内容
+
+1. 按用户要求将项目总览页“类型”“状态”筛选从表格工具栏移到表格表头筛选。
+2. 改造 `PlatformTable`，显式转发 ant-design-vue Table 原生 `change` 事件，页面可从 table change 回调中拿到 filters。
+3. `PlatformTable` 继续原样透传 columns，因此 `column.filters`、`filteredValue`、`defaultFilteredValue`、`filterMultiple`、`onFilter` 等 Antdv 原生列筛选能力可直接使用。
+4. 在 `PlatformTable` 作用域内补充表头 filter icon 的基础样式，包括间距、颜色、hover 和 active 态；未在项目总览页 scoped CSS 中覆盖表头筛选样式。
+5. 项目总览页 `类型` 列配置类型筛选项，`状态` 列配置状态筛选项，并通过 `handleTableChange` 更新本地 `query.type`、`query.status` 后刷新当前表格数据。
+6. 项目总览页工具栏保留搜索框、新建、导出、刷新、设置；移除工具栏里的类型 / 状态下拉筛选，避免和表头筛选重复。
+7. 未新增复杂筛选组件，未引入其他 UI 库，未修改 ant-design-vue 源码、`node_modules`、菜单、路由、Vben 核心布局或 `use-mixed-menu.ts`。
+
+### 修改了哪些文件
+
+1. `apps/web-antd/src/components/platform/table/platform-table.vue`
+2. `apps/web-antd/src/views/project/overview/index.vue`
+3. `docs/project-log.md`
+4. `docs/todo-next.md`
+
+### 涉及哪些页面或组件
+
+1. 页面：`/workbench/index`，菜单名 `项目全景管理 - 项目总览`
+2. 平台组件：`PlatformTable`
+3. 仍保留工具栏搜索：`PlatformTableToolbar` + `PlatformInput`
+
+### 验证结果
+
+1. 已执行 `git diff --check`，结果通过。
+2. 已执行 `./node_modules/.bin/eslint apps/web-antd/src/components/platform/table/platform-table.vue apps/web-antd/src/views/project/overview/index.vue apps/web-antd/src/components/platform/table/platform-table-toolbar.vue`，结果通过。
+3. 已执行 `curl -I http://127.0.0.1:5173/workbench/index`，返回 `200 OK`。
+4. 应用级 `vue-tsc` 仍失败于项目既有类型错误；本轮未把这些既有问题纳入整改范围。
+
+### 遗留问题
+
+1. 仍需在隔离浏览器中点击验证表头筛选下拉、筛选后表格刷新和筛选 icon active 态。
+2. 本轮只做 `类型`、`状态` 两列表头筛选；搜索框仍保留在工具栏，不把全文搜索迁入表头。
+
+### 任务名称
+
+项目总览页平台组件最小整改：工具栏收敛与统计卡 token 化
+
+### 完成内容
+
+1. 按“典型页面驱动平台组件改造”规则，只整改 `项目全景管理 - 项目总览` 已暴露的通用组件问题，未重构整个页面。
+2. 在 `docs/decision-records.md` 补充“项目总览页作为总览列表页平台组件验证样板”决策，并写入项目总览页组件映射表。
+3. 增强 `PlatformTableToolbar`，第一版支持标题、描述、搜索框、状态筛选、类型筛选、业务操作 slot、工具按钮和自定义 slot。
+4. 将项目总览页原页面内手写 `project-list-toolbar` 替换为 `PlatformTableToolbar`，页面只保留查询值、筛选值、事件处理和业务按钮 slot。
+5. 将 `PlatformStatCard` 的背景、边框、文本、info 色、默认阴影和 hover 阴影沉淀到平台 token。
+6. 本轮未抽 `PlatformProgress`、`PlatformDescriptions`、`PlatformEntityCell`、`PlatformActionGroup`，对应业务内容继续留在项目总览页。
+7. 本轮未修改菜单、路由、Vben 核心布局、`use-mixed-menu.ts`、ant-design-vue 源码或 `node_modules`。
+
+### 修改了哪些文件
+
+1. `docs/decision-records.md`
+2. `apps/web-antd/src/components/platform/table/platform-table-toolbar.vue`
+3. `apps/web-antd/src/views/project/overview/index.vue`
+4. `apps/web-antd/src/components/platform/stat/platform-stat-card.vue`
+5. `packages/@core/base/design/src/design-tokens/default.css`
+
+### 涉及哪些页面或组件
+
+1. 页面：`/workbench/index`，菜单名 `项目全景管理 - 项目总览`
+2. 平台组件：`PlatformTableToolbar`、`PlatformStatCard`
+3. 平台 token：`--st-color-stat-card-*`、`--st-shadow-stat-card*`
+4. 保留页面层内容：项目头像业务单元格、进度列、详情抽屉内部详情 grid、操作列现有写法、页面数据过滤逻辑
+
+### 验证结果
+
+1. 已执行 `git diff --check`，结果通过。
+2. 已执行 `./node_modules/.bin/eslint apps/web-antd/src/components/platform/table/platform-table-toolbar.vue apps/web-antd/src/views/project/overview/index.vue apps/web-antd/src/components/platform/stat/platform-stat-card.vue`，结果通过。
+3. 已执行 `curl -I http://127.0.0.1:5173/workbench/index`，返回 `200 OK`。
+4. 已执行 `./node_modules/.bin/vue-tsc -p apps/web-antd/tsconfig.json --noEmit --skipLibCheck --pretty false`，命令仍失败于项目既有类型错误；本轮新增 `PlatformTableToolbar` 和项目总览页接入未在输出中新增命名错误。
+
+### 遗留问题
+
+1. 尚未做截图级浏览器视觉复核；后续 Browser Use 或隔离浏览器链路恢复后，应复核工具栏左右布局、响应式换行、搜索/筛选交互和统计卡 hover 效果。
+2. `PlatformTableToolbar` 已支持列表页通用搜索/筛选/操作入口，但列设置、导出真实接口和全屏表格真实交互仍是后续能力。
+3. `PlatformStatCard` 已 token 化高频视觉值，但项目头像色仍作为业务数据色保留，不沉淀为平台 token。
+
 ## 2026-05-06
 
 ### 任务名称
@@ -1448,3 +2214,38 @@ Figma 截图驱动顶部导航栏源组件样式改造
 ### 遗留问题
 
 1. Browser Use in-app browser 仍需恢复后再做截图级视觉复核；本轮未操作用户系统 Chrome。
+
+### 任务名称
+
+人员全生命周期 - 用户管理右侧内容清空
+
+### 完成内容
+
+1. 按用户要求，清空 `人员全生命周期 - 用户管理` 当前右侧既有内容。
+2. 将 `/platform/typical-page` 从原用户管理典型页改为只保留 `Page` 空承载容器。
+3. 删除页面内部门树、查询表单、用户表格、工具栏、抽屉、弹窗和相关交互逻辑引用。
+4. 保留顶部导航、左侧菜单、路由入口和平台组件源码不变，等待用户后续提供原型后再开发。
+5. 未删除 `user-demo-source.ts`，避免扩大清理范围；后续如确认不再复用，可单独清理。
+
+### 修改了哪些文件
+
+1. `apps/web-antd/src/views/platform/typical-page/index.vue`
+2. `docs/project-log.md`
+3. `docs/todo-next.md`
+
+### 涉及哪些页面或组件
+
+1. 页面：`/platform/typical-page`
+2. 菜单：`人员全生命周期 - 用户管理`
+
+### 验证结果
+
+1. 已执行 `./node_modules/.bin/eslint apps/web-antd/src/views/platform/typical-page/index.vue`，结果通过。
+2. 已执行 `git diff --check -- apps/web-antd/src/views/platform/typical-page/index.vue`，结果通过。
+3. 已执行 `curl -I http://127.0.0.1:5173/platform/typical-page`，返回 `200 OK`。
+4. 本轮未做截图级浏览器验证，未操作用户系统 Chrome。
+
+### 遗留问题
+
+1. 后续需等待用户提供用户管理原型后，再重新做页面结构分析、组件映射和确认开发。
+2. 旧 `user-demo-source.ts` 当前已不被页面引用，是否删除需等后续原型范围确认。

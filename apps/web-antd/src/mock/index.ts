@@ -1,6 +1,6 @@
-import { DEFAULT_TENANT_ID } from '@vben/constants';
-
 import type { Menu } from '#/api/core/menu';
+
+import { DEFAULT_TENANT_ID } from '@vben/constants';
 
 const MOCK_ACCESS_TOKEN = 'mock-access-token';
 
@@ -11,7 +11,7 @@ function isMockMode() {
 const mockLoginResult = {
   access_token: MOCK_ACCESS_TOKEN,
   client_id: import.meta.env.VITE_GLOB_APP_CLIENT_ID || 'mock-client-id',
-  expire_in: 7_200,
+  expire_in: 7200,
 };
 
 const mockTenantResp = {
@@ -79,6 +79,66 @@ const mockBackendMenuList = [
         },
         name: 'WorkbenchIndex',
         path: '/workbench/index',
+      },
+      {
+        children: [],
+        component: 'project/information/index',
+        hidden: false,
+        meta: {
+          icon: 'lucide:folder-open',
+          noCache: false,
+          title: '项目信息管理',
+        },
+        name: 'ProjectInformation',
+        path: '/project/information',
+      },
+      {
+        children: [],
+        component: 'platform/blank/index',
+        hidden: false,
+        meta: {
+          icon: 'lucide:list-todo',
+          noCache: false,
+          title: '进度可视化跟踪',
+        },
+        name: 'ProjectProgressTracking',
+        path: '/project/progress',
+      },
+      {
+        children: [],
+        component: 'platform/blank/index',
+        hidden: false,
+        meta: {
+          icon: 'lucide:file-signature',
+          noCache: false,
+          title: '合同与付款管理',
+        },
+        name: 'ProjectContractPayment',
+        path: '/project/contract',
+      },
+      {
+        children: [],
+        component: 'platform/blank/index',
+        hidden: false,
+        meta: {
+          icon: 'lucide:files',
+          noCache: false,
+          title: '文档与台账管理',
+        },
+        name: 'ProjectDocumentLedger',
+        path: '/project/document',
+      },
+      {
+        children: [],
+        component: 'platform/blank/index',
+        hidden: false,
+        meta: {
+          icon: 'lucide:clipboard-check',
+          noCache: false,
+          title: '中期评估与验收',
+        },
+        name: 'ProjectEvaluationAcceptance',
+        path: '/project/evaluation',
       },
     ],
     component: 'Layout',
@@ -329,7 +389,7 @@ const mockBackendMenuList = [
 ] satisfies Menu[];
 
 function getMockBackendMenuList() {
-  return JSON.parse(JSON.stringify(mockBackendMenuList)) as Menu[];
+  return structuredClone(mockBackendMenuList) as Menu[];
 }
 
 export {

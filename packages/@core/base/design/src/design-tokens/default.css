@@ -31,9 +31,18 @@
   --st-color-table-tool-bg: 0 0% 100%;
   --st-color-table-tool-border: 146 100% 30% / 30%;
   --st-color-table-tool-icon: 220 8% 28%;
-  --st-color-table-tool-hover-bg: var(--st-color-brand);
-  --st-color-table-tool-hover-border: var(--st-color-brand);
-  --st-color-table-tool-hover-icon: var(--primary-foreground);
+  --st-color-table-tool-hover-bg: var(--st-color-fill-selected);
+  --st-color-table-tool-hover-border: var(--st-color-brand-outline);
+  --st-color-table-tool-hover-icon: var(--st-color-brand);
+  --st-color-table-cell-bg-solid: var(--st-color-card-bg);
+  --st-color-table-cell-bg: var(--st-color-table-cell-bg-solid);
+  --st-color-table-header-bg: var(--st-color-border-subtle);
+  --st-color-table-outline: var(--st-color-border-control);
+  --st-color-table-row-hover-bg-solid: #e5f5ec;
+  --st-color-stat-card-bg: var(--st-color-card-bg);
+  --st-color-stat-card-border: var(--st-color-border-subtle);
+  --st-color-stat-card-text: var(--st-color-text-tertiary);
+  --st-color-stat-card-info: 211 90% 56%;
   --st-color-tree-switcher: var(--st-color-text-tertiary);
   --st-color-warning-action: 71 61% 54%;
   --st-color-more-action: 25 33% 52%;
@@ -45,10 +54,16 @@
   --st-header-logo-width: 360px;
   --st-header-action-size: 36px;
   --st-control-height: 36px;
+  --st-table-action-column-width: 184px;
+  --st-table-edge-cell-padding: 24px;
   --st-table-header-height: 44px;
   --st-table-row-height: 44px;
   --st-tree-node-height: 32px;
   --st-pagination-item-size: 32px;
+  --st-stat-card-icon-box-size: 48px;
+  --st-stat-card-icon-size: 2rem;
+  --st-layout-section-gap: 24px;
+  --st-module-content-padding: 24px;
   --st-search-form-action-gap: 12px;
   --st-search-form-action-margin-top: 0px;
   --st-font-size-sm: 13px;
@@ -58,6 +73,8 @@
   --st-line-height-base: 18px;
   --st-line-height-lg: 24px;
   --st-shadow-card: 0 4px 8px hsl(146 100% 10% / 8%);
+  --st-shadow-stat-card: var(--st-shadow-card);
+  --st-shadow-stat-card-hover: 0 10px 22px hsl(146 100% 10% / 10%);
 
   /* Default background color of <body />...etc */
   --background: 0 0% 100%;

@@ -8,6 +8,7 @@
 | --- | --- | --- | --- |
 | 高 | 明确当前项目目标和业务范围 | 已确认 | 当前已确认按“平台母版 + 真实业务页验证”二者结合推进。 |
 | 高 | 梳理当前技术栈和应用结构 | 部分完成 | 已确认仓库为 `vben-admin-monorepo`，主应用为 `apps/web-antd/src`；已新增平台组件源头，仍需审计真实业务页引用关系。 |
+| 高 | 本地预览快速打开规则 | 已完成 | 默认检查 `5173/5174`，不要把 `5000` 当作项目端口；`pnpm` 不可用时直接在 `apps/web-antd` 使用本地 Vite 二进制启动。 |
 | 高 | 接续文档冲突清理 | 已完成 | 已清理 `AGENTS.md`、`docs/decision-records.md`、`docs/todo-next.md`、`docs/project-log.md` 中的 Git 冲突标记，并合并两条有效历史线。 |
 | 高 | 登录与 Mock 模式进入系统 | 已完成 | 已支持 `VITE_USE_MOCK=true` 下登录、用户信息、权限、菜单、动态路由和刷新保持登录状态。 |
 | 高 | 典型页面驱动平台组件改造一期 | 已完成 | 已新增 `components/platform` 平台薄封装与 `/platform/typical-page` 验证场。 |
@@ -34,11 +35,35 @@
 | 高 | 左侧导航栏源组件样式修正 | 已完成 | 已调整左侧菜单展开态选中背景横向充满、收起态 48px 正方形背景、折叠按钮尺寸/位置/描边和收起态 tooltip 灰色变量。 |
 | 高 | 左侧收起/展开按钮灰色背景变量修正 | 已完成 | 已将折叠按钮默认背景从品牌淡绿色变量改为 `--st-color-border-subtle`，hover 改为 `--st-color-border-control`。 |
 | 高 | 顶部右侧图标按钮 hover 源组件修正 | 已完成 | 已让日程与通知按钮 hover 使用菜单 hover 背景变量，svg 保持白色，并共享头部图标摇铃动画修饰类。 |
+| 高 | 项目总览页工具栏与统计卡平台化最小整改 | 已完成 | 已补组件映射表；`/workbench/index` 项目总览页已接入 `PlatformTableToolbar`；`PlatformStatCard` 背景、边框、文本、info 色和阴影已 token 化。 |
+| 高 | 项目总览页统计卡标题与趋势文字统一 | 已完成 | `PlatformStatCard` 标题已改为黑色变量，趋势文字已统一加粗，项目总览页 5 个统计卡同步生效。 |
+| 高 | 项目总览页统计卡头部下间距移除 | 已完成 | 已删除 `PlatformStatCard` 头部区域 `margin-bottom: 10px;`，保持源组件统一。 |
+| 高 | 项目总览页表格高度浏览器自适应 | 已完成 | `PlatformTable` 默认根据浏览器高度计算表格 body 最大高度，内容超出时表格内部上下滚动，调用方显式传 `scroll.y` 时优先尊重调用方设置。 |
+| 高 | 项目总览页补回右侧全屏工具按钮 | 已完成 | 已恢复 `PlatformTableToolbar` 默认四按钮在项目总览页可见，并接入浏览器 Fullscreen API。 |
+| 高 | 项目总览页搜索框展开高度调整 | 已完成 | `PlatformTableToolbar` 展开搜索框高度已使用 `--st-control-height`，当前为 36px，保持平台组件源头一致。 |
+| 高 | 项目总览页表格工具栏内距与工具间距微调 | 已完成 | `PlatformTableToolbar` 主体内距已是 `10px 12px`，actions / tools 间距已统一为 `12px`，保持平台组件源头一致。 |
+| 高 | 项目总览页统计卡图标尺寸组件化优化 | 已完成 | `PlatformStatCard` 已统一右上角图标外框 48px、内部图标 2rem，并由组件变量和设计 token 驱动，页面不再单独写尺寸。 |
+| 高 | 项目总览页类型/状态表头筛选平台化 | 已完成 | `PlatformTable` 已透传 Antdv Table 原生列筛选并转发 change；项目总览页类型、状态列已使用 `filters` / `filteredValue` / `filterMultiple` 接入表头筛选，工具栏重复筛选已移除。 |
+| 高 | 项目总览页表头筛选全部项与无按钮交互 | 已完成 | `PlatformTable` 已统一 `column.filters` 的平台筛选面板：默认“全部”选中，点击即应用，无“重置 / 确定”按钮，hover/选中背景同为品牌绿 10%。 |
+| 高 | 项目总览页表格工具栏排序与搜索折叠 | 已完成 | `PlatformTableToolbar` 已统一业务主按钮最左、次要按钮随后、搜索/刷新/设置在右侧；搜索改为右侧图标点击展开/收起。 |
+| 高 | 平台表格外描边源组件补充 | 已完成 | 已新增 `--st-color-table-outline`，并在 `PlatformTable` 源组件作用于 `.ant-table-container`，不在当前页面写局部边框。 |
+| 高 | 平台表格边缘列内边距统一 | 已完成 | 已新增 `--st-table-edge-cell-padding: 24px` 和 `--st-table-action-column-width: 184px`，并在 `PlatformTable` 源组件统一首列与操作列左右内边距和默认操作列宽度；已避开 Antdv 表头 scrollbar 占位格，并为固定列自动合成 `scroll.x`。 |
+| 高 | 平台表格横向滚动视觉复核 | 待执行 | 下一轮优先刷新 `/workbench/index` 与 `/project/information`，人工拖动横向滚动条确认表头和表体是否完全同步；如仍抖动，继续排查 Antdv fixed right sticky 重绘。 |
+| 高 | 平台模块默认间距与内容内边距统一 | 已完成 | 已新增 `--st-layout-section-gap: 24px`、`--st-module-content-padding: 24px`，并接入 `Page`、`.platform-surface`、`PlatformTableToolbar`、`PlatformStatCard`、`/workbench/index` 和 `/project/information`；工具栏上下内边距按源组件节奏为 `12px`。 |
+| 高 | 项目信息管理页面第一版 | 已完成 | 已新增 `/project/information`，补齐 `项目全景管理` 左侧菜单；页面使用专用 Mock 数据源，支持搜索、类型/状态表头筛选、新建、编辑、归档、删除和轻量详情入口；`/workbench/index` 仍保留为项目总览。 |
+| 高 | 项目信息管理筛选入口平台化 | 已完成 | 已按用户反馈移除工具栏里的 `全部状态` / `全部类型` 下拉，改为 `项目类型`、`状态` 表头筛选，复用 `PlatformTable` 的“全部”和即时生效规则。 |
+| 高 | 平台表格固定操作列 hover 透明问题 | 已完成 | 已在 `PlatformTable` 源组件修复 fixed 左/右列、`fix-right-first`、`fix-left-last` 的默认、hover、selected 和 `ant-table-cell-row-hover` 状态；将 fixed cell 拆成纯白底层和实心浅绿 hover 层，避免操作列透出下方内容。 |
+| 高 | 左侧导航菜单项高度与左侧距离源组件修正 | 已完成 | 已在 `menu-ui` 源组件将垂直展开态菜单项高度统一为 `52px`，一级菜单内容左侧距离统一为 `24px`；未改当前页面样式，未影响顶部横向菜单和收起态。 |
+| 中 | `PlatformTable` 筛选下拉逻辑整理 | 待处理 | 当前 `PlatformTable` 能力偏多；后续只整理筛选下拉 helper，本轮不拆组件。 |
+| 中 | 表格全屏能力下沉评估 | 待处理 | 当前项目总览页已接入全屏；后续评估沉淀到 `PlatformTableToolbar` 或 `PlatformTable`，本轮不做。 |
+| 中 | 多页面复用后评估 `PlatformEntityCell` | 待观察 | 项目信息业务单元格暂留页面，等多页面复用后再抽。 |
+| 中 | 多页面复用后评估 `PlatformProgress` | 待观察 | 项目进度列暂留页面，等多页面复用后再抽。 |
+| 中 | 多页面复用后评估 `PlatformDescriptions` | 待观察 | 详情抽屉内容暂留页面，等多页面复用后再抽。 |
 | 高 | 设计稿菜单骨架收敛 | 部分完成 | 顶部一级菜单已按设计稿展示；未开发菜单保留独立 path 并复用 Blank；`系统管理 - 用户管理` 已指向 `/platform/typical-page`；仍需修复 `/system/user` 直访问兼容。 |
 | 高 | `/system/user` 直访问兼容 | 待处理 | 当前浏览器直访 `/system/user` 未正确进入原真实页面。下次先排查 access mode、动态路由注入、mock 菜单源与隐藏路由关系，不要直接改 Vben 核心。 |
 | 高 | 旧 `/system/user` 页面解绑 | 已完成 | 已删除旧页面路由入口和页面壳文件，菜单入口已收口到 `/platform/typical-page`，不再把旧页作为本阶段目标。 |
 | 高 | 清理 Git 跟踪依赖产物问题 | 待确认 | 当前仓库存在 `node_modules` 等依赖产物被 Git 跟踪的问题，后续启动开发服务容易产生无意义变更；需用户确认清理范围和 `.gitignore` 策略。 |
-| 高 | 建立业务页面 Mock 数据组织方式 | 待处理 | 后续静态页面数据、表格、新增、编辑、删除、详情、筛选等交互需要统一使用前端 Mock 和本地状态模拟。 |
+| 高 | 建立业务页面 Mock 数据组织方式 | 部分完成 | `/project/information` 已采用页面专用 Mock 数据源和本地状态模拟；后续新增业务页继续沿用“页面专用数据源，后续可切接口”的方式。 |
 | 中 | 将接续文档链接到文档入口 | 待处理 | 可考虑在 `README.md` 或内部文档入口中增加 `AGENTS.md` 和 docs 接续文档说明。 |
 | 中 | 建立平台组件和业务页面的治理规则 | 已建立基础规则 | 已沉淀 ant-design-vue 组件改造默认规则和平台组件源头目录；仍需结合真实页面做迁移治理。 |
 
@@ -46,7 +71,28 @@
 
 | 日期 | 状态 | 说明 |
 | --- | --- | --- |
+| 2026-05-07 | 已收尾 | 已完成今天结束收尾：`docs/project-log.md`、`docs/todo-next.md` 已更新；本轮长期决策已同步到 `docs/decision-records.md` 和 `AGENTS.md`；下一轮优先做 `/workbench/index` 与 `/project/information` 的横向滚动视觉复核。 |
+| 2026-05-07 | 已完成 | 已完成平台表格边缘列内边距统一：新增 `--st-table-edge-cell-padding: 24px` 和 `--st-table-action-column-width: 184px`，并在 `PlatformTable` 源组件统一首列与操作列左右内边距和默认操作列宽度；已修复横向滚动时表头末尾 scrollbar 占位格被误加 padding 导致的错位晃动，并为固定列自动合成 `scroll.x`。 |
+| 2026-05-07 | 已完成 | 已完成平台表格外描边源组件补充：新增 `--st-color-table-outline`，明亮主题取 `--st-color-border-control`、暗色主题取 `--border`，并在 `PlatformTable` 源组件给 `.ant-table-container` 增加外描边。 |
+| 2026-05-07 | 已完成 | 已完成平台模块默认间距与内容内边距统一：新增 24px 间距 token，并接入 `Page`、`.platform-surface`、`PlatformTableToolbar`、`PlatformStatCard`、`/workbench/index` 和 `/project/information`；`PlatformTableToolbar` 上下内边距已按反馈调整为 `12px`，左右保持 `24px`；旧示例/登录/表单内部紧凑间距不纳入本轮清理。 |
+| 2026-05-07 | 已完成 | 已按批注修正左侧导航源组件：垂直展开态菜单项高度 52px，一级菜单左侧距离 24px；`menu-ui` ESLint 和包级 `vue-tsc` 通过，`/project/information` HTTP 检查通过。 |
+| 2026-05-07 | 已完成 | 已修复平台表格固定操作列 hover 透明问题：`PlatformTable` fixed 列补纯白底层与实心 hover 层，并新增 `--st-color-table-cell-bg-solid`、`--st-color-table-row-hover-bg-solid`；目标文件 ESLint、`git diff --check`、`/project/information` 与 `/workbench/index` HTTP 检查通过。 |
+| 2026-05-07 | 已完成 | 已修正项目信息管理筛选入口：类型/状态不再跟随原型放在工具栏，而是进入表头筛选并复用 `PlatformTable` 规则；目标文件 ESLint、`git diff --check` 与 `/project/information` HTTP 检查通过。 |
+| 2026-05-07 | 已完成 | 已完成项目信息管理页面第一版：`/workbench/index` 继续为项目总览，`/project/information` 进入项目信息管理；新建/编辑使用居中 `PlatformModal`，删除/归档有二次确认；目标文件 ESLint、`git diff --check`、两个路由 HTTP 检查通过。 |
+| 2026-05-07 | 已完成 | 已按用户要求清空 `人员全生命周期 - 用户管理` 右侧既有内容；`/platform/typical-page` 现在只保留空 `Page` 承载容器，等待后续原型；目标文件 ESLint、`git diff --check` 与 `/platform/typical-page` HTTP 检查通过。 |
+| 2026-05-07 | 已完成 | 已完成项目总览页统计卡标题与趋势文字统一：`PlatformStatCard` 标题改为黑色变量，趋势文字统一加粗；目标文件 ESLint、`git diff --check` 与 `/workbench/index` HTTP 检查通过。 |
+| 2026-05-07 | 已完成 | 已完成项目总览页统计卡头部下间距移除：删除 `PlatformStatCard` 中 `.platform-stat-card__header` 的 `margin-bottom: 10px;`；目标文件 ESLint、`git diff --check` 与 `/workbench/index` HTTP 检查通过。 |
+| 2026-05-07 | 已完成 | 已完成项目总览页表格高度浏览器自适应：`PlatformTable` 默认计算表格 body 最大高度并合并到 `scroll.y`，内容超出时表格内部滚动；目标文件 ESLint、`git diff --check` 与 `/workbench/index` HTTP 检查通过。 |
+| 2026-05-07 | 已完成 | 已完成项目总览页补回右侧全屏工具按钮：恢复 `PlatformTableToolbar` 默认四按钮可见，并让表格容器接入浏览器 Fullscreen API；目标文件 ESLint、`git diff --check` 与 `/workbench/index` HTTP 检查通过。 |
+| 2026-05-07 | 已完成 | 已完成项目总览页搜索框展开高度调整：`PlatformTableToolbar` 展开搜索框高度使用 `--st-control-height`，当前为 36px；目标文件 ESLint、`git diff --check` 与 `/workbench/index` HTTP 检查通过。 |
+| 2026-05-07 | 已完成 | 已完成项目总览页表格工具栏内距与工具间距微调：`PlatformTableToolbar` 主体 `padding` 保持 `10px 12px`，actions / tools 间距统一到 `12px`；目标文件 ESLint、`git diff --check` 与 `/workbench/index` HTTP 检查通过。 |
+| 2026-05-07 | 已完成 | 已完成项目总览页统计卡图标尺寸组件化优化：`PlatformStatCard` 图标外框默认 48px，内部图标默认 2rem，尺寸进入组件变量和设计 token；目标文件 ESLint、`git diff --check` 与 `/workbench/index` HTTP 检查通过。 |
+| 2026-05-07 | 已完成 | 已完成项目总览页表头筛选全部项与无按钮交互统一：`PlatformTable` 默认加入“全部”，空筛选默认选中全部，筛选项点击即应用，hover/选中背景统一为品牌绿 10%；目标文件 ESLint 通过，`/workbench/index` 返回 200。 |
+| 2026-05-07 | 已完成 | 已完成项目总览页表格工具栏排序与搜索折叠平台化：业务主按钮左置，搜索改为右侧可展开图标，刷新/设置默认无描边 hover 品牌态；`git diff --check` 与目标文件 ESLint 通过，`/workbench/index` 返回 200。 |
+| 2026-05-07 | 已完成 | 已沉淀本地预览快速打开规则：`5000` 不是项目端口，优先使用 `127.0.0.1:5173/5174`；服务未跑时从 `apps/web-antd` 执行 `../../node_modules/.bin/vite --mode development`。 |
+| 2026-05-07 | 已完成 | 已完成项目总览页类型/状态表头筛选平台化：工具栏只保留搜索，`PlatformTable` 转发原生 change 并在组件作用域内统一筛选 icon 样式；`git diff --check` 和目标文件 ESLint 通过。 |
 | 2026-05-07 | 已完成 | 已完成左侧收起/展开按钮灰色背景变量修正；`layout-ui` 包级 `vue-tsc` 通过，`localhost:5173/workbench/index` 返回 200。 |
+| 2026-05-07 | 已完成 | 已完成项目总览页平台组件最小整改：组件映射表已入 `docs/decision-records.md`，页面接入 `PlatformTableToolbar`，统计卡视觉 token 化；`git diff --check` 与目标文件 ESLint 通过，`/workbench/index` 返回 200。 |
 | 2026-05-07 | 已完成 | 已完成顶部右侧日程与通知图标按钮 hover 源组件修正；`layouts` 包级 `vue-tsc` 通过，`localhost:5173/platform/typical-page` 返回 200，截图级验证等待 Browser Use 后端恢复。 |
 | 2026-05-07 | 已完成 | 已完成左侧导航栏源组件样式修正；`menu-ui` 与 `layout-ui` 包级 `vue-tsc` 均通过，`localhost:5173/platform/typical-page` 返回 200。 |
 | 2026-05-07 | 已完成 | 已完成顶部导航栏 Logo 应用名更新：源码配置为“委外项目综合管理平台”，并在启动期覆盖历史偏好缓存；当前 Vite 服务因 `5173` 被占用运行在 `5174`。 |
@@ -81,12 +127,14 @@
 
 1. 用户输入“开工继续”或提出下一个开发需求后，先读取 `AGENTS.md`、`docs/project-log.md`、`docs/decision-records.md`、`docs/todo-next.md`。
 2. 输出项目接续摘要，明确当前项目目标、技术栈、最近完成内容、未完成事项、关键规则和建议执行顺序。
-3. 旧 `/system/user` 页面已解绑并删除壳文件，不再作为当前阶段目标；下次若继续开发，应只围绕 `系统管理 - 用户管理 -> /platform/typical-page`。
-4. 如需继续查看典型页面，先确认当前 Vite 服务端口是否仍在运行；本轮清理后 `5173` 仍可访问，但跨设备或新会话不要假设端口仍可用，应以实际 `lsof` 或新启动结果为准。
-5. 如果继续做更细的浏览器回归，优先在当前 `127.0.0.1:5173/platform/typical-page` 标签继续验证筛选、状态切换、更多菜单、导入导出提示、重置密码弹窗和表格选择。
-6. 继续抽查其他真实业务页，确认是否也已统一接入平台组件和 Vxe 适配层；`system/post`、`system/dept` 已验证，`system/role` 已删除。
+3. 下一轮第一优先级：刷新 `http://127.0.0.1:5173/workbench/index` 和 `http://127.0.0.1:5173/project/information`，人工拖动横向滚动条，确认 `PlatformTable` 表头与表体同步不再抖动。
+4. 同步复核表格视觉：首列边缘留白 24px、操作列左右留白 24px、操作列宽度是否合适、表格外描边是否清晰、fixed 操作列 hover 是否仍为实心背景。
+5. 如横向滚动仍有轻微抖动，继续在 `PlatformTable` 源组件排查 Antdv fixed right / sticky / scrollbar 占位格同步问题，不在 `/workbench/index` 或 `/project/information` 写页面补丁。
+6. 如需继续查看典型页面，先确认当前 Vite 服务端口是否仍在运行；本轮清理后 `5173` 仍可访问，但跨设备或新会话不要假设端口仍可用，应以实际 `lsof` 或新启动结果为准。
+7. 旧 `/system/user` 页面已解绑并删除壳文件，不再作为当前阶段目标；`人员全生命周期 - 用户管理 -> /platform/typical-page` 当前为空承载页，等待用户后续提供原型后再开发。
+8. 继续抽查其他真实业务页，确认是否也已统一接入平台组件和 Vxe 适配层；`system/post`、`system/dept` 已验证，`system/role` 已删除。
 7. Figma MCP Go 已恢复连接；后续如继续做 Figma 对齐，优先读取顶部导航节点 `2045-1586`，对照 `LayoutHeader`、`VbenLogo`、水平 `Menu` 和右侧按钮做节点级尺寸与切图校准。
-8. 对表格 `#toolbar-tools` 中直接手写的 `<a-button>` 建立统一规则：业务功能按钮保留权限和业务逻辑，常规工具按钮统一由平台表格工具栏或 Vxe 适配层承载。
+8. 对表格工具栏继续遵守统一规则：业务主按钮放最左，次要按钮随后；搜索、刷新、设置、全屏等常规工具统一由平台表格工具栏或 Vxe 适配层承载。
 9. 围绕 `/platform/typical-page` 继续做视觉对齐，由用户指出 Button、Table、Tree、Form、Modal、Drawer 等具体样式问题后回到平台组件源头改造。
 10. 如果后续继续统一头部交互态，优先复用 `platform-header-icon-action`，把主题切换、时区等剩余头部图标按钮收口到同一套 hover/focus 规则。
 11. 当前典型页面 Demo 下一步建议：先让用户在 `http://127.0.0.1:5173/platform/typical-page` 上确认第一版真实业务验证场的结构和组件问题。

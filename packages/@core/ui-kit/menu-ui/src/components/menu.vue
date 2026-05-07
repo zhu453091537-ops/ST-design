@@ -568,6 +568,11 @@ $namespace: vben;
   // 垂直菜单
   &.is-vertical {
     &:not(.#{$namespace}-menu.is-collapse) {
+      --menu-item-height: 52px;
+      --menu-item-indent: 24px;
+    }
+
+    &:not(.#{$namespace}-menu.is-collapse) {
       & .#{$namespace}-menu-item,
       & .#{$namespace}-sub-menu-content,
       & .#{$namespace}-menu-item-group__title {
@@ -588,11 +593,11 @@ $namespace: vben;
         }
 
         & > .#{$namespace}-sub-menu-content {
-          padding-left: calc(var(--menu-item-indent) - 8px);
+          padding-left: var(--menu-item-indent);
         }
       }
       & > .#{$namespace}-menu-item {
-        padding-left: calc(var(--menu-item-indent) - 8px);
+        padding-left: var(--menu-item-indent);
       }
     }
   }

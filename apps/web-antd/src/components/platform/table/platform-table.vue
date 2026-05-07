@@ -1,56 +1,125 @@
 <script setup lang="ts">
-import type { TableProps } from 'antdv-next';
+import type { TableEmits, TableProps } from 'antdv-next';
 
-import { computed, useSlots } from 'vue';
+import {
+  computed,
+  defineComponent,
+  h,
+  nextTick,
+  onBeforeUnmount,
+  onMounted,
+  ref,
+  useSlots,
+  type VNodeChild,
+} from 'vue';
 
 import { Table } from 'antdv-next';
+
+type PlatformTableColumn = NonNullable<TableProps['columns']>[number];
+type PlatformTableIndexColumn = Partial<PlatformTableColumn>;
+type PlatformFilterKey = boolean | number | string;
+type PlatformFilterItem = {
+  children?: PlatformFilterItem[];
+  text?: VNodeChild;
+  value?: PlatformFilterKey;
+};
+type PlatformFilterDropdownProps = {
+  close?: () => void;
+  confirm: (param?: { closeDropdown: boolean }) => void;
+  filterMultiple?: boolean;
+  filters?: PlatformFilterItem[];
+  selectedKeys: PlatformFilterKey[];
+  setSelectedKeys: (selectedKeys: PlatformFilterKey[]) => void;
+};
+type PlatformFlattenedFilterItem = {
+  depth: number;
+  label: VNodeChild;
+  value: PlatformFilterKey;
+};
 
 defineOptions({
   inheritAttrs: false,
 });
 
-type PlatformTableColumn = NonNullable<TableProps['columns']>[number];
-type PlatformTableIndexColumn = Partial<PlatformTableColumn>;
-
 const props = withDefaults(
   defineProps<{
+    actionColumnWidth?: number | string;
+    adaptiveHeight?: boolean;
+    adaptiveHeightBottomOffset?: number;
+    adaptiveHeightMin?: number;
     columns?: TableProps['columns'];
     indexColumn?: PlatformTableIndexColumn;
     pagination?: TableProps['pagination'];
+    scroll?: TableProps['scroll'];
     showIndex?: boolean;
   }>(),
   {
+    adaptiveHeight: true,
+    adaptiveHeightBottomOffset: 24,
+    adaptiveHeightMin: 240,
+    actionColumnWidth: 184,
     columns: () => [],
     indexColumn: () => ({}),
+    pagination: undefined,
+    scroll: undefined,
     showIndex: false,
   },
 );
+const emit = defineEmits<{
+  change: Parameters<TableEmits['change']>;
+}>();
+
+const PLATFORM_ALL_FILTER_KEY = '__platform_table_filter_all__';
+const PLATFORM_ALL_FILTER_LABEL = '全部';
 
 const slots = useSlots();
+const tableWrapperRef = ref<HTMLElement>();
+const adaptiveScrollY = ref<number>();
+let resizeObserver: ResizeObserver | undefined;
+let updateFrame = 0;
+
 const passthroughSlotNames = computed(() =>
   Object.keys(slots).filter((name) => name !== 'bodyCell'),
 );
 const mergedColumns = computed(() => {
   const columns = props.columns ?? [];
+  let nextColumns = columns;
+
   if (
-    !props.showIndex ||
-    columns.some((column) => column.key === '__platform_index')
+    props.showIndex &&
+    !columns.some((column) => column.key === '__platform_index')
   ) {
-    return columns;
+    const indexColumn: PlatformTableColumn = {
+      align: 'center',
+      dataIndex: '__platform_index',
+      key: '__platform_index',
+      title: '序号',
+      width: 72,
+      ...props.indexColumn,
+    };
+    nextColumns = [indexColumn, ...columns];
   }
 
-  const indexColumn: PlatformTableColumn = {
-    align: 'center',
-    dataIndex: '__platform_index',
-    key: '__platform_index',
-    title: '序号',
-    width: 72,
-    customRender: ({ index }: { index: number }) =>
-      getPaginationOffset() + index + 1,
-    ...props.indexColumn,
-  };
+  return enhancePlatformColumns(nextColumns);
+});
+const mergedScroll = computed<TableProps['scroll']>(() => {
+  const baseScroll = props.scroll ? { ...props.scroll } : {};
+  const nextScroll = { ...baseScroll };
+  const defaultScrollX = getDefaultScrollX(mergedColumns.value);
 
-  return [indexColumn, ...columns];
+  if (nextScroll.x === undefined && defaultScrollX !== undefined) {
+    nextScroll.x = defaultScrollX;
+  }
+
+  if (
+    props.adaptiveHeight &&
+    nextScroll.y === undefined &&
+    adaptiveScrollY.value !== undefined
+  ) {
+    nextScroll.y = adaptiveScrollY.value;
+  }
+
+  return Object.keys(nextScroll).length > 0 ? nextScroll : undefined;
 });
 
 function getIndexCellValue(index: number) {
@@ -72,28 +141,373 @@ function getPaginationOffset() {
 
   return (Math.max(current, 1) - 1) * Math.max(pageSize, 1);
 }
+
+function handleChange(
+  ...args: Parameters<TableEmits['change']>
+) {
+  emit('change', ...args);
+}
+
+function getElementHeight(selector: string) {
+  const element = tableWrapperRef.value?.querySelector(selector);
+
+  if (!(element instanceof HTMLElement)) {
+    return 0;
+  }
+
+  const rect = element.getBoundingClientRect();
+  const style = window.getComputedStyle(element);
+
+  return (
+    rect.height +
+    Number.parseFloat(style.marginTop || '0') +
+    Number.parseFloat(style.marginBottom || '0')
+  );
+}
+
+function getTableBodyTop() {
+  const body = tableWrapperRef.value?.querySelector('.ant-table-tbody');
+
+  if (body instanceof HTMLElement) {
+    return body.getBoundingClientRect().top;
+  }
+
+  const table = tableWrapperRef.value?.querySelector('.ant-table');
+
+  if (table instanceof HTMLElement) {
+    return table.getBoundingClientRect().top;
+  }
+
+  return tableWrapperRef.value?.getBoundingClientRect().top ?? 0;
+}
+
+function updateAdaptiveHeight() {
+  if (!props.adaptiveHeight || props.scroll?.y !== undefined) {
+    adaptiveScrollY.value = undefined;
+    return;
+  }
+
+  const tableBodyTop = getTableBodyTop();
+  const paginationHeight = getElementHeight('.ant-pagination');
+  const availableHeight =
+    window.innerHeight -
+    tableBodyTop -
+    paginationHeight -
+    props.adaptiveHeightBottomOffset;
+
+  adaptiveScrollY.value = Math.max(
+    props.adaptiveHeightMin,
+    Math.floor(availableHeight),
+  );
+}
+
+function scheduleAdaptiveHeightUpdate() {
+  if (updateFrame) {
+    cancelAnimationFrame(updateFrame);
+  }
+
+  updateFrame = requestAnimationFrame(() => {
+    updateFrame = 0;
+    updateAdaptiveHeight();
+  });
+}
+
+onMounted(() => {
+  nextTick(scheduleAdaptiveHeightUpdate);
+  window.addEventListener('resize', scheduleAdaptiveHeightUpdate);
+
+  if (tableWrapperRef.value && typeof ResizeObserver !== 'undefined') {
+    resizeObserver = new ResizeObserver(scheduleAdaptiveHeightUpdate);
+    resizeObserver.observe(tableWrapperRef.value);
+
+    if (tableWrapperRef.value.parentElement) {
+      resizeObserver.observe(tableWrapperRef.value.parentElement);
+    }
+  }
+});
+
+onBeforeUnmount(() => {
+  window.removeEventListener('resize', scheduleAdaptiveHeightUpdate);
+  resizeObserver?.disconnect();
+
+  if (updateFrame) {
+    cancelAnimationFrame(updateFrame);
+  }
+});
+
+function createPlatformFilterDropdown(column: PlatformTableColumn) {
+  return (dropdownProps: PlatformFilterDropdownProps) =>
+    h(PlatformTableFilterDropdown, {
+      ...dropdownProps,
+      filterMultiple: column.filterMultiple,
+    });
+}
+
+function enhancePlatformColumns(
+  columns: TableProps['columns'],
+): TableProps['columns'] {
+  return (columns ?? []).map((column) => {
+    if ('children' in column && column.children?.length) {
+      return {
+        ...column,
+        children: enhancePlatformColumns(column.children),
+      };
+    }
+
+    const nextColumn = isActionColumn(column)
+      ? appendColumnClass(
+          {
+            ...column,
+            width: props.actionColumnWidth,
+          },
+          'platform-table__action-column',
+        )
+      : column;
+
+    if (!nextColumn.filters?.length || nextColumn.filterDropdown) {
+      return nextColumn;
+    }
+
+    return {
+      ...nextColumn,
+      filterDropdown: createPlatformFilterDropdown(nextColumn),
+    };
+  });
+}
+
+function isActionColumn(column: PlatformTableColumn) {
+  return column.key === 'action' || column.title === '操作';
+}
+
+function appendColumnClass(column: PlatformTableColumn, className: string) {
+  return {
+    ...column,
+    className: [column.className, className].filter(Boolean).join(' '),
+  };
+}
+
+function getDefaultScrollX(columns: TableProps['columns']) {
+  const leafColumns = flattenColumns(columns);
+
+  if (!leafColumns.some((column) => column.fixed)) {
+    return undefined;
+  }
+
+  const totalWidth = leafColumns.reduce(
+    (total, column) => total + getColumnWidth(column),
+    0,
+  );
+
+  return totalWidth > 0 ? totalWidth : 'max-content';
+}
+
+function flattenColumns(
+  columns: TableProps['columns'] | undefined,
+): PlatformTableColumn[] {
+  return (columns ?? []).flatMap((column) =>
+    'children' in column && column.children?.length
+      ? flattenColumns(column.children)
+      : [column],
+  );
+}
+
+function getColumnWidth(column: PlatformTableColumn) {
+  const width = column.width;
+
+  if (typeof width === 'number') {
+    return width;
+  }
+
+  if (typeof width === 'string') {
+    const numericWidth = Number.parseFloat(width);
+    return Number.isFinite(numericWidth) ? numericWidth : 0;
+  }
+
+  return 0;
+}
+
+function flattenFilterItems(
+  filters: PlatformFilterItem[] | undefined,
+  depth = 0,
+): PlatformFlattenedFilterItem[] {
+  return (filters ?? []).flatMap((item, index) => {
+    const value = item.value ?? String(index);
+    const current = {
+      depth,
+      label: item.text ?? value,
+      value,
+    };
+    return [
+      current,
+      ...flattenFilterItems(item.children, depth + 1),
+    ];
+  });
+}
+
+function isSameFilterKey(a: PlatformFilterKey, b: PlatformFilterKey) {
+  return String(a) === String(b);
+}
+
+const PlatformTableFilterDropdown = defineComponent({
+  name: 'PlatformTableFilterDropdown',
+  props: {
+    confirm: {
+      required: true,
+      type: Function,
+    },
+    filterMultiple: {
+      default: false,
+      type: Boolean,
+    },
+    filters: {
+      default: () => [],
+      type: Array,
+    },
+    selectedKeys: {
+      default: () => [],
+      type: Array,
+    },
+    setSelectedKeys: {
+      required: true,
+      type: Function,
+    },
+  },
+  setup(componentProps) {
+    const flatItems = computed(() =>
+      flattenFilterItems(componentProps.filters as PlatformFilterItem[]),
+    );
+    const selectedKeys = computed(() =>
+      (componentProps.selectedKeys as PlatformFilterKey[]).map((key) => key),
+    );
+    const isAllSelected = computed(() => selectedKeys.value.length === 0);
+
+    function applySelectedKeys(keys: PlatformFilterKey[]) {
+      componentProps.setSelectedKeys(keys);
+      componentProps.confirm({
+        closeDropdown: !componentProps.filterMultiple,
+      });
+    }
+
+    function handleItemClick(value: PlatformFilterKey) {
+      if (isSameFilterKey(value, PLATFORM_ALL_FILTER_KEY)) {
+        applySelectedKeys([]);
+        return;
+      }
+
+      if (!componentProps.filterMultiple) {
+        applySelectedKeys([value]);
+        return;
+      }
+
+      const hasValue = selectedKeys.value.some((key) =>
+        isSameFilterKey(key, value),
+      );
+      applySelectedKeys(
+        hasValue
+          ? selectedKeys.value.filter((key) => !isSameFilterKey(key, value))
+          : [...selectedKeys.value, value],
+      );
+    }
+
+    function renderItem(
+      item: PlatformFlattenedFilterItem,
+      active: boolean,
+    ) {
+      return h(
+        'button',
+        {
+          'aria-checked': active,
+          class: [
+            'platform-table-filter-dropdown__item',
+            active && 'platform-table-filter-dropdown__item--active',
+          ],
+          role: componentProps.filterMultiple
+            ? 'menuitemcheckbox'
+            : 'menuitemradio',
+          style: {
+            paddingInlineStart: `${12 + item.depth * 16}px`,
+          },
+          type: 'button',
+          onClick: (event: MouseEvent) => {
+            event.stopPropagation();
+            handleItemClick(item.value);
+          },
+        },
+        [
+          h('span', {
+            class: [
+              'platform-table-filter-dropdown__indicator',
+              active &&
+                'platform-table-filter-dropdown__indicator--active',
+            ],
+          }),
+          h('span', { class: 'platform-table-filter-dropdown__label' }, [
+            item.label,
+          ]),
+        ],
+      );
+    }
+
+    return () => {
+      const items = [
+        {
+          depth: 0,
+          label: PLATFORM_ALL_FILTER_LABEL,
+          value: PLATFORM_ALL_FILTER_KEY,
+        },
+        ...flatItems.value,
+      ];
+
+      return h(
+        'div',
+        {
+          class: 'platform-table-filter-dropdown',
+          role: 'menu',
+        },
+        items.map((item) =>
+          renderItem(
+            item,
+            isSameFilterKey(item.value, PLATFORM_ALL_FILTER_KEY)
+              ? isAllSelected.value
+              : selectedKeys.value.some((key) =>
+                  isSameFilterKey(key, item.value),
+                ),
+          ),
+        ),
+      );
+    };
+  },
+});
 </script>
 
 <template>
-  <Table
-    v-bind="$attrs"
-    class="platform-table"
-    :columns="mergedColumns"
-    :pagination="pagination"
-  >
-    <template #bodyCell="slotProps">
-      <template v-if="slotProps.column?.key === '__platform_index'">
-        {{ getIndexCellValue(slotProps.index) }}
+  <div ref="tableWrapperRef" class="platform-table-wrapper">
+    <Table
+      v-bind="$attrs"
+      class="platform-table"
+      :columns="mergedColumns"
+      :pagination="pagination"
+      :scroll="mergedScroll"
+      @change="handleChange"
+    >
+      <template #bodyCell="slotProps">
+        <template v-if="slotProps.column?.key === '__platform_index'">
+          {{ getIndexCellValue(slotProps.index) }}
+        </template>
+        <slot v-else name="bodyCell" v-bind="slotProps || {}"></slot>
       </template>
-      <slot v-else name="bodyCell" v-bind="slotProps || {}"></slot>
-    </template>
-    <template v-for="name in passthroughSlotNames" #[name]="slotProps">
-      <slot :name="name" v-bind="slotProps || {}"></slot>
-    </template>
-  </Table>
+      <template v-for="name in passthroughSlotNames" #[name]="slotProps">
+        <slot :name="name" v-bind="slotProps || {}"></slot>
+      </template>
+    </Table>
+  </div>
 </template>
 
 <style scoped>
+.platform-table-wrapper {
+  min-height: 0;
+}
+
 .platform-table {
   width: 100%;
 }
@@ -102,7 +516,184 @@ function getPaginationOffset() {
   border-radius: var(--st-radius-card);
 }
 
+.platform-table :deep(.ant-table-container) {
+  overflow: hidden;
+  border: 1px solid hsl(var(--st-color-table-outline));
+  border-radius: var(--st-radius-card);
+}
+
 .platform-table :deep(.ant-table-thead > tr > th) {
   font-weight: 500;
+}
+
+.platform-table :deep(.ant-table-thead > tr > th:first-child),
+.platform-table :deep(.ant-table-tbody > tr > td:first-child),
+.platform-table :deep(.platform-table__action-column) {
+  padding-inline: var(--st-table-edge-cell-padding);
+}
+
+.platform-table :deep(.ant-table-cell-fix),
+.platform-table :deep(.ant-table-cell-fix-left),
+.platform-table :deep(.ant-table-cell-fix-right),
+.platform-table :deep(.ant-table-cell-fix-left-last),
+.platform-table :deep(.ant-table-cell-fix-right-first) {
+  isolation: isolate;
+  z-index: 30 !important;
+  overflow: hidden;
+  background: hsl(var(--st-color-table-cell-bg-solid)) !important;
+  background-color: hsl(var(--st-color-table-cell-bg-solid)) !important;
+  background-clip: padding-box;
+  background-image: none !important;
+}
+
+.platform-table :deep(.ant-table-thead > tr > th.ant-table-cell-fix),
+.platform-table :deep(.ant-table-thead > tr > th.ant-table-cell-fix-left),
+.platform-table :deep(.ant-table-thead > tr > th.ant-table-cell-fix-right),
+.platform-table :deep(.ant-table-thead > tr > th.ant-table-cell-fix-left-last),
+.platform-table :deep(.ant-table-thead > tr > th.ant-table-cell-fix-right-first) {
+  z-index: 31 !important;
+  background: hsl(var(--st-color-table-header-bg)) !important;
+  background-color: hsl(var(--st-color-table-header-bg)) !important;
+  background-image: none !important;
+}
+
+.platform-table
+  :deep(.ant-table-tbody > tr.ant-table-row:hover > td.ant-table-cell-fix),
+.platform-table
+  :deep(.ant-table-tbody > tr.ant-table-row:hover > td.ant-table-cell-fix-left),
+.platform-table
+  :deep(.ant-table-tbody > tr.ant-table-row:hover > td.ant-table-cell-fix-right),
+.platform-table
+  :deep(.ant-table-tbody > tr.ant-table-row:hover > td.ant-table-cell-fix-left-last),
+.platform-table
+  :deep(.ant-table-tbody > tr.ant-table-row:hover > td.ant-table-cell-fix-right-first),
+.platform-table
+  :deep(.ant-table-tbody > tr > td.ant-table-cell-fix.ant-table-cell-row-hover),
+.platform-table
+  :deep(.ant-table-tbody > tr > td.ant-table-cell-fix-left.ant-table-cell-row-hover),
+.platform-table
+  :deep(.ant-table-tbody > tr > td.ant-table-cell-fix-right.ant-table-cell-row-hover),
+.platform-table
+  :deep(.ant-table-tbody > tr > td.ant-table-cell-fix-left-last.ant-table-cell-row-hover),
+.platform-table
+  :deep(.ant-table-tbody > tr > td.ant-table-cell-fix-right-first.ant-table-cell-row-hover),
+.platform-table
+  :deep(
+    .ant-table-tbody
+      > tr.ant-table-row-selected
+      > td.ant-table-cell-fix
+  ),
+.platform-table
+  :deep(
+    .ant-table-tbody
+      > tr.ant-table-row-selected
+      > td.ant-table-cell-fix-left
+  ),
+.platform-table
+  :deep(
+    .ant-table-tbody
+      > tr.ant-table-row-selected
+      > td.ant-table-cell-fix-right
+  ) {
+  z-index: 32 !important;
+  background: var(--st-color-table-row-hover-bg-solid) !important;
+  background-color: var(--st-color-table-row-hover-bg-solid) !important;
+  background-image: none !important;
+}
+
+.platform-table :deep(.ant-table-filter-column) {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  max-width: 100%;
+}
+
+.platform-table :deep(.ant-table-filter-column-title) {
+  flex: none;
+}
+
+.platform-table :deep(.ant-table-filter-trigger) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  margin-inline-start: 2px;
+  color: hsl(var(--st-color-text-tertiary));
+  border-radius: var(--st-radius-control);
+  transition:
+    color 0.16s ease,
+    background-color 0.16s ease;
+}
+
+.platform-table :deep(.ant-table-filter-trigger:hover),
+.platform-table :deep(.ant-table-filter-trigger.active) {
+  color: hsl(var(--primary));
+  background: hsl(var(--st-color-fill-selected));
+}
+
+:global(.platform-table-filter-dropdown) {
+  min-width: 168px;
+  max-height: 320px;
+  padding: 6px;
+  overflow-y: auto;
+}
+
+:global(.platform-table-filter-dropdown__item) {
+  display: flex;
+  width: 100%;
+  height: 36px;
+  align-items: center;
+  gap: 10px;
+  padding: 0 12px;
+  color: hsl(var(--foreground));
+  font-size: var(--st-font-size-base);
+  line-height: var(--st-line-height-base);
+  text-align: left;
+  cursor: pointer;
+  background: transparent;
+  border: 0;
+  border-radius: var(--st-radius-control);
+  transition:
+    color 0.16s ease,
+    background-color 0.16s ease;
+}
+
+:global(.platform-table-filter-dropdown__item:hover),
+:global(.platform-table-filter-dropdown__item--active) {
+  background: hsl(var(--st-color-fill-selected));
+}
+
+:global(.platform-table-filter-dropdown__indicator) {
+  position: relative;
+  display: inline-flex;
+  flex: none;
+  width: 16px;
+  height: 16px;
+  background: hsl(var(--background));
+  border: 1px solid hsl(var(--st-color-border-control));
+  border-radius: 999px;
+  transition:
+    background-color 0.16s ease,
+    border-color 0.16s ease;
+}
+
+:global(.platform-table-filter-dropdown__indicator--active) {
+  border-color: hsl(var(--primary));
+}
+
+:global(.platform-table-filter-dropdown__indicator--active::after) {
+  position: absolute;
+  inset: 4px;
+  content: '';
+  background: hsl(var(--primary));
+  border-radius: inherit;
+}
+
+:global(.platform-table-filter-dropdown__label) {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 </style>

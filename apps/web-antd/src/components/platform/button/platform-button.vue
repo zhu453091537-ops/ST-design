@@ -18,7 +18,8 @@ withDefaults(
 <template>
   <Button
     v-bind="$attrs"
-    :class="['platform-button', `platform-button--${scene}`]"
+    class="platform-button"
+    :class="`platform-button--${scene}`"
   >
     <template v-for="(_, name) in $slots" #[name]="slotProps">
       <slot :name="name" v-bind="slotProps || {}"></slot>
@@ -64,8 +65,8 @@ withDefaults(
 .platform-button--toolbar.ant-btn-circle {
   min-width: var(--st-control-height);
   color: hsl(var(--st-color-table-tool-icon));
-  background: hsl(var(--st-color-table-tool-bg));
-  border-color: hsl(var(--st-color-table-tool-border));
+  background: hsl(var(--background));
+  border-color: hsl(0 0% 0% / 0);
 }
 
 .platform-button--toolbar.ant-btn-circle:not(:disabled):not(
@@ -95,5 +96,23 @@ withDefaults(
 
 .platform-button--action {
   padding-inline: 0;
+  text-decoration: none;
+  text-underline-offset: 3px;
+}
+
+.platform-button--action:not(:disabled):not(.ant-btn-disabled):hover,
+.platform-button--action:not(:disabled):not(.ant-btn-disabled):focus-visible {
+  text-decoration: underline;
+  background: transparent;
+}
+
+.platform-button--action.ant-btn-dangerous,
+.platform-button--action.ant-btn-dangerous:not(:disabled):not(
+    .ant-btn-disabled
+  ):hover,
+.platform-button--action.ant-btn-dangerous:not(:disabled):not(
+    .ant-btn-disabled
+  ):focus-visible {
+  color: hsl(var(--st-color-danger)) !important;
 }
 </style>

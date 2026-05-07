@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { TableProps } from 'antdv-next';
+import type { TableEmits, TableProps } from 'antdv-next';
 
 import type {
   ProjectOverviewQuery,
@@ -21,11 +21,11 @@ import {
   PlatformFormItem,
   PlatformInput,
   PlatformModal,
-  PlatformSearchForm,
   PlatformSelect,
-  PlatformStatusTag,
   PlatformStatCard,
+  PlatformStatusTag,
   PlatformTable,
+  PlatformTableToolbar,
 } from '#/components/platform';
 
 import {
@@ -53,7 +53,8 @@ const loading = ref(false);
 const saving = ref(false);
 const formOpen = ref(false);
 const detailOpen = ref(false);
-const currentRecord = ref<ProjectRecord | null>(null);
+const currentRecord = ref<null | ProjectRecord>(null);
+const projectListPanelRef = ref<HTMLElement>();
 
 const tableColumns = computed<TableProps['columns']>(() => [
   {
@@ -64,6 +65,11 @@ const tableColumns = computed<TableProps['columns']>(() => [
   },
   {
     dataIndex: 'type',
+    filterMultiple: false,
+    filteredValue: query.type ? [query.type] : null,
+    filters: projectTypeOptions
+      .filter((item) => item.value)
+      .map((item) => ({ text: item.label, value: item.value })),
     key: 'type',
     title: '类型',
     width: 120,
@@ -100,6 +106,11 @@ const tableColumns = computed<TableProps['columns']>(() => [
   },
   {
     dataIndex: 'status',
+    filterMultiple: false,
+    filteredValue: query.status ? [query.status] : null,
+    filters: projectStatusOptions
+      .filter((item) => item.value)
+      .map((item) => ({ text: item.label, value: item.value })),
     key: 'status',
     title: '状态',
     width: 110,
@@ -138,8 +149,44 @@ async function handleSearch() {
   await loadOverview();
 }
 
+async function handleTableChange(
+  ...args: Parameters<TableEmits['change']>
+) {
+  const [, filters] = args;
+  query.type = getFirstFilterValue(filters.type);
+  query.status = getFirstFilterValue(filters.status) as '' | ProjectStatus;
+  await loadOverview();
+}
+
 function handleBoardEntry() {
   window.message.info('进度看板入口已保留，后续确认页面后再接入路由。');
+}
+
+function handleExport() {
+  window.message.info('导出入口已保留，后续确认接口后再接入。');
+}
+
+function handleTableSetting() {
+  window.message.info('表格设置入口已保留，后续按列配置方案接入。');
+}
+
+async function handleTableFullscreen() {
+  const panel = projectListPanelRef.value;
+
+  if (!panel) {
+    return;
+  }
+
+  try {
+    if (document.fullscreenElement) {
+      await document.exitFullscreen();
+      return;
+    }
+
+    await panel.requestFullscreen();
+  } catch {
+    window.message.warning('当前浏览器暂不支持全屏展示。');
+  }
 }
 
 function handleAdd() {
@@ -219,6 +266,13 @@ function getStatusMeta(status: ProjectStatus) {
   return projectStatusMap[status];
 }
 
+function getFirstFilterValue(value: unknown) {
+  if (Array.isArray(value)) {
+    return String(value[0] ?? '');
+  }
+  return '';
+}
+
 function toProjectRecord(record: unknown) {
   return record as ProjectRecord;
 }
@@ -241,12 +295,6 @@ onMounted(loadOverview);
             </template>
             查看进度看板
           </PlatformButton>
-          <PlatformButton type="primary" @click="handleAdd">
-            <template #icon>
-              <VbenIcon icon="lucide:plus" />
-            </template>
-            新建项目
-          </PlatformButton>
         </Space>
       </header>
 
@@ -258,50 +306,30 @@ onMounted(loadOverview);
         />
       </section>
 
-      <section class="platform-surface project-list-panel">
-        <div class="project-list-toolbar">
-          <h2 class="project-list-title">项目列表</h2>
-          <PlatformSearchForm
-            :model="query"
-            class="project-filter-form"
-            layout="inline"
-          >
-            <div class="project-filter-group">
-              <PlatformFormItem class="project-filter-item">
-                <PlatformInput
-                  v-model:value="query.keyword"
-                  allow-clear
-                  class="project-filter-input"
-                  placeholder="搜索项目名称 / 编号 / 负责人"
-                  @change="handleSearch"
-                  @press-enter="handleSearch"
-                >
-                  <template #prefix>
-                    <VbenIcon icon="lucide:search" />
-                  </template>
-                </PlatformInput>
-              </PlatformFormItem>
-              <PlatformFormItem class="project-filter-item">
-                <PlatformSelect
-                  v-model:value="query.status"
-                  :options="projectStatusOptions"
-                  class="project-filter-select"
-                  :width="84"
-                  @change="handleSearch"
-                />
-              </PlatformFormItem>
-              <PlatformFormItem class="project-filter-item">
-                <PlatformSelect
-                  v-model:value="query.type"
-                  :options="projectTypeOptions"
-                  class="project-filter-select"
-                  :width="128"
-                  @change="handleSearch"
-                />
-              </PlatformFormItem>
-            </div>
-          </PlatformSearchForm>
-        </div>
+      <section ref="projectListPanelRef" class="platform-surface project-list-panel">
+        <PlatformTableToolbar
+          v-model:search-value="query.keyword"
+          search-placeholder="搜索项目名称 / 编号 / 负责人"
+          @fullscreen="handleTableFullscreen"
+          @refresh="handleSearch"
+          @search="handleSearch"
+          @setting="handleTableSetting"
+        >
+          <template #actions>
+            <PlatformButton scene="toolbar" type="primary" @click="handleAdd">
+              <template #icon>
+                <VbenIcon icon="lucide:plus" />
+              </template>
+              新建项目
+            </PlatformButton>
+            <PlatformButton scene="toolbar" @click="handleExport">
+              <template #icon>
+                <VbenIcon icon="lucide:download" />
+              </template>
+              导出
+            </PlatformButton>
+          </template>
+        </PlatformTableToolbar>
 
         <PlatformTable
           :columns="tableColumns"
@@ -310,6 +338,7 @@ onMounted(loadOverview);
           :pagination="pagination"
           row-key="id"
           size="middle"
+          @change="handleTableChange"
         >
           <template #bodyCell="{ column, record }">
             <template v-if="column.key === 'project'">
@@ -515,7 +544,7 @@ onMounted(loadOverview);
 .project-overview-page {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: var(--st-layout-section-gap);
   min-height: 100%;
 }
 
@@ -544,53 +573,12 @@ onMounted(loadOverview);
 .project-stat-grid {
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 12px;
+  gap: var(--st-layout-section-gap);
 }
 
-.project-list-panel {
-  padding: 16px;
-}
-
-.project-list-toolbar {
-  display: flex;
-  width: 100%;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  margin-bottom: 14px;
-  overflow: hidden;
-}
-
-.project-filter-form {
-  display: flex;
-  flex: 1;
-  justify-content: flex-end;
-  margin-left: auto;
-  min-width: 0;
-}
-
-.project-filter-item {
-  margin-bottom: 0;
-}
-
-.project-filter-group {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  min-width: 0;
-  max-width: 100%;
-}
-
-.project-list-title {
-  flex: none;
-  margin: 0;
-  font-size: 16px;
-  font-weight: 700;
-  line-height: var(--st-control-height);
-}
-
-.project-filter-input {
-  width: 280px;
+.project-list-panel:fullscreen {
+  overflow: auto;
+  background: hsl(var(--st-color-card-bg));
 }
 
 .project-info-cell {
@@ -667,8 +655,7 @@ onMounted(loadOverview);
 }
 
 @media (max-width: 960px) {
-  .project-overview-header,
-  .project-list-toolbar {
+  .project-overview-header {
     align-items: stretch;
     flex-direction: column;
   }
@@ -678,18 +665,5 @@ onMounted(loadOverview);
     grid-template-columns: 1fr;
   }
 
-  .project-filter-form {
-    width: 100%;
-  }
-
-  .project-filter-group {
-    align-items: stretch;
-    flex-direction: column;
-  }
-
-  .project-filter-input,
-  .project-filter-select {
-    width: 100%;
-  }
 }
 </style>

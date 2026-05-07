@@ -415,6 +415,7 @@ body {
 }
 
 .platform-surface {
+  padding: var(--st-module-content-padding);
   background: hsl(var(--card));
   border-radius: var(--st-radius-card);
   box-shadow: var(--st-shadow-card);

@@ -108,9 +108,14 @@
   --st-color-table-tool-bg: 146 100% 30% / 16%;
   --st-color-table-tool-border: 146 100% 30% / 40%;
   --st-color-table-tool-icon: var(--st-color-brand);
-  --st-color-table-tool-hover-bg: var(--st-color-brand);
-  --st-color-table-tool-hover-border: var(--st-color-brand);
-  --st-color-table-tool-hover-icon: var(--primary-foreground);
+  --st-color-table-tool-hover-bg: var(--st-color-fill-selected);
+  --st-color-table-tool-hover-border: var(--st-color-brand-outline);
+  --st-color-table-tool-hover-icon: var(--st-color-brand);
+  --st-color-table-cell-bg-solid: var(--card);
+  --st-color-table-cell-bg: var(--st-color-table-cell-bg-solid);
+  --st-color-table-header-bg: var(--st-color-border-subtle);
+  --st-color-table-outline: var(--border);
+  --st-color-table-row-hover-bg-solid: #20362a;
 
   color-scheme: dark;
 }

@@ -86,7 +86,7 @@ onMounted(() => {
       </div>
     </div>
 
-    <div :class="cn('h-full p-4', contentClass)" :style="contentStyle">
+    <div :class="cn('st-page-content h-full', contentClass)" :style="contentStyle">
       <slot></slot>
     </div>
     <div
@@ -98,3 +98,9 @@ onMounted(() => {
     </div>
   </div>
 </template>
+
+<style scoped>
+.st-page-content {
+  padding: var(--st-module-content-padding);
+}
+</style>
