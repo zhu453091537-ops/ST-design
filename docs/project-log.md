@@ -807,6 +807,7 @@ Figma MCP Go 连接规则沉淀与典型页面 Demo 一期审计方案
 
 ### 任务名称
 
+<<<<<<< HEAD
 典型页面驱动平台组件改造一期
 
 ### 完成内容
@@ -847,10 +848,37 @@ Figma MCP Go 连接规则沉淀与典型页面 Demo 一期审计方案
 1. 页面：`/platform/typical-page`
 2. 组件：PlatformButton、PlatformTable、PlatformTree、PlatformSearchForm、PlatformEditForm、PlatformFormItem、PlatformInput、PlatformSelect、PlatformDatePicker、PlatformModal、PlatformDrawer、PlatformStatusTag
 3. 菜单：Mock 模式下新增“平台组件 / 典型页面验证场”
+=======
+处理登录与 Mock 模式进入系统问题
+
+### 完成内容
+
+1. 排查登录链路，确认当前阶段进系统的关键风险集中在 Mock 菜单为空、后端菜单不可用时动态路由无法稳定承载静态页面开发。
+2. 保留登录页和既有登录流程，沿用 `VITE_USE_MOCK=true` 作为 Mock 模式开关。
+3. 在 Mock 模式下补齐假 token、假用户信息、假角色权限、假菜单和动态路由所需数据。
+4. 调整 Mock 菜单接口，Mock 模式下不请求真实 `/system/menu/getRouters`。
+5. 修复后端菜单转路由时绝对子路由被重复拼接父路径的问题，避免 `/analytics` 被错误拼成 `/dashboard//analytics`。
+6. 将 Mock 菜单返回改为深拷贝，避免运行时路由转换污染原始 Mock 菜单数据。
+7. 启动本地 Vite 服务，并在浏览器中验证登录、刷新、菜单与路由切换流程。
+
+### 修改了哪些文件
+
+1. `apps/web-antd/src/mock/index.ts`
+2. `apps/web-antd/src/api/core/menu.ts`
+3. `apps/web-antd/src/router/access.ts`
+
+### 涉及哪些页面或组件
+
+1. 登录页：`/auth/login`
+2. 分析页：`/analytics`
+3. 工作台：`/workspace`
+4. 系统基础布局：顶部导航、左侧菜单、标签页、页面容器
+>>>>>>> origin/codex/ye'mian
 
 ### 验证结果
 
 1. 已执行 `git diff --check`，结果通过。
+<<<<<<< HEAD
 2. 已执行 `./node_modules/.bin/vue-tsc --noEmit --skipLibCheck -p apps/web-antd/tsconfig.json`，本次新增典型页面与平台组件相关类型错误已处理；命令仍失败于项目既有类型错误。
 3. 已启动本地 Vite 服务，端口 `5666` 被占用后自动使用 `http://127.0.0.1:5667/`。
 4. 已执行浏览器验证：登录后可打开 `/platform/typical-page`，页面渲染 5 条 Mock 数据，无 Vite 错误遮罩。
@@ -876,10 +904,34 @@ Figma 典型页面全局样式与导航表格源组件改造
 5. 新增 `PlatformTableToolbar`，将表格常规功能入口设置、刷新、搜索、全屏沉淀到平台源组件。
 6. 根据用户反馈调整筛选区“收起”按钮为无描边样式，调整表格四个圆形功能按钮默认白底弱边框、hover 进入品牌态。
 7. 同步 Vxe Grid 表格、工具栏和分页的全局样式变量，避免真实业务页与 Antdv Table 视觉割裂。
+=======
+2. 已执行浏览器验证：登录页可打开，输入账号密码后可进入系统，刷新后仍保持登录状态。
+3. 已验证 `/analytics` 和 `/workspace` 可以正常打开和切换。
+4. 已确认 Mock 模式下没有因真实后端接口不可用而阻塞进入系统。
+5. `vue-tsc --noEmit --skipLibCheck` 仍存在项目既有类型错误，和本次登录 Mock 改动无关。
+
+### 遗留问题
+
+1. 仓库当前存在 `node_modules`、Vite 缓存等依赖产物被 Git 跟踪的问题，后续建议单独清理。
+2. 后续新增业务页面仍需继续补充页面级 Mock 数据和前端模拟交互。
+3. 平台组件边界和业务页面组件引用关系仍需继续审计。
+
+### 任务名称
+
+本轮收尾与 Mock 登录阶段接续更新
+
+### 完成内容
+
+1. 按“今天结束”流程更新 `docs/project-log.md` 和 `docs/todo-next.md`。
+2. 将“当前阶段默认使用 Mock 登录与前端静态数据，不被真实后端接口阻塞”沉淀为关键决策。
+3. 将前端静态页面与 Mock 模式规则同步到 `AGENTS.md`，作为后续开发默认约束。
+4. 明确下次接续重点：继续做静态页面开发前，先处理或确认 Git 跟踪依赖产物问题，再审计平台组件和页面 Mock 数据组织方式。
+>>>>>>> origin/codex/ye'mian
 
 ### 修改了哪些文件
 
 1. `AGENTS.md`
+<<<<<<< HEAD
 2. `apps/web-antd/src/preferences.ts`
 3. `apps/web-antd/src/layouts/basic.vue`
 4. `apps/web-antd/src/components/platform/button/platform-button.vue`
@@ -1189,3 +1241,22 @@ Figma 截图驱动顶部导航栏源组件样式改造
 1. Figma MCP Go 当前未连接，未能通过 MCP 读取节点结构、截图和切图资源；后续需要在 MCP 显示 connected 后补一次精确节点校准。
 2. 本次只处理顶部导航栏源组件视觉，不处理左侧菜单、树筛选、表格、查询区的进一步视觉差异。
 3. Vite 构建产生的 `apps/web-antd/dist` 与 `apps/web-antd/dist.zip` 是临时产物；本次尝试删除时审批服务 503，暂未删除，后续需要清理。
+=======
+2. `docs/project-log.md`
+3. `docs/decision-records.md`
+4. `docs/todo-next.md`
+
+### 涉及哪些页面或组件
+
+无。此次为本轮收尾与文档接续更新，不新增页面、组件或运行时代码。
+
+### 验证结果
+
+收尾后执行 `git diff --check`，用于检查文档修改是否存在空白或格式问题。
+
+### 遗留问题
+
+1. 依赖产物被 Git 跟踪的问题尚未处理，需用户确认后单独清理。
+2. 尚未建立统一的业务页面 Mock 数据目录和交互模拟规范。
+3. 尚未完成平台组件引用关系审计。
+>>>>>>> origin/codex/ye'mian
