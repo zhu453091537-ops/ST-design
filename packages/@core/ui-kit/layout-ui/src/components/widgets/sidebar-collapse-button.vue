@@ -10,29 +10,29 @@ function handleCollapsed() {
 
 <template>
   <div
-    class="vben-sidebar-collapse-button absolute bottom-2 left-3 z-10 flex-center cursor-pointer p-1"
+    :class="collapsed ? 'left-2' : 'right-3'"
+    class="vben-sidebar-collapse-button absolute bottom-2 z-10 flex-center cursor-pointer"
     @click.stop="handleCollapsed"
   >
-    <ChevronsRight v-if="collapsed" class="size-4" />
-    <ChevronsLeft v-else class="size-4" />
+    <ChevronsRight v-if="collapsed" class="size-[18px]" />
+    <ChevronsLeft v-else class="size-[18px]" />
   </div>
 </template>
 
 <style scoped>
 .vben-sidebar-collapse-button {
+  width: 32px;
+  height: 32px;
   color: hsl(var(--st-color-text-tertiary));
-  background: hsl(var(--st-color-fill-selected));
-  border: 1px solid hsl(var(--st-color-brand-outline));
+  background: hsl(var(--st-color-border-subtle));
   border-radius: var(--st-radius-control);
   transition:
     color 0.16s ease,
-    background-color 0.16s ease,
-    border-color 0.16s ease;
+    background-color 0.16s ease;
 }
 
 .vben-sidebar-collapse-button:hover {
-  color: hsl(var(--primary));
-  background: hsl(var(--primary) / 14%);
-  border-color: hsl(var(--primary) / 45%);
+  color: hsl(var(--st-color-text-secondary));
+  background: hsl(var(--st-color-border-control));
 }
 </style>

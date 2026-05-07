@@ -456,9 +456,10 @@ $namespace: vben;
   --menu-item-popup-padding-x: 12px;
   --menu-item-margin-y: 2px;
   --menu-item-margin-x: 0px;
-  --menu-item-collapse-padding-y: 23.5px;
+  --menu-item-collapse-size: 48px;
+  --menu-item-collapse-padding-y: 0px;
   --menu-item-collapse-padding-x: 0px;
-  --menu-item-collapse-margin-y: 4px;
+  --menu-item-collapse-margin-y: 0px;
   --menu-item-collapse-margin-x: 0px;
   --menu-item-radius: var(--st-radius-menu, 4px);
   --menu-item-indent: 16px;
@@ -499,6 +500,11 @@ $namespace: vben;
     --menu-item-margin-x: 8px;
     --menu-item-collapse-margin-x: 6px;
     --menu-item-radius: var(--st-radius-menu, 4px);
+  }
+
+  &.is-vertical.is-rounded {
+    --menu-item-margin-x: 0px;
+    --menu-item-collapse-margin-x: 0px;
   }
 
   &.is-horizontal:not(.is-rounded) {
@@ -681,6 +687,8 @@ $namespace: vben;
   // 折叠菜单
 
   &.is-collapse {
+    --menu-item-height: var(--menu-item-collapse-size);
+
     .#{$namespace}-menu__icon {
       margin-right: 0;
     }
@@ -720,10 +728,19 @@ $namespace: vben;
       .#{$namespace}-menu-item {
         &.is-collapse-show-title {
           // padding: 32px 0 !important;
-          margin: 4px 8px !important;
+          margin: 0 !important;
         }
       }
     }
+  }
+
+  &-tooltip__content {
+    color: hsl(var(--st-color-tooltip-fg, 0 0% 100%)) !important;
+    background: hsl(
+      var(--st-color-tooltip-bg, var(--st-color-text-secondary))
+    ) !important;
+    border-color: transparent !important;
+    box-shadow: 0 8px 20px hsl(var(--st-color-text-primary) / 16%);
   }
 
   &__popup-container {

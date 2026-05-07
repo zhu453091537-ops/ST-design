@@ -70,12 +70,12 @@ const mockBackendMenuList = [
     children: [
       {
         children: [],
-        component: 'platform/blank/index',
+        component: 'project/overview/index',
         hidden: false,
         meta: {
           icon: 'lucide:layout-dashboard',
           noCache: false,
-          title: '空白占位',
+          title: '项目总览',
         },
         name: 'WorkbenchIndex',
         path: '/workbench/index',

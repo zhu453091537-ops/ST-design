@@ -4,5 +4,6 @@ export * from './field';
 export * from './form';
 export * from './modal';
 export * from './status';
+export * from './stat';
 export * from './table';
 export * from './tree';

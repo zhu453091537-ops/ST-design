@@ -60,7 +60,9 @@ function handleClick(item: NotificationItem) {
   <VbenPopover v-model:open="open" content-class="relative right-2 w-90 p-0">
     <template #trigger>
       <div class="mr-1 flex-center h-full" @click.stop="toggle()">
-        <VbenIconButton class="platform-header-icon-action bell-button relative text-foreground">
+        <VbenIconButton
+          class="platform-header-icon-action platform-header-icon-action--ring relative text-foreground"
+        >
           <span v-if="dot" class="absolute top-0.5 right-0.5 size-2 rounded-sm bg-primary"></span>
           <Bell class="size-5" />
         </VbenIconButton>
@@ -133,40 +135,3 @@ function handleClick(item: NotificationItem) {
     </div>
   </VbenPopover>
 </template>
-
-<style scoped>
-:deep(.bell-button) {
-  &:hover {
-    svg {
-      animation: bell-ring 1s both;
-    }
-  }
-}
-
-@keyframes bell-ring {
-  0%,
-  100% {
-    transform-origin: top;
-  }
-
-  15% {
-    transform: rotateZ(10deg);
-  }
-
-  30% {
-    transform: rotateZ(-10deg);
-  }
-
-  45% {
-    transform: rotateZ(5deg);
-  }
-
-  60% {
-    transform: rotateZ(-5deg);
-  }
-
-  75% {
-    transform: rotateZ(2deg);
-  }
-}
-</style>

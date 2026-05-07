@@ -109,7 +109,7 @@ onBeforeUnmount(() => {
     >
       <VbenTooltip
         v-if="showTooltip"
-        :content-class="[rootMenu.theme]"
+        :content-class="[rootMenu.theme, nsMenu.be('tooltip', 'content')]"
         side="right"
       >
         <template #trigger>

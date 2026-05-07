@@ -135,7 +135,7 @@ useVersionUpdate();
     <template #header-right-20>
       <button
         aria-label="日程管理"
-        class="platform-header-icon-action"
+        class="platform-header-icon-action platform-header-icon-action--ring"
         type="button"
       >
         <VbenIcon icon="lucide:calendar-days" class="size-5" />

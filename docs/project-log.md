@@ -807,7 +807,6 @@ Figma MCP Go 连接规则沉淀与典型页面 Demo 一期审计方案
 
 ### 任务名称
 
-<<<<<<< HEAD
 典型页面驱动平台组件改造一期
 
 ### 完成内容
@@ -848,7 +847,24 @@ Figma MCP Go 连接规则沉淀与典型页面 Demo 一期审计方案
 1. 页面：`/platform/typical-page`
 2. 组件：PlatformButton、PlatformTable、PlatformTree、PlatformSearchForm、PlatformEditForm、PlatformFormItem、PlatformInput、PlatformSelect、PlatformDatePicker、PlatformModal、PlatformDrawer、PlatformStatusTag
 3. 菜单：Mock 模式下新增“平台组件 / 典型页面验证场”
-=======
+
+### 验证结果
+
+1. 已执行 `git diff --check`，结果通过。
+2. 已执行 `./node_modules/.bin/vue-tsc --noEmit --skipLibCheck -p apps/web-antd/tsconfig.json`，本次新增典型页面与平台组件相关类型错误已处理；命令仍失败于项目既有类型错误。
+3. 已启动本地 Vite 服务，端口 `5666` 被占用后自动使用 `http://127.0.0.1:5667/`。
+4. 已执行浏览器验证：登录后可打开 `/platform/typical-page`，页面渲染 5 条 Mock 数据，无 Vite 错误遮罩。
+5. 已执行交互验证：点击“新增”可显示用户表单抽屉；点击“产品中心”树节点后表格收敛为 2 条数据，包含 `linna`，不包含 `chenyu`；浏览器控制台无错误。
+6. 验证截图保存在 `/private/tmp/st-typical-page.png`、`/private/tmp/st-typical-page-drawer.png`、`/private/tmp/st-typical-page-tree-filter.png`。
+
+### 遗留问题
+
+1. 当前 `PlatformTable` 是基于 ant-design-vue `Table` 的薄封装，现有业务页面大量使用 `useVbenVxeGrid`，两条表格路线的长期边界仍需继续确认。
+2. 当前真实业务页面尚未接入 `#/components/platform`，还需要做引用关系审计和迁移优先级清单。
+3. 当前典型页面是验证场，后续用户指出视觉问题时，样式必须回到平台组件、主题变量或统一样式入口处理。
+
+### 任务名称
+
 处理登录与 Mock 模式进入系统问题
 
 ### 完成内容
@@ -873,38 +889,10 @@ Figma MCP Go 连接规则沉淀与典型页面 Demo 一期审计方案
 2. 分析页：`/analytics`
 3. 工作台：`/workspace`
 4. 系统基础布局：顶部导航、左侧菜单、标签页、页面容器
->>>>>>> origin/codex/ye'mian
 
 ### 验证结果
 
 1. 已执行 `git diff --check`，结果通过。
-<<<<<<< HEAD
-2. 已执行 `./node_modules/.bin/vue-tsc --noEmit --skipLibCheck -p apps/web-antd/tsconfig.json`，本次新增典型页面与平台组件相关类型错误已处理；命令仍失败于项目既有类型错误。
-3. 已启动本地 Vite 服务，端口 `5666` 被占用后自动使用 `http://127.0.0.1:5667/`。
-4. 已执行浏览器验证：登录后可打开 `/platform/typical-page`，页面渲染 5 条 Mock 数据，无 Vite 错误遮罩。
-5. 已执行交互验证：点击“新增”可显示用户表单抽屉；点击“产品中心”树节点后表格收敛为 2 条数据，包含 `linna`，不包含 `chenyu`；浏览器控制台无错误。
-6. 验证截图保存在 `/private/tmp/st-typical-page.png`、`/private/tmp/st-typical-page-drawer.png`、`/private/tmp/st-typical-page-tree-filter.png`。
-
-### 遗留问题
-
-1. 当前 `PlatformTable` 是基于 ant-design-vue `Table` 的薄封装，现有业务页面大量使用 `useVbenVxeGrid`，两条表格路线的长期边界仍需继续确认。
-2. 当前真实业务页面尚未接入 `#/components/platform`，还需要做引用关系审计和迁移优先级清单。
-3. 当前典型页面是验证场，后续用户指出视觉问题时，样式必须回到平台组件、主题变量或统一样式入口处理。
-
-### 任务名称
-
-Figma 典型页面全局样式与导航表格源组件改造
-
-### 完成内容
-
-1. 基于已读取的 Figma MCP Go 样式结果，将深圳地铁品牌色、文本、边框、背景、圆角、字号、行高、阴影等沉淀为全局设计变量。
-2. 将 `apps/web-antd` 全局品牌色改为 `#009943`，并将应用名称改为“深圳地铁智慧仓储管控平台”。
-3. 统一 ant-design-vue 原生 Button、Input、Select、DatePicker、Form、Tree、Table、Pagination、Modal、Drawer、Tag 的全局样式和交互状态。
-4. 调整 Vben 顶部导航和左侧导航：顶部显示一级功能菜单，左侧显示当前一级菜单下的二级、三级菜单。
-5. 新增 `PlatformTableToolbar`，将表格常规功能入口设置、刷新、搜索、全屏沉淀到平台源组件。
-6. 根据用户反馈调整筛选区“收起”按钮为无描边样式，调整表格四个圆形功能按钮默认白底弱边框、hover 进入品牌态。
-7. 同步 Vxe Grid 表格、工具栏和分页的全局样式变量，避免真实业务页与 Antdv Table 视觉割裂。
-=======
 2. 已执行浏览器验证：登录页可打开，输入账号密码后可进入系统，刷新后仍保持登录状态。
 3. 已验证 `/analytics` 和 `/workspace` 可以正常打开和切换。
 4. 已确认 Mock 模式下没有因真实后端接口不可用而阻塞进入系统。
@@ -926,12 +914,45 @@ Figma 典型页面全局样式与导航表格源组件改造
 2. 将“当前阶段默认使用 Mock 登录与前端静态数据，不被真实后端接口阻塞”沉淀为关键决策。
 3. 将前端静态页面与 Mock 模式规则同步到 `AGENTS.md`，作为后续开发默认约束。
 4. 明确下次接续重点：继续做静态页面开发前，先处理或确认 Git 跟踪依赖产物问题，再审计平台组件和页面 Mock 数据组织方式。
->>>>>>> origin/codex/ye'mian
 
 ### 修改了哪些文件
 
 1. `AGENTS.md`
-<<<<<<< HEAD
+2. `docs/project-log.md`
+3. `docs/decision-records.md`
+4. `docs/todo-next.md`
+
+### 涉及哪些页面或组件
+
+无。此次为本轮收尾与文档接续更新，不新增页面、组件或运行时代码。
+
+### 验证结果
+
+收尾后执行 `git diff --check`，用于检查文档修改是否存在空白或格式问题。
+
+### 遗留问题
+
+1. 依赖产物被 Git 跟踪的问题尚未处理，需用户确认后单独清理。
+2. 尚未建立统一的业务页面 Mock 数据目录和交互模拟规范。
+3. 尚未完成平台组件引用关系审计。
+
+### 任务名称
+
+Figma 典型页面全局样式与导航表格源组件改造
+
+### 完成内容
+
+1. 基于已读取的 Figma MCP Go 样式结果，将深圳地铁品牌色、文本、边框、背景、圆角、字号、行高、阴影等沉淀为全局设计变量。
+2. 将 `apps/web-antd` 全局品牌色改为 `#009943`，并将应用名称改为“深圳地铁智慧仓储管控平台”。
+3. 统一 ant-design-vue 原生 Button、Input、Select、DatePicker、Form、Tree、Table、Pagination、Modal、Drawer、Tag 的全局样式和交互状态。
+4. 调整 Vben 顶部导航和左侧导航：顶部显示一级功能菜单，左侧显示当前一级菜单下的二级、三级菜单。
+5. 新增 `PlatformTableToolbar`，将表格常规功能入口设置、刷新、搜索、全屏沉淀到平台源组件。
+6. 根据用户反馈调整筛选区“收起”按钮为无描边样式，调整表格四个圆形功能按钮默认白底弱边框、hover 进入品牌态。
+7. 同步 Vxe Grid 表格、工具栏和分页的全局样式变量，避免真实业务页与 Antdv Table 视觉割裂。
+
+### 修改了哪些文件
+
+1. `AGENTS.md`
 2. `apps/web-antd/src/preferences.ts`
 3. `apps/web-antd/src/layouts/basic.vue`
 4. `apps/web-antd/src/components/platform/button/platform-button.vue`
@@ -1241,22 +1262,189 @@ Figma 截图驱动顶部导航栏源组件样式改造
 1. Figma MCP Go 当前未连接，未能通过 MCP 读取节点结构、截图和切图资源；后续需要在 MCP 显示 connected 后补一次精确节点校准。
 2. 本次只处理顶部导航栏源组件视觉，不处理左侧菜单、树筛选、表格、查询区的进一步视觉差异。
 3. Vite 构建产生的 `apps/web-antd/dist` 与 `apps/web-antd/dist.zip` 是临时产物；本次尝试删除时审批服务 503，暂未删除，后续需要清理。
-=======
-2. `docs/project-log.md`
-3. `docs/decision-records.md`
+
+### 任务名称
+
+接续文档 Git 冲突标记清理
+
+### 完成内容
+
+1. 清理 `AGENTS.md`、`docs/decision-records.md`、`docs/todo-next.md`、`docs/project-log.md` 中已经落入文件内容的 Git 冲突标记。
+2. 将页面/截图/Figma 输出规则合并为一套结构化要求，保留 Markdown 表格、等待确认、Vben Admin + ant-design-vue 体系等约束。
+3. 将平台组件、典型页、Vben 布局保护、Figma MCP Go、Mock 登录与静态开发边界同时保留到接续规则和决策记录中。
+4. 将 `docs/project-log.md` 中交错的“典型页面改造一期”“Mock 登录进入系统”“Mock 登录阶段收尾”“Figma 典型页面全局样式改造”拆成连续、可读的历史记录。
+5. 同步修正 Figma MCP Go 排查规则在 `docs/decision-records.md` 和 `docs/todo-next.md` 中引用的 `AGENTS.md` 章节编号。
+
+### 修改了哪些文件
+
+1. `AGENTS.md`
+2. `docs/decision-records.md`
+3. `docs/project-log.md`
 4. `docs/todo-next.md`
 
 ### 涉及哪些页面或组件
 
-无。此次为本轮收尾与文档接续更新，不新增页面、组件或运行时代码。
+无。此次只恢复接续文档干净状态，不修改页面、组件或运行时代码。
 
 ### 验证结果
 
-收尾后执行 `git diff --check`，用于检查文档修改是否存在空白或格式问题。
+1. 已执行冲突标记扫描，`AGENTS.md` 与 `docs/` 接续文档中不再存在 Git 冲突标记三件套。
+2. 已执行 `git diff --check`，用于确认文档变更无空白错误。
+3. 本次未运行构建、类型检查或浏览器验证，因为改动范围仅限 Markdown 文档。
 
 ### 遗留问题
 
-1. 依赖产物被 Git 跟踪的问题尚未处理，需用户确认后单独清理。
-2. 尚未建立统一的业务页面 Mock 数据目录和交互模拟规范。
-3. 尚未完成平台组件引用关系审计。
->>>>>>> origin/codex/ye'mian
+1. `node_modules` 等依赖产物仍被 Git 跟踪，清理范围和 `.gitignore` 策略需单独确认。
+2. 后续新增静态业务页面时，仍需补充统一 Mock 数据组织方式和前端模拟交互规范。
+
+### 任务名称
+
+顶部导航栏 Logo 应用名更新
+
+### 完成内容
+
+1. 按用户截图批注，将顶部导航栏 Logo 文案目标确认为“委外项目综合管理平台”。
+2. 复核 `VbenLogo` 原组件链路，确认顶部 Logo 文案来自 `preferences.app.name`，不是 `/platform/typical-page` 页面内部文本。
+3. 保留 `apps/web-antd/src/preferences.ts` 中的项目应用名配置为“委外项目综合管理平台”。
+4. 在应用启动完成偏好初始化后，将 `overridesPreferences.app.name` 同步写回当前偏好状态，避免 localStorage 中历史应用名继续覆盖项目配置。
+5. 未修改 `VbenLogo` 组件模板、顶部导航样式、菜单逻辑、Vben layout 核心路由或 ant-design-vue 源码。
+
+### 修改了哪些文件
+
+1. `apps/web-antd/src/main.ts`
+2. `docs/project-log.md`
+3. `docs/todo-next.md`
+
+### 涉及哪些页面或组件
+
+1. 顶部导航栏 Logo 区域
+2. 原组件链路：`VbenLogo` -> `preferences.app.name`
+3. 验证页面：`/platform/typical-page`
+
+### 验证结果
+
+1. 已执行 `git diff --check`，结果通过。
+2. 已确认源码中旧文案“深圳地铁智慧仓储管控平台”已不再存在于 `apps/web-antd/src` 与 `packages` 源码范围内。
+3. 已执行 `./node_modules/.bin/vue-tsc --noEmit --skipLibCheck -p apps/web-antd/tsconfig.json`，命令失败于项目既有类型错误，输出未命中本次修改的 `apps/web-antd/src/main.ts`。
+4. 已执行 `./node_modules/.bin/oxlint apps/web-antd/src/main.ts`，命令因本机 Node.js `v22.17.1` 不满足 TypeScript 配置文件加载要求而未完成。
+5. 已重新启动 Vite 开发服务，因 `5173` 已被占用，本轮服务使用 `http://127.0.0.1:5174/`；`/platform/typical-page` 返回 `200 OK`。
+6. Browser Use in-app backend 当前不可用，Playwright Chromium 浏览器二进制未安装，因此未完成隔离浏览器截图验证；未操作用户系统 Chrome。
+
+### 遗留问题
+
+1. 当前机器仍有 `5173` 端口旧 Vite 进程占用，后续验证时需以实际端口为准。
+2. 若需要截图级视觉回归，需先恢复 Browser Use 后端或安装 Playwright Chromium，再用隔离浏览器验证顶部 Logo 实际渲染。
+
+### 任务名称
+
+左侧导航栏源组件样式修正
+
+### 完成内容
+
+1. 按用户截图批注，将左侧导航栏问题归入 Vben Menu / Layout 源组件，不在 `/platform/typical-page` 页面内写局部样式。
+2. 调整 `menu.vue` 垂直圆角菜单项变量，让展开态左侧导航选中背景左右充满，不再保留白色横向间距。
+3. 调整 `menu.vue` 收起态菜单变量，将收起态菜单项高度与折叠宽度对齐为 48px 正方形，避免收起/展开后图标背景块高度不一致。
+4. 调整 `sidebar-collapse-button.vue`：收起/展开按钮扩大到 32px，图标扩大到 18px，移除描边；展开状态下按钮定位到右侧，收起状态下保持在折叠栏内。
+5. 为左侧收起态菜单 tooltip 增加专用灰色变量与样式，避免当前浅绿色 tooltip 看不清。
+6. 未修改 ant-design-vue 源码、`node_modules`、业务页面导航、菜单路由或 `/platform/typical-page` 页面 scoped CSS。
+
+### 修改了哪些文件
+
+1. `packages/@core/base/design/src/design-tokens/default.css`
+2. `packages/@core/ui-kit/layout-ui/src/components/widgets/sidebar-collapse-button.vue`
+3. `packages/@core/ui-kit/menu-ui/src/components/menu-item.vue`
+4. `packages/@core/ui-kit/menu-ui/src/components/menu.vue`
+5. `docs/project-log.md`
+6. `docs/todo-next.md`
+
+### 涉及哪些页面或组件
+
+1. 左侧导航菜单展开态：`Menu` 垂直菜单项
+2. 左侧导航菜单收起态：`Menu` collapse 菜单项与 tooltip
+3. 左侧收起/展开按钮：`SidebarCollapseButton`
+4. 验证页面：`/platform/typical-page`
+
+### 验证结果
+
+1. 已执行 `git diff --check`，结果通过。
+2. 已执行 `./node_modules/.bin/vue-tsc -p packages/@core/ui-kit/menu-ui/tsconfig.json --noEmit --pretty false`，结果通过。
+3. 已执行 `./node_modules/.bin/vue-tsc -p packages/@core/ui-kit/layout-ui/tsconfig.json --noEmit --pretty false`，结果通过。
+4. 已确认 `http://localhost:5173/platform/typical-page` 返回 `200 OK`。
+5. Browser Use in-app backend 当前仍不可用，Computer Use 不能操作 Codex 应用，且未请求使用系统 Chrome；因此本轮未完成截图级视觉验证。
+
+### 遗留问题
+
+1. 仍需在 Browser Use 后端恢复后，对左侧导航展开态、收起态、hover tooltip 和折叠按钮位置做一次截图级复核。
+2. 当前 `5174` 仍有历史 Vite 进程监听，非本轮验证入口；用户当前 in-app browser 使用的是 `5173`。
+
+### 任务名称
+
+顶部右侧图标按钮 hover 源组件修正
+
+### 完成内容
+
+1. 按用户截图批注，将顶部右侧“日程管理”和通知铃铛问题归入头部原组件与公共样式，不在 `/platform/typical-page` 页面内写局部样式。
+2. 调整 `platform-header-icon-action` 公共样式：hover / focus 图标颜色保持 header 白色，不再变为主色。
+3. 将头部图标按钮 hover 背景从浅绿色选中态改为 `--st-color-nav-hover-bg`，与顶部/左侧菜单 hover 背景变量保持一致。
+4. 新增 `platform-header-icon-action--ring` 公共动画修饰类，把通知铃铛原 scoped 摇铃动画沉淀为头部图标公共动画。
+5. 为“日程管理”和通知铃铛按钮接入公共摇铃动画类，使两者 hover 时 svg 动画一致。
+6. 未修改 ant-design-vue 源码、`node_modules`、Vben 菜单逻辑、路由逻辑或典型页页面 scoped CSS。
+
+### 修改了哪些文件
+
+1. `apps/web-antd/src/layouts/basic.vue`
+2. `packages/effects/layouts/src/widgets/notification/notification.vue`
+3. `packages/styles/src/antd/index.css`
+4. `docs/project-log.md`
+5. `docs/todo-next.md`
+
+### 涉及哪些页面或组件
+
+1. 顶部导航栏右侧“日程管理”按钮
+2. 顶部导航栏右侧通知铃铛按钮
+3. 头部公共图标按钮样式：`platform-header-icon-action`
+4. 验证页面：`/platform/typical-page`
+
+### 验证结果
+
+1. 已执行 `git diff --check`，结果通过。
+2. 已执行 `./node_modules/.bin/vue-tsc -p packages/effects/layouts/tsconfig.json --noEmit --pretty false`，结果通过。
+3. 已执行 `curl -I http://127.0.0.1:5173/platform/typical-page`，返回 `200 OK`。
+4. 已执行 `./node_modules/.bin/vue-tsc -p apps/web-antd/tsconfig.json --noEmit --skipLibCheck --pretty false`，命令仍失败于项目既有类型错误，当前输出未命中本次修改的 `apps/web-antd/src/layouts/basic.vue`。
+5. 已尝试使用 Browser Use in-app browser 做隔离验证，但 IAB 后端初始化超时；本轮未操作用户系统 Chrome。
+
+### 遗留问题
+
+1. 仍需在 Browser Use 后端恢复后，对顶部“日程管理”和通知铃铛 hover 背景、svg 白色保持、摇铃动画做一次截图级复核。
+
+### 任务名称
+
+左侧收起/展开按钮灰色背景变量修正
+
+### 完成内容
+
+1. 按用户截图批注，将左侧导航收起/展开按钮默认背景从品牌淡绿色变量调整为淡灰色变量。
+2. 默认态背景改为 `--st-color-border-subtle`，hover 背景改为 `--st-color-border-control`，避免继续出现绿色底色。
+3. 保留按钮 32px 尺寸、18px 图标、无描边和展开态右侧定位等前序源组件调整。
+4. 未修改业务页面、路由、菜单逻辑、ant-design-vue 源码或 `/platform/typical-page` 页面 scoped CSS。
+
+### 修改了哪些文件
+
+1. `packages/@core/ui-kit/layout-ui/src/components/widgets/sidebar-collapse-button.vue`
+2. `docs/project-log.md`
+3. `docs/todo-next.md`
+
+### 涉及哪些页面或组件
+
+1. 左侧导航收起/展开按钮：`SidebarCollapseButton`
+2. 受影响页面：所有使用 Vben 基础布局左侧导航的页面，包括 `/workbench/index` 与 `/platform/typical-page`
+
+### 验证结果
+
+1. 已执行 `git diff --check`，结果通过。
+2. 已执行 `./node_modules/.bin/vue-tsc -p packages/@core/ui-kit/layout-ui/tsconfig.json --noEmit --pretty false`，结果通过。
+3. 已执行 `curl -I http://127.0.0.1:5173/workbench/index`，返回 `200 OK`。
+
+### 遗留问题
+
+1. Browser Use in-app browser 仍需恢复后再做截图级视觉复核；本轮未操作用户系统 Chrome。
