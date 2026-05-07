@@ -6,6 +6,480 @@
 
 ### 任务名称
 
+今天结束收尾 - 规则复盘与项目全景管理阶段接续
+
+### 完成内容
+
+1. 按用户“今天结束”要求进入收尾，只更新接续文档，不继续扩展业务代码。
+2. 复核本轮项目全景管理页面开发记录：`/project/contract` 已完成付款节点 ECharts mini bar + 下方文字；`/project/document`、`/project/evaluation` 已完成页面开发与治理记录；`/project/progress` 纠偏阶段仍处于暂停状态。
+3. 按用户确认的复盘结论补充长期规则：新增平台组件、扩展平台组件能力、修改适配层、token 或全局样式入口前，必须单独说明原因、影响范围、替代方案和查询列表页模式判断，并等待用户确认。
+4. 更新 `AGENTS.md` 和 `docs/decision-records.md`，明确“确认开发”不等于跳过组件映射、规则自检或平台组件新增确认。
+5. 更新下一轮待办，把优先级收敛为先审计 `/project/progress` 未完成 diff，再做新页面视觉确认、平台组件新增确认规则执行和全量 `vue-tsc` 存量错误治理。
+
+### 修改了哪些文件
+
+1. `AGENTS.md`
+2. `docs/decision-records.md`
+3. `docs/project-log.md`
+4. `docs/todo-next.md`
+
+### 涉及哪些页面或组件
+
+1. 页面：`/project/contract`、`/project/progress`、`/project/document`、`/project/evaluation`
+2. 页面内组件：`ContractPaymentMiniBar`
+3. 平台组件/能力：`PlatformStatCard`、`PlatformStatusTag`、`PlatformTable`、`PlatformTableToolbar`、`PlatformFileList`、`PlatformFileItem`、`@vben/plugins/echarts`
+
+### 验证结果
+
+1. 本次收尾为文档更新，未重新启动浏览器做新的页面验证。
+2. 收尾前 `/project/contract` 已用隔离 headless Chrome 验证：统计卡 `3` 张，合同卡片 `8` 张，ECharts canvas `8` 个，节点文字 `24` 个，旧纯列表 DOM 不存在，宽屏 grid 为 `3` 列，控制台无 error。
+3. 收尾前 `/project/evaluation`、`/project/document` 等页面已有对应 HTTP、ESLint 与隔离浏览器验证记录，详见下方阶段日志。
+4. 全量 `vue-tsc` 仍因既有模块错误失败；当前记录中失败范围不指向 `/project/contract` 的 mini bar 改动。
+
+### 遗留问题
+
+1. `/project/progress` 纠偏未完成，下一轮必须先审计当前 diff，再决定继续、回退或迁移。
+2. `/project/contract` 的 ECharts mini bar 当前为页面内业务组件，若后续付款节点、验收节点、进度节点多页面复用，再评估是否下沉为平台节点图组件。
+3. 需要用户视觉确认 `/project/contract` 付款节点 mini bar 的高度、颜色、文字密度和三列卡片布局。
+4. 后续继续开发前必须先输出组件映射、规则自检、是否新增或扩展平台组件、是否符合查询列表页模式。
+5. 全量 `vue-tsc` 存量错误仍需单独治理。
+
+### 平台治理影响
+
+1. 本次收尾未发现新的 ant-design-vue 原生组件问题。
+2. `/project/contract` 继续复用 `PlatformStatCard` 和 `PlatformStatusTag`，付款节点图使用项目已有 `@vben/plugins/echarts`，未新增第三方 UI 库。
+3. `ContractPaymentMiniBar` 当前保留为页面内业务组件，不作为平台组件完成项。
+4. `/project/document` 暴露出的主要治理问题是新增 `PlatformFileList` / `PlatformFileItem` 前缺少单独确认，且“两列展示”这类小反馈落到平台组件能力扩展时没有先补简版组件映射。
+5. 后续禁止在其他页面继续复制大段付款节点图样式；如果出现复用场景，应先输出组件映射并评估 `PlatformTimeline` / `PlatformStepList` / `PlatformProgress` 类平台能力。
+6. 台账、记录、管理列表页面后续必须先判断是否应采用“查询区 + 工具栏 + 表格/列表 + 分页 + 批量操作”模式；不采用时必须说明原因并等待确认。
+
+### 任务名称
+
+今天结束收尾 - 进度页纠偏阶段暂停
+
+### 完成内容
+
+1. 按用户要求停止继续开发，进入收尾模式。
+2. 停止本轮用于验证的本地 Vite 服务，避免收尾后继续占用端口。
+3. 复盘 `/project/progress` 进度可视化跟踪页面实现方向，确认其应从“截图复刻页”纠偏为“查询列表页变体 + 平台组件治理验证页”。
+4. 纠偏开发已开始但被中断：已新增一批平台组件雏形，并开始调整 `PlatformSearchForm` 与进度页数据源，但尚未完成页面重构、删除页面专用组件或重新验证。
+5. 本次收尾只更新接续文档，不继续写业务代码。
+
+### 修改了哪些文件
+
+1. `docs/project-log.md`
+2. `docs/todo-next.md`
+
+### 涉及哪些页面或组件
+
+1. 页面：`/project/progress`
+2. 已开始但未完成的组件方向：`PlatformProgress`、`PlatformViewToolbar`、`PlatformViewSwitch`、`PlatformStatusBoard`、`PlatformSection`、`PlatformEchartsPanel`
+3. 已开始但未完成的源组件调整：`PlatformSearchForm` 支持 columns 配置，`project-progress-source.ts` 支持查询参数和筛选选项
+
+### 验证结果
+
+1. 本次收尾未做新的浏览器验证，因为用户明确要求今天结束并停止继续开发。
+2. 本次收尾未做新的 ESLint、类型检查或构建验证；纠偏阶段代码处于未完成状态，不应视为可交付。
+3. 之前 `/project/progress` 第一版曾完成过 HTTP 与隔离浏览器验证，但该验证不覆盖本次已开始的纠偏改动。
+
+### 遗留问题
+
+1. `/project/progress` 纠偏未完成：页面仍未改成“查询区 + 操作区 + 可视化结果区 + 状态区”的最终结构。
+2. 页面专用组件 `project-progress-gantt-chart.vue`、`project-progress-board.vue` 尚未删除或迁移。
+3. 已新增的平台组件雏形尚未完成接入、验证和文档化，下一轮必须先审计这些改动再决定保留、回退或继续。
+4. 当前工作区还有多个既有/并行页面与平台组件改动，下一轮不要把所有 diff 都当成本轮进度页纠偏成果。
+
+### 平台治理影响
+
+1. 本轮确认 `/project/progress` 应作为平台组件治理样本，而不是继续局部还原截图。
+2. 进度条、视图切换、状态看板、ECharts 面板等能力具备平台化价值，但本轮只进入雏形阶段，不能标记为完成。
+3. 下一轮必须先输出最终组件映射和迁移/回退清单，再继续代码修改。
+
+### 任务名称
+
+合同与付款管理付款节点改为 ECharts mini bar
+
+### 完成内容
+
+1. 按用户确认，将 `/project/contract` 合同卡片内的付款节点区域从纯文字列表改为 ECharts mini bar + 下方节点文字。
+2. 新增页面内业务组件 `ContractPaymentMiniBar`，封装 ECharts 渲染、tooltip、节点文字和金额展示。
+3. 页面主体继续复用 `PlatformStatCard`、`PlatformStatusTag`，不新增平台组件，不修改平台源组件。
+4. 保留下方合同卡片宽屏三列布局，只替换框选的付款节点表达方式。
+
+### 修改了哪些文件
+
+1. `apps/web-antd/src/views/project/contract/index.vue`
+2. `apps/web-antd/src/views/project/contract/components/contract-payment-mini-bar.vue`
+3. `docs/project-log.md`
+4. `docs/todo-next.md`
+
+### 涉及哪些页面或组件
+
+1. 页面：`/project/contract`
+2. 页面内业务组件：`ContractPaymentMiniBar`
+3. 复用能力：`@vben/plugins/echarts`、`PlatformStatCard`、`PlatformStatusTag`
+
+### 验证结果
+
+1. 已执行 `./node_modules/.bin/eslint apps/web-antd/src/views/project/contract/index.vue apps/web-antd/src/views/project/contract/project-contract-source.ts apps/web-antd/src/views/project/contract/components/contract-payment-mini-bar.vue`，结果通过。
+2. 已执行 `./node_modules/.bin/vue-tsc -p apps/web-antd/tsconfig.json --noEmit --skipLibCheck --pretty false`，仍因既有模块错误失败；失败列表不再包含 `/project/contract` 文件。
+3. 已启动本地 Vite：`http://127.0.0.1:5673/`，并执行 `curl -I http://127.0.0.1:5673/project/contract`，返回 `200 OK`。
+4. 已用隔离 headless Chrome 打开 `/project/contract` 并注入 Mock 登录态验证：统计卡 `3` 张，合同卡片 `8` 张，ECharts canvas `8` 个，节点文字 `24` 个，旧纯列表 DOM 不存在，宽屏卡片 grid 仍为 `3` 列，控制台无 error。
+
+### 遗留问题
+
+1. ECharts mini bar 当前为静态展示和 tooltip，不包含点击节点筛选、审批流跳转或详情联动。
+2. 如果其他页面后续复用付款节点图，再评估是否下沉为平台组件。
+
+### 任务名称
+
+2026-05-07 今天结束收尾
+
+### 完成内容
+
+1. 复核本轮项目全景管理页面开发与治理记录，确认 `/project/progress`、`/project/document`、`/project/evaluation` 的完成记录已写入 `docs/project-log.md` 和 `docs/todo-next.md`。
+2. 复核长期规则沉淀，确认“截图开发前规则自检”和“确认开发不等于跳过组件映射和规则自检”已同步写入 `AGENTS.md` 与 `docs/decision-records.md`。
+3. 更新 `docs/todo-next.md`，将下一轮优先事项收敛到新页面视觉确认、`/project/evaluation` 治理后复核、以及全量 `vue-tsc` 存量错误治理。
+4. 本次收尾不新增业务功能，不继续页面开发。
+
+### 修改了哪些文件
+
+1. `docs/project-log.md`
+2. `docs/todo-next.md`
+
+### 涉及哪些页面或组件
+
+1. 页面：`/project/progress`、`/project/document`、`/project/evaluation`
+2. 平台组件：`PlatformTable`、`PlatformTableToolbar`、`PlatformSelect`、`PlatformFileList`、`PlatformFileItem`
+3. 长期规则：截图开发前规则自检、组件映射与规则自检确认流程
+
+### 验证结果
+
+1. 收尾前已执行目标文件 ESLint，结果通过。
+2. 收尾前已执行 `git diff --check`，结果通过。
+3. 收尾前已执行 `/project/evaluation` HTTP 路由验证，返回 `200 OK`。
+4. 收尾前已用独立 headless Chrome 验证 `/project/evaluation`：左右面板 2 个、工具栏 2 个、平台表格 1 个，工作区约 `1377px × 576px`。
+5. 收尾前已执行全量 `vue-tsc`，仍因既有组件和演示页类型问题失败；失败列表不包含 `/project/evaluation` 和 `PlatformSelect` 改动。
+
+### 遗留问题
+
+1. 需要用户视觉确认 `/project/progress` 甘特图/看板、`/project/document` 两列文件列表、`/project/evaluation` 治理后的左右布局与右侧表格。
+2. 全量 `vue-tsc` 仍存在既有类型错误，需要单独安排治理。
+3. 浏览器控制台仍有 Vben `LayoutHeader` 既有 `clearPreferencesAndLogout` emits 警告，不属于本轮页面改动。
+4. 本地 Vite 服务当前用于验证的地址为 `http://127.0.0.1:5672/`，下次接续必须重新确认端口状态。
+
+### 平台治理影响
+
+1. 本轮发现的 ant-design-vue 原生组件问题：
+   - `Select` 的 `popupClassName` 已废弃，应迁移到 `classes.popup.root`。
+   - 原生 Table / Vxe Grid / 卡片列表并存时，若不通过 `PlatformTable` 或 Vxe 适配层统一，会造成查询、筛选、表格高度、工具栏和分页体验不一致。
+   - 原型中的文件列表、记录列表、进度展示、看板卡片很容易被页面 scoped CSS 直接复刻，后续复用成本高。
+2. 已通过平台层解决的问题：
+   - `PlatformSelect` 已改用 `classes.popup.root`，避免继续触发 Antdv `popupClassName` 废弃警告。
+   - `/project/evaluation` 的 `评估记录` 已从页面手写卡片改为 `PlatformTable`，并通过 `PlatformTableToolbar` 接入查询和筛选。
+   - `/project/document` 的文件条目已通过 `PlatformFileList` / `PlatformFileItem` 下沉到平台层，文件图标、条目边框、hover 背景和下载按钮布局不再散落在页面。
+   - `PlatformTableToolbar`、`PlatformStatCard`、`PlatformStatusTag`、`PlatformButton` 已作为项目全景管理页面的默认平台组件来源。
+3. 仍是页面临时实现的问题：
+   - `/project/evaluation` 左侧待评估项目仍是页面业务列表卡片，只治理了查询筛选入口，未抽平台列表组件。
+   - `/project/progress` 甘特图组件和看板卡片仍属于页面专用实现，暂未形成平台视图切换、进度条或看板组件。
+   - `/project/contract` 合同付款卡片和付款节点列表仍是页面局部实现，尚未回收为平台卡片/时间线/节点列表能力。
+4. 未来必须回收为平台组件的页面子组件：
+   - `PlatformProgress` 或统一进度展示组件，用于项目进度、付款节点进度和评估进度。
+   - `PlatformEntityList` / `PlatformEntityCard`，用于待评估项目、项目付款卡片、看板卡片等实体列表。
+   - `PlatformViewTabs` 或统一视图切换组件，用于甘特图 / 看板、列表 / 卡片等切换。
+   - `PlatformTimeline` / `PlatformStepList`，用于付款节点、验收节点、评估流程节点。
+5. 后续新页面禁止继续复制的实现：
+   - 禁止继续复制页面内手写文件列表、下载条目和附件条目，应使用 `PlatformFileList` / `PlatformFileItem`。
+   - 禁止把评估记录、历史记录、审批记录等查询列表继续写成纯页面卡片，默认先评估 `PlatformTable`。
+   - 禁止为通用 Select 下拉样式继续使用 Antdv 废弃属性或页面级下拉 class。
+   - 禁止在新页面重复写大段卡片 hover、边框、阴影、图标和按钮布局样式。
+6. 应进入主题变量或统一样式入口的样式：
+   - 实体卡片边框、hover 背景、卡片间距、卡片标题/副文本字号应进入平台组件或 token。
+   - 进度条高度、轨道色、完成色、预警色应进入 `PlatformProgress` 或设计 token。
+   - 记录列表分数颜色、成功/合格/预警等状态色应继续读取状态组件或 token，不在页面硬编码。
+   - 看板列背景、列间距、卡片密度和空态样式应进入后续平台看板/实体列表组件。
+7. 当前仍存在的页面级样式债务：
+   - `/project/evaluation` 的待评估项目卡片、进度条轨道和左侧列表密度仍在页面 scoped CSS 中。
+   - `/project/progress` 的甘特图容器、看板列、项目卡片和进度条仍是页面 scoped CSS。
+   - `/project/contract` 的合同卡片、付款节点列表和金额布局仍是页面 scoped CSS。
+   - `/project/document` 页面主体布局仍有页面级布局 CSS，但文件条目视觉已下沉平台层。
+
+### 任务名称
+
+中期评估与验收管理页面治理整改
+
+### 完成内容
+
+1. 按用户复盘意见暂停继续扩展业务功能，转入 `/project/evaluation` 页面治理整改。
+2. 将右侧 `评估记录` 从页面手写卡片改为 `PlatformTable` 列表，并接入 `PlatformTableToolbar` 查询与结果筛选。
+3. 左侧 `待评估项目` 接入 `PlatformTableToolbar`，补充关键词、阶段、状态筛选，保留用户明确要求的左右自适应布局和模块内部滚动。
+4. 收敛页面 scoped CSS：删除右侧记录卡片样式、hover 阴影/位移等截图式视觉补丁，分数颜色改回平台 token。
+5. 在平台源组件 `PlatformSelect` 中将 Antdv 已废弃的 `popup-class-name` 改为 `classes.popup.root`，并顺手修复该文件既有 ESLint 问题。
+
+### 修改了哪些文件
+
+1. `apps/web-antd/src/views/project/evaluation/index.vue`
+2. `apps/web-antd/src/components/platform/field/platform-select.vue`
+3. `docs/project-log.md`
+4. `docs/todo-next.md`
+
+### 涉及哪些页面或组件
+
+1. 页面：`/project/evaluation`
+2. 平台组件：`PlatformTable`、`PlatformTableToolbar`、`PlatformSelect`、`PlatformStatCard`、`PlatformStatusTag`、`PlatformButton`
+
+### 验证结果
+
+1. 已执行 `./node_modules/.bin/eslint apps/web-antd/src/views/project/evaluation/index.vue apps/web-antd/src/views/project/evaluation/project-evaluation-source.ts apps/web-antd/src/components/platform/field/platform-select.vue apps/web-antd/src/mock/index.ts`，结果通过。
+2. 已执行 `git diff --check`，结果通过。
+3. 已执行 `curl -I http://127.0.0.1:5672/project/evaluation`，返回 `200 OK`。
+4. 已使用独立 headless Chrome 完成浏览器验证：页面标题可见，左右面板数量为 2，工具栏数量为 2，平台表格数量为 1，工作区宽度 `1377px`，高度 `576px`，左右列宽约 `500px / 853px`。
+5. 已执行 `./node_modules/.bin/vue-tsc -p apps/web-antd/tsconfig.json --noEmit --skipLibCheck --pretty false`，仍因既有模块错误失败，失败列表不包含本次 `/project/evaluation` 和 `PlatformSelect` 改动。
+
+### 遗留问题
+
+1. 浏览器控制台仍有 Vben `LayoutHeader` 既有 `clearPreferencesAndLogout` emits 警告，不指向本次页面和平台字段组件。
+2. 左侧待评估项目仍保留业务列表卡片形态；后续如多页面复用，应再评估是否抽 `PlatformEntityList` 或 `PlatformProgress`。
+3. 当前发起评估仍为前端模拟流程；评估详情、模板、附件、导出和真实接口待后续确认。
+
+### 任务名称
+
+截图开发前规则自检补充
+
+### 完成内容
+
+1. 复盘 `合同与付款管理` 页面开发中暴露的问题：确认开发后仍应先锁定截图还原范围、平台组件优先级、页面 CSS 范围和查询列表页模式。
+2. 在 `AGENTS.md` 新增“截图开发前规则自检”，要求即使用户确认开发，也必须先输出规则自检并等待确认。
+3. 在 `docs/decision-records.md` 新增长期决策，明确“确认开发不等于跳过组件映射和规则自检”。
+4. 本轮只做治理文档补充，不继续业务页面开发。
+
+### 修改了哪些文件
+
+1. `AGENTS.md`
+2. `docs/decision-records.md`
+3. `docs/project-log.md`
+4. `docs/todo-next.md`
+
+### 涉及哪些页面或组件
+
+1. 规则来源页面：`/project/contract`
+2. 影响范围：后续所有截图、原型、Figma 页面开发任务
+
+### 验证结果
+
+1. 已执行 `git diff --check`，结果通过。
+2. 本轮为文档治理补充，未做浏览器验证。
+
+### 遗留问题
+
+1. 后续截图页面开发必须按新规则先输出组件映射表、文件归属表和规则自检表。
+2. 如现有 `合同与付款管理` 页面需要按新规则回看，应另行做一次页面实现审计，不在本轮继续开发。
+
+### 任务名称
+
+项目全景管理 - 进度可视化跟踪页面右侧内容开发
+
+### 完成内容
+
+1. 按原型新增 `/project/progress` 进度可视化跟踪页面右侧内容。
+2. 页面内支持“甘特图 / 看板”两个视图切换，默认展示甘特图。
+3. 新增页面专用 Mock 数据源，承载项目进度、状态分组、月份范围、里程碑节点和预警空态。
+4. 甘特图使用项目已有 `@vben/plugins/echarts` 的 `EchartsUI` / `useEcharts` 实现，不新增图表依赖。
+5. 看板页按“待启动 / 进行中 / 已完成 / 已归档”四列展示项目卡片和进度条。
+6. 将 Mock 菜单中 `进度可视化跟踪` 从空白占位页切换到真实页面组件。
+
+### 修改了哪些文件
+
+1. `apps/web-antd/src/views/project/progress/index.vue`
+2. `apps/web-antd/src/views/project/progress/project-progress-source.ts`
+3. `apps/web-antd/src/views/project/progress/components/project-progress-gantt-chart.vue`
+4. `apps/web-antd/src/views/project/progress/components/project-progress-board.vue`
+5. `apps/web-antd/src/mock/index.ts`
+
+### 涉及哪些页面或组件
+
+1. 页面：`/project/progress`
+2. 平台组件：`PlatformButton`
+3. ECharts 插件：`@vben/plugins/echarts`
+4. Mock 菜单：`项目全景管理 - 进度可视化跟踪`
+
+### 验证结果
+
+1. 已执行 `./node_modules/.bin/eslint apps/web-antd/src/views/project/progress/index.vue apps/web-antd/src/views/project/progress/project-progress-source.ts apps/web-antd/src/views/project/progress/components/project-progress-gantt-chart.vue apps/web-antd/src/views/project/progress/components/project-progress-board.vue apps/web-antd/src/mock/index.ts`，结果通过。
+2. 已执行 `git diff --check`，结果通过。
+3. 已执行 `curl -I http://127.0.0.1:5672/project/progress`，返回 `200 OK`。
+4. 已使用独立 headless Chrome 完成浏览器验证：Mock 登录后进入 `/project/progress`，甘特图页存在 1 个 ECharts canvas，未检测到 Vite error overlay 或 console error。
+5. 已点击“看板”视图验证，四列状态和 15 张项目卡片正常渲染，未检测到 Vite error overlay 或 console error。
+6. 已执行 `./node_modules/.bin/vue-tsc --noEmit --skipLibCheck -p apps/web-antd/tsconfig.json`，仍因既有模块错误失败，失败列表不再包含本次新增的 `/project/progress` 文件。
+
+### 遗留问题
+
+1. 甘特图当前基于 ECharts bar + line symbol 组合实现；如后续要求拖拽、缩放或更复杂的里程碑交互，可再评估是否扩展 ECharts 注册能力。
+2. 当前数据为页面专用 Mock 数据源；后续真实接口可用后，需要按接口结构切换数据来源。
+3. 当前看板只做展示，不包含拖拽流转、点击详情、筛选或权限控制。
+4. 本轮未抽 `PlatformViewTabs` 或 `PlatformProgress`，后续多页面复用后再评估平台化。
+
+### 任务名称
+
+文档与台账管理文档列表改为一行两列
+
+### 完成内容
+
+1. 给 `PlatformFileList` 新增 `columns` 列数配置，默认仍为单列，避免影响其他未来文件列表场景。
+2. `/project/document` 页面将文件列表配置为两列展示，提高宽屏空间利用率。
+3. 移动端和窄屏下仍自动回落为单列，避免文件名和下载按钮拥挤。
+
+### 修改了哪些文件
+
+1. `apps/web-antd/src/components/platform/file/platform-file-list.vue`
+2. `apps/web-antd/src/views/project/document/index.vue`
+3. `docs/project-log.md`
+4. `docs/todo-next.md`
+
+### 涉及哪些页面或组件
+
+1. 页面：`/project/document`
+2. 平台组件：`PlatformFileList`
+
+### 验证结果
+
+1. 已执行目标文件 ESLint，结果通过。
+2. 已用独立 Playwright headless Chrome 访问 `/project/document`，确认文件列表为两列，`gridTemplateColumns` 为 `547px 547px`，文件项数量为 `12`，控制台无错误。
+
+### 遗留问题
+
+1. 当前只调整列表密度；分类筛选、预览和真实接口仍待后续确认。
+
+### 任务名称
+
+项目全景管理 - 中期评估与验收管理页面右侧内容开发
+
+### 完成内容
+
+1. 按原型新增 `/project/evaluation` 中期评估与验收管理页面右侧内容。
+2. 新增页面专用 Mock 数据源，承载待评估项目、评估记录、评估状态、评分和顶部统计卡数据。
+3. 顶部统计卡复用 `PlatformStatCard`，展示已评估项目、待评估项目和平均评估得分。
+4. 下方主体改为左右自适应布局：左侧为待评估项目，右侧为评估记录。
+5. 左右模块根据浏览器高度占满剩余内容区，内容超出时在模块内部滚动。
+6. 新增“发起评估”弹窗，支持从顶部按钮或待评估项目卡片带入项目后生成评估记录。
+7. 将 Mock 菜单中 `中期评估与验收` 从空白占位页切换到真实页面组件。
+
+### 修改了哪些文件
+
+1. `apps/web-antd/src/views/project/evaluation/index.vue`
+2. `apps/web-antd/src/views/project/evaluation/project-evaluation-source.ts`
+3. `apps/web-antd/src/mock/index.ts`
+4. `docs/project-log.md`
+5. `docs/todo-next.md`
+
+### 涉及哪些页面或组件
+
+1. 页面：`/project/evaluation`
+2. 平台组件：`PlatformStatCard`、`PlatformStatusTag`、`PlatformButton`、`PlatformModal`、`PlatformEditForm`、`PlatformFormItem`、`PlatformInput`、`PlatformSelect`
+3. Mock 菜单：`项目全景管理 - 中期评估与验收`
+
+### 验证结果
+
+1. 已执行 `./node_modules/.bin/eslint apps/web-antd/src/views/project/evaluation/index.vue apps/web-antd/src/views/project/evaluation/project-evaluation-source.ts apps/web-antd/src/mock/index.ts`，结果通过。
+2. 已执行 `git diff --check`，结果通过。
+3. 已执行 `curl -I http://127.0.0.1:5672/project/evaluation`，返回 `200 OK`。
+4. 已使用独立 headless Chrome 完成浏览器验证：Mock 登录后进入 `/project/evaluation`，页面标题可见，左右面板数量为 2，工作区宽度 `1377px`，高度 `576px`，左右列宽约 `500px / 853px`，控制台错误为 0。
+5. 已执行 `./node_modules/.bin/vue-tsc -p apps/web-antd/tsconfig.json --noEmit --skipLibCheck --pretty false`，仍因既有模块和并行页面类型问题失败，失败列表不再包含本次新增的 `/project/evaluation` 文件。
+
+### 遗留问题
+
+1. 当前页面使用专用 Mock 数据源；后续真实接口可用后，需要按接口结构切换数据来源。
+2. 发起评估流程当前为前端模拟生成记录，正式业务中的评估模板、审批流、验收附件和详情页仍需后续设计确认。
+3. 未开发“评估详情 / 导出 / 模板配置”等扩展入口。
+
+### 任务名称
+
+项目全景管理 - 文档与台账管理页面右侧内容开发
+
+### 完成内容
+
+1. 按用户提供原型新增 `/project/document` 文档与台账管理页面右侧内容。
+2. 新增 `PlatformFileList`、`PlatformFileItem` 平台文件列表薄封装，统一文件图标、文件名、元信息和下载按钮样式。
+3. 新增页面专用 Mock 数据源，承载文档统计、文件列表、导出台账、批量上传和下载模拟逻辑。
+4. 顶部统计卡复用 `PlatformStatCard`，文档总数、合同文件、技术文档、数据报表数值对齐原型。
+5. 将 Mock 菜单中 `文档与台账管理` 从空白占位页切换到真实页面组件。
+
+### 修改了哪些文件
+
+1. `apps/web-antd/src/components/platform/file/index.ts`
+2. `apps/web-antd/src/components/platform/file/platform-file-item.vue`
+3. `apps/web-antd/src/components/platform/file/platform-file-list.vue`
+4. `apps/web-antd/src/components/platform/file/types.ts`
+5. `apps/web-antd/src/components/platform/index.ts`
+6. `apps/web-antd/src/views/project/document/index.vue`
+7. `apps/web-antd/src/views/project/document/project-document-source.ts`
+8. `apps/web-antd/src/mock/index.ts`
+9. `AGENTS.md`
+10. `docs/decision-records.md`
+11. `docs/project-log.md`
+12. `docs/todo-next.md`
+
+### 涉及哪些页面或组件
+
+1. 页面：`/project/document`
+2. 平台组件：`PlatformFileList`、`PlatformFileItem`、`PlatformStatCard`、`PlatformButton`
+3. Mock 菜单：`项目全景管理 - 文档与台账管理`
+
+### 验证结果
+
+1. 已执行目标文件 ESLint，结果通过。
+2. 已执行 `git diff --check`，结果通过。
+3. 已执行 `curl -I http://127.0.0.1:5174/project/document`，返回 `200 OK`。
+4. 已用独立 Playwright headless Chrome 完成 Mock 登录后访问 `/project/document`，页面显示 4 张统计卡和 12 条文件项，控制台无错误。
+5. 已执行 `./node_modules/.bin/vue-tsc -p apps/web-antd/tsconfig.json --noEmit --skipLibCheck --pretty false`，失败项均为既有模块类型问题，未指向本次新增文件。
+
+### 遗留问题
+
+1. 当前批量上传、导出台账和下载为前端模拟逻辑；后续真实接口可用后，需要切换到接口调用。
+2. 当前仅按原型实现右侧内容，未新增详情、分类筛选、权限控制和真实文件预览流程。
+3. 全量 `vue-tsc` 仍存在既有类型错误，后续需要另行治理。
+
+### 任务名称
+
+项目全景管理 - 合同与付款管理页面右侧内容开发
+
+### 完成内容
+
+1. 按原型新增 `/project/contract` 合同与付款管理页面右侧内容。
+2. 新增页面专用 Mock 数据源，承载合同金额、付款节点、付款状态和顶部统计卡数据。
+3. 顶部统计卡复用 `PlatformStatCard`，统计值对齐原型：合同总额 `20.4亿`、已付金额 `12.4亿`、待审批付款 `4笔`。
+4. 下方项目付款卡片列表改为宽屏三列布局，中屏两列，小屏一列。
+5. 将 Mock 菜单中 `合同与付款管理` 从空白占位页切换到真实页面组件。
+
+### 修改了哪些文件
+
+1. `apps/web-antd/src/views/project/contract/index.vue`
+2. `apps/web-antd/src/views/project/contract/project-contract-source.ts`
+3. `apps/web-antd/src/mock/index.ts`
+
+### 涉及哪些页面或组件
+
+1. 页面：`/project/contract`
+2. 平台组件：`PlatformStatCard`、`PlatformStatusTag`
+3. Mock 菜单：`项目全景管理 - 合同与付款管理`
+
+### 验证结果
+
+1. 已执行 `./node_modules/.bin/eslint apps/web-antd/src/views/project/contract/index.vue apps/web-antd/src/views/project/contract/project-contract-source.ts apps/web-antd/src/mock/index.ts`，结果通过。
+2. 已执行 `git diff --check`，结果通过。
+3. 已启动本地 Vite：`http://127.0.0.1:5670/`。
+4. 已执行 `curl -I http://127.0.0.1:5670/project/contract`，返回 `200 OK`。
+5. 已用隔离 headless Chrome 打开 `/project/contract` 并注入 Mock 登录态验证：页面标题为“合同与付款管理”，统计卡数量 `3`，项目付款卡片数量 `8`，宽屏下卡片 grid 为 `3` 列，控制台无 error。
+6. 已执行应用级 `vue-tsc`，结果未通过；当前输出不再包含 `apps/web-antd/src/views/project/contract`，剩余错误来自既有组件、演示页和并行的 `project/evaluation` 页面改动。
+
+### 遗留问题
+
+1. 当前页面使用专用 Mock 数据源；后续真实接口可用后，需要按接口结构切换数据来源。
+2. 页面暂不包含新增、编辑、审批、详情跳转等操作，后续需根据业务流程继续确认。
+3. 应用级 `vue-tsc` 仍有存量/并行改动错误，后续如需要完整类型验收，应另开任务集中处理。
+
+### 任务名称
+
 2026-05-07 今天结束收尾
 
 ### 完成内容

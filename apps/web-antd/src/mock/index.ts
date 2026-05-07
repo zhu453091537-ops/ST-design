@@ -94,7 +94,7 @@ const mockBackendMenuList = [
       },
       {
         children: [],
-        component: 'platform/blank/index',
+        component: 'project/progress/index',
         hidden: false,
         meta: {
           icon: 'lucide:list-todo',
@@ -106,7 +106,7 @@ const mockBackendMenuList = [
       },
       {
         children: [],
-        component: 'platform/blank/index',
+        component: 'project/contract/index',
         hidden: false,
         meta: {
           icon: 'lucide:file-signature',
@@ -118,7 +118,7 @@ const mockBackendMenuList = [
       },
       {
         children: [],
-        component: 'platform/blank/index',
+        component: 'project/document/index',
         hidden: false,
         meta: {
           icon: 'lucide:files',
@@ -130,7 +130,7 @@ const mockBackendMenuList = [
       },
       {
         children: [],
-        component: 'platform/blank/index',
+        component: 'project/evaluation/index',
         hidden: false,
         meta: {
           icon: 'lucide:clipboard-check',

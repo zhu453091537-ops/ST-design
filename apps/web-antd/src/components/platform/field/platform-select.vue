@@ -43,22 +43,26 @@ function getMaxOptionLabelLength(options?: SelectProps['options']): number {
     return 0;
   }
 
-  return options.reduce((max, option) => {
+  let maxLength = 0;
+
+  for (const option of options) {
     const labelLength = getOptionLabel(option);
     const childrenLength = getMaxOptionLabelLength(
       'options' in option ? option.options : undefined,
     );
-    return Math.max(max, labelLength, childrenLength);
-  }, 0);
+    maxLength = Math.max(maxLength, labelLength, childrenLength);
+  }
+
+  return maxLength;
 }
 
 function getOptionLabel(option: NonNullable<SelectProps['options']>[number]) {
   const label = 'label' in option ? option.label : undefined;
   if (typeof label === 'number' || typeof label === 'string') {
-    return Array.from(String(label)).length;
+    return [...String(label)].length;
   }
   if (typeof option.value === 'number' || typeof option.value === 'string') {
-    return Array.from(String(option.value)).length;
+    return [...String(option.value)].length;
   }
   return 0;
 }
@@ -68,8 +72,8 @@ function getOptionLabel(option: NonNullable<SelectProps['options']>[number]) {
   <Select
     v-bind="$attrs"
     class="platform-select"
+    :classes="{ popup: { root: 'platform-select-dropdown' } }"
     :options="options"
-    popup-class-name="platform-select-dropdown"
     :popup-match-select-width="false"
     :style="selectStyle"
   >

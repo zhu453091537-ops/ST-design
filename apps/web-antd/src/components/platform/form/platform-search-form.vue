@@ -7,14 +7,34 @@ defineOptions({
   inheritAttrs: false,
 });
 
+const props = withDefaults(
+  defineProps<{
+    columns?: number | string;
+  }>(),
+  {
+    columns: 'repeat(auto-fit, minmax(180px, 1fr))',
+  },
+);
+
 const slots = useSlots();
 const fieldSlotNames = computed(() =>
   Object.keys(slots).filter((name) => name !== 'actions'),
 );
+const formStyle = computed(() => ({
+  '--platform-search-form-columns':
+    typeof props.columns === 'number'
+      ? `repeat(${props.columns}, minmax(0, 1fr))`
+      : props.columns,
+}));
 </script>
 
 <template>
-  <PlatformForm v-bind="$attrs" class="platform-search-form" variant="search">
+  <PlatformForm
+    v-bind="$attrs"
+    class="platform-search-form"
+    :style="formStyle"
+    variant="search"
+  >
     <template v-for="name in fieldSlotNames" #[name]="slotProps">
       <slot :name="name" v-bind="slotProps || {}"></slot>
     </template>

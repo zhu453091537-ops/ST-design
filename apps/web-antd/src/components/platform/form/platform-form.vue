@@ -30,6 +30,7 @@ withDefaults(
 
 .platform-form--search {
   display: grid;
+  grid-template-columns: var(--platform-search-form-columns, 1fr);
   gap: 16px 24px;
 }
 

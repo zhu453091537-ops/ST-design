@@ -30,6 +30,9 @@
 | 高 | 建立阶段进度报告规则 | 已完成 | 已写入 `AGENTS.md` 和 `docs/decision-records.md`，后续每完成一个步骤、阶段或代码修改后都要主动同步方案进度和剩余内容。 |
 | 高 | `AGENTS.md` 长期规则去重轻量化 | 已完成 | 已将 `AGENTS.md` 从 586 行压缩到 188 行，保留核心规则和硬性禁止项，减少后续接续读取成本。 |
 | 高 | 对下一张截图或页面需求输出结构化分析 | 待执行 | 按复杂度处理：简单组件反馈输出简版归因和组件映射；复杂页面或截图开发再输出完整结构、文件归属、交互状态和验证方案。 |
+| 高 | 截图开发前规则自检 | 已完成 | 已写入 `AGENTS.md` 和 `docs/decision-records.md`：即使用户确认开发，也必须先判断截图还原范围、平台组件优先级、页面 CSS 范围、是否新增平台组件和是否符合查询列表页模式。 |
+| 高 | 新增或扩展平台组件前单独确认 | 已完成 | 已写入 `AGENTS.md` 和 `docs/decision-records.md`：新增平台组件、扩展平台组件能力、修改适配层、token 或全局样式入口前，必须先说明原因、影响范围、替代方案和查询列表页模式判断，并等待用户确认。 |
+| 高 | 典型页面收尾平台治理影响章节 | 已完成 | 已写入 `AGENTS.md` 和 `docs/decision-records.md`：以后所有典型页面、截图页面、Figma 页面或业务右侧内容页收尾，都必须补充“平台治理影响”章节，并覆盖原生组件问题、平台层解决项、临时实现、未来回收组件、禁止复制实现、主题变量落点和页面级样式债务。 |
 | 高 | 导航组件统一样式微调 | 已完成 | 已把顶部/左侧菜单字号、左侧菜单图标尺寸、顶部选中态满高背景和右上角设置/通知/头像 hover 收敛到菜单组件变量与头部公共样式类。 |
 | 高 | 顶部导航栏 Logo 应用名更新 | 已完成 | 已在应用启动期将项目配置的 `preferences.app.name` 同步回当前偏好状态，避免历史 localStorage 继续显示旧应用名。 |
 | 高 | 左侧导航栏源组件样式修正 | 已完成 | 已调整左侧菜单展开态选中背景横向充满、收起态 48px 正方形背景、折叠按钮尺寸/位置/描边和收起态 tooltip 灰色变量。 |
@@ -51,9 +54,17 @@
 | 高 | 平台表格横向滚动视觉复核 | 待执行 | 下一轮优先刷新 `/workbench/index` 与 `/project/information`，人工拖动横向滚动条确认表头和表体是否完全同步；如仍抖动，继续排查 Antdv fixed right sticky 重绘。 |
 | 高 | 平台模块默认间距与内容内边距统一 | 已完成 | 已新增 `--st-layout-section-gap: 24px`、`--st-module-content-padding: 24px`，并接入 `Page`、`.platform-surface`、`PlatformTableToolbar`、`PlatformStatCard`、`/workbench/index` 和 `/project/information`；工具栏上下内边距按源组件节奏为 `12px`。 |
 | 高 | 项目信息管理页面第一版 | 已完成 | 已新增 `/project/information`，补齐 `项目全景管理` 左侧菜单；页面使用专用 Mock 数据源，支持搜索、类型/状态表头筛选、新建、编辑、归档、删除和轻量详情入口；`/workbench/index` 仍保留为项目总览。 |
+| 高 | 进度可视化跟踪页面右侧内容开发 | 已完成，待用户视觉确认 | 已新增 `/project/progress` 页面和页面专用 Mock 数据源，支持甘特图 / 看板双视图；甘特图使用现有 ECharts 插件，看板四列卡片已完成隔离浏览器验证。 |
+| 高 | 进度可视化跟踪页面纠偏 | 进行中/已暂停 | 用户要求今天结束时，纠偏阶段尚未完成：已开始新增平台组件雏形和查询数据结构，但尚未完成页面重构、删除页面专用组件、验证或最终平台治理映射。下一轮必须先审计当前 diff。 |
 | 高 | 项目信息管理筛选入口平台化 | 已完成 | 已按用户反馈移除工具栏里的 `全部状态` / `全部类型` 下拉，改为 `项目类型`、`状态` 表头筛选，复用 `PlatformTable` 的“全部”和即时生效规则。 |
 | 高 | 平台表格固定操作列 hover 透明问题 | 已完成 | 已在 `PlatformTable` 源组件修复 fixed 左/右列、`fix-right-first`、`fix-left-last` 的默认、hover、selected 和 `ant-table-cell-row-hover` 状态；将 fixed cell 拆成纯白底层和实心浅绿 hover 层，避免操作列透出下方内容。 |
 | 高 | 左侧导航菜单项高度与左侧距离源组件修正 | 已完成 | 已在 `menu-ui` 源组件将垂直展开态菜单项高度统一为 `52px`，一级菜单内容左侧距离统一为 `24px`；未改当前页面样式，未影响顶部横向菜单和收起态。 |
+| 高 | 合同与付款管理页面右侧内容开发 | 已完成 | 已新增 `/project/contract` 页面和页面专用 Mock 数据源，顶部统计卡复用 `PlatformStatCard`；付款节点已改为 ECharts mini bar + 下方文字，合同卡片宽屏三列、中屏两列、小屏一列；已完成 headless Chrome 验证。 |
+| 高 | 文档与台账管理页面右侧内容开发 | 已完成 | 已新增 `/project/document` 页面、页面专用 Mock 数据源和 `PlatformFileList` / `PlatformFileItem` 平台文件列表薄封装；文档列表已调整为宽屏两列、窄屏单列；已完成 ESLint、HTTP 和隔离浏览器验证。 |
+| 高 | 中期评估与验收管理页面右侧内容开发 | 已完成 | 已新增 `/project/evaluation` 页面和页面专用 Mock 数据源，并完成页面治理整改：左右自适应布局保留，待评估项目接入平台工具栏查询筛选，评估记录改为 `PlatformTable`；已完成 ESLint、HTTP 和隔离浏览器验证。 |
+| 高 | 本轮新页面视觉确认 | 待执行 | 下一轮优先由用户确认 `/project/contract` ECharts mini bar、`/project/progress` 甘特图/看板、`/project/document` 两列文件列表、`/project/evaluation` 治理后左右布局和右侧表格是否符合原型预期。 |
+| 高 | 新页面查询列表页模式复核 | 待执行 | 下一轮如继续做项目全景管理页面，开发前先判断页面是否应采用“查询区 + 工具栏 + 表格/列表 + 分页 + 批量操作”模式；不采用时必须写明原因并等待确认。 |
+| 中 | 应用级 `vue-tsc` 存量错误整理 | 待处理 | 本次运行 `vue-tsc -p apps/web-antd/tsconfig.json --noEmit --skipLibCheck --pretty false` 仍有既有组件和演示页错误；当前失败列表不包含 `/project/contract` mini bar、`/project/evaluation` 和 `PlatformSelect` 改动。 |
 | 中 | `PlatformTable` 筛选下拉逻辑整理 | 待处理 | 当前 `PlatformTable` 能力偏多；后续只整理筛选下拉 helper，本轮不拆组件。 |
 | 中 | 表格全屏能力下沉评估 | 待处理 | 当前项目总览页已接入全屏；后续评估沉淀到 `PlatformTableToolbar` 或 `PlatformTable`，本轮不做。 |
 | 中 | 多页面复用后评估 `PlatformEntityCell` | 待观察 | 项目信息业务单元格暂留页面，等多页面复用后再抽。 |
@@ -71,6 +82,19 @@
 
 | 日期 | 状态 | 说明 |
 | --- | --- | --- |
+| 2026-05-07 | 已收尾 | 已按用户要求停止开发并完成规则复盘收尾：`AGENTS.md`、`docs/decision-records.md`、`docs/project-log.md`、`docs/todo-next.md` 已更新；新增/扩展平台组件必须单独确认，小反馈落到平台层也必须先补简版映射和影响范围。 |
+| 2026-05-07 | 已收尾 | 今天结束收尾：已更新接续文档，并将“新增或扩展平台组件必须单独确认”同步到 `AGENTS.md` 和 `docs/decision-records.md`；下一轮先审计 `/project/progress` 未完成 diff，再做 `/project/contract`、`/project/document`、`/project/evaluation`、`/project/progress` 视觉确认。 |
+| 2026-05-07 | 已暂停 | 今天结束收尾：已停止继续开发并停掉本轮 Vite 服务；`/project/progress` 纠偏阶段只完成部分平台组件雏形和数据源调整，未完成页面重构、删除页面专用组件或重新验证；下一轮需先审计当前 diff，再决定继续、回退或迁移。 |
+| 2026-05-07 | 已完成 | 已按用户确认将 `/project/contract` 付款节点区域改为 ECharts mini bar + 下方文字：新增页面内 `ContractPaymentMiniBar`，验证统计卡 3 张、合同卡片 8 张、ECharts canvas 8 个、节点文字 24 个，旧纯列表 DOM 不存在，控制台无 error；全量 `vue-tsc` 仍有既有模块错误。 |
+| 2026-05-07 | 已完成 | 已补充“平台治理影响”长期收尾规则：`AGENTS.md` 和 `docs/decision-records.md` 已同步；`docs/project-log.md` 今天结束收尾记录已补平台治理影响七项盘点。 |
+| 2026-05-07 | 已收尾 | 已完成今天结束收尾：`docs/project-log.md`、`docs/todo-next.md` 已更新；本轮产生的长期规则已确认同步到 `AGENTS.md` 和 `docs/decision-records.md`；下一轮优先做新页面视觉确认和全量 `vue-tsc` 存量错误治理。 |
+| 2026-05-07 | 已完成 | 已完成 `/project/evaluation` 页面治理整改：评估记录改为 `PlatformTable`，左右两栏均接入 `PlatformTableToolbar` 查询筛选，页面 scoped CSS 收敛到布局和少量业务列表结构；`PlatformSelect` 已去掉 Antdv 废弃属性；目标文件 ESLint、`git diff --check`、HTTP 路由和隔离浏览器验证通过。 |
+| 2026-05-07 | 已完成 | 已补充截图开发前规则自检：确认开发后仍必须先输出组件映射、文件归属和规则自检，明确是否局部修正、是否完整还原截图、是否优先复用平台组件、是否大量手写 CSS、是否新增平台组件和是否采用查询列表页模式；本轮只改文档，`git diff --check` 通过。 |
+| 2026-05-07 | 已完成，待用户视觉确认 | 已完成 `项目全景管理 - 进度可视化跟踪` 右侧内容：新增 `/project/progress` 页面、专用 Mock 数据源、ECharts 甘特图组件和看板组件；目标文件 ESLint、`git diff --check`、HTTP 路由和隔离浏览器验证通过；全量 `vue-tsc` 仍有既有模块错误。 |
+| 2026-05-07 | 已完成 | 已按用户反馈将 `/project/document` 文档列表调整为宽屏两列展示；`PlatformFileList` 新增 `columns` 配置，页面传入 `2`，隔离浏览器验证两列宽度为 `547px 547px`。 |
+| 2026-05-07 | 已完成 | 已完成 `项目全景管理 - 中期评估与验收管理` 右侧内容：新增 `/project/evaluation` 页面、专用 Mock 数据源和菜单 component 指向；待评估项目与评估记录采用左右自适应布局；目标文件 ESLint、`git diff --check`、HTTP 路由和隔离浏览器验证通过。 |
+| 2026-05-07 | 已完成 | 已完成 `项目全景管理 - 文档与台账管理` 右侧内容：新增 `/project/document` 页面、专用 Mock 数据源、`PlatformFileList` / `PlatformFileItem` 平台文件列表薄封装，并将菜单 component 指向真实页面；目标文件 ESLint、`git diff --check`、HTTP 路由和隔离浏览器验证通过；全量 `vue-tsc` 仍有既有模块错误。 |
+| 2026-05-07 | 已完成 | 已完成 `项目全景管理 - 合同与付款管理` 右侧内容第一版：新增 `/project/contract` 页面、专用 Mock 数据源和菜单 component 指向；目标文件 ESLint、`git diff --check`、HTTP 路由和 headless Chrome 宽屏三列验证通过；应用级 `vue-tsc` 仍有存量/并行改动错误。 |
 | 2026-05-07 | 已收尾 | 已完成今天结束收尾：`docs/project-log.md`、`docs/todo-next.md` 已更新；本轮长期决策已同步到 `docs/decision-records.md` 和 `AGENTS.md`；下一轮优先做 `/workbench/index` 与 `/project/information` 的横向滚动视觉复核。 |
 | 2026-05-07 | 已完成 | 已完成平台表格边缘列内边距统一：新增 `--st-table-edge-cell-padding: 24px` 和 `--st-table-action-column-width: 184px`，并在 `PlatformTable` 源组件统一首列与操作列左右内边距和默认操作列宽度；已修复横向滚动时表头末尾 scrollbar 占位格被误加 padding 导致的错位晃动，并为固定列自动合成 `scroll.x`。 |
 | 2026-05-07 | 已完成 | 已完成平台表格外描边源组件补充：新增 `--st-color-table-outline`，明亮主题取 `--st-color-border-control`、暗色主题取 `--border`，并在 `PlatformTable` 源组件给 `.ant-table-container` 增加外描边。 |
@@ -127,22 +151,25 @@
 
 1. 用户输入“开工继续”或提出下一个开发需求后，先读取 `AGENTS.md`、`docs/project-log.md`、`docs/decision-records.md`、`docs/todo-next.md`。
 2. 输出项目接续摘要，明确当前项目目标、技术栈、最近完成内容、未完成事项、关键规则和建议执行顺序。
-3. 下一轮第一优先级：刷新 `http://127.0.0.1:5173/workbench/index` 和 `http://127.0.0.1:5173/project/information`，人工拖动横向滚动条，确认 `PlatformTable` 表头与表体同步不再抖动。
-4. 同步复核表格视觉：首列边缘留白 24px、操作列左右留白 24px、操作列宽度是否合适、表格外描边是否清晰、fixed 操作列 hover 是否仍为实心背景。
-5. 如横向滚动仍有轻微抖动，继续在 `PlatformTable` 源组件排查 Antdv fixed right / sticky / scrollbar 占位格同步问题，不在 `/workbench/index` 或 `/project/information` 写页面补丁。
-6. 如需继续查看典型页面，先确认当前 Vite 服务端口是否仍在运行；本轮清理后 `5173` 仍可访问，但跨设备或新会话不要假设端口仍可用，应以实际 `lsof` 或新启动结果为准。
-7. 旧 `/system/user` 页面已解绑并删除壳文件，不再作为当前阶段目标；`人员全生命周期 - 用户管理 -> /platform/typical-page` 当前为空承载页，等待用户后续提供原型后再开发。
-8. 继续抽查其他真实业务页，确认是否也已统一接入平台组件和 Vxe 适配层；`system/post`、`system/dept` 已验证，`system/role` 已删除。
-7. Figma MCP Go 已恢复连接；后续如继续做 Figma 对齐，优先读取顶部导航节点 `2045-1586`，对照 `LayoutHeader`、`VbenLogo`、水平 `Menu` 和右侧按钮做节点级尺寸与切图校准。
-8. 对表格工具栏继续遵守统一规则：业务主按钮放最左，次要按钮随后；搜索、刷新、设置、全屏等常规工具统一由平台表格工具栏或 Vxe 适配层承载。
-9. 围绕 `/platform/typical-page` 继续做视觉对齐，由用户指出 Button、Table、Tree、Form、Modal、Drawer 等具体样式问题后回到平台组件源头改造。
-10. 如果后续继续统一头部交互态，优先复用 `platform-header-icon-action`，把主题切换、时区等剩余头部图标按钮收口到同一套 hover/focus 规则。
-11. 当前典型页面 Demo 下一步建议：先让用户在 `http://127.0.0.1:5173/platform/typical-page` 上确认第一版真实业务验证场的结构和组件问题。
-12. 后端数据源可用后，在 `apps/web-antd/src/views/platform/typical-page/user-demo-source.ts` 内把受控数据源切回 `/system/user/list`、`/system/user/deptTree` 等真实接口，尽量不改页面主体。
-13. 典型页面 Demo 开发时，顶部导航、左侧导航和面包屑必须纳入验证范围；组件视觉样式优先沉淀到平台组件场景，页面 scoped CSS 只写布局。
-14. 后续用户提供截图或指出组件样式问题时，即使没有特别强调全局修改，也默认映射到 ant-design-vue 原生组件、平台薄封装和全局样式源头处理。
-15. 如果用户提供截图或页面需求，先按 `AGENTS.md` 的截图与页面需求分析输出规则判断输出强度：简单组件反馈用简版映射，复杂页面再输出完整表格。
-16. 等用户确认后，再开始下一步具体平台组件改造、方案设计或代码修改。
+3. 下一轮第一优先级：先审计当前 `/project/progress` 纠偏 diff，区分“已完成的一版页面”“未完成的平台组件雏形”“需要回退/删除/迁移的页面专用组件”，不要直接继续写代码。
+4. 审计后输出最终组件映射和回退/迁移清单，再由用户确认是否继续纠偏。
+5. 如用户要求视觉确认，再重新启动 Vite 并打开 `/project/contract`、`/project/progress`、`/project/evaluation`、`/project/document`；不要沿用今天的 `5672` / `5673` 端口状态。
+6. 如继续处理平台表格存量事项，再刷新 `/workbench/index` 和 `/project/information`，人工拖动横向滚动条确认 `PlatformTable` 表头与表体同步不再抖动。
+7. 如需继续查看典型页面，先确认当前 Vite 服务端口是否仍在运行；跨设备或新会话不要假设端口仍可用，应以实际 `lsof` 或新启动结果为准。
+8. 旧 `/system/user` 页面已解绑并删除壳文件，不再作为当前阶段目标；`人员全生命周期 - 用户管理 -> /platform/typical-page` 当前为空承载页，等待用户后续提供原型后再开发。
+9. 继续抽查其他真实业务页，确认是否也已统一接入平台组件和 Vxe 适配层；`system/post`、`system/dept` 已验证，`system/role` 已删除。
+10. Figma MCP Go 已恢复连接；后续如继续做 Figma 对齐，优先读取顶部导航节点 `2045-1586`，对照 `LayoutHeader`、`VbenLogo`、水平 `Menu` 和右侧按钮做节点级尺寸与切图校准。
+11. 对表格工具栏继续遵守统一规则：业务主按钮放最左，次要按钮随后；搜索、刷新、设置、全屏等常规工具统一由平台表格工具栏或 Vxe 适配层承载。
+12. 围绕 `/platform/typical-page` 继续做视觉对齐，由用户指出 Button、Table、Tree、Form、Modal、Drawer 等具体样式问题后回到平台组件源头改造。
+13. 如果后续继续统一头部交互态，优先复用 `platform-header-icon-action`，把主题切换、时区等剩余头部图标按钮收口到同一套 hover/focus 规则。
+14. 当前典型页面 Demo 下一步建议：先让用户在 `http://127.0.0.1:5173/platform/typical-page` 上确认第一版真实业务验证场的结构和组件问题。
+15. 后端数据源可用后，在 `apps/web-antd/src/views/platform/typical-page/user-demo-source.ts` 内把受控数据源切回 `/system/user/list`、`/system/user/deptTree` 等真实接口，尽量不改页面主体。
+16. 典型页面 Demo 开发时，顶部导航、左侧导航和面包屑必须纳入验证范围；组件视觉样式优先沉淀到平台组件场景，页面 scoped CSS 只写布局。
+17. 后续用户提供截图或指出组件样式问题时，即使没有特别强调全局修改，也默认映射到 ant-design-vue 原生组件、平台薄封装和全局样式源头处理。
+18. 如果用户提供截图或页面需求，先按 `AGENTS.md` 的截图与页面需求分析输出规则判断输出强度：简单组件反馈用简版映射，复杂页面再输出完整表格。
+19. `/project/evaluation` 后续建议补充评估详情、评估模板配置、验收附件和导出能力；当前发起评估只是前端模拟流程。
+20. 所有典型页面、截图页面、Figma 页面或业务右侧内容页收尾时，必须补“平台治理影响”章节，不得只写完成和验证。
+21. 等用户确认后，再开始下一步具体平台组件改造、方案设计或代码修改。
 
 ## 暂时不处理的问题
 
@@ -169,7 +196,7 @@
 10. 当前 `PlatformTable` 基于 ant-design-vue `Table`，但真实业务页大量使用 `useVbenVxeGrid`；如果不先治理 Vxe 适配层，后续可能出现两套表格平台能力并行维护的问题。
 11. 当前 `#/components/platform` 只在典型验证页接入，真实业务页继续直接引用 `antdv-next` 属于存量事实；后续迁移需要分批推进，避免一次性影响权限、接口、弹窗和表格行为。
 12. 顶部一级菜单默认子路由跳转已覆盖当前 Mock 菜单；如果后续真实后端菜单存在隐藏、禁用、外链和多层空父级混合场景，需要继续做一次真实菜单抽查。
-13. 今天结束未执行停服操作；本轮收尾时 `5174` 仍有 Vite 服务监听，下次接续时必须以实际 `lsof` 或新启动结果为准，不要直接沿用当前浏览器端口状态。
+13. 本轮验证端口曾使用 `http://127.0.0.1:5672/` 和 `http://127.0.0.1:5673/`；`5673` 已在合同付款 mini bar 验证后停止，下次接续时必须以实际 `lsof` 或新启动结果为准，不要直接沿用当前浏览器端口状态。
 14. 当前预览已删除可见的 Vben 示例模块入口；如后续需要业务模块，应按真实业务范围重新接入，避免直接恢复示例模块造成平台范围混乱。
 15. Figma MCP Go 已恢复连接，但不同电脑上本机二进制缓存路径可能变化；如再次断开，应优先按 `AGENTS.md` 第 8 节重新定位 `figma-mcp-go` 二进制并更新 MCP 配置。
 16. 本轮 Vite 构建曾产生 `apps/web-antd/dist` 与 `apps/web-antd/dist.zip` 临时产物，现已清理；后续每次构建后仍需复查，避免把构建产物纳入源码提交。
