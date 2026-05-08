@@ -6,16 +6,15 @@ import type {
 
 import type { PlatformFileListItem } from '#/components/platform';
 
-import { onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 
 import { Page } from '@vben/common-ui';
-import { VbenIcon } from '@vben/icons';
 
 import {
-  PlatformButton,
   PlatformFileList,
   PlatformSectionTitle,
   PlatformStatCard,
+  PlatformViewToolbar,
 } from '#/components/platform';
 
 import {
@@ -33,6 +32,21 @@ const uploading = ref(false);
 const exporting = ref(false);
 const downloadingId = ref<null | number | string>(null);
 const fileInputRef = ref<HTMLInputElement>();
+const headerActions = computed(() => [
+  {
+    icon: 'lucide:download',
+    key: 'export',
+    label: '导出台账',
+    loading: exporting.value,
+  },
+  {
+    icon: 'lucide:upload',
+    key: 'upload',
+    label: '批量上传',
+    loading: uploading.value,
+    type: 'primary' as const,
+  },
+]);
 
 onMounted(loadDocumentManagement);
 
@@ -76,6 +90,16 @@ function handleUploadClick() {
   fileInputRef.value?.click();
 }
 
+function handleHeaderAction(key: string) {
+  if (key === 'export') {
+    void handleExportLedger();
+  }
+
+  if (key === 'upload') {
+    handleUploadClick();
+  }
+}
+
 async function handleUploadChange(event: Event) {
   const input = event.target as HTMLInputElement;
   const files = [...(input.files || [])];
@@ -99,43 +123,19 @@ async function handleUploadChange(event: Event) {
 <template>
   <Page :auto-content-height="true">
     <div class="project-document-page">
-      <header class="project-document-header">
-        <div>
-          <h1>文档与台账管理</h1>
-          <p>合同、技术方案、验收报告等文档分类管理</p>
-        </div>
-
-        <div class="project-document-header__actions">
-          <PlatformButton
-            :loading="exporting"
-            scene="toolbar"
-            @click="handleExportLedger"
-          >
-            <template #icon>
-              <VbenIcon icon="lucide:download" />
-            </template>
-            导出台账
-          </PlatformButton>
-          <PlatformButton
-            :loading="uploading"
-            scene="toolbar"
-            type="primary"
-            @click="handleUploadClick"
-          >
-            <template #icon>
-              <VbenIcon icon="lucide:upload" />
-            </template>
-            批量上传
-          </PlatformButton>
-          <input
-            ref="fileInputRef"
-            class="project-document-upload-input"
-            multiple
-            type="file"
-            @change="handleUploadChange"
-          />
-        </div>
-      </header>
+      <PlatformViewToolbar
+        :actions="headerActions"
+        description="合同、技术方案、验收报告等文档分类管理"
+        title="文档与台账管理"
+        @action="handleHeaderAction"
+      />
+      <input
+        ref="fileInputRef"
+        class="project-document-upload-input"
+        multiple
+        type="file"
+        @change="handleUploadChange"
+      />
 
       <section class="project-document-stat-grid">
         <PlatformStatCard
@@ -173,33 +173,6 @@ async function handleUploadChange(event: Event) {
   min-height: 100%;
 }
 
-.project-document-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-}
-
-.project-document-header h1 {
-  margin: 0;
-  font-size: 22px;
-  font-weight: 700;
-  line-height: 32px;
-  color: hsl(var(--foreground));
-}
-
-.project-document-header p {
-  margin: 0;
-  color: hsl(var(--muted-foreground));
-}
-
-.project-document-header__actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  justify-content: flex-end;
-}
-
 .project-document-upload-input {
   display: none;
 }
@@ -229,15 +202,6 @@ async function handleUploadChange(event: Event) {
 }
 
 @media (max-width: 720px) {
-  .project-document-header {
-    align-items: stretch;
-    flex-direction: column;
-  }
-
-  .project-document-header__actions {
-    justify-content: flex-start;
-  }
-
   .project-document-stat-grid {
     grid-template-columns: 1fr;
   }

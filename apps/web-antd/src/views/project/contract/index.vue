@@ -8,7 +8,11 @@ import { onMounted, ref } from 'vue';
 
 import { Page } from '@vben/common-ui';
 
-import { PlatformStatCard, PlatformStatusTag } from '#/components/platform';
+import {
+  PlatformStatCard,
+  PlatformStatusTag,
+  PlatformViewToolbar,
+} from '#/components/platform';
 
 import ContractPaymentMiniBar from './components/contract-payment-mini-bar.vue';
 import {
@@ -47,12 +51,10 @@ function formatAmount(value: number) {
 <template>
   <Page auto-content-height>
     <div class="project-contract-page">
-      <header class="project-contract-header">
-        <div>
-          <h1>合同与付款管理</h1>
-          <p>合同存储、版本控制、付款审批联动</p>
-        </div>
-      </header>
+      <PlatformViewToolbar
+        description="合同存储、版本控制、付款审批联动"
+        title="合同与付款管理"
+      />
 
       <section class="project-contract-stat-grid">
         <PlatformStatCard
@@ -100,26 +102,6 @@ function formatAmount(value: number) {
   flex-direction: column;
   gap: var(--st-layout-section-gap);
   min-height: 100%;
-}
-
-.project-contract-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-}
-
-.project-contract-header h1 {
-  margin: 0;
-  font-size: 22px;
-  font-weight: 700;
-  line-height: 32px;
-  color: hsl(var(--foreground));
-}
-
-.project-contract-header p {
-  margin: 0;
-  color: hsl(var(--muted-foreground));
 }
 
 .project-contract-stat-grid,
@@ -210,11 +192,6 @@ function formatAmount(value: number) {
 }
 
 @media (max-width: 960px) {
-  .project-contract-header {
-    align-items: stretch;
-    flex-direction: column;
-  }
-
   .project-contract-card-grid {
     grid-template-columns: 1fr;
   }

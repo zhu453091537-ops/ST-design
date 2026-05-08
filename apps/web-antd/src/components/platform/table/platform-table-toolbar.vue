@@ -57,7 +57,7 @@ const emit = defineEmits<{
   fullscreen: [];
   refresh: [];
   search: [];
-  setting: [];
+  setting: [event: MouseEvent];
   'update:searchValue': [value: string];
   'update:statusValue': [value: string];
   'update:typeValue': [value: string];
@@ -144,7 +144,7 @@ const toolbarStyle = computed(() => ({
   ),
 }));
 
-function handleToolClick(tool: TableTool) {
+function handleToolClick(tool: TableTool, event: MouseEvent) {
   switch (tool) {
     case 'add': {
       emit('add');
@@ -171,7 +171,7 @@ function handleToolClick(tool: TableTool) {
       break;
     }
     case 'setting': {
-      emit('setting');
+      emit('setting', event);
       break;
     }
   }
@@ -255,7 +255,7 @@ function normalizeWidth(width: number | string | undefined, fallback: string) {
         :data-tool="tool.key"
         scene="toolbar"
         shape="circle"
-        @click="handleToolClick(tool.key)"
+        @click="handleToolClick(tool.key, $event)"
       >
         <template #icon>
           <VbenIcon :icon="tool.icon" />

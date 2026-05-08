@@ -23,6 +23,7 @@ import {
   PlatformStatusTag,
   PlatformTable,
   PlatformTableToolbar,
+  PlatformViewToolbar,
 } from '#/components/platform';
 
 import {
@@ -232,12 +233,10 @@ function getRecordScore(record: unknown) {
 <template>
   <Page :auto-content-height="true">
     <div class="project-evaluation-page">
-      <header class="project-evaluation-header">
-        <div>
-          <h1>中期评估与验收管理</h1>
-          <p>评估模板、验收流程数字化留痕</p>
-        </div>
-      </header>
+      <PlatformViewToolbar
+        description="评估模板、验收流程数字化留痕"
+        title="中期评估与验收管理"
+      />
 
       <section class="project-evaluation-stat-grid">
         <PlatformStatCard
@@ -411,26 +410,12 @@ function getRecordScore(record: unknown) {
   min-height: 0;
 }
 
-.project-evaluation-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-}
-
-.project-evaluation-header h1,
 .project-pending-card h3 {
   margin: 0;
   color: hsl(var(--foreground));
   font-weight: 700;
 }
-
-.project-evaluation-header h1 {
-  font-size: 22px;
-  line-height: 32px;
-}
-
-.project-evaluation-header p,
+.project-pending-card p,
 .project-pending-card p,
 .project-pending-card__meta,
 .project-pending-card__footer {
@@ -581,11 +566,6 @@ function getRecordScore(record: unknown) {
   .project-evaluation-page {
     height: auto;
     min-height: 100%;
-  }
-
-  .project-evaluation-header {
-    align-items: stretch;
-    flex-direction: column;
   }
 
   .project-evaluation-stat-grid,

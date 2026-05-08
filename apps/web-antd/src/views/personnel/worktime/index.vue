@@ -50,6 +50,10 @@ async function handleNotify(alert: WorktimeAlert) {
 function getLevelMeta(level: WorktimeAlert['level']) {
   return worktimeAlertLevelMap[level];
 }
+
+function getNameInitial(name: string) {
+  return name.slice(0, 1);
+}
 </script>
 
 <template>
@@ -92,7 +96,7 @@ function getLevelMeta(level: WorktimeAlert['level']) {
             <div class="worktime-alert-card__header">
               <div class="worktime-alert-card__person">
                 <span class="worktime-alert-card__avatar">
-                  {{ alert.name.slice(0, 1) }}
+                  {{ getNameInitial(alert.name) }}
                 </span>
                 <div>
                   <h3>{{ alert.name }}</h3>
@@ -210,7 +214,6 @@ function getLevelMeta(level: WorktimeAlert['level']) {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 16px;
-  padding: var(--st-module-content-padding) 0 0;
 }
 
 .worktime-alert-card {
@@ -253,14 +256,14 @@ function getLevelMeta(level: WorktimeAlert['level']) {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 42px;
-  height: 42px;
-  flex: 0 0 42px;
-  color: hsl(var(--primary));
+  width: 56px;
+  height: 56px;
+  flex: 0 0 56px;
+  color: hsl(var(--primary-foreground));
+  font-size: 28px;
   font-weight: 700;
-  background: hsl(var(--st-color-fill-selected));
-  border: 1px solid hsl(var(--st-color-brand-outline));
-  border-radius: 50%;
+  background: hsl(var(--primary));
+  border-radius: 14px;
 }
 
 .worktime-alert-card h3 {
@@ -364,6 +367,15 @@ function getLevelMeta(level: WorktimeAlert['level']) {
 
   .worktime-alert-panel__threshold {
     align-self: flex-start;
+  }
+}
+
+@media (max-width: 640px) {
+  .worktime-alert-card__avatar {
+    width: 48px;
+    height: 48px;
+    flex-basis: 48px;
+    font-size: 24px;
   }
 }
 </style>

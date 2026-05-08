@@ -8,6 +8,7 @@
 | --- | --- | --- | --- |
 | 高 | 明确当前项目目标和业务范围 | 已确认 | 当前已确认按“平台母版 + 真实业务页验证”二者结合推进。 |
 | 高 | 梳理当前技术栈和应用结构 | 部分完成 | 已确认仓库为 `vben-admin-monorepo`，主应用为 `apps/web-antd/src`；已新增平台组件源头，仍需审计真实业务页引用关系。 |
+| 高 | 前端联调源码交付包与交付说明 | 已完成 | 已新增 `docs/handoff-frontend.md` 并生成 `ST-design-source-handoff-20260508.zip`；源码包按 monorepo 整体交付，排除 `.git`、`node_modules`、`apps/web-antd/dist` 和本机临时文件。 |
 | 高 | 本地预览快速打开规则 | 已完成 | 默认检查 `5173/5174`，不要把 `5000` 当作项目端口；`pnpm` 不可用时直接在 `apps/web-antd` 使用本地 Vite 二进制启动。 |
 | 高 | 接续文档冲突清理 | 已完成 | 已清理 `AGENTS.md`、`docs/decision-records.md`、`docs/todo-next.md`、`docs/project-log.md` 中的 Git 冲突标记，并合并两条有效历史线。 |
 | 高 | 登录与 Mock 模式进入系统 | 已完成 | 已支持 `VITE_USE_MOCK=true` 下登录、用户信息、权限、菜单、动态路由和刷新保持登录状态。 |
@@ -19,8 +20,9 @@
 | 高 | 人员全生命周期 - 人员总览独立入口恢复 | 已完成，待视觉复核 | 已按用户纠偏保留 `/platform/typical-page` 人员档案管理不覆盖；新增 `/personnel/overview` 作为人员总览独立页面，包含统计卡、工具栏左侧新增人员、右侧默认 4 工具、状态/资质状态表头筛选和文字操作列。 |
 | 高 | 人员全生命周期 - 人员档案管理页面保护 | 已完成，待视觉复核 | 当前人员档案管理是正确页面，继续保留在 `/platform/typical-page`；后续不得用人员总览覆盖档案页。 |
 | 高 | 人员全生命周期 - 资质与准入管控页面第一版 | 已完成，待视觉复核 | 已新增 `/personnel/qualification` 独立页面并插入到人员档案管理下方；新增 `PlatformNoticeList` / `PlatformNoticeItem`，资质到期预警不使用表格；资质预警与准入规则配置一行两列；发送提醒按钮默认品牌绿描边、hover 绿底白字；批量提醒暂不做。 |
-| 高 | 人员全生命周期 - 变动与流失率统计页面第一版 | 已完成，待视觉复核 | 已新增 `/personnel/turnover` 独立页面并插入到资质与准入管控下方、工时与兼职管控上方；统计卡复用 `PlatformStatCard`，各承包商流失率复用 `PlatformEchartsPanel` 和 ECharts 横向 bar chart；未覆盖其他已完成模块。 |
+| 高 | 人员全生命周期 - 变动与流失率统计页面第一版 | 已完成，待视觉复核 | 已新增 `/personnel/turnover` 独立页面并插入到资质与准入管控下方、工时与兼职管控上方；统计卡复用 `PlatformStatCard`，各承包商流失率已改为按流失率排序的 ECharts 排名横向柱状图，保留 `PlatformEchartsPanel` 并补齐 `lostCount`、`totalCount`、`lossRate` mock 字段；未覆盖其他已完成模块。 |
 | 高 | 人员全生命周期 - 工时与兼职管控页面第一版 | 已完成，待视觉复核 | 已新增 `/personnel/worktime`：超工时人员预警改为页面业务卡片，展示阈值 `180小时/月`、本月工时和超出时长；已按截图批注微调标题区与卡片网格 padding；底部兼职核查模块按用户要求暂不开发。 |
+| 高 | 平台表格操作列文字按钮间距与字重修正 | 已完成，待继续抽查 | 已确认真实生效源头是 `PlatformButton scene=\"action\"`，并在按钮源组件恢复 `16px` 间距与 `600` 字重；已用独立 Chrome 临时 profile 复核 `/workbench/index` 的操作列显示恢复正常，下一步继续抽查 `/project/information`、`/personnel/overview` 等表格页。 |
 | 高 | 通用组件样式默认全局生效规则 | 已完成 | 用户后续即使没有特别强调，全局通用组件样式反馈也默认回到 `packages/styles`、主题 token、平台组件或适配层源头处理。 |
 | 高 | 典型页面样式沉淀边界 | 已完成 | 已明确分页、工具栏、操作列、表格状态切换优先沉淀到 `PlatformTable`、`PlatformTableToolbar` 等组件场景，不轻易直接覆盖 Antdv 全局样式。 |
 | 高 | 顶部一级菜单默认子路由跳转 | 已完成 | 已修复 `header-sidebar-nav` 下点击有子级一级菜单不跳转的问题；当前菜单目标已调整为设计稿多一级菜单骨架。 |
@@ -41,6 +43,13 @@
 | 高 | 导航组件统一样式微调 | 已完成 | 已把顶部/左侧菜单字号、左侧菜单图标尺寸、顶部选中态满高背景和右上角设置/通知/头像 hover 收敛到菜单组件变量与头部公共样式类。 |
 | 高 | 顶部导航栏 Logo 应用名更新 | 已完成 | 已在应用启动期将项目配置的 `preferences.app.name` 同步回当前偏好状态，避免历史 localStorage 继续显示旧应用名。 |
 | 高 | 顶部导航本地 Logo、表格默认序号列、平台标题组件与卡片 hover | 已完成，待视觉复核 | 已使用 `/LOGO.svg` 作为系统名称左侧 32px 本地 Logo；`PlatformTable` 与 Vxe 适配层默认补“序号”列；新增 `PlatformSectionTitle` 并接入进度、文档、资质、流失率和工时相关标题；卡片 hover 只上移不出现品牌描边。 |
+| 高 | 平台页面头部组件一期 | 已完成，待视觉复核 | 已扩展 `PlatformViewToolbar` 的 `actions` 配置能力，并首批接入 `/workbench/index`、`/project/document`、`/project/progress`、`/personnel/overview`；下一步需要确认按钮顺序、换行和视图切换样式。 |
+| 高 | 平台页面头部组件二期 | 已完成，待视觉复核 | 已将 `/project/information`、`/project/evaluation`、`/personnel/turnover`、`/project/contract` 的手写头部统一替换为 `PlatformViewToolbar`；下一步需要确认第二批页面标题区与统计卡区的上下间距。 |
+| 高 | 平台表格列设置浮层无蒙版交互 | 已完成，待视觉复核 | 已将 `PlatformTable` 的列设置从居中 `Modal` 改为设置 icon 下方的无蒙版浮层，移除头部标题和关闭按钮，宽度按内容自适应，并让 `/workbench/index`、`/project/information`、`/personnel/overview` 透传点击锚点；下一步需要肉眼确认浮层位置、宽度和关闭手感。 |
+| 高 | 顶部用户下拉菜单精简与头像状态点描边 | 已完成，待视觉复核 | 已删除 `Gitee项目地址`、`Vben官方地址`、`问题 & 帮助` 3 个入口；头像绿色状态点外描边改为 `--header-foreground` 白色变量；因隔离浏览器链路不可用，下一步需用户刷新 `/platform/typical-page` 后点开头像复核。 |
+| 高 | 左侧导航菜单项白色间隙取消 | 已完成，待视觉复核 | 已在 `@vben-core/menu-ui` 源组件将垂直菜单项 `--menu-item-margin-y` 从 `2px` 改为 `0px`，取消相邻菜单块之间的白色分隔；下一步需刷新 `/platform/typical-page` 后肉眼确认。 |
+| 高 | 工时预警前缀样式对齐与人员总览表格前缀移除 | 已完成，待视觉复核 | 已将 `/personnel/worktime` 的姓名前缀块改为与人员档案一致的方形品牌绿样式，并移除 `/personnel/overview` 表格“人员信息”列中的姓氏前缀块；下一步需分别刷新两个页面确认观感。 |
+| 高 | 平台表格窄屏横向滚动条默认可见 | 已完成，待视觉复核 | 已在 `PlatformTable` 源组件取消“仅 hover 才显示滚动条”的策略，窄屏横向溢出时底部滚动条默认显示；下一步需缩窄页面后确认观感。 |
 | 高 | 左侧导航栏源组件样式修正 | 已完成 | 已调整左侧菜单展开态选中背景横向充满、收起态 48px 正方形背景、折叠按钮尺寸/位置/描边和收起态 tooltip 灰色变量。 |
 | 高 | 左侧收起/展开按钮灰色背景变量修正 | 已完成 | 已将折叠按钮默认背景从品牌淡绿色变量改为 `--st-color-border-subtle`，hover 改为 `--st-color-border-control`。 |
 | 高 | 顶部右侧图标按钮 hover 源组件修正 | 已完成 | 已让日程与通知按钮 hover 使用菜单 hover 背景变量，svg 保持白色，并共享头部图标摇铃动画修饰类。 |
@@ -95,8 +104,11 @@
 | 2026-05-08 | 已完成，待视觉复核 | 已完成 `人员全生命周期 - 资质与准入管控` 第一版：新增 `/personnel/qualification` 和 `PlatformNoticeList` / `PlatformNoticeItem`；菜单位于人员档案管理下方；页面不使用表格，资质预警与准入规则配置一行两列；发送提醒按钮品牌绿描边、hover 绿底白字；批量提醒暂不开发；目标 ESLint、`git diff --check`、HTTP 检查通过；全量 `vue-tsc` 仍因既有错误失败但不包含本轮文件。 |
 | 2026-05-08 | 已完成，待视觉复核 | 已完成 `/project/evaluation` 评论整改：删除顶部发起评估按钮、两处辅助文案、待评估工具栏状态/阶段下拉和内容区 padding；评估记录结果筛选改为表头筛选；待评估卡片按钮改为主按钮；评估记录与待评估项目左右位置已调换。 |
 | 2026-05-08 | 已完成，待视觉复核 | 已按用户纠偏恢复 `人员全生命周期 - 人员总览` 独立入口：新增 `/personnel/overview` 页面和页面专用数据源；保留 `/platform/typical-page` 人员档案管理不覆盖；目标 ESLint、`git diff --check`、HTTP 检查通过，全量 `vue-tsc` 仍因既有错误失败但不包含本轮文件。 |
+| 2026-05-08 | 已完成，待视觉复核 | 已完成平台页面头部组件一期：扩展 `PlatformViewToolbar` 的 `actions` 配置能力，并首批接入 `/workbench/index`、`/project/document`、`/project/progress`、`/personnel/overview`；目标文件 ESLint、`git diff --check` 与四个路由 HTTP 检查通过。 |
+| 2026-05-08 | 已完成，待视觉复核 | 已完成平台页面头部组件二期：将 `/project/information`、`/project/evaluation`、`/personnel/turnover`、`/project/contract` 的手写头部统一替换为 `PlatformViewToolbar`；目标文件 ESLint、`git diff --check` 与四个路由 HTTP 检查通过。 |
 | 2026-05-08 | 已完成，待视觉复核 | 已完成 `人员全生命周期 - 工时与兼职管控` 第一版：新增 `/personnel/worktime` 页面和页面专用数据源；超工时预警使用卡片样式，右侧显示 `阈值：180小时/月`，卡片 hover 上移，通知整改按钮默认品牌绿描边、hover 品牌绿填充白字；兼职核查模块暂不开发。 |
 | 2026-05-08 | 已完成，待视觉复核 | 已完成 `项目全景管理 - 项目信息管理` 表格与新建项目弹窗整改：新增 `PlatformSegmented` 平台分段控件；新建项目弹窗已按基础信息、招采信息、进场信息分段；目标文件 ESLint、`git diff --check`、HTTP 检查通过，全量 `vue-tsc` 仍因既有错误失败但不包含本轮文件。 |
+| 2026-05-08 | 已完成，待视觉复核 | 已完成平台表格列设置浮层交互调整：`PlatformTable` 已由居中 `Modal` 改为设置 icon 下方无蒙版浮层，移除头部标题和关闭按钮，宽度按内容自适应，支持点击外部关闭和 `Esc` 关闭；目标文件 ESLint、`git diff --check`、`/workbench/index` 与 `/project/information` HTTP 检查通过。 |
 | 2026-05-08 | 已完成，待视觉复核 | 已完成 `人员全生命周期 - 人员总览` 第一版：菜单改名，页面接入统计卡、平台工具栏、平台表格、状态/资质表头筛选、新增人员弹窗；操作列已从 icon-only 改回文字按钮；所有录入控件已补业务化 placeholder；目标文件 ESLint、`git diff --check`、HTTP 检查通过，全量 `vue-tsc` 仍因既有错误失败但不再包含本轮文件。 |
 | 2026-05-07 | 已收尾 | 已按用户要求停止开发并完成规则复盘收尾：`AGENTS.md`、`docs/decision-records.md`、`docs/project-log.md`、`docs/todo-next.md` 已更新；新增/扩展平台组件必须单独确认，小反馈落到平台层也必须先补简版映射和影响范围。 |
 | 2026-05-07 | 已收尾 | 今天结束收尾：已更新接续文档，并将“新增或扩展平台组件必须单独确认”同步到 `AGENTS.md` 和 `docs/decision-records.md`；下一轮先审计 `/project/progress` 未完成 diff，再做 `/project/contract`、`/project/document`、`/project/evaluation`、`/project/progress` 视觉确认。 |

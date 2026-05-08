@@ -12,7 +12,7 @@ import { computed, onMounted, reactive, ref } from 'vue';
 import { Page } from '@vben/common-ui';
 import { VbenIcon } from '@vben/icons';
 
-import { Popconfirm, Progress, Space } from 'antdv-next';
+import { Popconfirm, Progress } from 'antdv-next';
 
 import {
   PlatformButton,
@@ -26,6 +26,7 @@ import {
   PlatformStatusTag,
   PlatformTable,
   PlatformTableToolbar,
+  PlatformViewToolbar,
 } from '#/components/platform';
 
 import {
@@ -56,6 +57,13 @@ const detailOpen = ref(false);
 const currentRecord = ref<null | ProjectRecord>(null);
 const projectListPanelRef = ref<HTMLElement>();
 const projectTableRef = ref<InstanceType<typeof PlatformTable>>();
+const headerActions = [
+  {
+    icon: 'lucide:bar-chart-3',
+    key: 'board',
+    label: '查看进度看板',
+  },
+];
 
 const tableColumns = computed<TableProps['columns']>(() => [
   {
@@ -163,12 +171,18 @@ function handleBoardEntry() {
   window.message.info('进度看板入口已保留，后续确认页面后再接入路由。');
 }
 
+function handleHeaderAction(key: string) {
+  if (key === 'board') {
+    handleBoardEntry();
+  }
+}
+
 function handleExport() {
   window.message.info('导出入口已保留，后续确认接口后再接入。');
 }
 
-function handleTableSetting() {
-  projectTableRef.value?.openColumnSetting();
+function handleTableSetting(event: MouseEvent) {
+  projectTableRef.value?.openColumnSetting(event);
 }
 
 async function handleTableFullscreen() {
@@ -284,20 +298,12 @@ onMounted(loadOverview);
 <template>
   <Page :auto-content-height="true">
     <div class="project-overview-page">
-      <header class="project-overview-header">
-        <div>
-          <h1>项目总览</h1>
-          <p>全生命周期数字化管理</p>
-        </div>
-        <Space>
-          <PlatformButton @click="handleBoardEntry">
-            <template #icon>
-              <VbenIcon icon="lucide:bar-chart-3" />
-            </template>
-            查看进度看板
-          </PlatformButton>
-        </Space>
-      </header>
+      <PlatformViewToolbar
+        :actions="headerActions"
+        description="全生命周期数字化管理"
+        title="项目总览"
+        @action="handleHeaderAction"
+      />
 
       <section class="project-stat-grid">
         <PlatformStatCard
@@ -552,22 +558,6 @@ onMounted(loadOverview);
   min-height: 100%;
 }
 
-.project-overview-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-}
-
-.project-overview-header h1 {
-  margin: 0;
-  font-size: 22px;
-  font-weight: 700;
-  line-height: 32px;
-  color: hsl(var(--foreground));
-}
-
-.project-overview-header p,
 .project-info-cell p,
 .project-detail-title p {
   margin: 0;
@@ -659,11 +649,6 @@ onMounted(loadOverview);
 }
 
 @media (max-width: 960px) {
-  .project-overview-header {
-    align-items: stretch;
-    flex-direction: column;
-  }
-
   .project-stat-grid,
   .project-form-grid {
     grid-template-columns: 1fr;

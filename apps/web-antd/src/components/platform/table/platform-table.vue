@@ -14,7 +14,7 @@ import {
   watch,
 } from 'vue';
 
-import { Checkbox, CheckboxGroup, Modal, Table } from 'antdv-next';
+import { Checkbox, CheckboxGroup, Table } from 'antdv-next';
 
 type PlatformTableColumn = NonNullable<TableProps['columns']>[number];
 type PlatformTableIndexColumn = Partial<PlatformTableColumn>;
@@ -84,8 +84,14 @@ const PLATFORM_ALL_FILTER_LABEL = '全部';
 
 const slots = useSlots();
 const tableWrapperRef = ref<HTMLElement>();
+const columnSettingPanelRef = ref<HTMLElement>();
 const adaptiveScrollY = ref<number>();
 const columnSettingOpen = ref(false);
+const columnSettingAnchor = ref<HTMLElement>();
+const columnSettingPosition = ref({
+  left: 0,
+  top: 0,
+});
 const visibleColumnKeys = ref<string[]>([]);
 let resizeObserver: ResizeObserver | undefined;
 let updateFrame = 0;
@@ -276,6 +282,10 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
   window.removeEventListener('resize', scheduleAdaptiveHeightUpdate);
+  window.removeEventListener('mousedown', handleColumnSettingPointerDown);
+  window.removeEventListener('keydown', handleColumnSettingKeydown);
+  window.removeEventListener('resize', handleColumnSettingViewportChange);
+  window.removeEventListener('scroll', handleColumnSettingViewportChange, true);
   resizeObserver?.disconnect();
 
   if (updateFrame) {
@@ -492,20 +502,124 @@ function persistVisibleColumns() {
   window.localStorage.setItem(storageKey, JSON.stringify(visibleColumnKeys.value));
 }
 
-function openColumnSetting() {
+function resolveColumnSettingAnchor(anchor?: HTMLElement | MouseEvent) {
+  if (anchor instanceof MouseEvent) {
+    const currentTarget = anchor.currentTarget;
+
+    if (currentTarget instanceof HTMLElement) {
+      return currentTarget;
+    }
+  }
+
+  if (anchor instanceof HTMLElement) {
+    return anchor;
+  }
+
+  return tableWrapperRef.value ?? undefined;
+}
+
+function updateColumnSettingPosition() {
+  if (typeof window === 'undefined') {
+    return;
+  }
+
+  const anchor = columnSettingAnchor.value ?? tableWrapperRef.value;
+
+  if (!anchor) {
+    return;
+  }
+
+  const anchorRect = anchor.getBoundingClientRect();
+  const panelWidth = columnSettingPanelRef.value?.offsetWidth ?? 360;
+  const panelHeight = columnSettingPanelRef.value?.offsetHeight ?? 320;
+  const gutter = 12;
+  const maxLeft = Math.max(gutter, window.innerWidth - panelWidth - gutter);
+  const maxTop = Math.max(gutter, window.innerHeight - panelHeight - gutter);
+  const preferredLeft = anchorRect.right - panelWidth;
+  const preferredTop = anchorRect.bottom + 8;
+
+  columnSettingPosition.value = {
+    left: Math.min(Math.max(preferredLeft, gutter), maxLeft),
+    top: Math.min(Math.max(preferredTop, gutter), maxTop),
+  };
+}
+
+function openColumnSetting(anchor?: HTMLElement | MouseEvent) {
   if (!props.columnSettingEnabled) {
     return;
   }
+
+  const nextAnchor = resolveColumnSettingAnchor(anchor);
+
+  if (columnSettingOpen.value && nextAnchor === columnSettingAnchor.value) {
+    closeColumnSetting();
+    return;
+  }
+
+  columnSettingAnchor.value = nextAnchor;
   columnSettingOpen.value = true;
+  nextTick(updateColumnSettingPosition);
 }
 
 function closeColumnSetting() {
   columnSettingOpen.value = false;
+  columnSettingAnchor.value = undefined;
+}
+
+function handleColumnSettingPointerDown(event: MouseEvent) {
+  const target = event.target;
+
+  if (!(target instanceof Node)) {
+    return;
+  }
+
+  if (columnSettingPanelRef.value?.contains(target)) {
+    return;
+  }
+
+  if (columnSettingAnchor.value?.contains(target)) {
+    return;
+  }
+
+  closeColumnSetting();
+}
+
+function handleColumnSettingKeydown(event: KeyboardEvent) {
+  if (event.key === 'Escape') {
+    closeColumnSetting();
+  }
+}
+
+function handleColumnSettingViewportChange() {
+  if (!columnSettingOpen.value) {
+    return;
+  }
+
+  nextTick(updateColumnSettingPosition);
 }
 
 defineExpose({
   closeColumnSetting,
   openColumnSetting,
+});
+
+watch(columnSettingOpen, (open) => {
+  if (typeof window === 'undefined') {
+    return;
+  }
+
+  if (open) {
+    window.addEventListener('mousedown', handleColumnSettingPointerDown);
+    window.addEventListener('keydown', handleColumnSettingKeydown);
+    window.addEventListener('resize', handleColumnSettingViewportChange);
+    window.addEventListener('scroll', handleColumnSettingViewportChange, true);
+    return;
+  }
+
+  window.removeEventListener('mousedown', handleColumnSettingPointerDown);
+  window.removeEventListener('keydown', handleColumnSettingKeydown);
+  window.removeEventListener('resize', handleColumnSettingViewportChange);
+  window.removeEventListener('scroll', handleColumnSettingViewportChange, true);
 });
 
 function flattenFilterItems(
@@ -683,32 +797,51 @@ const PlatformTableFilterDropdown = defineComponent({
       </template>
     </Table>
 
-    <Modal
-      :footer="null"
-      :open="columnSettingOpen"
-      title="表头显示设置"
-      width="360px"
-      @cancel="closeColumnSetting"
-    >
-      <div class="platform-table-column-setting">
-        <CheckboxGroup v-model:value="checkedColumnKeys">
-          <Checkbox
-            v-for="item in columnSettingItems"
-            :key="item.key"
-            :disabled="item.required"
-            :value="item.key"
-          >
-            {{ item.label }}
-          </Checkbox>
-        </CheckboxGroup>
+    <Teleport to="body">
+      <div
+        v-if="columnSettingOpen"
+        ref="columnSettingPanelRef"
+        class="platform-table-column-setting-panel"
+        :style="{
+          left: `${columnSettingPosition.left}px`,
+          top: `${columnSettingPosition.top}px`,
+        }"
+      >
+        <div class="platform-table-column-setting">
+          <CheckboxGroup v-model:value="checkedColumnKeys">
+            <Checkbox
+              v-for="item in columnSettingItems"
+              :key="item.key"
+              :disabled="item.required"
+              :value="item.key"
+            >
+              {{ item.label }}
+            </Checkbox>
+          </CheckboxGroup>
+        </div>
       </div>
-    </Modal>
+    </Teleport>
   </div>
 </template>
 
 <style scoped>
 .platform-table-wrapper {
   min-height: 0;
+}
+
+.platform-table-column-setting-panel {
+  position: fixed;
+  z-index: 1080;
+  width: max-content;
+  max-width: calc(100vw - 24px);
+  max-height: min(420px, calc(100vh - 24px));
+  min-width: 0;
+  padding: 16px;
+  overflow: auto;
+  background: hsl(var(--background));
+  border: 1px solid hsl(var(--st-color-border-control));
+  border-radius: var(--st-radius-card);
+  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.12);
 }
 
 .platform-table-column-setting {
@@ -741,33 +874,23 @@ const PlatformTableFilterDropdown = defineComponent({
 
 .platform-table :deep(.ant-table-content),
 .platform-table :deep(.ant-table-body) {
-  scrollbar-color: transparent transparent;
+  scrollbar-color: hsl(var(--st-color-border-control)) transparent;
   scrollbar-width: thin;
 }
 
 .platform-table :deep(.ant-table-content::-webkit-scrollbar),
 .platform-table :deep(.ant-table-body::-webkit-scrollbar) {
-  height: 0;
-}
-
-.platform-table:hover :deep(.ant-table-content),
-.platform-table:hover :deep(.ant-table-body) {
-  scrollbar-color: hsl(var(--st-color-border-control)) transparent;
-}
-
-.platform-table:hover :deep(.ant-table-content::-webkit-scrollbar),
-.platform-table:hover :deep(.ant-table-body::-webkit-scrollbar) {
   height: 10px;
 }
 
-.platform-table:hover :deep(.ant-table-content::-webkit-scrollbar-thumb),
-.platform-table:hover :deep(.ant-table-body::-webkit-scrollbar-thumb) {
+.platform-table :deep(.ant-table-content::-webkit-scrollbar-thumb),
+.platform-table :deep(.ant-table-body::-webkit-scrollbar-thumb) {
   background: hsl(var(--st-color-border-control));
   border-radius: 999px;
 }
 
-.platform-table:hover :deep(.ant-table-content::-webkit-scrollbar-track),
-.platform-table:hover :deep(.ant-table-body::-webkit-scrollbar-track) {
+.platform-table :deep(.ant-table-content::-webkit-scrollbar-track),
+.platform-table :deep(.ant-table-body::-webkit-scrollbar-track) {
   background: transparent;
 }
 

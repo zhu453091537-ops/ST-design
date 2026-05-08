@@ -140,6 +140,8 @@
 
 模块标题、图表标题、预警标题、列表标题等可复用标题区默认优先使用 `PlatformSectionTitle` 或已接入该组件的 `PlatformSection` / `PlatformEchartsPanel`，不在业务页面重复手写标题字号、字重、右侧补充信息和响应式排列。
 
+二级页面顶部的“页面标题 + 描述 + 右侧动作区/视图切换”默认优先使用 `PlatformViewToolbar`。标准工具按钮走 `tools`，可增减的业务按钮优先走配置化 `actions`，上传、下拉菜单、确认框等特殊交互再使用插槽兜底，不在业务页面重复手写整块 header。
+
 卡片类组件鼠标移入交互默认只做上移反馈，不额外出现品牌描边；如确需 hover 描边，必须说明业务原因并优先沉淀到平台组件或 token。
 
 文件列表、附件列表、文档台账、下载条目等通用文件行场景默认优先使用 `PlatformFileList` / `PlatformFileItem`；业务页面只传文件数据和操作事件，不在页面 scoped CSS 中重复维护文件图标、条目边框、hover 背景和下载按钮布局。

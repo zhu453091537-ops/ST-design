@@ -25,6 +25,7 @@ import {
   PlatformStatusTag,
   PlatformTable,
   PlatformTableToolbar,
+  PlatformViewToolbar,
 } from '#/components/platform';
 
 import {
@@ -228,8 +229,8 @@ async function handleTableFullscreen() {
   }
 }
 
-function handleTableSetting() {
-  projectTableRef.value?.openColumnSetting();
+function handleTableSetting(event: MouseEvent) {
+  projectTableRef.value?.openColumnSetting(event);
 }
 
 function resetForm(record?: ProjectInformationRecord) {
@@ -287,12 +288,10 @@ onMounted(loadProjectInformation);
 <template>
   <Page :auto-content-height="true">
     <div class="project-information-page">
-      <header class="project-information-header">
-        <div>
-          <h1>项目信息管理</h1>
-          <p>维护委外项目基础信息、招采信息和进场信息</p>
-        </div>
-      </header>
+      <PlatformViewToolbar
+        description="维护委外项目基础信息、招采信息和进场信息"
+        title="项目信息管理"
+      />
 
       <section
         ref="projectListPanelRef"
@@ -585,26 +584,6 @@ onMounted(loadProjectInformation);
   min-height: 100%;
 }
 
-.project-information-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-}
-
-.project-information-header h1 {
-  margin: 0;
-  font-size: 22px;
-  font-weight: 700;
-  line-height: 32px;
-  color: hsl(var(--foreground));
-}
-
-.project-information-header p {
-  margin: 0;
-  color: hsl(var(--muted-foreground));
-}
-
 .project-information-panel:fullscreen {
   overflow: auto;
   background: hsl(var(--st-color-card-bg));
@@ -670,11 +649,6 @@ onMounted(loadProjectInformation);
 }
 
 @media (max-width: 960px) {
-  .project-information-header {
-    align-items: stretch;
-    flex-direction: column;
-  }
-
   .project-form-grid {
     grid-template-columns: 1fr;
   }

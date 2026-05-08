@@ -6,6 +6,487 @@
 
 ### 任务名称
 
+平台页面头部组件二期：第二批页面接入
+
+### 完成内容
+
+1. 将 `/project/information`、`/project/evaluation`、`/personnel/turnover`、`/project/contract` 四个第二批页面的手写头部统一替换为 `PlatformViewToolbar`。
+2. 保持这四个页面原有业务主体、统计卡、表格、图表和卡片结构不变，只收口页头标题与描述区域。
+3. 清理上述页面内重复手写的 header 结构与对应 scoped CSS，避免同类页头继续散落在业务页面。
+
+### 修改了哪些文件
+
+1. `apps/web-antd/src/views/project/information/index.vue`
+2. `apps/web-antd/src/views/project/evaluation/index.vue`
+3. `apps/web-antd/src/views/personnel/turnover/index.vue`
+4. `apps/web-antd/src/views/project/contract/index.vue`
+5. `docs/project-log.md`
+6. `docs/todo-next.md`
+
+### 涉及哪些页面或组件
+
+1. 平台组件：`PlatformViewToolbar`
+2. 页面：`/project/information`、`/project/evaluation`、`/personnel/turnover`、`/project/contract`
+
+### 验证结果
+
+1. 已执行目标文件 ESLint：通过。
+2. 已执行 `git diff --check`：通过。
+3. 已执行 `curl -I http://127.0.0.1:5173/project/information`：返回 `200 OK`。
+4. 已执行 `curl -I http://127.0.0.1:5173/project/evaluation`：返回 `200 OK`。
+5. 已执行 `curl -I http://127.0.0.1:5173/personnel/turnover`：返回 `200 OK`。
+6. 已执行 `curl -I http://127.0.0.1:5173/project/contract`：返回 `200 OK`。
+7. 未完成隔离浏览器视觉回归：本轮未额外启用隔离浏览器自动化，因此尚未肉眼确认第二批页面头部的间距与对齐。
+
+### 遗留问题
+
+1. 需要用户在第二批四个页面视觉确认 `PlatformViewToolbar` 的标题间距、与统计卡区块的上下距离是否符合预期。
+2. 其他尚未迁移的页面如 `/personnel/qualification`、`/personnel/worktime` 后续可继续按同一路线收口。
+
+### 平台治理影响
+
+1. 本轮发现的 ant-design-vue 原生组件问题：无直接原生组件缺陷，核心问题仍是业务页头部重复手写。
+2. 已通过平台层解决的问题：第二批项目页和人员页头部已统一回 `PlatformViewToolbar`，平台页头规则覆盖范围进一步扩大。
+3. 仍是页面临时实现的问题：暂无新增页面级临时实现，本轮只保留业务主体结构在页面内。
+4. 未来必须回收为平台组件的页面子组件：若后续更多页面出现复杂页头筛选或批量操作，可再评估把页头 filters 区做成标准能力。
+5. 后续新页面禁止继续复制哪些实现：不要在第二批已覆盖类型的页面里继续手写 `header + h1 + p`。
+6. 哪些样式应进入主题变量或统一样式入口：本轮无新增 token，页头样式继续由 `PlatformViewToolbar` 统一承载。
+7. 当前仍存在的页面级样式债务：剩余未迁移页面仍保留各自 header 实现，需要后续继续收口。
+
+### 任务名称
+
+平台表格窄屏横向滚动条默认可见
+
+### 完成内容
+
+1. 定位 `PlatformTable` 横向滚动条默认不可见的原因：源组件把滚动条高度和颜色都放在 `:hover` 状态下才启用。
+2. 将 `PlatformTable` 改为默认显示横向滚动条样式：滚动条高度固定为 `10px`，thumb 使用 `--st-color-border-control`，不再依赖 hover 才出现。
+3. 本轮只修改表格源组件滚动条展示策略，不改业务页列配置、`scroll.x` 计算逻辑和分页行为。
+
+### 修改了哪些文件
+
+1. `apps/web-antd/src/components/platform/table/platform-table.vue`
+2. `docs/project-log.md`
+3. `docs/todo-next.md`
+
+### 涉及哪些页面或组件
+
+1. 源组件：`PlatformTable`
+2. 受影响场景：所有接入 `PlatformTable` 且存在横向溢出的表格页面
+3. 验证页面：`/platform/typical-page`
+
+### 验证结果
+
+1. 已执行目标文件 ESLint：通过。
+2. 已执行 `git diff --check`：通过。
+3. 已执行 `curl -I http://127.0.0.1:5173/platform/typical-page`：返回 `200 OK`。
+4. 未完成隔离浏览器视觉验证：需要在窄屏或缩窄容器宽度后，肉眼确认表格底部横向滚动条默认可见。
+
+### 遗留问题
+
+1. 需要确认在 macOS 当前浏览器环境下，窄屏表格底部滚动条是否符合“默认可见”的预期。
+2. 如后续希望进一步区分桌面端与触控端滚动条尺寸，再评估是否补充响应式滚动条变量。
+
+### 平台治理影响
+
+1. 本轮发现的 ant-design-vue 原生组件问题：无，属于平台表格滚动条可见性策略。
+2. 已通过平台层解决的问题：横向溢出表格不再需要用户 hover 才知道可以横向滚动。
+3. 仍是页面临时实现的问题：无页面级滚动条补丁。
+4. 未来必须回收为平台组件的页面子组件：暂无新增。
+5. 后续新页面禁止继续复制哪些实现：不要在业务页单独写横向滚动条显隐样式。
+6. 哪些样式应进入主题变量或统一样式入口：当前继续使用 `--st-color-border-control` 作为滚动条 thumb 颜色。
+7. 当前仍存在的页面级样式债务：无新增页面级样式债务。
+
+### 任务名称
+
+工时预警前缀样式对齐与人员总览表格前缀移除
+
+### 完成内容
+
+1. 将 `/personnel/worktime` 超工时预警卡片中的姓名前缀块改为与人员档案卡片一致的方形样式：56px、14px 圆角、品牌绿实底、白字，并补齐移动端 48px 缩放。
+2. `/personnel/overview` 人员总览表格的“人员信息”列移除姓名前缀块，仅保留姓名与编号两行信息。
+3. 本轮只调整页面业务展示结构，不改平台表格能力、数据接口或菜单逻辑。
+
+### 修改了哪些文件
+
+1. `apps/web-antd/src/views/personnel/worktime/index.vue`
+2. `apps/web-antd/src/views/personnel/overview/index.vue`
+3. `docs/project-log.md`
+4. `docs/todo-next.md`
+
+### 涉及哪些页面或组件
+
+1. 页面：`/personnel/worktime`
+2. 页面：`/personnel/overview`
+3. 参考样式来源：`/platform/typical-page` 人员档案卡片
+
+### 验证结果
+
+1. 已执行目标文件 ESLint：通过。
+2. 已执行 `git diff --check`：通过。
+3. 已执行 `curl -I http://127.0.0.1:5173/personnel/worktime`：返回 `200 OK`。
+4. 已执行 `curl -I http://127.0.0.1:5173/personnel/overview`：返回 `200 OK`。
+5. 未完成隔离浏览器截图验证：需要用户在当前浏览器中肉眼确认两个页面的最终观感。
+
+### 遗留问题
+
+1. 需要确认 `/personnel/worktime` 的前缀块尺寸和颜色是否与人员档案卡片达到预期一致。
+2. 需要确认 `/personnel/overview` 移除前缀块后，表格“人员信息”列的留白和视觉密度是否合适。
+
+### 平台治理影响
+
+1. 本轮发现的 ant-design-vue 原生组件问题：无，属于两个业务页的人员信息展示差异收敛。
+2. 已通过平台层解决的问题：暂无新增平台层改动，本轮是页面业务展示对齐。
+3. 仍是页面临时实现的问题：工时预警卡片前缀样式仍在页面内维护，后续若多处复用再评估回收。
+4. 未来必须回收为平台组件的页面子组件：如更多页面使用“姓名前缀块 + 姓名信息”组合，可评估抽出 `PlatformPersonBadge`。
+5. 后续新页面禁止继续复制哪些实现：不要在表格里默认加姓氏前缀块；只有明确需要卡片式识别时再使用。
+6. 哪些样式应进入主题变量或统一样式入口：本轮暂无新增 token，继续复用现有品牌色变量。
+7. 当前仍存在的页面级样式债务：人员信息前缀块仍分散在典型页卡片和工时预警卡片两个页面文件中。
+
+### 任务名称
+
+左侧导航菜单项白色间隙取消
+
+### 完成内容
+
+1. 定位左侧导航菜单项之间的白色间隙来自 `@vben-core/menu-ui` 垂直菜单项默认纵向 margin。
+2. 将 `packages/@core/ui-kit/menu-ui/src/components/menu.vue` 中 `--menu-item-margin-y` 从 `2px` 调整为 `0px`。
+3. 本轮只修改菜单源组件变量，不改业务路由、菜单数据、页面 scoped CSS，也不影响顶部横向菜单和折叠菜单原有 0 间距配置。
+
+### 修改了哪些文件
+
+1. `packages/@core/ui-kit/menu-ui/src/components/menu.vue`
+2. `docs/project-log.md`
+3. `docs/todo-next.md`
+
+### 涉及哪些页面或组件
+
+1. 源组件：`@vben-core/menu-ui` 的 `Menu` 垂直菜单。
+2. 受影响区域：左侧导航栏展开态菜单项。
+3. 验证页面：`/platform/typical-page`。
+
+### 验证结果
+
+1. 已执行目标文件 ESLint：通过。
+2. 已执行 `git diff --check`：通过。
+3. 已执行 `curl -I http://127.0.0.1:5173/platform/typical-page`：返回 `200 OK`。
+4. 未完成隔离浏览器截图验证：本轮未能稳定使用隔离浏览器链路，需用户在当前页面刷新后肉眼确认左侧菜单选中块之间已无白色分隔。
+
+### 遗留问题
+
+1. 需要用户在 `/platform/typical-page` 视觉确认“进度可视化跟踪”和“合同与付款管理”等相邻菜单块之间是否已贴合。
+2. 如后续希望相邻选中父子菜单完全连成一个整体圆角块，再评估是否进一步调整 active 父子项的圆角策略；本轮只取消白色间距。
+
+### 平台治理影响
+
+1. 本轮发现的 ant-design-vue 原生组件问题：无，属于 Vben 菜单源组件变量问题。
+2. 已通过平台层解决的问题：左侧菜单项默认纵向间隙已回到 `menu-ui` 源组件变量，避免业务页单独覆盖。
+3. 仍是页面临时实现的问题：无页面 scoped CSS。
+4. 未来必须回收为平台组件的页面子组件：暂无新增。
+5. 后续新页面禁止继续复制哪些实现：不要在业务页用局部样式调整左侧菜单项间距。
+6. 哪些样式应进入主题变量或统一样式入口：本次直接修改 `menu-ui` 菜单变量 `--menu-item-margin-y`。
+7. 当前仍存在的页面级样式债务：无新增页面级样式债务。
+
+### 任务名称
+
+平台表格操作列文字按钮间距与字重修正
+
+### 完成内容
+
+1. 首轮排查发现用户截图中的真实生效类名是 `platform-button--action`，不是旧的全局 `ActionButton`；因此将修正落点切回 `PlatformButton scene="action"` 源组件。
+2. 在 `apps/web-antd/src/components/platform/button/platform-button.vue` 中为操作态按钮补充 `font-weight: 600`，并给相邻按钮恢复 `16px` 横向间距。
+3. 保留先前补充的 `ActionButton` / 全局样式兜底，兼容仍在使用旧全局操作按钮的页面。
+4. 使用独立 Chrome 临时 profile 打开 `http://127.0.0.1:5173/workbench/index` 进行隔离视觉确认，已看到操作列“编辑 / 详情 / 归档 / 删除”重新分开显示。
+5. 本轮只修平台源头，不在任何业务页面 scoped CSS 中追加局部补丁。
+
+### 修改了哪些文件
+
+1. `apps/web-antd/src/components/platform/button/platform-button.vue`
+2. `apps/web-antd/src/components/global/button.ts`
+3. `packages/styles/src/antd/index.css`
+4. `docs/project-log.md`
+5. `docs/todo-next.md`
+
+### 涉及哪些页面或组件
+
+1. 平台组件：`PlatformButton`（`scene="action"`）
+2. 全局组件：`ActionButton`
+3. 样式入口：`packages/styles/src/antd/index.css`
+4. 受影响场景：各页面表格操作列文字按钮
+
+### 验证结果
+
+1. 已执行目标 Vue / TS 文件 ESLint：通过。
+2. 已执行 `git diff --check`：通过。
+3. 已在独立 Chrome 临时 profile 中打开 `/workbench/index` 做隔离视觉确认，操作列按钮已恢复分隔显示。
+4. 未逐页复核所有业务表格：本轮先确认平台表格典型页之一恢复正常。
+
+### 遗留问题
+
+1. 仍建议继续抽查 `/project/information`、`/personnel/overview` 等其他带操作列页面，确认它们也都走 `PlatformButton` 或 `ActionButton`，没有遗漏原生 `a-button link` 场景。
+2. 若后续还需要补 hover、禁用态或分隔线规则，再继续在 `PlatformButton` / `ActionButton` 源头扩展，不回业务页散改。
+
+### 平台治理影响
+
+1. 本轮发现的 ant-design-vue 原生组件问题：`link` 按钮连续使用时不会自动保证业务约定的操作项间距和字重；同时项目中存在 `PlatformButton` 与 `ActionButton` 两条操作按钮路径。
+2. 已通过平台层解决的问题：表格操作列文字按钮的间距和字重已回到 `PlatformButton` 源组件，并对旧 `ActionButton` 路径保留兜底。
+3. 仍是页面临时实现的问题：暂无新增页面级临时实现。
+4. 未来必须回收为平台组件的页面子组件：无新增，继续收敛到 `PlatformButton` / `ActionButton`。
+5. 后续新页面禁止继续复制哪些实现：不要在单页给操作列按钮手写 `margin-right` 或局部字体加粗；不要绕开平台按钮直接在表格里堆原生 `link` 按钮。
+6. 哪些样式应进入主题变量或统一样式入口：操作列按钮间距和字重已进入统一按钮源头；若后续还要抽成 token，再评估变量化。
+7. 当前仍存在的页面级样式债务：部分旧页面如果没走 `PlatformButton` / `ActionButton` 而是直接写原生 `a-button link`，仍可能绕过本轮修正。
+
+### 任务名称
+
+人员全生命周期 - 各承包商流失率图表改为排名横向柱状图
+
+### 完成内容
+
+1. 保留 `PlatformEchartsPanel` 和项目现有 ECharts 封装，只重写 `/personnel/turnover` 页内 option，未引入新的图表组件实现。
+2. 将“各承包商流失率”改为按流失率从高到低排序的横向排名柱状图：左侧显示“排名 + 承包商名称”，中间为圆角横向柱状条，右侧显示“流失率（离职人数/总人数）”。
+3. 流失率大于 0 的柱条改为红橙渐变，并附加轻阴影；`0%` 数据改为浅灰色弱化，避免继续显示成普通红色进度条。
+4. 调整 tooltip，展示承包商名称、流失率、离职人数和总人数，便于后续直接映射后端统计字段。
+5. 扩充 `personnel-turnover-source.ts` mock 字段，新增并回填 `lostCount`、`totalCount`、`lossRate`，同时继续保留原有 `resigned`、`total`、`rate` 兼容结构。
+6. 根据数据条数动态计算图表高度，增强看板式统计图的纵向留白和可读性。
+
+### 修改了哪些文件
+
+1. `apps/web-antd/src/views/personnel/turnover/index.vue`
+2. `apps/web-antd/src/views/personnel/turnover/personnel-turnover-source.ts`
+3. `docs/project-log.md`
+4. `docs/todo-next.md`
+
+### 涉及哪些页面或组件
+
+1. 页面：`/personnel/turnover`
+2. 图表区块：`各承包商流失率`
+3. 复用平台组件：`PlatformEchartsPanel`
+
+### 验证结果
+
+1. 已执行目标文件 ESLint：通过。
+2. 已执行 `git diff --check`：通过。
+3. 未做隔离浏览器视觉验证：本轮按用户明确图表结构要求完成源码改造，但尚未额外启动独立浏览器链路确认实际观感。
+
+### 遗留问题
+
+1. 需要用户在 `/personnel/turnover` 视觉确认左侧排名宽度、右侧标签间距和红橙渐变强度是否符合看板预期。
+2. 如后续后端接口直接返回 `lossRate`、`lostCount`、`totalCount`，可直接替换 mock；若仍返回旧字段名，再决定是否保留兼容映射层。
+
+### 平台治理影响
+
+1. 本轮发现的 ant-design-vue 原生组件问题：无，属于页面内 ECharts 数据看板表达优化。
+2. 已通过平台层解决的问题：继续复用项目既有 `PlatformEchartsPanel` 和 ECharts 封装，没有复制独立图表壳。
+3. 仍是页面临时实现的问题：流失率排名图的排序规则、颜色梯度和标签格式仍写在 `/personnel/turnover` 页面内，暂未抽象成平台通用排行图。
+4. 未来必须回收为平台组件的页面子组件：若后续多个业务页都出现“左排名 + 中间柱条 + 右指标”的排行榜图，再评估 `PlatformRankingBarChart`。
+5. 后续新页面禁止继续复制哪些实现：不要把这种统计图退化成页面内普通进度条列表；不要绕过 `PlatformEchartsPanel` 直接散写新的图表容器。
+6. 哪些样式应进入主题变量或统一样式入口：若后续多个页面复用相同红橙风险渐变或 0 值灰化策略，再评估沉淀为图表色板 token。
+7. 当前仍存在的页面级样式债务：当前排行图的左右标签宽度、渐变颜色和 tooltip 文案仍为页面级配置。
+
+### 任务名称
+
+顶部导航用户下拉菜单精简与头像状态点描边修正
+
+### 完成内容
+
+1. 删除用户下拉菜单中框选的 3 个外部/帮助入口：`Gitee项目地址`、`Vben官方地址`、`问题 & 帮助`。
+2. 保留 `文档`、`个人中心` 和 `退出登录`，不改登录、锁屏、用户信息和通知逻辑。
+3. 将顶部头像和下拉用户信息头像的绿色在线状态点外描边改为白色变量 `--header-foreground`，避免继续依赖默认背景色描边。
+
+### 修改了哪些文件
+
+1. `apps/web-antd/src/layouts/basic.vue`
+2. `packages/effects/layouts/src/widgets/user-dropdown/user-dropdown.vue`
+3. `packages/styles/src/antd/index.css`
+4. `docs/project-log.md`
+5. `docs/todo-next.md`
+
+### 涉及哪些页面或组件
+
+1. 顶部导航：`BasicLayout` 的 `user-dropdown` 插槽。
+2. 源组件：`UserDropdown`、`VbenAvatar` 在线状态点显示。
+3. 验证页面：`/platform/typical-page`。
+
+### 验证结果
+
+1. 已执行目标 Vue 文件 ESLint：通过。
+2. 已执行 `git diff --check`：通过。
+3. 已执行 `curl -I http://127.0.0.1:5173/platform/typical-page`：返回 `200 OK`。
+4. 已执行源码搜索，确认目标文件中已无 `Gitee项目地址`、`Vben官方地址`、`问题 & 帮助`。
+5. 未完成隔离浏览器截图验证：Codex 内置浏览器连接超时，独立 Playwright 缺少本机 Chromium；按浏览器隔离规则未操作用户当前 Chrome。
+6. `packages/styles/src/antd/index.css` 整文件 stylelint 仍被既有属性顺序/格式问题阻断，本轮新增 `.platform-user-avatar-dot` 未出现在报错列表。
+
+### 遗留问题
+
+1. 需要用户在当前浏览器中刷新 `/platform/typical-page` 后点开右上角头像，肉眼确认菜单项已精简且绿色状态点外描边为白色。
+2. 如后续还需要统一所有头像在线点描边，再评估是否把该规则下沉到 `VbenAvatar` 默认实现；本轮只对顶部用户下拉显式加类。
+
+### 平台治理影响
+
+1. 本轮发现的 ant-design-vue 原生组件问题：无，属于 Vben 顶部用户下拉菜单配置与头像状态点样式问题。
+2. 已通过平台层解决的问题：顶部用户下拉菜单源头已精简，头像状态点描边已回到全局样式变量。
+3. 仍是页面临时实现的问题：无页面 scoped CSS。
+4. 未来必须回收为平台组件的页面子组件：如多处都需要在线状态点统一描边，应回收为 `VbenAvatar` 或统一头像状态点 token。
+5. 后续新页面禁止继续复制哪些实现：不要在业务页单独手写顶部用户菜单外链入口；不要用当前页面 CSS 覆盖头像状态点描边。
+6. 哪些样式应进入主题变量或统一样式入口：状态点外描边已使用 `--header-foreground`，规则落在 `packages/styles/src/antd/index.css`。
+7. 当前仍存在的页面级样式债务：无新增页面级样式债务。
+
+### 任务名称
+
+平台页面头部组件一期：PlatformViewToolbar 扩展与首批接入
+
+### 完成内容
+
+1. 扩展 `PlatformViewToolbar`，新增配置化 `actions` 能力和统一 `action` 事件，支持业务按钮按 key 分发。
+2. 将 `tools` 默认值收敛为空数组，避免普通页面头部误展示标准工具按钮。
+3. 保留并复用现有 `viewOptions` 视图切换能力，同时补充右侧动作区自动换行，适配按钮数量增减场景。
+4. 首批接入 `/workbench/index`、`/project/document`、`/project/progress`、`/personnel/overview` 四个页面，分别验证单按钮、多按钮、视图切换和纯标题头部场景。
+5. 清理上述页面内重复手写的 header 结构与样式，把页面标题、描述和右侧动作区统一回平台组件。
+6. 将“二级页头部默认优先使用 `PlatformViewToolbar`”同步沉淀到 `AGENTS.md` 和 `docs/decision-records.md`。
+
+### 修改了哪些文件
+
+1. `apps/web-antd/src/components/platform/view/platform-view-toolbar.vue`
+2. `apps/web-antd/src/components/platform/view/types.ts`
+3. `apps/web-antd/src/components/platform/view/index.ts`
+4. `apps/web-antd/src/views/project/overview/index.vue`
+5. `apps/web-antd/src/views/project/document/index.vue`
+6. `apps/web-antd/src/views/project/progress/index.vue`
+7. `apps/web-antd/src/views/personnel/overview/index.vue`
+8. `AGENTS.md`
+9. `docs/decision-records.md`
+10. `docs/project-log.md`
+11. `docs/todo-next.md`
+
+### 涉及哪些页面或组件
+
+1. 平台组件：`PlatformViewToolbar`、`PlatformViewSwitch`
+2. 页面：`/workbench/index`、`/project/document`、`/project/progress`、`/personnel/overview`
+
+### 验证结果
+
+1. 已执行目标文件 ESLint：通过。
+2. 已执行 `git diff --check`：通过。
+3. 已执行 `curl -I http://127.0.0.1:5173/workbench/index`：返回 `200 OK`。
+4. 已执行 `curl -I http://127.0.0.1:5173/project/document`：返回 `200 OK`。
+5. 已执行 `curl -I http://127.0.0.1:5173/project/progress`：返回 `200 OK`。
+6. 已执行 `curl -I http://127.0.0.1:5173/personnel/overview`：返回 `200 OK`。
+7. 未完成隔离浏览器视觉回归：本轮未额外启用隔离浏览器自动化，因此尚未肉眼确认四个页面头部的按钮换行、间距和对齐。
+
+### 遗留问题
+
+1. 需要用户在四个首批页面视觉确认 `PlatformViewToolbar` 的标题间距、按钮顺序、按钮换行和视图切换样式是否符合预期。
+2. `project/document` 当前批量上传通过 `actions` 配置触发隐藏 input，后续若出现下拉菜单或确认框类动作，再评估是否保留 slot 混合模式。
+
+### 平台治理影响
+
+1. 本轮发现的 ant-design-vue 原生组件问题：无直接原生组件缺陷，核心问题是页面头部结构在业务页重复散写。
+2. 已通过平台层解决的问题：页面标题、描述、右侧业务按钮和视图切换已统一回 `PlatformViewToolbar`，减少后续新页面重复造轮子。
+3. 仍是页面临时实现的问题：`project/document` 的上传 input 仍保留在页面内，只由平台头部按钮触发。
+4. 未来必须回收为平台组件的页面子组件：如后续更多页面出现“复杂动作区”，可再评估把 dropdown / confirm action 包装成平台动作能力。
+5. 后续新页面禁止继续复制哪些实现：不要在业务页重复手写 `header + h1 + p + actions`；不要为单页单独定义一套顶部按钮排序和换行规则。
+6. 哪些样式应进入主题变量或统一样式入口：本轮按钮混排和动作区换行已进入 `PlatformViewToolbar`；后续如需统一页头高度或 sticky 行为，再评估补 token。
+7. 当前仍存在的页面级样式债务：其他尚未迁移的项目页、人员页 header 仍保留页面级实现，后续需要继续批量迁移。
+
+### 任务名称
+
+平台表格列设置浮层交互调整
+
+### 完成内容
+
+1. 将 `PlatformTable` 的“表头显示设置”从居中 `Modal` 改为无蒙版浮层，点击设置 icon 后浮层直接出现在按钮下方。
+2. 保留原有列显隐勾选、必选列禁用和 localStorage 记忆逻辑，不改业务页列配置结构。
+3. 为 `PlatformTableToolbar` 的设置按钮补充点击事件透传，让表格组件能够基于真实触发按钮定位浮层。
+4. 将 `/workbench/index`、`/project/information`、`/personnel/overview` 三个已接入页面的设置入口切换为传入点击事件。
+5. 按用户二次反馈移除浮层头部标题和关闭按钮，继续保留“点击其他区域关闭”，并把宽度、圆角、内边距和阴影收敛到平台卡片规范。
+6. 按浏览器批注把列设置浮层宽度由固定值改为随内容自适应，同时保留视口宽度上限，避免小屏溢出。
+
+### 修改了哪些文件
+
+1. `apps/web-antd/src/components/platform/table/platform-table.vue`
+2. `apps/web-antd/src/components/platform/table/platform-table-toolbar.vue`
+3. `apps/web-antd/src/views/project/overview/index.vue`
+4. `apps/web-antd/src/views/project/information/index.vue`
+5. `apps/web-antd/src/views/personnel/overview/index.vue`
+6. `docs/project-log.md`
+7. `docs/todo-next.md`
+
+### 涉及哪些页面或组件
+
+1. 平台组件：`PlatformTable`、`PlatformTableToolbar`
+2. 页面：`/workbench/index`、`/project/information`、`/personnel/overview`
+
+### 验证结果
+
+1. 已执行目标文件 ESLint：通过。
+2. 已执行 `git diff --check`：通过。
+3. 已执行 `curl -I http://127.0.0.1:5173/workbench/index`：返回 `200 OK`。
+4. 已执行 `curl -I http://127.0.0.1:5173/project/information`：返回 `200 OK`。
+5. 未完成隔离浏览器截图验证：本轮未启用独立浏览器自动化链路，因此尚未做 icon 下方浮层的肉眼位置确认。
+
+### 遗留问题
+
+1. 需要用户在 `/workbench/index`、`/project/information`、`/personnel/overview` 视觉确认浮层是否与设置按钮上下间距、右侧对齐方式一致，以及按内容自适应后的宽度是否合适。
+2. 当前浮层在小视口下会做窗口内收敛；如后续设计要求固定左对齐或带箭头，再评估是否沉淀为平台通用浮层样式。
+
+### 平台治理影响
+
+1. 本轮发现的 ant-design-vue 原生组件问题：`Modal` 交互会强制引入蒙版和居中展示，不适合表格局部“列设置”这类轻量工具浮层。
+2. 已通过平台层解决的问题：`PlatformTable` 已把列设置交互改为就近浮层，避免业务页各自隐藏蒙版或重写弹窗定位。
+3. 仍是页面临时实现的问题：暂无新增页面级临时实现，三个业务页只透传点击事件。
+4. 未来必须回收为平台组件的页面子组件：如后续还有更多“工具 icon 打开局部配置面板”的场景，可评估抽出 `PlatformFloatingPanel`。
+5. 后续新页面禁止继续复制哪些实现：不要在业务页通过局部 CSS 隐藏 `Modal` 蒙版来伪装浮层；不要为单页单独写设置面板定位逻辑。
+6. 哪些样式应进入主题变量或统一样式入口：列设置浮层的边框、阴影、圆角和内边距已进入 `PlatformTable` 源组件，后续复用场景再评估是否提炼 token。
+7. 当前仍存在的页面级样式债务：暂无新增；列设置面板样式已回到平台表格源组件。
+
+### 任务名称
+
+前端联调源码交付包与交付说明
+
+### 完成内容
+
+1. 新增前端联调交付说明，明确本项目应以 monorepo 源码整体交付，不能只压缩 `apps/web-antd`。
+2. 说明 `dist/index.html` 不能双击打开的原因：构建资源使用站点根路径，且应用为 Vue Router history 模式 SPA，必须通过 HTTP 服务或 Nginx 访问。
+3. 梳理本地启动、构建、预览、Mock 模式、真实后端切换、Nginx fallback、页面清单、Mock 数据位置和平台组件边界。
+4. 生成干净源码交付包，排除 `.git`、`node_modules`、`apps/web-antd/dist`、压缩包和本机临时文件。
+
+### 修改了哪些文件
+
+1. `docs/handoff-frontend.md`
+2. `docs/project-log.md`
+3. `docs/todo-next.md`
+
+### 涉及哪些页面或组件
+
+1. 主应用：`apps/web-antd`
+2. 交付页面：`/workbench/index`、`/project/information`、`/project/contract`、`/project/progress`、`/project/document`、`/project/evaluation`、`/platform/typical-page`、`/personnel/overview`、`/personnel/qualification`、`/personnel/turnover`、`/personnel/worktime`
+3. 平台组件目录：`apps/web-antd/src/components/platform`
+
+### 验证结果
+
+1. 已确认仓库当前为 Vben Admin monorepo，根目录包含 `pnpm-workspace.yaml` 和 `pnpm-lock.yaml`，`apps/web-antd` 不能脱离根目录独立交付。
+2. 已检查 `apps/web-antd/dist/index.html`，确认资源路径使用 `/_app.config.js`、`/js/...`、`/jse/...`，不适合 `file://` 双击打开。
+3. 已检查构建产物配置，生产接口前缀为 `/prod-api`，开发 Mock 开关在 `apps/web-antd/.env.development`。
+4. 已生成交付包并检查压缩包内容，确认未包含 `node_modules`、`.git` 和 `apps/web-antd/dist`。
+
+### 遗留问题
+
+1. 前端接收后仍需按实际后端地址调整 `VITE_GLOB_API_URL`、Vite proxy 或 Nginx `/prod-api` 代理。
+2. 当前页面数据仍以 Mock 和页面专用 `*-source.ts` 为主，真实接口字段需要前后端联调时逐页替换。
+3. 应用级 `vue-tsc` 仍有存量类型问题，后续建议单独治理。
+
+### 平台治理影响
+
+1. 本轮发现的 ant-design-vue 原生组件问题：无，属于交付打包和文档说明。
+2. 已通过平台层解决的问题：无新增平台组件改动。
+3. 仍是页面临时实现的问题：各业务页仍以页面专用 Mock 数据源模拟后端返回。
+4. 未来必须回收为平台组件的页面子组件：继续参考 `docs/handoff-frontend.md` 中的平台组件边界，避免联调时复制页面样式。
+5. 后续新页面禁止继续复制哪些实现：不要把 `dist` 当作二次开发主产物；不要脱离 monorepo 单独交付 `apps/web-antd`。
+6. 哪些样式应进入主题变量或统一样式入口：本轮无新增样式。
+7. 当前仍存在的页面级样式债务：交付范围内已知业务卡片、图表 option 和页面数据适配仍分布在各页面。
+
+### 任务名称
+
 人员全生命周期 - 工时与兼职管控间距微调
 
 ### 完成内容

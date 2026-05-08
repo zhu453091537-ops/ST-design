@@ -7,11 +7,14 @@ import type {
 import { onMounted, ref } from 'vue';
 
 import { Page } from '@vben/common-ui';
-import { VbenIcon } from '@vben/icons';
 
 import { Empty } from 'antdv-next';
 
-import { PlatformButton, PlatformSectionTitle } from '#/components/platform';
+import {
+  PlatformSectionTitle,
+  type PlatformViewOption,
+  PlatformViewToolbar,
+} from '#/components/platform';
 
 import ProjectProgressBoard from './components/project-progress-board.vue';
 import ProjectProgressGanttChart from './components/project-progress-gantt-chart.vue';
@@ -28,6 +31,18 @@ const boardRows = ref<ProjectProgressRecord[]>([]);
 const ganttRows = ref<ProjectProgressRecord[]>([]);
 const warnings = ref<ProjectProgressWarning[]>([]);
 const loading = ref(false);
+const viewOptions: PlatformViewOption[] = [
+  {
+    icon: 'lucide:chart-gantt',
+    label: '甘特图',
+    value: 'gantt',
+  },
+  {
+    icon: 'lucide:columns-3',
+    label: '看板',
+    value: 'board',
+  },
+];
 
 onMounted(async () => {
   await loadProgress();
@@ -52,40 +67,22 @@ async function loadProgress() {
 function setActiveView(view: ProjectProgressView) {
   activeView.value = view;
 }
+
+function handleViewChange(value: string) {
+  setActiveView(value as ProjectProgressView);
+}
 </script>
 
 <template>
   <Page auto-content-height>
     <div class="project-progress-page" :aria-busy="loading">
-      <header class="project-progress-header">
-        <div class="project-progress-header__title">
-          <h1>进度可视化跟踪</h1>
-          <p>甘特图 / 看板 / 进度条</p>
-        </div>
-
-        <div class="project-progress-switch" aria-label="进度视图切换">
-          <PlatformButton
-            scene="toolbar"
-            :type="activeView === 'gantt' ? 'primary' : 'default'"
-            @click="setActiveView('gantt')"
-          >
-            <template #icon>
-              <VbenIcon icon="lucide:chart-gantt" />
-            </template>
-            甘特图
-          </PlatformButton>
-          <PlatformButton
-            scene="toolbar"
-            :type="activeView === 'board' ? 'primary' : 'default'"
-            @click="setActiveView('board')"
-          >
-            <template #icon>
-              <VbenIcon icon="lucide:columns-3" />
-            </template>
-            看板
-          </PlatformButton>
-        </div>
-      </header>
+      <PlatformViewToolbar
+        description="甘特图 / 看板 / 进度条"
+        title="进度可视化跟踪"
+        :view-options="viewOptions"
+        :view-value="activeView"
+        @update:view-value="handleViewChange"
+      />
 
       <section v-if="activeView === 'gantt'" class="platform-surface">
         <ProjectProgressGanttChart :rows="ganttRows" :year="2026" />
@@ -125,40 +122,6 @@ function setActiveView(view: ProjectProgressView) {
   min-height: 100%;
 }
 
-.project-progress-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-}
-
-.project-progress-header__title {
-  display: flex;
-  align-items: baseline;
-  gap: 10px;
-  min-width: 0;
-}
-
-.project-progress-header__title h1 {
-  margin: 0;
-  color: hsl(var(--foreground));
-  font-size: 22px;
-  font-weight: 700;
-  line-height: 32px;
-}
-
-.project-progress-header__title p {
-  margin: 0;
-  color: hsl(var(--muted-foreground));
-  font-size: var(--st-font-size-sm);
-}
-
-.project-progress-switch {
-  display: inline-flex;
-  flex: none;
-  gap: 8px;
-}
-
 .project-progress-board-section {
   min-width: 0;
 }
@@ -195,24 +158,4 @@ function setActiveView(view: ProjectProgressView) {
   text-align: left;
 }
 
-@media (max-width: 768px) {
-  .project-progress-header {
-    align-items: flex-start;
-    flex-direction: column;
-  }
-
-  .project-progress-header__title {
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 4px;
-  }
-
-  .project-progress-switch {
-    width: 100%;
-  }
-
-  .project-progress-switch :deep(.platform-button) {
-    flex: 1;
-  }
-}
 </style>

@@ -27,6 +27,7 @@ import {
   PlatformStatusTag,
   PlatformTable,
   PlatformTableToolbar,
+  PlatformViewToolbar,
 } from '#/components/platform';
 
 import {
@@ -240,8 +241,8 @@ async function handleTableFullscreen() {
   }
 }
 
-function handleTableSetting() {
-  personnelTableRef.value?.openColumnSetting();
+function handleTableSetting(event: MouseEvent) {
+  personnelTableRef.value?.openColumnSetting(event);
 }
 
 function resetForm(record?: PersonnelOverviewRecord) {
@@ -281,12 +282,10 @@ onMounted(loadPersonnelOverview);
 <template>
   <Page :auto-content-height="true">
     <div class="personnel-overview-page">
-      <header class="personnel-overview-header">
-        <div>
-          <h1>人员总览</h1>
-          <p>人员全生命周期管理</p>
-        </div>
-      </header>
+      <PlatformViewToolbar
+        description="人员全生命周期管理"
+        title="人员总览"
+      />
 
       <section class="personnel-overview-stat-grid">
         <PlatformStatCard
@@ -337,9 +336,6 @@ onMounted(loadPersonnelOverview);
           <template #bodyCell="{ column, record }">
             <template v-if="column.key === 'person'">
               <div class="personnel-overview-person-cell">
-                <span class="personnel-overview-person-cell__avatar">
-                  {{ record.name.slice(0, 1) }}
-                </span>
                 <div>
                   <strong>{{ record.name }}</strong>
                   <span>{{ record.code }}</span>
@@ -514,26 +510,6 @@ onMounted(loadPersonnelOverview);
   min-height: 100%;
 }
 
-.personnel-overview-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-}
-
-.personnel-overview-header h1 {
-  margin: 0;
-  color: hsl(var(--foreground));
-  font-size: 22px;
-  font-weight: 700;
-  line-height: 32px;
-}
-
-.personnel-overview-header p {
-  margin: 0;
-  color: hsl(var(--muted-foreground));
-}
-
 .personnel-overview-stat-grid {
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
@@ -548,21 +524,7 @@ onMounted(loadPersonnelOverview);
 .personnel-overview-person-cell {
   display: flex;
   align-items: center;
-  gap: 10px;
   min-width: 0;
-}
-
-.personnel-overview-person-cell__avatar {
-  display: inline-flex;
-  width: 34px;
-  height: 34px;
-  flex: none;
-  align-items: center;
-  justify-content: center;
-  color: hsl(var(--primary));
-  font-weight: 700;
-  background: hsl(var(--st-color-fill-selected));
-  border-radius: 50%;
 }
 
 .personnel-overview-person-cell div {
@@ -599,11 +561,6 @@ onMounted(loadPersonnelOverview);
 }
 
 @media (max-width: 960px) {
-  .personnel-overview-header {
-    align-items: flex-start;
-    flex-direction: column;
-  }
-
   .personnel-overview-stat-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }

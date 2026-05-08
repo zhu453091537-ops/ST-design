@@ -21,4 +21,15 @@ export interface PlatformViewOption {
   value: string;
 }
 
+export interface PlatformViewAction {
+  danger?: boolean;
+  disabled?: boolean;
+  hidden?: boolean;
+  icon?: string;
+  key: string;
+  label: string;
+  loading?: boolean;
+  type?: 'dashed' | 'default' | 'link' | 'primary' | 'text';
+}
+
 export type PlatformViewTool = 'export' | 'fullscreen' | 'refresh' | 'setting';

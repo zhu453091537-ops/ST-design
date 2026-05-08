@@ -454,7 +454,7 @@ $namespace: vben;
   --menu-item-padding-x: 12px;
   --menu-item-popup-padding-y: 20px;
   --menu-item-popup-padding-x: 12px;
-  --menu-item-margin-y: 2px;
+  --menu-item-margin-y: 0px;
   --menu-item-margin-x: 0px;
   --menu-item-collapse-size: 48px;
   --menu-item-collapse-padding-y: 0px;

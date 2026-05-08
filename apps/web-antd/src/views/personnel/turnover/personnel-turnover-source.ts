@@ -1,8 +1,11 @@
 export interface ContractorTurnoverRate {
   contractor: string;
+  lossRate: number;
+  lostCount: number;
   rate: number;
   resigned: number;
   total: number;
+  totalCount: number;
 }
 
 export interface PersonnelTurnoverStatCard {
@@ -16,16 +19,86 @@ export interface PersonnelTurnoverStatCard {
 const contractorTurnoverSeed: Array<
   Omit<ContractorTurnoverRate, 'rate'>
 > = [
-  { contractor: '中建三局', resigned: 1, total: 3 },
-  { contractor: '中铁十二局', resigned: 1, total: 3 },
-  { contractor: '金螳螂装饰', resigned: 0, total: 3 },
-  { contractor: '中交一公局', resigned: 0, total: 3 },
-  { contractor: '东方园林', resigned: 1, total: 3 },
-  { contractor: '城建集团', resigned: 0, total: 3 },
-  { contractor: '华为技术', resigned: 0, total: 3 },
-  { contractor: '北控水务', resigned: 1, total: 3 },
-  { contractor: '中建八局', resigned: 1, total: 3 },
-  { contractor: '保安公司', resigned: 0, total: 3 },
+  {
+    contractor: '中建三局',
+    lossRate: 0,
+    lostCount: 1,
+    resigned: 1,
+    total: 3,
+    totalCount: 3,
+  },
+  {
+    contractor: '中铁十二局',
+    lossRate: 0,
+    lostCount: 1,
+    resigned: 1,
+    total: 3,
+    totalCount: 3,
+  },
+  {
+    contractor: '金螳螂装饰',
+    lossRate: 0,
+    lostCount: 0,
+    resigned: 0,
+    total: 3,
+    totalCount: 3,
+  },
+  {
+    contractor: '中交一公局',
+    lossRate: 0,
+    lostCount: 0,
+    resigned: 0,
+    total: 3,
+    totalCount: 3,
+  },
+  {
+    contractor: '东方园林',
+    lossRate: 0,
+    lostCount: 1,
+    resigned: 1,
+    total: 3,
+    totalCount: 3,
+  },
+  {
+    contractor: '城建集团',
+    lossRate: 0,
+    lostCount: 0,
+    resigned: 0,
+    total: 3,
+    totalCount: 3,
+  },
+  {
+    contractor: '华为技术',
+    lossRate: 0,
+    lostCount: 0,
+    resigned: 0,
+    total: 3,
+    totalCount: 3,
+  },
+  {
+    contractor: '北控水务',
+    lossRate: 0,
+    lostCount: 1,
+    resigned: 1,
+    total: 3,
+    totalCount: 3,
+  },
+  {
+    contractor: '中建八局',
+    lossRate: 0,
+    lostCount: 1,
+    resigned: 1,
+    total: 3,
+    totalCount: 3,
+  },
+  {
+    contractor: '保安公司',
+    lossRate: 0,
+    lostCount: 0,
+    resigned: 0,
+    total: 3,
+    totalCount: 3,
+  },
 ];
 
 const turnoverMovementCount = 9;
@@ -35,11 +108,11 @@ export async function getPersonnelTurnoverStats(): Promise<
 > {
   const contractorRates = await getContractorTurnoverRates();
   const resignedCount = contractorRates.reduce(
-    (total, item) => total + item.resigned,
+    (total, item) => total + item.lostCount,
     0,
   );
   const registeredCount = contractorRates.reduce(
-    (total, item) => total + item.total,
+    (total, item) => total + item.totalCount,
     0,
   );
   const overallRate = getTurnoverRate(resignedCount, registeredCount);
@@ -76,10 +149,17 @@ export async function getPersonnelTurnoverStats(): Promise<
 export async function getContractorTurnoverRates(): Promise<
   ContractorTurnoverRate[]
 > {
-  return contractorTurnoverSeed.map((item) => ({
-    ...item,
-    rate: getTurnoverRate(item.resigned, item.total),
-  }));
+  return contractorTurnoverSeed.map((item) => {
+    const lossRate = getTurnoverRate(item.lostCount, item.totalCount);
+
+    return {
+      ...item,
+      lossRate,
+      rate: lossRate,
+      resigned: item.lostCount,
+      total: item.totalCount,
+    };
+  });
 }
 
 function getTurnoverRate(resigned: number, total: number) {

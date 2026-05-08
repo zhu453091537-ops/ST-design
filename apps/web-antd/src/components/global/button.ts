@@ -16,6 +16,7 @@ export const ActionButton = defineComponent({
         {
           ...props,
           ...attrs,
+          class: ['platform-action-button', attrs.class],
           type: 'link',
           // ghost: true,
           size: 'small',

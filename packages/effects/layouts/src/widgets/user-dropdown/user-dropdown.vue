@@ -199,7 +199,13 @@ if (enableShortcutKey.value) {
     <DropdownMenuTrigger ref="refTrigger" :disabled="props.trigger === 'hover'">
       <div class="platform-header-icon-action mr-3 ml-1 cursor-pointer p-1.5">
         <div class="flex-center">
-          <VbenAvatar :alt="text" :src="avatar" class="size-8" dot />
+          <VbenAvatar
+            :alt="text"
+            :src="avatar"
+            class="size-8"
+            dot
+            dot-class="platform-user-avatar-dot bg-green-500"
+          />
         </div>
       </div>
     </DropdownMenuTrigger>
@@ -211,7 +217,7 @@ if (enableShortcutKey.value) {
             :src="avatar"
             class="size-12"
             dot
-            dot-class="bottom-0 right-1 border-2 size-4 bg-green-500"
+            dot-class="platform-user-avatar-dot bottom-0 right-1 border-2 size-4 bg-green-500"
           />
           <div class="ml-2 w-full">
             <div

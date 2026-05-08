@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type {
+  PlatformViewAction,
   PlatformViewOption,
   PlatformViewTool,
 } from './types';
@@ -13,6 +14,7 @@ import PlatformViewSwitch from './platform-view-switch.vue';
 
 const props = withDefaults(
   defineProps<{
+    actions?: PlatformViewAction[];
     description?: string;
     title?: string;
     tools?: PlatformViewTool[];
@@ -20,15 +22,17 @@ const props = withDefaults(
     viewValue?: string;
   }>(),
   {
+    actions: () => [],
     description: '',
     title: '',
-    tools: () => ['refresh', 'export', 'setting'],
+    tools: () => [],
     viewOptions: () => [],
     viewValue: '',
   },
 );
 
 const emit = defineEmits<{
+  action: [key: string];
   export: [];
   fullscreen: [];
   refresh: [];
@@ -61,6 +65,9 @@ const toolbarTools = computed(() =>
     ...toolMeta[tool],
   })),
 );
+const toolbarActions = computed(() =>
+  props.actions.filter((action) => !action.hidden),
+);
 </script>
 
 <template>
@@ -89,10 +96,25 @@ const toolbarTools = computed(() =>
         scene="toolbar"
         shape="circle"
         @click="emit(tool.key)"
+        >
+          <template #icon>
+            <VbenIcon :icon="tool.icon" />
+          </template>
+        </PlatformButton>
+      <PlatformButton
+        v-for="action in toolbarActions"
+        :key="action.key"
+        :danger="action.danger"
+        :disabled="action.disabled"
+        :loading="action.loading"
+        scene="toolbar"
+        :type="action.type || 'default'"
+        @click="emit('action', action.key)"
       >
-        <template #icon>
-          <VbenIcon :icon="tool.icon" />
+        <template v-if="action.icon" #icon>
+          <VbenIcon :icon="action.icon" />
         </template>
+        {{ action.label }}
       </PlatformButton>
       <slot name="actions"></slot>
     </div>
@@ -139,6 +161,8 @@ const toolbarTools = computed(() =>
   flex: none;
   align-items: center;
   gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
 }
 
 @media (max-width: 960px) {

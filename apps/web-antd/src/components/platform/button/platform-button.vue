@@ -96,8 +96,13 @@ withDefaults(
 
 .platform-button--action {
   padding-inline: 0;
+  font-weight: 600;
   text-decoration: none;
   text-underline-offset: 3px;
+}
+
+.platform-button--action + .platform-button--action {
+  margin-inline-start: 16px;
 }
 
 .platform-button--action:not(:disabled):not(.ant-btn-disabled):hover,

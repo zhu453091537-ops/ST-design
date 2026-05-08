@@ -483,6 +483,10 @@ body {
   color: inherit !important;
 }
 
+.platform-user-avatar-dot {
+  border-color: hsl(var(--header-foreground)) !important;
+}
+
 .platform-header-icon-action--ring:hover svg,
 .platform-header-icon-action--ring:focus-visible svg {
   animation: platform-header-icon-ring 1s both;
@@ -520,6 +524,15 @@ body {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.platform-action-button.ant-btn-link {
+  padding-inline: 0;
+  font-weight: 600;
+}
+
+.platform-action-button.ant-btn-link + .platform-action-button.ant-btn-link {
+  margin-inline-start: 16px;
 }
 
 /* .ant-btn {
