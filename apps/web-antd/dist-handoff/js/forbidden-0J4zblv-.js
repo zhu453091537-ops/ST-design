@@ -1,0 +1,1 @@
+import{Fr as e,Un as t,cr as n,gi as r,gr as i}from"./antdv-next-Bbl__uyc.js";import{t as a}from"./fallback-DQbltKgY.js";var o=i(t(t({},{name:`Fallback403Demo`}),{},{__name:`forbidden`,setup(t){return(t,i)=>(e(),n(r(a),{status:`403`}))}}));export{o as default};

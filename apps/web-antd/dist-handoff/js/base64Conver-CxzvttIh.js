@@ -1,0 +1,1 @@
+function e(e){let t=e.split(`,`),n=t[0].match(/:(.*?);/)[1],r=window.atob(t[1]),i=r.length,a=new Uint8Array(i);for(;i--;)a[i]=r.codePointAt(i);return new Blob([a],{type:n})}export{e as t};

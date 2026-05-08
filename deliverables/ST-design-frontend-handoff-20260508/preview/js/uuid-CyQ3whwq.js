@@ -1,0 +1,1 @@
+function e(){let e=globalThis.crypto;if(!e)throw Error(`Web Crypto API is not available in the current environment.`);return e}function t(){return e().randomUUID().replaceAll(`-`,``)}export{t};

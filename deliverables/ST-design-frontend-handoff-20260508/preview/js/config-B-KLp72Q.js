@@ -1,0 +1,1 @@
+import{Fr as e,cr as t,gr as n}from"./antdv-next-Bbl__uyc.js";import{t as r}from"./oss-config-BuHQT37A.js";var i=n({__name:`config`,setup(n){return(n,i)=>(e(),t(r))}});export{i as default};

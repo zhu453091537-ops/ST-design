@@ -1,0 +1,1 @@
+import{Fr as e,cr as t,gi as n,gr as r}from"./antdv-next-Bbl__uyc.js";import{t as i}from"./fallback-DQbltKgY.js";var a=r({__name:`coming-soon`,setup(r){return(r,a)=>(e(),t(n(i),{status:`coming-soon`}))}});export{a as default};

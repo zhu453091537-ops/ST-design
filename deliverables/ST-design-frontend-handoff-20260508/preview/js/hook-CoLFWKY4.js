@@ -1,0 +1,1 @@
+import{Dr as e,Mr as t,hn as n,si as r}from"./antdv-next-Bbl__uyc.js";function i(n,r=500){let{businessId:i}=a();function o(){let e=i.value;e&&setTimeout(()=>{n==null||n(e),i.value=``},r)}t(o),e(o)}var a=n(()=>({businessId:r(``)}));export{i as n,a as t};
