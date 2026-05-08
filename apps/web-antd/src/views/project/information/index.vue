@@ -15,10 +15,12 @@ import { Popconfirm, Space } from 'antdv-next';
 
 import {
   PlatformButton,
+  PlatformDatePicker,
   PlatformEditForm,
   PlatformFormItem,
   PlatformInput,
   PlatformModal,
+  PlatformSegmented,
   PlatformSelect,
   PlatformStatusTag,
   PlatformTable,
@@ -29,6 +31,9 @@ import {
   archiveProjectInformationProject,
   deleteProjectInformationProject,
   getProjectInformationList,
+  projectInformationBiddingResultOptions,
+  projectInformationDepartmentOptions,
+  projectInformationProcurementMethodOptions,
   projectInformationStatusMap,
   projectInformationStatusOptions,
   projectInformationTypeOptions,
@@ -49,6 +54,14 @@ const saving = ref(false);
 const formOpen = ref(false);
 const currentRecord = ref<null | ProjectInformationRecord>(null);
 const projectListPanelRef = ref<HTMLElement>();
+const projectTableRef = ref<InstanceType<typeof PlatformTable>>();
+const formSection = ref('basic');
+
+const formSectionOptions = [
+  { label: '基础信息', value: 'basic' },
+  { label: '招采信息', value: 'procurement' },
+  { label: '进场信息', value: 'entry' },
+];
 
 const tableColumns = computed<TableProps['columns']>(() => [
   {
@@ -144,6 +157,7 @@ async function handleTableChange(...args: Parameters<TableEmits['change']>) {
 function handleAdd() {
   currentRecord.value = null;
   resetForm();
+  formSection.value = 'basic';
   formOpen.value = true;
 }
 
@@ -151,6 +165,7 @@ function handleEdit(record: unknown) {
   const project = toProjectRecord(record);
   currentRecord.value = project;
   resetForm(project);
+  formSection.value = 'basic';
   formOpen.value = true;
 }
 
@@ -214,7 +229,7 @@ async function handleTableFullscreen() {
 }
 
 function handleTableSetting() {
-  window.message.info('表格设置入口已保留，后续按列配置方案接入。');
+  projectTableRef.value?.openColumnSetting();
 }
 
 function resetForm(record?: ProjectInformationRecord) {
@@ -236,10 +251,15 @@ function resetForm(record?: ProjectInformationRecord) {
     plannedExitDate: record?.plannedExitDate ?? '',
     procurementAgency: record?.procurementAgency ?? '',
     procurementMethod: record?.procurementMethod ?? '公开招标',
+    singleSourceFilingCode: record?.singleSourceFilingCode ?? '',
     staffing: record?.staffing ?? '',
     status: record?.status ?? 'pending',
     type: record?.type ?? projectInformationTypeOptions[1]?.value,
   });
+}
+
+function handleCancelForm() {
+  formOpen.value = false;
 }
 
 function formatAmount(amount: number) {
@@ -297,6 +317,8 @@ onMounted(loadProjectInformation);
         </PlatformTableToolbar>
 
         <PlatformTable
+          ref="projectTableRef"
+          column-setting-key="project-information"
           :columns="tableColumns"
           :data-source="tableRows"
           :loading="loading"
@@ -319,6 +341,7 @@ onMounted(loadProjectInformation);
               <PlatformStatusTag
                 :label="getStatusMeta(record.status).label"
                 :status="getStatusMeta(record.status).status"
+                variant="dot"
               />
             </template>
             <template v-else-if="column.key === 'action'">
@@ -372,47 +395,76 @@ onMounted(loadProjectInformation);
     <PlatformModal
       v-model:open="formOpen"
       :confirm-loading="saving"
+      cancel-text="取消"
+      centered
+      ok-text="保存"
       :title="formTitle"
       destroy-on-close
-      width="860px"
-      @cancel="formOpen = false"
+      width="1120px"
+      @cancel="handleCancelForm"
       @ok="handleSave"
     >
-      <PlatformEditForm :model="formModel" layout="vertical">
-        <section class="project-form-section">
-          <h3>基础信息</h3>
+      <div class="project-form-tabs">
+        <PlatformSegmented
+          v-model:value="formSection"
+          :options="formSectionOptions"
+        />
+      </div>
+
+      <PlatformEditForm
+        :model="formModel"
+        class="project-modal-form"
+        layout="vertical"
+      >
+        <section v-show="formSection === 'basic'" class="project-form-section">
           <div class="project-form-grid">
-            <PlatformFormItem label="项目名称">
-              <PlatformInput v-model:value="formModel.name" />
+            <PlatformFormItem label="项目名称" required>
+              <PlatformInput
+                v-model:value="formModel.name"
+                placeholder="请输入项目名称"
+              />
             </PlatformFormItem>
-            <PlatformFormItem label="项目编号">
-              <PlatformInput v-model:value="formModel.code" />
-            </PlatformFormItem>
-            <PlatformFormItem label="项目类型">
+            <PlatformFormItem label="项目类型" required>
               <PlatformSelect
                 v-model:value="formModel.type"
                 :options="
                   projectInformationTypeOptions.filter((item) => item.value)
                 "
+                placeholder="请选择项目类型"
               />
             </PlatformFormItem>
-            <PlatformFormItem label="所属部门">
-              <PlatformInput v-model:value="formModel.department" />
+            <PlatformFormItem label="所属部门" required>
+              <PlatformSelect
+                v-model:value="formModel.department"
+                :options="projectInformationDepartmentOptions"
+                placeholder="请选择所属部门"
+              />
             </PlatformFormItem>
             <PlatformFormItem label="承包商">
-              <PlatformInput v-model:value="formModel.contractor" />
-            </PlatformFormItem>
-            <PlatformFormItem label="合同金额（万）">
-              <PlatformInput v-model:value="formModel.amount" type="number" />
-            </PlatformFormItem>
-            <PlatformFormItem label="工期（天）">
               <PlatformInput
-                v-model:value="formModel.durationDays"
+                v-model:value="formModel.contractor"
+                placeholder="请输入承包商"
+              />
+            </PlatformFormItem>
+            <PlatformFormItem label="合同金额(万元)" required>
+              <PlatformInput
+                v-model:value="formModel.amount"
+                placeholder="请输入合同金额"
                 type="number"
               />
             </PlatformFormItem>
-            <PlatformFormItem label="负责人">
-              <PlatformInput v-model:value="formModel.manager" />
+            <PlatformFormItem label="工期(天)" required>
+              <PlatformInput
+                v-model:value="formModel.durationDays"
+                placeholder="请输入工期"
+                type="number"
+              />
+            </PlatformFormItem>
+            <PlatformFormItem label="项目负责人" required>
+              <PlatformInput
+                v-model:value="formModel.manager"
+                placeholder="请输入项目负责人"
+              />
             </PlatformFormItem>
             <PlatformFormItem label="状态">
               <PlatformSelect
@@ -420,50 +472,104 @@ onMounted(loadProjectInformation);
                 :options="
                   projectInformationStatusOptions.filter((item) => item.value)
                 "
+                placeholder="请选择项目状态"
               />
             </PlatformFormItem>
-            <PlatformFormItem label="描述">
-              <PlatformInput v-model:value="formModel.description" />
+            <PlatformFormItem class="project-form-item--full" label="项目描述">
+              <PlatformInput
+                v-model:value="formModel.description"
+                placeholder="请输入项目描述"
+              />
             </PlatformFormItem>
           </div>
         </section>
 
-        <section class="project-form-section">
-          <h3>招采信息</h3>
+        <section
+          v-show="formSection === 'procurement'"
+          class="project-form-section"
+        >
           <div class="project-form-grid">
             <PlatformFormItem label="招采方式">
-              <PlatformInput v-model:value="formModel.procurementMethod" />
+              <PlatformSelect
+                v-model:value="formModel.procurementMethod"
+                :options="projectInformationProcurementMethodOptions"
+                placeholder="请选择招采方式"
+              />
             </PlatformFormItem>
             <PlatformFormItem label="招标结果">
-              <PlatformInput v-model:value="formModel.biddingResult" />
+              <PlatformSelect
+                v-model:value="formModel.biddingResult"
+                :options="projectInformationBiddingResultOptions"
+                placeholder="请选择招标结果"
+              />
             </PlatformFormItem>
-            <PlatformFormItem label="备案号">
-              <PlatformInput v-model:value="formModel.filingCode" />
+            <PlatformFormItem label="公开招标备案号">
+              <PlatformInput
+                v-model:value="formModel.filingCode"
+                placeholder="请输入公开招标备案号"
+              />
+            </PlatformFormItem>
+            <PlatformFormItem label="单一来源备案号">
+              <PlatformInput
+                v-model:value="formModel.singleSourceFilingCode"
+                placeholder="请输入单一来源备案号"
+              />
             </PlatformFormItem>
             <PlatformFormItem label="招标代理机构">
-              <PlatformInput v-model:value="formModel.procurementAgency" />
+              <PlatformInput
+                v-model:value="formModel.procurementAgency"
+                placeholder="请输入招标代理机构"
+              />
             </PlatformFormItem>
             <PlatformFormItem label="开标日期">
-              <PlatformInput v-model:value="formModel.bidOpenDate" />
+              <PlatformDatePicker
+                v-model:value="formModel.bidOpenDate"
+                placeholder="请选择开标日期"
+                value-format="YYYY-MM-DD"
+              />
             </PlatformFormItem>
           </div>
         </section>
 
-        <section class="project-form-section">
-          <h3>进场信息</h3>
+        <section v-show="formSection === 'entry'" class="project-form-section">
           <div class="project-form-grid">
             <PlatformFormItem label="进场时间">
-              <PlatformInput v-model:value="formModel.entryDate" />
+              <PlatformDatePicker
+                v-model:value="formModel.entryDate"
+                placeholder="请选择进场时间"
+                value-format="YYYY-MM-DD"
+              />
             </PlatformFormItem>
             <PlatformFormItem label="计划退场时间">
-              <PlatformInput v-model:value="formModel.plannedExitDate" />
+              <PlatformDatePicker
+                v-model:value="formModel.plannedExitDate"
+                placeholder="请选择计划退场时间"
+                value-format="YYYY-MM-DD"
+              />
             </PlatformFormItem>
-            <PlatformFormItem label="人员配置">
-              <PlatformInput v-model:value="formModel.staffing" />
-            </PlatformFormItem>
-            <PlatformFormItem label="设备清单">
-              <PlatformInput v-model:value="formModel.equipmentList" />
-            </PlatformFormItem>
+            <div class="project-form-group project-form-item--full">
+              <h3>人员配置</h3>
+              <div class="project-form-inline">
+                <PlatformInput
+                  v-model:value="formModel.staffing"
+                  placeholder="请输入姓名"
+                />
+                <PlatformInput placeholder="请输入岗位" />
+                <PlatformButton>+</PlatformButton>
+              </div>
+            </div>
+            <div class="project-form-group project-form-item--full">
+              <h3>设备清单</h3>
+              <div class="project-form-inline project-form-inline--equipment">
+                <PlatformInput
+                  v-model:value="formModel.equipmentList"
+                  placeholder="请输入设备名"
+                />
+                <PlatformInput placeholder="请输入型号" />
+                <PlatformInput placeholder="请输入数量" />
+                <PlatformButton>+</PlatformButton>
+              </div>
+            </div>
           </div>
         </section>
       </PlatformEditForm>
@@ -516,21 +622,51 @@ onMounted(loadProjectInformation);
   font-size: var(--st-font-size-sm);
 }
 
-.project-form-section + .project-form-section {
-  margin-top: 20px;
+.project-form-tabs {
+  padding: 0 0 20px;
+  margin: -8px -24px 24px;
+  border-bottom: 1px solid hsl(var(--border));
 }
 
-.project-form-section h3 {
-  margin: 0 0 12px;
-  font-size: var(--st-font-size-base);
-  font-weight: 700;
-  color: hsl(var(--foreground));
+.project-form-tabs :deep(.platform-segmented) {
+  margin-left: 24px;
+}
+
+.project-modal-form {
+  min-height: 360px;
 }
 
 .project-form-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0 16px;
+  gap: 12px 24px;
+}
+
+.project-form-grid :deep(.ant-form-item) {
+  margin-bottom: 0;
+}
+
+.project-form-item--full {
+  grid-column: 1 / -1;
+}
+
+.project-form-group h3 {
+  margin: 0 0 12px;
+  color: hsl(var(--muted-foreground));
+  font-size: var(--st-font-size-base);
+  font-weight: 700;
+}
+
+.project-form-inline {
+  display: grid;
+  grid-template-columns: 160px 160px var(--st-control-height);
+  gap: 8px;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.project-form-inline--equipment {
+  grid-template-columns: 180px 180px 120px var(--st-control-height);
 }
 
 @media (max-width: 960px) {
@@ -540,6 +676,11 @@ onMounted(loadProjectInformation);
   }
 
   .project-form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .project-form-inline,
+  .project-form-inline--equipment {
     grid-template-columns: 1fr;
   }
 }

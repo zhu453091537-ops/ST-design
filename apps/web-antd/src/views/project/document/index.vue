@@ -14,6 +14,7 @@ import { VbenIcon } from '@vben/icons';
 import {
   PlatformButton,
   PlatformFileList,
+  PlatformSectionTitle,
   PlatformStatCard,
 } from '#/components/platform';
 
@@ -146,9 +147,10 @@ async function handleUploadChange(event: Event) {
       </section>
 
       <section class="platform-surface project-document-panel">
-        <header class="project-document-panel__header">
-          <h2>文档列表</h2>
-        </header>
+        <PlatformSectionTitle
+          class="project-document-panel__header"
+          title="文档列表"
+        />
 
         <PlatformFileList
           :columns="2"
@@ -217,16 +219,7 @@ async function handleUploadChange(event: Event) {
 }
 
 .project-document-panel__header {
-  padding-bottom: 8px;
-  border-bottom: 1px solid hsl(var(--border));
-}
-
-.project-document-panel__header h2 {
-  margin: 0;
-  font-size: var(--st-font-size-base);
-  font-weight: 700;
-  line-height: 24px;
-  color: hsl(var(--foreground));
+  margin-bottom: 20px;
 }
 
 @media (max-width: 1280px) {

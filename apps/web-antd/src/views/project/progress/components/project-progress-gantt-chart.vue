@@ -7,6 +7,8 @@ import { computed, onMounted, ref, watch } from 'vue';
 
 import { EchartsUI, useEcharts } from '@vben/plugins/echarts';
 
+import { PlatformSectionTitle } from '#/components/platform';
+
 const props = withDefaults(
   defineProps<{
     rows: ProjectProgressRecord[];
@@ -187,10 +189,9 @@ function renderChart() {
 
 <template>
   <div class="project-progress-gantt">
-    <div class="project-progress-gantt__title-row">
-      <h2>项目甘特图</h2>
-      <span>{{ year }}年度</span>
-    </div>
+    <PlatformSectionTitle class="project-progress-gantt__title-row" title="项目甘特图">
+      <template #extra>{{ year }}年度</template>
+    </PlatformSectionTitle>
     <div class="project-progress-gantt__month-head">
       <strong>项目名称</strong>
       <span v-for="month in 12" :key="month">{{ month }}月</span>
@@ -205,24 +206,7 @@ function renderChart() {
 }
 
 .project-progress-gantt__title-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
   margin-bottom: 20px;
-}
-
-.project-progress-gantt__title-row h2 {
-  margin: 0;
-  color: hsl(var(--foreground));
-  font-size: var(--st-font-size-title);
-  font-weight: 700;
-  line-height: var(--st-line-height-lg);
-}
-
-.project-progress-gantt__title-row span {
-  color: hsl(var(--muted-foreground));
-  font-size: var(--st-font-size-sm);
 }
 
 .project-progress-gantt__month-head {

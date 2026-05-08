@@ -11,7 +11,7 @@ import { VbenIcon } from '@vben/icons';
 
 import { Empty } from 'antdv-next';
 
-import { PlatformButton } from '#/components/platform';
+import { PlatformButton, PlatformSectionTitle } from '#/components/platform';
 
 import ProjectProgressBoard from './components/project-progress-board.vue';
 import ProjectProgressGanttChart from './components/project-progress-gantt-chart.vue';
@@ -96,7 +96,10 @@ function setActiveView(view: ProjectProgressView) {
       </section>
 
       <section v-if="activeView === 'gantt'" class="platform-surface">
-        <h2 class="project-progress-section-title">进度预警</h2>
+        <PlatformSectionTitle
+          class="project-progress-section-title"
+          title="进度预警"
+        />
         <ul v-if="warnings.length > 0" class="project-progress-warning-list">
           <li v-for="warning in warnings" :key="warning.id">
             <strong>{{ warning.name }}</strong>
@@ -162,10 +165,6 @@ function setActiveView(view: ProjectProgressView) {
 
 .project-progress-section-title {
   margin: 0 0 18px;
-  color: hsl(var(--foreground));
-  font-size: var(--st-font-size-title);
-  font-weight: 700;
-  line-height: var(--st-line-height-lg);
 }
 
 .project-progress-warning-list {

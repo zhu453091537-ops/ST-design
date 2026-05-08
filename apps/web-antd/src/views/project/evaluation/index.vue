@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { TableProps } from 'antdv-next';
+import type { TableEmits, TableProps } from 'antdv-next';
 
 import type {
   EvaluationProject,
@@ -56,8 +56,6 @@ const saving = ref(false);
 const formOpen = ref(false);
 const projectQuery = reactive({
   keyword: '',
-  stage: '',
-  status: '',
 });
 const recordQuery = reactive({
   keyword: '',
@@ -70,20 +68,6 @@ const projectOptions = computed(() =>
     value: item.id,
   })),
 );
-const projectStageOptions = computed(() => [
-  { label: '全部阶段', value: '' },
-  ...Object.entries(evaluationProjectStageMap).map(([value, meta]) => ({
-    label: meta.label,
-    value,
-  })),
-]);
-const projectStatusOptions = computed(() => [
-  { label: '全部状态', value: '' },
-  ...Object.entries(evaluationProjectStatusMap).map(([value, meta]) => ({
-    label: meta.label,
-    value,
-  })),
-]);
 const recordResultOptions = computed(() => [
   { label: '全部结果', value: '' },
   ...Object.entries(evaluationRecordResultMap).map(([value, meta]) => ({
@@ -102,11 +86,8 @@ const filteredEvaluationProjects = computed(() =>
       [project.name, project.department, project.manager].some((value) =>
         value.toLowerCase().includes(keyword),
       );
-    const matchStage = !projectQuery.stage || project.stage === projectQuery.stage;
-    const matchStatus =
-      !projectQuery.status || project.status === projectQuery.status;
 
-    return matchKeyword && matchStage && matchStatus;
+    return matchKeyword;
   }),
 );
 const filteredEvaluationRecords = computed(() =>
@@ -131,6 +112,11 @@ const recordColumns = computed<TableProps['columns']>(() => [
   },
   {
     dataIndex: 'result',
+    filterMultiple: false,
+    filteredValue: recordQuery.result ? [recordQuery.result] : null,
+    filters: recordResultOptions.value
+      .filter((item) => item.value)
+      .map((item) => ({ text: item.label, value: item.value })),
     key: 'result',
     title: '评估结果',
     width: 110,
@@ -178,6 +164,13 @@ async function loadEvaluationPage() {
   }
 }
 
+function handleRecordTableChange(...args: Parameters<TableEmits['change']>) {
+  const [, filters] = args;
+  recordQuery.result = getFirstFilterValue(
+    filters.result,
+  ) as '' | EvaluationRecord['result'];
+}
+
 function handleCreateEvaluation(project?: EvaluationProject) {
   Object.assign(formModel, {
     evaluator: '项目管理部',
@@ -216,6 +209,13 @@ function getScoreClass(score: number) {
     : 'project-evaluation-score--warning';
 }
 
+function getFirstFilterValue(value: unknown) {
+  if (Array.isArray(value)) {
+    return String(value[0] ?? '');
+  }
+  return '';
+}
+
 function getEvaluationRecord(record: unknown) {
   return record as EvaluationRecord;
 }
@@ -237,16 +237,6 @@ function getRecordScore(record: unknown) {
           <h1>中期评估与验收管理</h1>
           <p>评估模板、验收流程数字化留痕</p>
         </div>
-        <PlatformButton
-          :disabled="evaluationProjects.length === 0"
-          type="primary"
-          @click="handleCreateEvaluation()"
-        >
-          <template #icon>
-            <VbenIcon icon="lucide:plus" />
-          </template>
-          发起评估
-        </PlatformButton>
       </header>
 
       <section class="project-evaluation-stat-grid">
@@ -261,26 +251,65 @@ function getRecordScore(record: unknown) {
       <section class="project-evaluation-workspace">
         <article class="platform-surface project-evaluation-panel">
           <PlatformTableToolbar
-            v-model:search-value="projectQuery.keyword"
-            v-model:status-value="projectQuery.status"
-            v-model:type-value="projectQuery.stage"
-            description="按阶段和状态筛选待处理项目"
-            search-placeholder="搜索项目 / 部门 / 负责人"
-            :status-options="projectStatusOptions"
+            v-model:search-value="recordQuery.keyword"
+            search-placeholder="搜索项目 / 评估组"
             :tools="['search', 'refresh']"
-            :type-options="projectStageOptions"
+            title="评估记录"
+            @refresh="loadEvaluationPage"
+            @search="() => {}"
+          />
+
+          <PlatformTable
+            :adaptive-height-bottom-offset="48"
+            :columns="recordColumns"
+            :data-source="filteredEvaluationRecords"
+            :loading="loading"
+            :pagination="recordPagination"
+            row-key="id"
+            show-index
+            size="middle"
+            @change="handleRecordTableChange"
+          >
+            <template #bodyCell="{ column, record }">
+              <template v-if="column.key === 'name'">
+                <div class="project-record-name">
+                  <strong>{{ record.name }}</strong>
+                  <span>{{ record.evaluator }}</span>
+                </div>
+              </template>
+              <template v-else-if="column.key === 'result'">
+                <PlatformStatusTag
+                  :label="getRecordResultMeta(record).label"
+                  :status="getRecordResultMeta(record).status"
+                />
+              </template>
+              <template v-else-if="column.key === 'score'">
+                <strong
+                  class="project-evaluation-score"
+                  :class="getScoreClass(getRecordScore(record))"
+                >
+                  {{ getRecordScore(record) }}分
+                </strong>
+              </template>
+            </template>
+          </PlatformTable>
+        </article>
+
+        <article class="platform-surface project-evaluation-panel">
+          <PlatformTableToolbar
+            v-model:search-value="projectQuery.keyword"
+            search-placeholder="搜索项目 / 部门 / 负责人"
+            :tools="['search', 'refresh']"
             title="待评估项目"
             @refresh="loadEvaluationPage"
             @search="() => {}"
           />
 
           <div class="project-evaluation-panel__body">
-            <button
+            <article
               v-for="project in filteredEvaluationProjects"
               :key="project.id"
               class="project-pending-card"
-              type="button"
-              @click="handleCreateEvaluation(project)"
             >
               <div class="project-pending-card__main">
                 <div>
@@ -307,11 +336,18 @@ function getRecordScore(record: unknown) {
               </div>
               <div class="project-pending-card__footer">
                 <span>进度 {{ project.progress }}%</span>
-                <PlatformButton scene="action" size="small" type="link">
+                <PlatformButton
+                  size="small"
+                  type="primary"
+                  @click="handleCreateEvaluation(project)"
+                >
+                  <template #icon>
+                    <VbenIcon icon="lucide:plus" />
+                  </template>
                   发起评估
                 </PlatformButton>
               </div>
-            </button>
+            </article>
             <div
               v-if="filteredEvaluationProjects.length === 0"
               class="project-evaluation-empty"
@@ -319,54 +355,6 @@ function getRecordScore(record: unknown) {
               暂无符合条件的待评估项目
             </div>
           </div>
-        </article>
-
-        <article class="platform-surface project-evaluation-panel">
-          <PlatformTableToolbar
-            v-model:search-value="recordQuery.keyword"
-            v-model:status-value="recordQuery.result"
-            description="按项目名称、评估组和结果查询历史记录"
-            search-placeholder="搜索项目 / 评估组"
-            :status-options="recordResultOptions"
-            :tools="['search', 'refresh']"
-            title="评估记录"
-            @refresh="loadEvaluationPage"
-            @search="() => {}"
-          />
-
-          <PlatformTable
-            :adaptive-height-bottom-offset="48"
-            :columns="recordColumns"
-            :data-source="filteredEvaluationRecords"
-            :loading="loading"
-            :pagination="recordPagination"
-            row-key="id"
-            show-index
-            size="middle"
-          >
-            <template #bodyCell="{ column, record }">
-              <template v-if="column.key === 'name'">
-                <div class="project-record-name">
-                  <strong>{{ record.name }}</strong>
-                  <span>{{ record.evaluator }}</span>
-                </div>
-              </template>
-              <template v-else-if="column.key === 'result'">
-                <PlatformStatusTag
-                  :label="getRecordResultMeta(record).label"
-                  :status="getRecordResultMeta(record).status"
-                />
-              </template>
-              <template v-else-if="column.key === 'score'">
-                <strong
-                  class="project-evaluation-score"
-                  :class="getScoreClass(getRecordScore(record))"
-                >
-                  {{ getRecordScore(record) }}分
-                </strong>
-              </template>
-            </template>
-          </PlatformTable>
         </article>
       </section>
     </div>
@@ -459,7 +447,7 @@ function getRecordScore(record: unknown) {
 .project-evaluation-workspace {
   display: grid;
   flex: 1;
-  grid-template-columns: minmax(360px, 0.85fr) minmax(520px, 1.45fr);
+  grid-template-columns: minmax(520px, 1.45fr) minmax(360px, 0.85fr);
   gap: var(--st-layout-section-gap);
   min-height: 0;
 }
@@ -479,7 +467,6 @@ function getRecordScore(record: unknown) {
   gap: 12px;
   min-height: 0;
   overflow: auto;
-  padding: var(--st-module-content-padding);
 }
 
 .project-pending-card {
@@ -489,15 +476,14 @@ function getRecordScore(record: unknown) {
   width: 100%;
   padding: 18px;
   text-align: left;
-  cursor: pointer;
   background: hsl(var(--st-color-card-bg));
   border: 1px solid hsl(var(--border));
   border-radius: var(--st-radius-card);
-  transition: border-color 0.2s ease;
+  transition: transform 0.18s ease;
 }
 
 .project-pending-card:hover {
-  border-color: hsl(var(--st-color-brand));
+  transform: translateY(-4px);
 }
 
 .project-pending-card__main,
@@ -587,7 +573,7 @@ function getRecordScore(record: unknown) {
 
 @media (max-width: 1200px) {
   .project-evaluation-workspace {
-    grid-template-columns: minmax(320px, 0.95fr) minmax(420px, 1.2fr);
+    grid-template-columns: minmax(420px, 1.2fr) minmax(320px, 0.95fr);
   }
 }
 

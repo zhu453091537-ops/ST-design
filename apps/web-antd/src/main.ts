@@ -28,6 +28,10 @@ async function initApplication() {
   }
 
   updatePreferences({
+    logo: {
+      source: overridesPreferences.logo?.source,
+      sourceDark: overridesPreferences.logo?.sourceDark,
+    },
     tabbar: {
       enable: false,
       keepAlive: false,

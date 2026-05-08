@@ -16,6 +16,11 @@
 | 高 | Figma 顶部导航栏源组件样式改造 | 已完成 | 已基于截图完成顶部布局源组件、Logo、水平菜单和右侧功能按钮样式改造；Figma MCP Go 已恢复连接，后续可继续补节点级校准。 |
 | 高 | Figma MCP Go 本地连接规则沉淀 | 已完成 | 已确认本项目使用非官方 `@vkhanhqui/figma-mcp-go`，插件固定 `127.0.0.1:1994`，成功方案已写入 `AGENTS.md` 和 `docs/decision-records.md`。 |
 | 高 | ant-design-vue 典型页面 Demo 开发 | 已完成第一版 | 已按专用受控数据源适配文件 `user-demo-source.ts` 落地 `/platform/typical-page`，字段、columns、树结构模型和操作入口对齐 `/system/user`；已完成浏览器登录、树筛选和新增抽屉抽查；真实后端恢复后仍需切回接口。 |
+| 高 | 人员全生命周期 - 人员总览独立入口恢复 | 已完成，待视觉复核 | 已按用户纠偏保留 `/platform/typical-page` 人员档案管理不覆盖；新增 `/personnel/overview` 作为人员总览独立页面，包含统计卡、工具栏左侧新增人员、右侧默认 4 工具、状态/资质状态表头筛选和文字操作列。 |
+| 高 | 人员全生命周期 - 人员档案管理页面保护 | 已完成，待视觉复核 | 当前人员档案管理是正确页面，继续保留在 `/platform/typical-page`；后续不得用人员总览覆盖档案页。 |
+| 高 | 人员全生命周期 - 资质与准入管控页面第一版 | 已完成，待视觉复核 | 已新增 `/personnel/qualification` 独立页面并插入到人员档案管理下方；新增 `PlatformNoticeList` / `PlatformNoticeItem`，资质到期预警不使用表格；资质预警与准入规则配置一行两列；发送提醒按钮默认品牌绿描边、hover 绿底白字；批量提醒暂不做。 |
+| 高 | 人员全生命周期 - 变动与流失率统计页面第一版 | 已完成，待视觉复核 | 已新增 `/personnel/turnover` 独立页面并插入到资质与准入管控下方、工时与兼职管控上方；统计卡复用 `PlatformStatCard`，各承包商流失率复用 `PlatformEchartsPanel` 和 ECharts 横向 bar chart；未覆盖其他已完成模块。 |
+| 高 | 人员全生命周期 - 工时与兼职管控页面第一版 | 已完成，待视觉复核 | 已新增 `/personnel/worktime`：超工时人员预警改为页面业务卡片，展示阈值 `180小时/月`、本月工时和超出时长；已按截图批注微调标题区与卡片网格 padding；底部兼职核查模块按用户要求暂不开发。 |
 | 高 | 通用组件样式默认全局生效规则 | 已完成 | 用户后续即使没有特别强调，全局通用组件样式反馈也默认回到 `packages/styles`、主题 token、平台组件或适配层源头处理。 |
 | 高 | 典型页面样式沉淀边界 | 已完成 | 已明确分页、工具栏、操作列、表格状态切换优先沉淀到 `PlatformTable`、`PlatformTableToolbar` 等组件场景，不轻易直接覆盖 Antdv 全局样式。 |
 | 高 | 顶部一级菜单默认子路由跳转 | 已完成 | 已修复 `header-sidebar-nav` 下点击有子级一级菜单不跳转的问题；当前菜单目标已调整为设计稿多一级菜单骨架。 |
@@ -35,6 +40,7 @@
 | 高 | 典型页面收尾平台治理影响章节 | 已完成 | 已写入 `AGENTS.md` 和 `docs/decision-records.md`：以后所有典型页面、截图页面、Figma 页面或业务右侧内容页收尾，都必须补充“平台治理影响”章节，并覆盖原生组件问题、平台层解决项、临时实现、未来回收组件、禁止复制实现、主题变量落点和页面级样式债务。 |
 | 高 | 导航组件统一样式微调 | 已完成 | 已把顶部/左侧菜单字号、左侧菜单图标尺寸、顶部选中态满高背景和右上角设置/通知/头像 hover 收敛到菜单组件变量与头部公共样式类。 |
 | 高 | 顶部导航栏 Logo 应用名更新 | 已完成 | 已在应用启动期将项目配置的 `preferences.app.name` 同步回当前偏好状态，避免历史 localStorage 继续显示旧应用名。 |
+| 高 | 顶部导航本地 Logo、表格默认序号列、平台标题组件与卡片 hover | 已完成，待视觉复核 | 已使用 `/LOGO.svg` 作为系统名称左侧 32px 本地 Logo；`PlatformTable` 与 Vxe 适配层默认补“序号”列；新增 `PlatformSectionTitle` 并接入进度、文档、资质、流失率和工时相关标题；卡片 hover 只上移不出现品牌描边。 |
 | 高 | 左侧导航栏源组件样式修正 | 已完成 | 已调整左侧菜单展开态选中背景横向充满、收起态 48px 正方形背景、折叠按钮尺寸/位置/描边和收起态 tooltip 灰色变量。 |
 | 高 | 左侧收起/展开按钮灰色背景变量修正 | 已完成 | 已将折叠按钮默认背景从品牌淡绿色变量改为 `--st-color-border-subtle`，hover 改为 `--st-color-border-control`。 |
 | 高 | 顶部右侧图标按钮 hover 源组件修正 | 已完成 | 已让日程与通知按钮 hover 使用菜单 hover 背景变量，svg 保持白色，并共享头部图标摇铃动画修饰类。 |
@@ -54,6 +60,7 @@
 | 高 | 平台表格横向滚动视觉复核 | 待执行 | 下一轮优先刷新 `/workbench/index` 与 `/project/information`，人工拖动横向滚动条确认表头和表体是否完全同步；如仍抖动，继续排查 Antdv fixed right sticky 重绘。 |
 | 高 | 平台模块默认间距与内容内边距统一 | 已完成 | 已新增 `--st-layout-section-gap: 24px`、`--st-module-content-padding: 24px`，并接入 `Page`、`.platform-surface`、`PlatformTableToolbar`、`PlatformStatCard`、`/workbench/index` 和 `/project/information`；工具栏上下内边距按源组件节奏为 `12px`。 |
 | 高 | 项目信息管理页面第一版 | 已完成 | 已新增 `/project/information`，补齐 `项目全景管理` 左侧菜单；页面使用专用 Mock 数据源，支持搜索、类型/状态表头筛选、新建、编辑、归档、删除和轻量详情入口；`/workbench/index` 仍保留为项目总览。 |
+| 高 | 项目信息管理新建项目弹窗整改 | 已完成，待视觉复核 | `/project/information` 已新增 `PlatformSegmented` 并接入新建项目弹窗，形成 `基础信息 / 招采信息 / 进场信息` 三段式表单；表格继续保持工具栏左侧新建、表头类型/状态筛选、文字操作列。 |
 | 高 | 进度可视化跟踪页面右侧内容开发 | 已完成，待用户视觉确认 | 已新增 `/project/progress` 页面和页面专用 Mock 数据源，支持甘特图 / 看板双视图；甘特图使用现有 ECharts 插件，看板四列卡片已完成隔离浏览器验证。 |
 | 高 | 进度可视化跟踪页面纠偏 | 进行中/已暂停 | 用户要求今天结束时，纠偏阶段尚未完成：已开始新增平台组件雏形和查询数据结构，但尚未完成页面重构、删除页面专用组件、验证或最终平台治理映射。下一轮必须先审计当前 diff。 |
 | 高 | 项目信息管理筛选入口平台化 | 已完成 | 已按用户反馈移除工具栏里的 `全部状态` / `全部类型` 下拉，改为 `项目类型`、`状态` 表头筛选，复用 `PlatformTable` 的“全部”和即时生效规则。 |
@@ -61,7 +68,7 @@
 | 高 | 左侧导航菜单项高度与左侧距离源组件修正 | 已完成 | 已在 `menu-ui` 源组件将垂直展开态菜单项高度统一为 `52px`，一级菜单内容左侧距离统一为 `24px`；未改当前页面样式，未影响顶部横向菜单和收起态。 |
 | 高 | 合同与付款管理页面右侧内容开发 | 已完成 | 已新增 `/project/contract` 页面和页面专用 Mock 数据源，顶部统计卡复用 `PlatformStatCard`；付款节点已改为 ECharts mini bar + 下方文字，合同卡片宽屏三列、中屏两列、小屏一列；已完成 headless Chrome 验证。 |
 | 高 | 文档与台账管理页面右侧内容开发 | 已完成 | 已新增 `/project/document` 页面、页面专用 Mock 数据源和 `PlatformFileList` / `PlatformFileItem` 平台文件列表薄封装；文档列表已调整为宽屏两列、窄屏单列；已完成 ESLint、HTTP 和隔离浏览器验证。 |
-| 高 | 中期评估与验收管理页面右侧内容开发 | 已完成 | 已新增 `/project/evaluation` 页面和页面专用 Mock 数据源，并完成页面治理整改：左右自适应布局保留，待评估项目接入平台工具栏查询筛选，评估记录改为 `PlatformTable`；已完成 ESLint、HTTP 和隔离浏览器验证。 |
+| 高 | 中期评估与验收管理页面右侧内容开发 | 已完成，待视觉复核 | 已新增 `/project/evaluation` 页面和页面专用 Mock 数据源，并完成评论整改：顶部发起评估按钮已删除，工具栏辅助文案和重复下拉筛选已删除，评估结果筛选迁到表头，评估记录在左侧宽列，待评估项目在右侧窄列；已完成 ESLint、HTTP 检查。 |
 | 高 | 本轮新页面视觉确认 | 待执行 | 下一轮优先由用户确认 `/project/contract` ECharts mini bar、`/project/progress` 甘特图/看板、`/project/document` 两列文件列表、`/project/evaluation` 治理后左右布局和右侧表格是否符合原型预期。 |
 | 高 | 新页面查询列表页模式复核 | 待执行 | 下一轮如继续做项目全景管理页面，开发前先判断页面是否应采用“查询区 + 工具栏 + 表格/列表 + 分页 + 批量操作”模式；不采用时必须写明原因并等待确认。 |
 | 中 | 应用级 `vue-tsc` 存量错误整理 | 待处理 | 本次运行 `vue-tsc -p apps/web-antd/tsconfig.json --noEmit --skipLibCheck --pretty false` 仍有既有组件和演示页错误；当前失败列表不包含 `/project/contract` mini bar、`/project/evaluation` 和 `PlatformSelect` 改动。 |
@@ -70,7 +77,7 @@
 | 中 | 多页面复用后评估 `PlatformEntityCell` | 待观察 | 项目信息业务单元格暂留页面，等多页面复用后再抽。 |
 | 中 | 多页面复用后评估 `PlatformProgress` | 待观察 | 项目进度列暂留页面，等多页面复用后再抽。 |
 | 中 | 多页面复用后评估 `PlatformDescriptions` | 待观察 | 详情抽屉内容暂留页面，等多页面复用后再抽。 |
-| 高 | 设计稿菜单骨架收敛 | 部分完成 | 顶部一级菜单已按设计稿展示；未开发菜单保留独立 path 并复用 Blank；`系统管理 - 用户管理` 已指向 `/platform/typical-page`；仍需修复 `/system/user` 直访问兼容。 |
+| 高 | 设计稿菜单骨架收敛 | 部分完成 | 顶部一级菜单已按设计稿展示；未开发菜单保留独立 path 并复用 Blank；`人员全生命周期 - 人员总览` 已指向 `/platform/typical-page`；仍需修复 `/system/user` 直访问兼容。 |
 | 高 | `/system/user` 直访问兼容 | 待处理 | 当前浏览器直访 `/system/user` 未正确进入原真实页面。下次先排查 access mode、动态路由注入、mock 菜单源与隐藏路由关系，不要直接改 Vben 核心。 |
 | 高 | 旧 `/system/user` 页面解绑 | 已完成 | 已删除旧页面路由入口和页面壳文件，菜单入口已收口到 `/platform/typical-page`，不再把旧页作为本阶段目标。 |
 | 高 | 清理 Git 跟踪依赖产物问题 | 待确认 | 当前仓库存在 `node_modules` 等依赖产物被 Git 跟踪的问题，后续启动开发服务容易产生无意义变更；需用户确认清理范围和 `.gitignore` 策略。 |
@@ -82,6 +89,15 @@
 
 | 日期 | 状态 | 说明 |
 | --- | --- | --- |
+| 2026-05-08 | 已完成，待视觉复核 | 已按用户截图批注微调 `/personnel/worktime` 的 `超工时人员预警` 区块：标题区仅保留下方 24px padding，预警卡片网格仅保留上方 24px padding；本轮只改页面布局类，不改平台组件、token 或全局样式。 |
+| 2026-05-08 | 已完成，待视觉复核 | 已完成 `人员全生命周期 - 变动与流失率统计` 第一版：新增 `/personnel/turnover` 与页面专用数据源；菜单位于 `资质与准入管控` 下方、`工时与兼职管控` 上方；统计卡复用 `PlatformStatCard`，承包商流失率复用 `PlatformEchartsPanel` + ECharts；未改动人员总览、人员档案、资质与工时页面主体；目标 ESLint 与相关路由 HTTP 检查通过，全量 `vue-tsc` 仍因既有错误失败但不包含本轮文件。 |
+| 2026-05-08 | 已完成，待视觉复核 | 已完成平台源组件统一：顶部系统名左侧使用本地 `/LOGO.svg`；`PlatformTable` 和 Vxe 适配层默认提供序号列；新增 `PlatformSectionTitle` 并接入指定标题；删除超工时说明文案；统计卡、超工时卡和待评估卡 hover 仅上移；目标 ESLint、`git diff --check` 和相关路由 HTTP 检查通过，应用级 `vue-tsc` 仍有既有存量错误。 |
+| 2026-05-08 | 已完成，待视觉复核 | 已完成 `人员全生命周期 - 资质与准入管控` 第一版：新增 `/personnel/qualification` 和 `PlatformNoticeList` / `PlatformNoticeItem`；菜单位于人员档案管理下方；页面不使用表格，资质预警与准入规则配置一行两列；发送提醒按钮品牌绿描边、hover 绿底白字；批量提醒暂不开发；目标 ESLint、`git diff --check`、HTTP 检查通过；全量 `vue-tsc` 仍因既有错误失败但不包含本轮文件。 |
+| 2026-05-08 | 已完成，待视觉复核 | 已完成 `/project/evaluation` 评论整改：删除顶部发起评估按钮、两处辅助文案、待评估工具栏状态/阶段下拉和内容区 padding；评估记录结果筛选改为表头筛选；待评估卡片按钮改为主按钮；评估记录与待评估项目左右位置已调换。 |
+| 2026-05-08 | 已完成，待视觉复核 | 已按用户纠偏恢复 `人员全生命周期 - 人员总览` 独立入口：新增 `/personnel/overview` 页面和页面专用数据源；保留 `/platform/typical-page` 人员档案管理不覆盖；目标 ESLint、`git diff --check`、HTTP 检查通过，全量 `vue-tsc` 仍因既有错误失败但不包含本轮文件。 |
+| 2026-05-08 | 已完成，待视觉复核 | 已完成 `人员全生命周期 - 工时与兼职管控` 第一版：新增 `/personnel/worktime` 页面和页面专用数据源；超工时预警使用卡片样式，右侧显示 `阈值：180小时/月`，卡片 hover 上移，通知整改按钮默认品牌绿描边、hover 品牌绿填充白字；兼职核查模块暂不开发。 |
+| 2026-05-08 | 已完成，待视觉复核 | 已完成 `项目全景管理 - 项目信息管理` 表格与新建项目弹窗整改：新增 `PlatformSegmented` 平台分段控件；新建项目弹窗已按基础信息、招采信息、进场信息分段；目标文件 ESLint、`git diff --check`、HTTP 检查通过，全量 `vue-tsc` 仍因既有错误失败但不包含本轮文件。 |
+| 2026-05-08 | 已完成，待视觉复核 | 已完成 `人员全生命周期 - 人员总览` 第一版：菜单改名，页面接入统计卡、平台工具栏、平台表格、状态/资质表头筛选、新增人员弹窗；操作列已从 icon-only 改回文字按钮；所有录入控件已补业务化 placeholder；目标文件 ESLint、`git diff --check`、HTTP 检查通过，全量 `vue-tsc` 仍因既有错误失败但不再包含本轮文件。 |
 | 2026-05-07 | 已收尾 | 已按用户要求停止开发并完成规则复盘收尾：`AGENTS.md`、`docs/decision-records.md`、`docs/project-log.md`、`docs/todo-next.md` 已更新；新增/扩展平台组件必须单独确认，小反馈落到平台层也必须先补简版映射和影响范围。 |
 | 2026-05-07 | 已收尾 | 今天结束收尾：已更新接续文档，并将“新增或扩展平台组件必须单独确认”同步到 `AGENTS.md` 和 `docs/decision-records.md`；下一轮先审计 `/project/progress` 未完成 diff，再做 `/project/contract`、`/project/document`、`/project/evaluation`、`/project/progress` 视觉确认。 |
 | 2026-05-07 | 已暂停 | 今天结束收尾：已停止继续开发并停掉本轮 Vite 服务；`/project/progress` 纠偏阶段只完成部分平台组件雏形和数据源调整，未完成页面重构、删除页面专用组件或重新验证；下一轮需先审计当前 diff，再决定继续、回退或迁移。 |
@@ -156,7 +172,7 @@
 5. 如用户要求视觉确认，再重新启动 Vite 并打开 `/project/contract`、`/project/progress`、`/project/evaluation`、`/project/document`；不要沿用今天的 `5672` / `5673` 端口状态。
 6. 如继续处理平台表格存量事项，再刷新 `/workbench/index` 和 `/project/information`，人工拖动横向滚动条确认 `PlatformTable` 表头与表体同步不再抖动。
 7. 如需继续查看典型页面，先确认当前 Vite 服务端口是否仍在运行；跨设备或新会话不要假设端口仍可用，应以实际 `lsof` 或新启动结果为准。
-8. 旧 `/system/user` 页面已解绑并删除壳文件，不再作为当前阶段目标；`人员全生命周期 - 用户管理 -> /platform/typical-page` 当前为空承载页，等待用户后续提供原型后再开发。
+8. 旧 `/system/user` 页面已解绑并删除壳文件，不再作为当前阶段目标；`人员全生命周期 - 人员总览` 当前恢复为 `/personnel/overview` 独立入口，`/platform/typical-page` 保留为人员档案管理，下一步优先做两个页面的视觉复核和新增弹窗交互细化。
 9. 继续抽查其他真实业务页，确认是否也已统一接入平台组件和 Vxe 适配层；`system/post`、`system/dept` 已验证，`system/role` 已删除。
 10. Figma MCP Go 已恢复连接；后续如继续做 Figma 对齐，优先读取顶部导航节点 `2045-1586`，对照 `LayoutHeader`、`VbenLogo`、水平 `Menu` 和右侧按钮做节点级尺寸与切图校准。
 11. 对表格工具栏继续遵守统一规则：业务主按钮放最左，次要按钮随后；搜索、刷新、设置、全屏等常规工具统一由平台表格工具栏或 Vxe 适配层承载。

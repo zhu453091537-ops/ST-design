@@ -116,18 +116,50 @@ setupVbenVxeTable({
 });
 
 type VbenVxeGridOptions = Parameters<UseVbenVxeGrid>[0];
+type PlatformVxeGridOptions = VbenVxeGridOptions & {
+  platformIndex?: boolean;
+};
+
+function withPlatformIndexColumn(
+  columns: NonNullable<VbenVxeGridOptions['gridOptions']>['columns'],
+) {
+  const indexColumn = {
+    align: 'center' as const,
+    field: '__platform_index',
+    title: '序号',
+    type: 'seq' as const,
+    width: 72,
+  };
+
+  if (columns?.[0]?.type !== 'checkbox') {
+    return [indexColumn, ...(columns ?? [])];
+  }
+
+  const [firstColumn, ...restColumns] = columns;
+  return [firstColumn, indexColumn, ...restColumns];
+}
 
 function withPlatformVxeGridOptions(
-  options: VbenVxeGridOptions,
+  options: PlatformVxeGridOptions,
 ): VbenVxeGridOptions {
   const toolbarConfig = options.gridOptions?.toolbarConfig ?? {};
   const headerCellConfig = options.gridOptions?.headerCellConfig ?? {};
   const cellConfig = options.gridOptions?.cellConfig ?? {};
+  const columns = options.gridOptions?.columns ?? [];
+  const shouldShowIndex = options.platformIndex !== false;
+  const hasIndexColumn = columns.some(
+    (column) => column.type === 'seq' || column.field === '__platform_index',
+  );
+  const mergedColumns =
+    shouldShowIndex && columns.length > 0 && !hasIndexColumn
+      ? withPlatformIndexColumn(columns)
+      : columns;
 
   return {
     ...options,
     gridOptions: {
       ...options.gridOptions,
+      columns: mergedColumns,
       headerCellConfig: {
         height: 44,
         ...headerCellConfig,

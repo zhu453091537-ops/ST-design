@@ -2,6 +2,499 @@
 
 本文件记录项目阶段性工作日志，用于跨设备、跨聊天上下文恢复。只记录已经发生并完成的事项，不混入长期规则或下一步待办。
 
+## 2026-05-08
+
+### 任务名称
+
+人员全生命周期 - 工时与兼职管控间距微调
+
+### 完成内容
+
+1. 按用户截图批注调整 `超工时人员预警` 面板标题区内边距：仅保留下方 24px，上、左、右为 0。
+2. 调整预警卡片网格内边距：仅保留上方 24px，右、下、左为 0。
+3. 本轮只处理 `/personnel/worktime` 页面业务布局类，不改平台组件、设计 token 或全局样式入口。
+
+### 修改了哪些文件
+
+1. `apps/web-antd/src/views/personnel/worktime/index.vue`
+2. `docs/project-log.md`
+3. `docs/todo-next.md`
+
+### 涉及哪些页面或组件
+
+1. 页面：`/personnel/worktime`
+2. 页面布局类：`.worktime-alert-panel__header`、`.worktime-alert-grid`
+3. 复用平台组件：`PlatformSectionTitle`
+
+### 验证结果
+
+1. 已完成源码级检查，确认只改两个 padding 声明。
+2. 已执行目标文件 ESLint：通过。
+3. 已执行 `git diff --check`：通过。
+4. 未做浏览器截图验证：本轮为截图批注下的两处 CSS 明确值修正，且当前仓库存在较多既有未提交改动，未额外启动浏览器链路。
+
+### 遗留问题
+
+1. 需要用户在 `/personnel/worktime` 视觉确认标题与卡片网格上下间距是否符合预期。
+2. 若后续多个业务页都需要“平台区块标题只留底部 padding、内容网格只留顶部 padding”，再评估是否沉淀为平台区块布局能力。
+
+### 平台治理影响
+
+1. 本轮发现的 ant-design-vue 原生组件问题：无，属于业务页面区块布局间距微调。
+2. 已通过平台层解决的问题：无新增平台层改动，继续复用 `PlatformSectionTitle`。
+3. 仍是页面临时实现的问题：`超工时人员预警` 卡片网格和人员预警卡仍是页面级业务结构。
+4. 未来必须回收为平台组件的页面子组件：若多页面复用人员预警卡，再评估 `PlatformWarningCard`。
+5. 后续新页面禁止继续复制哪些实现：不要把本次页面特例直接当作全局模块 padding 规则。
+6. 哪些样式应进入主题变量或统一样式入口：本轮无新增，继续使用 `--st-module-content-padding`。
+7. 当前仍存在的页面级样式债务：预警卡片结构、网格列数和局部 padding 仍留在页面 scoped CSS。
+
+### 任务名称
+
+平台源组件统一：顶部 Logo、表格序号列、标题组件与卡片 hover
+
+### 完成内容
+
+1. 将顶部系统名称左侧 Logo 配置为本地仓库资源 `/LOGO.svg`，并在应用启动期同步覆盖历史偏好缓存，避免仍显示空 Logo 或旧 Logo。
+2. 将 `PlatformTable` 默认序号列改为开启；后续如不需要序号列，需要显式关闭。
+3. 在 `#/adapter/vxe-table` 中为通过 `useVbenVxeGrid` 创建的 Vxe 表格默认补充 `type: 'seq'` 序号列；若首列是复选框，则序号列自动插到复选框之后。
+4. 新增 `PlatformSectionTitle` 平台标题组件，并让 `PlatformSection` 复用它，`PlatformEchartsPanel` 的标题也随之继承统一标题样式。
+5. 将 `项目甘特图`、`进度预警`、`文档列表`、`超工时人员预警` 等页面手写标题接入平台标题组件；`资质到期预警`、`准入规则配置`、`各承包商流失率` 通过既有平台区块间接复用。
+6. 删除 `超工时人员预警` 中“重点关注本月工时和超出时长，及时通知承包商整改。”文案。
+7. 调整 `PlatformStatCard`、超工时人员卡片和待评估项目卡片 hover：移入只上移，不再出现品牌描边。
+8. 顺手修正 `project-progress-board.vue` 中看板列数量显示的既有类型问题，从不存在的 `column.count` 改为 `column.records.length`。
+
+### 修改了哪些文件
+
+1. `apps/web-antd/src/preferences.ts`
+2. `apps/web-antd/src/main.ts`
+3. `apps/web-antd/src/adapter/vxe-table.ts`
+4. `apps/web-antd/src/components/platform/table/platform-table.vue`
+5. `apps/web-antd/src/components/platform/stat/platform-stat-card.vue`
+6. `apps/web-antd/src/components/platform/view/index.ts`
+7. `apps/web-antd/src/components/platform/view/platform-section.vue`
+8. `apps/web-antd/src/components/platform/view/platform-section-title.vue`
+9. `apps/web-antd/src/views/project/progress/index.vue`
+10. `apps/web-antd/src/views/project/progress/components/project-progress-gantt-chart.vue`
+11. `apps/web-antd/src/views/project/progress/components/project-progress-board.vue`
+12. `apps/web-antd/src/views/project/document/index.vue`
+13. `apps/web-antd/src/views/personnel/worktime/index.vue`
+14. `apps/web-antd/src/views/project/evaluation/index.vue`
+15. `AGENTS.md`
+16. `docs/decision-records.md`
+17. `docs/project-log.md`
+18. `docs/todo-next.md`
+
+### 涉及哪些页面或组件
+
+1. 顶部导航：`VbenLogo` 偏好配置链路。
+2. 平台组件：`PlatformTable`、`PlatformSectionTitle`、`PlatformSection`、`PlatformEchartsPanel`、`PlatformStatCard`。
+3. 适配层：`#/adapter/vxe-table`。
+4. 页面：`/project/progress`、`/project/document`、`/project/evaluation`、`/personnel/qualification`、`/personnel/turnover`、`/personnel/worktime`、`/personnel/overview`、`/project/information`。
+
+### 验证结果
+
+1. 已执行目标文件 ESLint：通过。
+2. 已执行 `git diff --check`：通过。
+3. 已执行 `curl -I http://127.0.0.1:5173/LOGO.svg`：返回 `200 OK`，`Content-Type: image/svg+xml`。
+4. 已执行 `curl -I` 检查 `/project/progress`、`/project/document`、`/project/evaluation`、`/project/information`、`/personnel/qualification`、`/personnel/worktime`、`/personnel/turnover`、`/personnel/overview`：均返回 `200 OK`。
+5. 已执行应用级 `vue-tsc -p apps/web-antd/tsconfig.json --noEmit --skipLibCheck --pretty false`：仍因既有 `platform-view-toolbar`、`tenant-toggle`、`tinymce`、`tree-select-panel`、`utils/http`、workflow 和演示页错误失败；本轮新增的 Vxe 序号列类型错误已修复，`project-progress-board` 的 `count` 错误已清除。
+6. 未完成隔离浏览器截图验证：当前 Browser Node 执行通道不可用，按浏览器隔离规则未操作用户系统 Chrome。
+
+### 遗留问题
+
+1. 需要用户在浏览器中视觉确认顶部 Logo 32px、平台标题组件行高、各复用标题位置和卡片 hover 手感。
+2. `PlatformTable` 默认序号列会影响所有已接入平台表格的页面；如某些特殊表格不需要序号列，需要后续显式关闭。
+3. Vxe 适配层默认序号列只在调用方提供 columns 时自动补充；动态列或无 columns 的特殊表格仍需单独确认。
+4. 应用级 `vue-tsc` 仍有存量错误，需要后续单独治理。
+
+### 平台治理影响
+
+1. 本轮发现的 ant-design-vue 原生组件问题：直接在页面手写表格序号、模块标题和卡片 hover 会造成不同页面体验不一致。
+2. 已通过平台层解决的问题：`PlatformTable`、Vxe 适配层、`PlatformSectionTitle`、`PlatformSection`、`PlatformStatCard` 已统一默认行为。
+3. 仍是页面临时实现的问题：超工时人员卡片、待评估项目卡片仍是页面级业务卡片，仅同步 hover 规则，未抽成通用卡片组件。
+4. 未来必须回收为平台组件的页面子组件：若多页面继续出现“人员预警卡 / 项目待办卡”，再评估 `PlatformWarningCard` 或 `PlatformTaskCard`。
+5. 后续新页面禁止继续复制的实现：禁止默认省略序号列；禁止重复手写模块标题字号和右侧年份/阈值布局；禁止卡片 hover 时额外改品牌描边。
+6. 应进入主题变量或统一样式入口的样式：标题字号、字重、描述色和右侧补充信息已进入 `PlatformSectionTitle`；卡片 hover 规则已进入平台统计卡，其他卡片后续按同规则迁移。
+7. 当前仍存在的页面级样式债务：项目甘特图月份表头、超工时人员卡片内容结构、待评估项目卡片结构仍留在页面 scoped CSS。
+
+### 任务名称
+
+人员全生命周期 - 变动与流失率统计页面第一版
+
+### 完成内容
+
+1. 按用户纠偏，将 `变动与流失率统计` 做成独立页面，不覆盖已完成的 `人员总览`、`人员档案管理`、`资质与准入管控`、`工时与兼职管控`。
+2. 新增页面路径 `/personnel/turnover`，并在 Mock 菜单中插入到 `资质与准入管控` 下方、`工时与兼职管控` 上方。
+3. 顶部 4 张数据卡片复用 `PlatformStatCard`，展示 `本月入职`、`本月离职`、`整体流失率`、`变动人次`。
+4. `各承包商流失率` 复用 `PlatformEchartsPanel` 和现有 `@vben/plugins/echarts`，用横向 bar chart 展示承包商流失率、离职人数和总人数。
+5. 新增页面专用 Mock 数据源，当前统计数据为前端静态模拟，后续可替换为真实统计接口。
+
+### 修改了哪些文件
+
+1. `apps/web-antd/src/mock/index.ts`
+2. `apps/web-antd/src/views/personnel/turnover/index.vue`
+3. `apps/web-antd/src/views/personnel/turnover/personnel-turnover-source.ts`
+4. `docs/project-log.md`
+5. `docs/todo-next.md`
+
+### 涉及哪些页面或组件
+
+1. 页面：`/personnel/turnover`
+2. 菜单：`人员全生命周期 - 变动与流失率统计`
+3. 复用平台组件：`PlatformStatCard`、`PlatformEchartsPanel`
+4. 复用图表能力：`@vben/plugins/echarts`
+
+### 验证结果
+
+1. 已执行目标文件 ESLint：通过。
+2. 已执行 `curl -I http://127.0.0.1:5173/personnel/turnover`：返回 `200 OK`。
+3. 已执行 `curl -I http://127.0.0.1:5173/personnel/qualification`：返回 `200 OK`。
+4. 已执行 `curl -I http://127.0.0.1:5173/personnel/worktime`：返回 `200 OK`。
+5. 已执行应用级 `vue-tsc -p apps/web-antd/tsconfig.json --noEmit --skipLibCheck --pretty false`：仍因既有平台 view、workflow、演示页等错误失败；失败列表不包含本轮新增的 `/personnel/turnover` 文件。
+6. 本轮尚未完成隔离浏览器截图验证：当前自动化浏览器链路仍需进一步确认。
+
+### 遗留问题
+
+1. 流失率统计当前为页面专用 Mock 数据，未接真实后端统计接口。
+2. 当前图表为静态横向柱状图和 tooltip，暂未做点击承包商钻取、时间范围筛选或人员明细联动。
+3. 需要用户视觉确认图表高度、条形颜色、右侧标签密度和菜单排序是否符合截图预期。
+
+### 平台治理影响
+
+1. 本轮发现的 ant-design-vue 原生组件问题：该页面属于统计看板，不适合用 Table 列表强行承载承包商流失率。
+2. 已通过平台层解决的问题：统计卡继续复用 `PlatformStatCard`；图表外壳与 ECharts 渲染复用 `PlatformEchartsPanel`。
+3. 仍是页面临时实现的问题：承包商流失率 ECharts option、静态统计数据和图表标签格式暂留页面与页面专用数据源。
+4. 未来必须回收为平台组件的页面子组件：若后续多页面复用“横向指标排行图”，再评估沉淀为 `PlatformRankingBarChart` 或扩展 `PlatformEchartsPanel` preset。
+5. 后续新页面禁止继续复制的实现：不要用普通 DOM 进度条伪装 ECharts 图表；不要把统计卡片写成页面局部卡片。
+6. 应进入主题变量或统一样式入口的样式：图表红色风险条、灰色背景条如成为通用风险排行图规范，再补充 chart token。
+7. 当前仍存在的页面级样式债务：统计页标题、4 列卡片栅格和图表高度仍在页面 scoped CSS 中，待复用后再下沉。
+
+### 任务名称
+
+人员全生命周期 - 资质与准入管控页面第一版
+
+### 完成内容
+
+1. 按用户确认新增 `PlatformNoticeList` / `PlatformNoticeItem` 平台提醒列表组件，用于资质到期预警、待办提醒、风险提醒等非表格列表场景。
+2. 新增 `人员全生命周期 - 资质与准入管控` 独立页面，路径 `/personnel/qualification`。
+3. 在 `人员全生命周期` 左侧菜单中将 `资质与准入管控` 插入到 `人员档案管理` 下方、`工时与兼职管控` 上方，避免覆盖已完成的 `人员总览`、`人员档案管理`、`工时与兼职管控`。
+4. 页面顶部保留三张统计卡：资质即将到期、无资质在岗、准入不合规。
+5. `资质到期预警` 与 `准入规则配置` 两个模块按一行两列展示，窄屏自动折叠为单列。
+6. `资质到期预警` 不使用表格，改用 `PlatformNoticeList` 展示消息/通知风格行列表。
+7. `发送提醒` 按钮默认品牌绿描边和品牌绿文本，鼠标移入后品牌绿填充、文字变白。
+8. 按用户要求，批量提醒功能暂不开发、不渲染入口。
+
+### 修改了哪些文件
+
+1. `apps/web-antd/src/components/platform/index.ts`
+2. `apps/web-antd/src/components/platform/notice/index.ts`
+3. `apps/web-antd/src/components/platform/notice/platform-notice-item.vue`
+4. `apps/web-antd/src/components/platform/notice/platform-notice-list.vue`
+5. `apps/web-antd/src/components/platform/notice/types.ts`
+6. `apps/web-antd/src/mock/index.ts`
+7. `apps/web-antd/src/views/personnel/qualification/index.vue`
+8. `apps/web-antd/src/views/personnel/qualification/personnel-qualification-source.ts`
+9. `docs/project-log.md`
+10. `docs/todo-next.md`
+
+### 涉及哪些页面或组件
+
+1. 新增页面：`/personnel/qualification`
+2. 保留不改页面：`/personnel/overview`、`/platform/typical-page`、`/personnel/worktime`
+3. 新增平台组件：`PlatformNoticeList`、`PlatformNoticeItem`
+4. 复用平台组件：`PlatformStatCard`、`PlatformSection`
+
+### 验证结果
+
+1. 已执行目标文件 ESLint：通过。
+2. 已执行 `git diff --check`：通过。
+3. 已执行 `curl -I http://127.0.0.1:5173/personnel/qualification`：返回 `200 OK`。
+4. 已执行应用级 `vue-tsc -p apps/web-antd/tsconfig.json --noEmit --skipLibCheck --pretty false`：仍因既有平台 view、tenant-toggle、tinymce、tree、http、`/project/progress`、workflow、演示页和 common-ui 存量错误失败；失败列表不包含本轮 `/personnel/qualification` 或 `components/platform/notice` 文件。
+5. 本轮未做隔离浏览器截图验证；当前已完成源码级、类型失败范围确认与 HTTP 路由检查。
+
+### 遗留问题
+
+1. `发送提醒` 当前为前端 Mock 状态更新，未接真实消息接口。
+2. 准入规则配置当前为静态规则展示，未开发规则编辑、启停、审批或版本管理。
+3. 批量提醒按用户要求暂不开发。
+4. 后续如待办、预警、通知等多页面复用提醒行列表，应继续在 `PlatformNoticeList` 扩展权限、已读、批量和分组能力。
+
+### 平台治理影响
+
+1. 本轮发现的 ant-design-vue 原生组件问题：`a-table` 不适合消息通知式提醒列表；直接用页面卡片重复实现会导致提醒行、操作按钮、空态和 loading 分散。
+2. 已通过平台层解决的问题：提醒行列表已沉淀为 `PlatformNoticeList` / `PlatformNoticeItem`，发送提醒按钮视觉也收口在平台提醒项内。
+3. 仍是页面临时实现的问题：准入规则卡片、规则 Mock 数据和发送提醒 Mock 状态仍在业务页面与页面专用数据源中。
+4. 未来必须回收为平台组件的页面子组件：若多页面复用规则卡片，可评估 `PlatformRuleCard` 或 `PlatformPolicyCard`。
+5. 后续新页面禁止继续复制的实现：禁止把提醒/通知/预警行继续写成页面专用散落 CSS；优先使用 `PlatformNoticeList`。
+6. 应进入主题变量或统一样式入口的样式：提醒行边框、状态标签色和品牌提醒按钮后续若出现多变体，可继续抽 token。
+7. 当前仍存在的页面级样式债务：两列布局、准入规则卡片布局和规则状态标签暂留页面 scoped CSS。
+
+### 任务名称
+
+人员全生命周期 - 人员总览独立入口恢复
+
+### 完成内容
+
+1. 按用户纠偏确认：当前 `人员档案管理` 是正确页面，不允许用人员总览覆盖人员档案。
+2. 保留 `人员档案管理` 现有 `/platform/typical-page` 卡片与详情抽屉页面不动。
+3. 新增独立 `人员总览` 页面，路径 `/personnel/overview`。
+4. 在 `人员全生命周期` 菜单下补回 `人员总览` 子入口，并保留 `人员档案管理`、`工时与兼职管控` 现有入口。
+5. `人员总览` 页面恢复统计卡、表格工具栏、人员表格、表头状态/资质状态筛选和文字操作列。
+6. `新增人员` 继续放在表格工具栏左侧；右侧默认搜索、刷新、设置、全屏 4 个工具入口。
+7. 新增/编辑人员弹窗继续复用平台弹窗、表单、输入框、下拉框、日期选择器，并保持业务化暗文本。
+
+### 修改了哪些文件
+
+1. `apps/web-antd/src/mock/index.ts`
+2. `apps/web-antd/src/views/personnel/overview/index.vue`
+3. `apps/web-antd/src/views/personnel/overview/personnel-overview-source.ts`
+4. `docs/project-log.md`
+5. `docs/todo-next.md`
+
+### 涉及哪些页面或组件
+
+1. 新增页面：`/personnel/overview`
+2. 保留页面：`/platform/typical-page` 人员档案管理
+3. 平台组件：`PlatformStatCard`、`PlatformTableToolbar`、`PlatformTable`、`PlatformStatusTag`、`PlatformModal`、`PlatformEditForm`、`PlatformInput`、`PlatformSelect`、`PlatformDatePicker`、`PlatformButton`
+
+### 验证结果
+
+1. 已执行目标文件 ESLint：通过。
+2. 已执行 `git diff --check`：通过。
+3. 已执行 `curl -I http://127.0.0.1:5173/personnel/overview`：返回 `200 OK`。
+4. 已执行应用级 `vue-tsc -p apps/web-antd/tsconfig.json --noEmit --skipLibCheck --pretty false`：仍因既有平台 view、tenant-toggle、tinymce、tree、workflow、演示页和 `/project/progress` 存量错误失败；失败列表不包含本轮 `/personnel/overview` 文件。
+
+### 遗留问题
+
+1. `人员总览` 新增/编辑/删除当前为前端 Mock 状态，未接真实接口。
+2. `查看` 入口当前保留提示，未展开详情弹窗。
+3. 隔离浏览器截图链路仍未恢复，本轮仅完成 HTTP 与源码级检查。
+
+### 平台治理影响
+
+1. 本轮发现的问题：人员总览与人员档案是两个业务页面，不能继续共用 `/platform/typical-page` 互相覆盖。
+2. 已通过平台层解决的问题：人员总览继续复用平台表格、工具栏、状态标签、弹窗、表单和录入控件。
+3. 仍是页面临时实现的问题：人员总览 Mock 数据、人员头像单元格、新增/编辑保存逻辑仍在页面专用文件内。
+4. 未来必须回收为平台组件的页面子组件：若多页面复用人员头像 + 姓名编号展示，可继续评估 `PlatformEntityCell`。
+5. 后续新页面禁止继续复制的实现：禁止把两个不同人员页面挂到同一路由互相覆盖；禁止把平台表格操作列改为 icon-only，除非用户明确要求。
+6. 应进入主题变量或统一样式入口的样式：本轮未新增主题变量，继续使用既有平台 token。
+7. 当前仍存在的页面级样式债务：统计卡栅格、人员头像单元格和弹窗两列表单布局暂留页面 scoped CSS。
+
+### 任务名称
+
+项目全景管理 - 中期评估与验收管理页面评论整改
+
+### 完成内容
+
+1. 按评论删除 `/project/evaluation` 页面标题右侧的全局 `发起评估` 按钮。
+2. 删除 `待评估项目` 与 `评估记录` 两个功能区的辅助文案。
+3. 删除 `待评估项目` 工具栏里的 `全部状态`、`全部阶段` 下拉筛选，仅保留搜索与刷新。
+4. 将 `评估记录` 的 `全部结果` 工具栏下拉迁移为 `PlatformTable` 表头筛选，保持平台表格原生筛选交互。
+5. 将待评估项目卡片内 `发起评估` 改为醒目的主按钮，并保留点击打开评估弹窗。
+6. 按用户补充要求删除 `.project-evaluation-panel__body` 的 `padding: var(--st-module-content-padding);` 页面级内边距。
+7. 按用户补充要求左右调换模块位置：`评估记录` 放左侧宽列，`待评估项目` 放右侧窄列。
+
+### 修改了哪些文件
+
+1. `apps/web-antd/src/views/project/evaluation/index.vue`
+2. `docs/project-log.md`
+3. `docs/todo-next.md`
+
+### 涉及哪些页面或组件
+
+1. 页面：`/project/evaluation`
+2. 平台组件：`PlatformTableToolbar`、`PlatformTable`、`PlatformButton`、`PlatformStatusTag`
+
+### 验证结果
+
+1. 已执行目标文件 ESLint：通过。
+2. 已执行 `git diff --check -- apps/web-antd/src/views/project/evaluation/index.vue`：通过。
+3. 已执行 `curl -I http://127.0.0.1:5173/project/evaluation`：返回 `200 OK`。
+4. 已执行应用级 `vue-tsc -p apps/web-antd/tsconfig.json --noEmit --skipLibCheck --pretty false`：仍因既有模块、演示页、流程页和 `/project/progress` 存量问题失败；失败列表不包含本轮 `/project/evaluation` 改动文件。
+
+### 遗留问题
+
+1. 本轮只处理评论范围内的页面组合与样式调整，未扩展评估详情、模板配置、验收附件或导出能力。
+2. `发起评估` 仍为前端 Mock 流程，未接真实接口。
+3. 全量 `vue-tsc` 存量错误仍需单独治理。
+
+### 平台治理影响
+
+1. 本轮发现的 ant-design-vue 原生组件问题：结果筛选如果放在工具栏 `Select` 中，会与平台表格的表头筛选能力重复。
+2. 已通过平台层解决的问题：`评估记录` 结果筛选已回到 `PlatformTable` 表头筛选，继续复用平台筛选面板。
+3. 仍是页面临时实现的问题：待评估项目卡片布局、进度条和发起评估 Mock 流程仍在页面内。
+4. 未来必须回收为平台组件的页面子组件：若多页面出现“项目卡片 + 状态标签 + 进度 + 主操作按钮”，可评估业务卡片组件。
+5. 后续新页面禁止继续复制的实现：禁止在表格工具栏重复放置本应属于表头的字段筛选。
+6. 应进入主题变量或统一样式入口的样式：本轮未新增主题变量；主按钮继续使用 `PlatformButton type="primary"`。
+7. 当前仍存在的页面级样式债务：项目卡片的间距、进度条、两栏工作区布局和左右列宽仍为页面 scoped CSS。
+
+### 任务名称
+
+人员全生命周期 - 工时与兼职管控页面第一版
+
+### 完成内容
+
+1. 新增 `人员全生命周期 - 工时与兼职管控` 页面，路径 `/personnel/worktime`。
+2. 按用户要求，本轮暂不开发页面底部“兼职核查”小模块，不渲染该模块占位。
+3. 将“超工时人员预警”从表格样式改为页面业务卡片样式，模块标题右侧展示 `阈值：180小时/月`。
+4. 每张预警卡重点展示 `本月工时` 与 `超出时长` 两个核心数据，并保留人员、岗位、承包商、项目和预警级别。
+5. 预警卡已加入鼠标移入上移与阴影增强交互。
+6. `通知整改` 按钮默认品牌绿描边与品牌绿文本，鼠标移入后品牌绿填充、文字变白。
+7. 新增页面专用 Mock 数据源，当前通知整改为前端模拟状态更新。
+
+### 修改了哪些文件
+
+1. `apps/web-antd/src/mock/index.ts`
+2. `apps/web-antd/src/views/personnel/worktime/index.vue`
+3. `apps/web-antd/src/views/personnel/worktime/personnel-worktime-source.ts`
+4. `docs/project-log.md`
+5. `docs/todo-next.md`
+
+### 涉及哪些页面或组件
+
+1. 页面：`/personnel/worktime`
+2. 菜单：`人员全生命周期 - 工时与兼职管控`
+3. 复用平台组件：`PlatformStatCard`、`PlatformStatusTag`、`PlatformButton`
+4. 页面业务模块：`超工时人员预警` 卡片列表
+
+### 验证结果
+
+1. 已执行目标文件 ESLint：通过。
+2. 已执行 `git diff --check`：通过。
+3. 已执行 `curl -I http://127.0.0.1:5173/personnel/worktime`：返回 `200 OK`。
+4. 已执行应用级 `vue-tsc -p apps/web-antd/tsconfig.json --noEmit --skipLibCheck --pretty false`：仍因既有平台 view、workflow、演示页和当前其他未完成页面错误失败；失败列表不包含本轮新增的 `/personnel/worktime` 文件。
+5. 本轮尚未完成隔离浏览器截图验证：当前自动化浏览器链路需进一步确认。
+
+### 遗留问题
+
+1. `通知整改` 当前为前端 Mock 状态更新，未接真实整改通知接口。
+2. 兼职核查模块按用户要求暂不开发；后续如恢复，需要重新输出组件映射和规则自检。
+3. 本页卡片列表为页面业务组件，若后续多处出现“风险人员卡片 / 整改通知卡片”，再评估是否下沉为平台组件。
+
+### 平台治理影响
+
+1. 本轮发现的 ant-design-vue 原生组件问题：超工时预警更适合风险卡片，不适合复用表格原组件样式强行展示。
+2. 已通过平台层解决的问题：统计卡、状态标签、按钮基础能力继续复用平台组件。
+3. 仍是页面临时实现的问题：超工时预警卡片布局、工时指标块、整改通知状态属于当前页面业务实现。
+4. 未来必须回收为平台组件的页面子组件：若多个页面复用风险卡片，可评估 `PlatformRiskCard` 或 `PlatformAlertCard`。
+5. 后续新页面禁止继续复制的实现：不要把类似风险卡片伪装成表格，也不要绕过平台按钮重新写基础按钮。
+6. 应进入主题变量或统一样式入口的样式：品牌绿按钮 hover 规则如后续成为通用“整改/处理”按钮场景，再进入平台按钮 scene 或 token。
+7. 当前仍存在的页面级样式债务：卡片布局和按钮业务态暂留页面 scoped CSS，待复用后再下沉。
+
+### 任务名称
+
+项目全景管理 - 项目信息管理表格与新建项目弹窗整改
+
+### 完成内容
+
+1. 明确本轮目标为 `项目全景管理 - 项目信息管理`，页面路径 `/project/information`，不是人员全生命周期模块。
+2. 复核并保持 `新建项目` 位于下方表格功能区左侧，右侧工具入口继续由 `PlatformTableToolbar` 承载。
+3. 复核并保持 `项目类型`、`状态` 使用 `PlatformTable` 表头筛选，不在工具栏放 `全部类型 / 全部状态` 下拉。
+4. 复核并保持操作列为 `编辑 / 详情 / 归档 / 删除` 文字按钮，不使用 icon-only 操作。
+5. 新增平台组件 `PlatformSegmented`，基于 `antdv-next` `Segmented` 薄封装。
+6. 将 `新建项目` 弹窗改为 `基础信息 / 招采信息 / 进场信息` 三段式表单。
+7. 弹窗内录入控件继续遵守业务化暗文本规则，输入框使用“请输入…”，选择与日期控件使用“请选择…”。
+
+### 修改了哪些文件
+
+1. `AGENTS.md`
+2. `docs/decision-records.md`
+3. `docs/project-log.md`
+4. `docs/todo-next.md`
+5. `apps/web-antd/src/components/platform/index.ts`
+6. `apps/web-antd/src/components/platform/segmented/index.ts`
+7. `apps/web-antd/src/components/platform/segmented/platform-segmented.vue`
+8. `apps/web-antd/src/views/project/information/index.vue`
+9. `apps/web-antd/src/views/project/information/project-information-source.ts`
+
+### 涉及哪些页面或组件
+
+1. 页面：`/project/information`
+2. 菜单：`项目全景管理 - 项目信息管理`
+3. 平台组件：`PlatformSegmented`、`PlatformTableToolbar`、`PlatformTable`、`PlatformModal`、`PlatformEditForm`、`PlatformInput`、`PlatformSelect`、`PlatformDatePicker`、`PlatformButton`
+
+### 验证结果
+
+1. 已执行目标文件 ESLint：通过。
+2. 已执行 `git diff --check`：通过。
+3. 已执行 `curl -I http://127.0.0.1:5173/project/information`：返回 `200 OK`。
+4. 已执行应用级 `vue-tsc -p apps/web-antd/tsconfig.json --noEmit --skipLibCheck --pretty false`：仍因既有模块和演示页错误失败；失败列表不包含本轮 `/project/information` 与 `PlatformSegmented` 改动文件。
+5. 本轮未做隔离浏览器截图验证：当前 Playwright 浏览器二进制缺失，自动化截图链路不可用。
+
+### 遗留问题
+
+1. `进场信息` 里的人员配置和设备清单当前为首行录入样式与加号入口，尚未实现多行增删数组化保存。
+2. 新建项目弹窗当前仍是前端 Mock 保存，未接真实接口。
+3. 分段切换暂不做跨段校验提示，后续如需提交前按段定位错误，再扩展表单校验策略。
+4. 全量 `vue-tsc` 存量错误仍需单独治理。
+
+### 平台治理影响
+
+1. 本轮发现的 ant-design-vue 原生组件问题：`Segmented` 可满足分段切换，但直接在页面使用会让选中态、字号、下划线和 hover 样式分散。
+2. 已通过平台层解决的问题：新增 `PlatformSegmented` 统一分段切换视觉和出口；项目信息页面弹窗已接入该组件。
+3. 仍是页面临时实现的问题：新建项目弹窗的三段业务字段、人员配置行、设备清单行仍属于页面业务实现。
+4. 未来必须回收为平台组件的页面子组件：若多个页面出现“表单分段 + 分段内容 + 底部保存”结构，可评估 `PlatformSegmentedForm` 或表单步骤容器。
+5. 后续新页面禁止继续复制的实现：禁止在弹窗里手写分段按钮、手写选中下划线；默认使用 `PlatformSegmented`。
+6. 应进入主题变量或统一样式入口的样式：分段控件选中态、字体、间距当前已收敛到 `PlatformSegmented`，后续多主题差异再补 token。
+7. 当前仍存在的页面级样式债务：项目信息弹窗内容区两列栅格、人员/设备行布局仍在页面 scoped CSS 中，等待多页面复用后再下沉。
+
+### 任务名称
+
+人员全生命周期 - 人员总览页面第一版
+
+### 完成内容
+
+1. 将 `人员全生命周期 - 用户管理` 菜单文案改为 `人员总览`。
+2. 将 `/platform/typical-page` 从空承载页开发为人员总览页面：顶部标题、统计卡、表格功能区、人员表格和操作列。
+3. 按用户反馈将 `新增人员` 从页面标题旁移动到表格功能区左侧，保留右侧默认 4 个工具图标。
+4. 移除 `人员列表` 标题，不再在表格功能区展示列表标题。
+5. `状态`、`资质状态` 表头接入 `PlatformTable` 平台筛选面板，点击筛选 icon 下拉筛选。
+6. 将操作列从 icon-only 改回 `编辑 / 查看 / 删除` 文字按钮，保持平台表格操作列 hover 下划线风格。
+7. 按新增人员截图补充新增弹窗，复用平台弹窗、表单、输入框、下拉框和日期选择器；保存后写入页面专用 Mock 数据。
+8. 按用户新增规则，为所有录入控件补充业务化暗文本，并将该规则同步到 `AGENTS.md` 与 `docs/decision-records.md`。
+
+### 修改了哪些文件
+
+1. `AGENTS.md`
+2. `docs/decision-records.md`
+3. `docs/project-log.md`
+4. `docs/todo-next.md`
+5. `apps/web-antd/src/mock/index.ts`
+6. `apps/web-antd/src/locales/langs/zh-CN/menu.json`
+7. `apps/web-antd/src/views/platform/typical-page/index.vue`
+8. `apps/web-antd/src/views/platform/typical-page/user-demo-source.ts`
+
+### 涉及哪些页面或组件
+
+1. 页面：`/platform/typical-page`
+2. 菜单：`人员全生命周期 - 人员总览`
+3. 平台组件：`PlatformStatCard`、`PlatformTableToolbar`、`PlatformTable`、`PlatformStatusTag`、`PlatformModal`、`PlatformEditForm`、`PlatformInput`、`PlatformSelect`、`PlatformDatePicker`、`PlatformButton`
+
+### 验证结果
+
+1. 已执行目标文件 ESLint：通过。
+2. 已执行 `git diff --check`：通过。
+3. 已执行 `curl -I http://127.0.0.1:5173/platform/typical-page`：返回 `200 OK`。
+4. 已执行应用级 `vue-tsc -p apps/web-antd/tsconfig.json --noEmit --skipLibCheck --pretty false`：仍因既有模块和演示页错误失败；修正后失败列表不再包含 `/platform/typical-page` 本轮改动文件。
+5. 本轮未完成隔离浏览器截图验证：Playwright 浏览器二进制缺失；当前已通过用户实时截图反馈完成操作列与新增弹窗样式纠偏。
+
+### 遗留问题
+
+1. 新增人员弹窗当前为静态 Mock 保存，未接真实后端接口。
+2. 编辑、查看入口当前保留提示，未展开详情弹窗或编辑回显。
+3. 人员数据刷新后不持久化，符合当前静态 Mock 阶段边界。
+4. 全量 `vue-tsc` 存量错误仍需单独治理。
+
+### 平台治理影响
+
+1. 本轮发现的 ant-design-vue 原生组件问题：表格操作列如果在页面 slot 中直接写 icon-only，会绕过当前平台文字操作风格；表单录入控件如果不传 placeholder，会出现空白输入区。
+2. 已通过平台层解决的问题：表格工具栏、右侧四工具图标、表头筛选、状态标签、弹窗、表单和录入控件均复用已有平台组件。
+3. 仍是页面临时实现的问题：人员总览 Mock 数据、新增保存逻辑、编辑/查看提示和人员头像业务单元格仍在页面及专用数据源内。
+4. 未来必须回收为平台组件的页面子组件：若多页面复用人员头像 + 姓名编号展示，可评估 `PlatformEntityCell`；若多页面复用人员新增表单，可评估人员表单业务组件。
+5. 后续新页面禁止继续复制的实现：禁止在平台表格操作列中随意改成 icon-only，除非用户明确要求图标操作列；禁止录入控件缺失业务化 placeholder。
+6. 应进入主题变量或统一样式入口的样式：本轮未新增主题变量；统计卡、表格、工具栏和弹窗继续读取现有平台 token。
+7. 当前仍存在的页面级样式债务：人员统计卡栅格、人员头像单元格、新增弹窗两列表单布局仍属于页面布局样式，后续复用后再下沉。
+
 ## 2026-05-07
 
 ### 任务名称

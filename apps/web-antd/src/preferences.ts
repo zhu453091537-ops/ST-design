@@ -127,6 +127,6 @@ export const overridesPreferences = defineOverridesPreferences({
    */
   logo: {
     enable: true,
-    source: '',
+    source: '/LOGO.svg',
   },
 });

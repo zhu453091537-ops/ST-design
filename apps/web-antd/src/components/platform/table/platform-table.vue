@@ -11,9 +11,10 @@ import {
   ref,
   useSlots,
   type VNodeChild,
+  watch,
 } from 'vue';
 
-import { Table } from 'antdv-next';
+import { Checkbox, CheckboxGroup, Modal, Table } from 'antdv-next';
 
 type PlatformTableColumn = NonNullable<TableProps['columns']>[number];
 type PlatformTableIndexColumn = Partial<PlatformTableColumn>;
@@ -36,6 +37,11 @@ type PlatformFlattenedFilterItem = {
   label: VNodeChild;
   value: PlatformFilterKey;
 };
+type PlatformColumnSettingItem = {
+  key: string;
+  label: string;
+  required: boolean;
+};
 
 defineOptions({
   inheritAttrs: false,
@@ -48,6 +54,8 @@ const props = withDefaults(
     adaptiveHeightBottomOffset?: number;
     adaptiveHeightMin?: number;
     columns?: TableProps['columns'];
+    columnSettingEnabled?: boolean;
+    columnSettingKey?: string;
     indexColumn?: PlatformTableIndexColumn;
     pagination?: TableProps['pagination'];
     scroll?: TableProps['scroll'];
@@ -58,11 +66,13 @@ const props = withDefaults(
     adaptiveHeightBottomOffset: 24,
     adaptiveHeightMin: 240,
     actionColumnWidth: 184,
+    columnSettingEnabled: true,
+    columnSettingKey: '',
     columns: () => [],
     indexColumn: () => ({}),
     pagination: undefined,
     scroll: undefined,
-    showIndex: false,
+    showIndex: true,
   },
 );
 const emit = defineEmits<{
@@ -75,13 +85,15 @@ const PLATFORM_ALL_FILTER_LABEL = '全部';
 const slots = useSlots();
 const tableWrapperRef = ref<HTMLElement>();
 const adaptiveScrollY = ref<number>();
+const columnSettingOpen = ref(false);
+const visibleColumnKeys = ref<string[]>([]);
 let resizeObserver: ResizeObserver | undefined;
 let updateFrame = 0;
 
 const passthroughSlotNames = computed(() =>
   Object.keys(slots).filter((name) => name !== 'bodyCell'),
 );
-const mergedColumns = computed(() => {
+const baseColumns = computed(() => {
   const columns = props.columns ?? [];
   let nextColumns = columns;
 
@@ -100,7 +112,24 @@ const mergedColumns = computed(() => {
     nextColumns = [indexColumn, ...columns];
   }
 
-  return enhancePlatformColumns(nextColumns);
+  return nextColumns;
+});
+const columnSettingItems = computed<PlatformColumnSettingItem[]>(() =>
+  flattenColumns(baseColumns.value).map((column: PlatformTableColumn, index: number) => ({
+    key: getColumnIdentity(column, index),
+    label: getColumnSettingLabel(column, index),
+    required: isColumnRequired(column),
+  })),
+);
+const mergedColumns = computed(() => {
+  const enabledVisibleKeys =
+    visibleColumnKeys.value.length > 0
+      ? new Set(visibleColumnKeys.value)
+      : new Set(columnSettingItems.value.map((item) => item.key));
+
+  return enhancePlatformColumns(
+    filterColumnsByVisibility(baseColumns.value, enabledVisibleKeys),
+  );
 });
 const mergedScroll = computed<TableProps['scroll']>(() => {
   const baseScroll = props.scroll ? { ...props.scroll } : {};
@@ -120,6 +149,24 @@ const mergedScroll = computed<TableProps['scroll']>(() => {
   }
 
   return Object.keys(nextScroll).length > 0 ? nextScroll : undefined;
+});
+const checkedColumnKeys = computed({
+  get: () => visibleColumnKeys.value,
+  set: (value) => {
+    const allowedKeys = new Set(
+      columnSettingItems.value
+        .filter((item) => !item.required)
+        .map((item) => item.key),
+    );
+    const requiredKeys = columnSettingItems.value
+      .filter((item) => item.required)
+      .map((item) => item.key);
+    visibleColumnKeys.value = [
+      ...requiredKeys,
+      ...value.filter((key) => allowedKeys.has(key)),
+    ];
+    persistVisibleColumns();
+  },
 });
 
 function getIndexCellValue(index: number) {
@@ -213,6 +260,7 @@ function scheduleAdaptiveHeightUpdate() {
 }
 
 onMounted(() => {
+  syncVisibleColumns();
   nextTick(scheduleAdaptiveHeightUpdate);
   window.addEventListener('resize', scheduleAdaptiveHeightUpdate);
 
@@ -234,6 +282,14 @@ onBeforeUnmount(() => {
     cancelAnimationFrame(updateFrame);
   }
 });
+
+watch(
+  () => props.columns,
+  () => {
+    syncVisibleColumns();
+  },
+  { deep: true },
+);
 
 function createPlatformFilterDropdown(column: PlatformTableColumn) {
   return (dropdownProps: PlatformFilterDropdownProps) =>
@@ -289,26 +345,40 @@ function appendColumnClass(column: PlatformTableColumn, className: string) {
 function getDefaultScrollX(columns: TableProps['columns']) {
   const leafColumns = flattenColumns(columns);
 
-  if (!leafColumns.some((column) => column.fixed)) {
+  if (leafColumns.length === 0) {
     return undefined;
   }
 
+  const hasExplicitWidth = leafColumns.some(
+    (column: PlatformTableColumn) => getColumnWidth(column) > 0,
+  );
   const totalWidth = leafColumns.reduce(
-    (total, column) => total + getColumnWidth(column),
+    (total: number, column: PlatformTableColumn) => total + getColumnWidth(column),
     0,
   );
 
-  return totalWidth > 0 ? totalWidth : 'max-content';
+  if (hasExplicitWidth && totalWidth > 0) {
+    return totalWidth;
+  }
+
+  return 'max-content';
 }
 
 function flattenColumns(
-  columns: TableProps['columns'] | undefined,
+  columns: PlatformTableColumn[] | undefined,
 ): PlatformTableColumn[] {
   return (columns ?? []).flatMap((column) =>
     'children' in column && column.children?.length
       ? flattenColumns(column.children)
       : [column],
   );
+}
+
+function getColumnDataIndex(column: PlatformTableColumn) {
+  if ('dataIndex' in column) {
+    return column.dataIndex;
+  }
+  return undefined;
 }
 
 function getColumnWidth(column: PlatformTableColumn) {
@@ -325,6 +395,118 @@ function getColumnWidth(column: PlatformTableColumn) {
 
   return 0;
 }
+
+function getColumnIdentity(column: PlatformTableColumn, index: number) {
+  if (typeof column.key === 'string' || typeof column.key === 'number') {
+    return String(column.key);
+  }
+  const dataIndex = getColumnDataIndex(column);
+  if (typeof dataIndex === 'string' || typeof dataIndex === 'number') {
+    return String(dataIndex);
+  }
+  if (Array.isArray(dataIndex)) {
+    return dataIndex.join('.');
+  }
+  return `column-${index}`;
+}
+
+function getColumnSettingLabel(column: PlatformTableColumn, index: number) {
+  if (typeof column.title === 'string' && column.title.trim()) {
+    return column.title;
+  }
+  const dataIndex = getColumnDataIndex(column);
+  if (typeof dataIndex === 'string' && dataIndex) {
+    return dataIndex;
+  }
+  if (Array.isArray(dataIndex) && dataIndex.length > 0) {
+    return dataIndex.join('.');
+  }
+  return `列${index + 1}`;
+}
+
+function isColumnRequired(column: PlatformTableColumn) {
+  return (
+    column.key === '__platform_index' ||
+    column.key === 'action' ||
+    column.title === '操作'
+  );
+}
+
+function filterColumnsByVisibility(columns: PlatformTableColumn[], visibleKeys: Set<string>) {
+  return (columns ?? []).filter((column, index) =>
+    visibleKeys.has(getColumnIdentity(column, index)),
+  );
+}
+
+function getColumnSettingStorageKey() {
+  if (!props.columnSettingKey) {
+    return '';
+  }
+  return `platform-table-columns:${props.columnSettingKey}`;
+}
+
+function syncVisibleColumns() {
+  const nextItems = columnSettingItems.value;
+  const defaultKeys = nextItems.map((item) => item.key);
+  const storageKey = getColumnSettingStorageKey();
+
+  if (!storageKey || typeof window === 'undefined') {
+    visibleColumnKeys.value = defaultKeys;
+    return;
+  }
+
+  try {
+    const rawValue = window.localStorage.getItem(storageKey);
+    if (!rawValue) {
+      visibleColumnKeys.value = defaultKeys;
+      return;
+    }
+
+    const savedKeys = JSON.parse(rawValue);
+    if (!Array.isArray(savedKeys)) {
+      visibleColumnKeys.value = defaultKeys;
+      return;
+    }
+
+    const allowedKeys = new Set(defaultKeys);
+    const requiredKeys = nextItems
+      .filter((item) => item.required)
+      .map((item) => item.key);
+    visibleColumnKeys.value = [
+      ...requiredKeys,
+      ...savedKeys
+        .map(String)
+        .filter((key) => allowedKeys.has(key) && !requiredKeys.includes(key)),
+    ];
+  } catch {
+    visibleColumnKeys.value = defaultKeys;
+  }
+}
+
+function persistVisibleColumns() {
+  const storageKey = getColumnSettingStorageKey();
+  if (!storageKey || typeof window === 'undefined') {
+    return;
+  }
+
+  window.localStorage.setItem(storageKey, JSON.stringify(visibleColumnKeys.value));
+}
+
+function openColumnSetting() {
+  if (!props.columnSettingEnabled) {
+    return;
+  }
+  columnSettingOpen.value = true;
+}
+
+function closeColumnSetting() {
+  columnSettingOpen.value = false;
+}
+
+defineExpose({
+  closeColumnSetting,
+  openColumnSetting,
+});
 
 function flattenFilterItems(
   filters: PlatformFilterItem[] | undefined,
@@ -500,12 +682,47 @@ const PlatformTableFilterDropdown = defineComponent({
         <slot :name="name" v-bind="slotProps || {}"></slot>
       </template>
     </Table>
+
+    <Modal
+      :footer="null"
+      :open="columnSettingOpen"
+      title="表头显示设置"
+      width="360px"
+      @cancel="closeColumnSetting"
+    >
+      <div class="platform-table-column-setting">
+        <CheckboxGroup v-model:value="checkedColumnKeys">
+          <Checkbox
+            v-for="item in columnSettingItems"
+            :key="item.key"
+            :disabled="item.required"
+            :value="item.key"
+          >
+            {{ item.label }}
+          </Checkbox>
+        </CheckboxGroup>
+      </div>
+    </Modal>
   </div>
 </template>
 
 <style scoped>
 .platform-table-wrapper {
   min-height: 0;
+}
+
+.platform-table-column-setting {
+  display: grid;
+  gap: 12px;
+}
+
+.platform-table-column-setting :deep(.ant-checkbox-group) {
+  display: grid;
+  gap: 12px;
+}
+
+.platform-table-column-setting :deep(.ant-checkbox-wrapper) {
+  margin-inline-start: 0;
 }
 
 .platform-table {
@@ -520,6 +737,38 @@ const PlatformTableFilterDropdown = defineComponent({
   overflow: hidden;
   border: 1px solid hsl(var(--st-color-table-outline));
   border-radius: var(--st-radius-card);
+}
+
+.platform-table :deep(.ant-table-content),
+.platform-table :deep(.ant-table-body) {
+  scrollbar-color: transparent transparent;
+  scrollbar-width: thin;
+}
+
+.platform-table :deep(.ant-table-content::-webkit-scrollbar),
+.platform-table :deep(.ant-table-body::-webkit-scrollbar) {
+  height: 0;
+}
+
+.platform-table:hover :deep(.ant-table-content),
+.platform-table:hover :deep(.ant-table-body) {
+  scrollbar-color: hsl(var(--st-color-border-control)) transparent;
+}
+
+.platform-table:hover :deep(.ant-table-content::-webkit-scrollbar),
+.platform-table:hover :deep(.ant-table-body::-webkit-scrollbar) {
+  height: 10px;
+}
+
+.platform-table:hover :deep(.ant-table-content::-webkit-scrollbar-thumb),
+.platform-table:hover :deep(.ant-table-body::-webkit-scrollbar-thumb) {
+  background: hsl(var(--st-color-border-control));
+  border-radius: 999px;
+}
+
+.platform-table:hover :deep(.ant-table-content::-webkit-scrollbar-track),
+.platform-table:hover :deep(.ant-table-body::-webkit-scrollbar-track) {
+  background: transparent;
 }
 
 .platform-table :deep(.ant-table-thead > tr > th) {

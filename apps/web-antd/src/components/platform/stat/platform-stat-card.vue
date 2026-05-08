@@ -121,10 +121,7 @@ const trendIcon = computed(() => {
   border: 1px solid hsl(var(--st-color-stat-card-border));
   border-radius: var(--st-radius-card);
   box-shadow: var(--st-shadow-stat-card);
-  transition:
-    transform 0.18s ease,
-    box-shadow 0.18s ease,
-    border-color 0.18s ease;
+  transition: transform 0.18s ease;
 }
 
 .platform-stat-card::before {
@@ -136,10 +133,6 @@ const trendIcon = computed(() => {
 }
 
 .platform-stat-card:hover {
-  border-color: color-mix(in srgb, var(--platform-stat-color) 42%, transparent);
-  box-shadow:
-    var(--st-shadow-stat-card),
-    var(--st-shadow-stat-card-hover);
   transform: translateY(-4px);
 }
 

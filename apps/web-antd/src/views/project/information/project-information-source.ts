@@ -28,6 +28,7 @@ export interface ProjectInformationRecord {
   plannedExitDate: string;
   procurementAgency: string;
   procurementMethod: string;
+  singleSourceFilingCode: string;
   staffing: string;
   status: ProjectInformationStatus;
   type: string;
@@ -52,6 +53,29 @@ export const projectInformationStatusOptions = [
   { label: '进行中', value: 'running' },
   { label: '已完成', value: 'completed' },
   { label: '已归档', value: 'archived' },
+];
+
+export const projectInformationDepartmentOptions = [
+  { label: '工程一部', value: '工程一部' },
+  { label: '工程二部', value: '工程二部' },
+  { label: '工程三部', value: '工程三部' },
+  { label: '设计院', value: '设计院' },
+  { label: '设备管理部', value: '设备管理部' },
+];
+
+export const projectInformationProcurementMethodOptions = [
+  { label: '公开招标', value: '公开招标' },
+  { label: '邀请招标', value: '邀请招标' },
+  { label: '竞争性谈判', value: '竞争性谈判' },
+  { label: '单一来源采购', value: '单一来源采购' },
+  { label: '询价采购', value: '询价采购' },
+];
+
+export const projectInformationBiddingResultOptions = [
+  { label: '中标', value: '中标' },
+  { label: '流标', value: '流标' },
+  { label: '废标', value: '废标' },
+  { label: '待定', value: '待定' },
 ];
 
 export const projectInformationStatusMap: Record<
@@ -86,6 +110,7 @@ let projectInformationRows: ProjectInformationRecord[] = [
     plannedExitDate: '2027-09-18',
     procurementAgency: '华诚招标代理',
     procurementMethod: '公开招标',
+    singleSourceFilingCode: '',
     staffing: '项目经理1人、安全员3人、施工人员86人',
     status: 'running',
     type: '房建工程',
@@ -108,6 +133,7 @@ let projectInformationRows: ProjectInformationRecord[] = [
     plannedExitDate: '2028-03-15',
     procurementAgency: '城建招采中心',
     procurementMethod: '邀请招标',
+    singleSourceFilingCode: '',
     staffing: '项目经理1人、技术员5人、施工人员72人',
     status: 'pending',
     type: '市政工程',
@@ -130,6 +156,7 @@ let projectInformationRows: ProjectInformationRecord[] = [
     plannedExitDate: '2028-03-24',
     procurementAgency: '启明工程咨询',
     procurementMethod: '竞争性谈判',
+    singleSourceFilingCode: '',
     staffing: '项目经理1人、设计协调3人、施工人员64人',
     status: 'completed',
     type: '装饰装修',
@@ -152,6 +179,7 @@ let projectInformationRows: ProjectInformationRecord[] = [
     plannedExitDate: '2028-07-30',
     procurementAgency: '中咨招标',
     procurementMethod: '单一来源采购',
+    singleSourceFilingCode: 'DY-2026-004',
     staffing: '项目经理1人、机电人员12人、施工人员45人',
     status: 'archived',
     type: '基础设施',
@@ -174,6 +202,7 @@ let projectInformationRows: ProjectInformationRecord[] = [
     plannedExitDate: '2027-12-20',
     procurementAgency: '绿城咨询',
     procurementMethod: '询价采购',
+    singleSourceFilingCode: '',
     staffing: '项目经理1人、养护人员38人、巡检人员6人',
     status: 'running',
     type: '园林景观',
@@ -196,6 +225,7 @@ let projectInformationRows: ProjectInformationRecord[] = [
     plannedExitDate: '2027-06-21',
     procurementAgency: '城投招标代理',
     procurementMethod: '公开招标',
+    singleSourceFilingCode: '',
     staffing: '项目经理1人、安全员2人、施工人员96人',
     status: 'pending',
     type: '特种设备维保',
@@ -218,6 +248,7 @@ let projectInformationRows: ProjectInformationRecord[] = [
     plannedExitDate: '2026-09-29',
     procurementAgency: '交通工程咨询',
     procurementMethod: '邀请招标',
+    singleSourceFilingCode: '',
     staffing: '项目经理1人、技术员8人、施工人员110人',
     status: 'completed',
     type: '车辆整改',
@@ -240,6 +271,7 @@ let projectInformationRows: ProjectInformationRecord[] = [
     plannedExitDate: '2027-01-23',
     procurementAgency: '数智招采中心',
     procurementMethod: '竞争性谈判',
+    singleSourceFilingCode: '',
     staffing: '项目经理1人、实施工程师14人、施工人员36人',
     status: 'archived',
     type: '轨道桥隧维保',
@@ -262,6 +294,7 @@ let projectInformationRows: ProjectInformationRecord[] = [
     plannedExitDate: '2028-07-02',
     procurementAgency: '水务工程咨询',
     procurementMethod: '单一来源采购',
+    singleSourceFilingCode: 'DY-2026-009',
     staffing: '项目经理1人、工艺工程师4人、施工人员52人',
     status: 'running',
     type: '保安保洁',
@@ -284,6 +317,7 @@ let projectInformationRows: ProjectInformationRecord[] = [
     plannedExitDate: '2028-03-03',
     procurementAgency: '广场项目招采组',
     procurementMethod: '询价采购',
+    singleSourceFilingCode: '',
     staffing: '项目经理1人、机电人员10人、施工人员68人',
     status: 'pending',
     type: '房建工程',
@@ -340,6 +374,7 @@ export async function saveProjectInformationProject(
       plannedExitDate: project.plannedExitDate || '',
       procurementAgency: project.procurementAgency || '',
       procurementMethod: project.procurementMethod || '',
+      singleSourceFilingCode: project.singleSourceFilingCode || '',
       staffing: project.staffing || '',
       status: project.status || 'pending',
       type: project.type || '房建工程',

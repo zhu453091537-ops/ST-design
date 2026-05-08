@@ -55,6 +55,7 @@ const formOpen = ref(false);
 const detailOpen = ref(false);
 const currentRecord = ref<null | ProjectRecord>(null);
 const projectListPanelRef = ref<HTMLElement>();
+const projectTableRef = ref<InstanceType<typeof PlatformTable>>();
 
 const tableColumns = computed<TableProps['columns']>(() => [
   {
@@ -167,7 +168,7 @@ function handleExport() {
 }
 
 function handleTableSetting() {
-  window.message.info('表格设置入口已保留，后续按列配置方案接入。');
+  projectTableRef.value?.openColumnSetting();
 }
 
 async function handleTableFullscreen() {
@@ -332,6 +333,8 @@ onMounted(loadOverview);
         </PlatformTableToolbar>
 
         <PlatformTable
+          ref="projectTableRef"
+          column-setting-key="project-overview"
           :columns="tableColumns"
           :data-source="tableRows"
           :loading="loading"
@@ -383,6 +386,7 @@ onMounted(loadOverview);
               <PlatformStatusTag
                 :label="getStatusMeta(record.status).label"
                 :status="getStatusMeta(record.status).status"
+                variant="dot"
               />
             </template>
             <template v-else-if="column.key === 'action'">

@@ -49,7 +49,7 @@ function getProgressColor(status: ProjectProgressStatus) {
           :style="{ backgroundColor: column.tokenColor }"
         ></span>
         <strong>{{ column.label }}</strong>
-        <span>{{ column.count }}</span>
+        <span>{{ column.records.length }}</span>
       </header>
 
       <article
