@@ -753,6 +753,24 @@ $namespace: vben;
     height: unset;
     padding: 0;
     background: var(--menu-background-color);
+
+    &.is-more-popup {
+      --menu-background-color: hsl(var(--background));
+      --menu-item-color: hsl(var(--st-color-text-primary));
+      --menu-item-background-color: transparent;
+      --menu-item-hover-color: hsl(var(--primary));
+      --menu-item-hover-background-color: hsl(var(--st-color-fill-selected));
+      --menu-item-active-color: hsl(var(--primary));
+      --menu-item-active-background-color: hsl(var(--st-color-fill-selected));
+      --menu-submenu-background-color: hsl(var(--background));
+      --menu-submenu-hover-color: hsl(var(--primary));
+      --menu-submenu-hover-background-color: hsl(var(--st-color-fill-selected));
+      --menu-submenu-active-color: hsl(var(--primary));
+      --menu-submenu-active-background-color: hsl(var(--st-color-fill-selected));
+      background: hsl(var(--background));
+      border: 1px solid hsl(var(--st-color-border-subtle, var(--border)));
+      box-shadow: 0 12px 32px hsl(var(--st-color-text-primary) / 12%);
+    }
   }
 
   &__popup {
@@ -762,6 +780,24 @@ $namespace: vben;
     .#{$namespace}-sub-menu-content,
     .#{$namespace}-menu-item {
       padding: var(--menu-item-popup-padding-y) var(--menu-item-popup-padding-x);
+    }
+
+    &.is-more-popup {
+      padding: 8px;
+
+      .#{$namespace}-sub-menu-content,
+      .#{$namespace}-menu-item {
+        min-width: 0;
+        padding: 0 12px;
+        color: hsl(var(--st-color-text-primary));
+        background: transparent;
+      }
+
+      .#{$namespace}-sub-menu-content:hover,
+      .#{$namespace}-menu-item:hover {
+        color: hsl(var(--primary));
+        background: hsl(var(--st-color-fill-selected)) !important;
+      }
     }
   }
 
@@ -840,6 +876,29 @@ $namespace: vben;
     padding: 0 var(--menu-item-padding-x);
     font-size: var(--menu-font-size) !important;
     line-height: var(--menu-item-height);
+  }
+}
+
+.#{$namespace}-menu.is-more-popup {
+  background: hsl(var(--background));
+
+  .#{$namespace}-menu-item {
+    min-width: 0;
+    justify-content: flex-start;
+  }
+
+  .#{$namespace}-menu-item__content {
+    justify-content: flex-start;
+  }
+
+  .#{$namespace}-menu__icon,
+  .#{$namespace}-sub-menu-content__icon-arrow {
+    display: none !important;
+  }
+
+  .#{$namespace}-menu-item__content > span,
+  .#{$namespace}-sub-menu-content__title {
+    color: inherit;
   }
 }
 

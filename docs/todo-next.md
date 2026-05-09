@@ -6,7 +6,12 @@
 
 | 优先级 | 事项 | 状态 | 说明 |
 | --- | --- | --- | --- |
+| 高 | 平台表格刷新联动表头筛选 | 已完成，待视觉复核 | 已在 `PlatformTableToolbar + PlatformTable` 平台层补上刷新请求联动：当存在激活的表头筛选时，点击刷新优先由 `PlatformTable` 清空筛选并触发一次平台 `change`，不再沿用页面里的旧筛选条件刷新。 |
+| 高 | 智能考勤管理 - 施工管理与 PlatformQueryPanel 首版 | 已完成，待视觉复核 | 已新增 `PlatformQueryPanel` 平台查询面板，并落地 `/battery/construction` 施工管理列表页；菜单已从 `BatteryMenu` 空白占位切到真实页面，需继续确认查询面板折叠手感、字段换行、按钮顺序和状态列观感。 |
+| 高 | 登录页原组件宽度与品牌区纠偏 | 已完成，待视觉复核 | 已删除标题挥手和“其他登录方式”整块，关闭底部版权，登录模块宽度统一为 `480px` 并默认居中，左上角 `LOGO.svg` 改为品牌绿；需继续在隔离浏览器确认字号、边距和居中效果。 |
+| 高 | 顶部导航窄屏“更多”浮窗源组件修正 | 已完成，待视觉复核 | 已将顶部横向菜单 overflow “更多”浮窗统一为白底纯文字菜单，移除图标/箭头，hover 改为品牌绿茶 10% 背景 + 品牌绿文字；需继续在隔离浏览器缩窄窗口确认实际观感。 |
 | 高 | 项目信息管理新建项目弹窗与分段控件纠偏 | 已完成，待视觉复核 | 已将 `PlatformSegmented` 源组件改为居中、16px、无 hover 灰底；`/project/information` 弹窗已改为 720px，并补齐进场信息动态新增行逻辑；需继续肉眼确认弹窗宽度、切换稳态和新增行交互。 |
+| 高 | 顶部导航用户菜单与消息入口微调 | 已完成，待视觉复核 | 已删除用户下拉中的“文档”入口，并将顶部待办/日程、消息通知、头像入口之间的相邻间距统一为 `8px`；需继续在隔离浏览器里确认视觉间距与菜单顺序。 |
 | 高 | 项目总览表格操作列移除详情按钮 | 已完成，待视觉复核 | 已将 `/project/overview` 表格操作列中的“详情”移除，保留标题点击打开详情；需继续确认操作列宽度与标题点击交互符合预期。 |
 | 高 | 变动与流失率统计 hover 与右侧数据列校准 | 已完成，待视觉复核 | 已在 `/personnel/turnover` 将 hover 阴影改为极淡灰色，tooltip 避让右侧数据列，并继续扩大右侧留白与标签宽度；需继续肉眼确认 `33.3%（1/3）` 一类数据完整可读且柱图区比例合适。 |
 | 高 | 合同与付款管理付款节点标题行微调 | 已完成，待视觉复核 | 已将 `/project/contract` 付款节点圆点移动到“预付款 30% / 中期款 40% / 尾款 30%”标题行左侧；本轮只改页面业务组件 `ContractPaymentMiniBar`，需继续肉眼确认节点行间距和对齐。 |
@@ -60,7 +65,7 @@
 | 高 | 项目总览页工具栏与统计卡平台化最小整改 | 已完成 | 已补组件映射表；`/workbench/index` 项目总览页已接入 `PlatformTableToolbar`；`PlatformStatCard` 背景、边框、文本、info 色和阴影已 token 化。 |
 | 高 | 项目总览页统计卡标题与趋势文字统一 | 已完成 | `PlatformStatCard` 标题已改为黑色变量，趋势文字已统一加粗，项目总览页 5 个统计卡同步生效。 |
 | 高 | 项目总览页统计卡头部下间距移除 | 已完成 | 已删除 `PlatformStatCard` 头部区域 `margin-bottom: 10px;`，保持源组件统一。 |
-| 高 | 项目总览页表格高度浏览器自适应 | 已完成 | `PlatformTable` 默认根据浏览器高度计算表格 body 最大高度，内容超出时表格内部上下滚动，调用方显式传 `scroll.y` 时优先尊重调用方设置。 |
+| 高 | 平台表格按页码完整展示并由页面整体滚动 | 已完成 | `PlatformTable` 默认关闭基于浏览器高度的内部滚动自适应；页码器一页展示多少条，就在当前页面完整展示多少条，超出浏览器高度时由页面整体上下滚动。 |
 | 高 | 项目总览页补回右侧全屏工具按钮 | 已完成 | 已恢复 `PlatformTableToolbar` 默认四按钮在项目总览页可见，并接入浏览器 Fullscreen API。 |
 | 高 | 项目总览页搜索框展开高度调整 | 已完成 | `PlatformTableToolbar` 展开搜索框高度已使用 `--st-control-height`，当前为 36px，保持平台组件源头一致。 |
 | 高 | 项目总览页表格工具栏内距与工具间距微调 | 已完成 | `PlatformTableToolbar` 主体内距已是 `10px 12px`，actions / tools 间距已统一为 `12px`，保持平台组件源头一致。 |
@@ -114,6 +119,7 @@
 | 2026-05-08 | 已完成，待视觉复核 | 已完成 `项目全景管理 - 项目信息管理` 表格与新建项目弹窗整改：新增 `PlatformSegmented` 平台分段控件；新建项目弹窗已按基础信息、招采信息、进场信息分段；目标文件 ESLint、`git diff --check`、HTTP 检查通过，全量 `vue-tsc` 仍因既有错误失败但不包含本轮文件。 |
 | 2026-05-08 | 已完成，待视觉复核 | 已完成平台表格列设置浮层交互调整：`PlatformTable` 已由居中 `Modal` 改为设置 icon 下方无蒙版浮层，移除头部标题和关闭按钮，宽度按内容自适应，支持点击外部关闭和 `Esc` 关闭；目标文件 ESLint、`git diff --check`、`/workbench/index` 与 `/project/information` HTTP 检查通过。 |
 | 2026-05-08 | 已完成，待视觉复核 | 已完成 `人员全生命周期 - 人员总览` 第一版：菜单改名，页面接入统计卡、平台工具栏、平台表格、状态/资质表头筛选、新增人员弹窗；操作列已从 icon-only 改回文字按钮；所有录入控件已补业务化 placeholder；目标文件 ESLint、`git diff --check`、HTTP 检查通过，全量 `vue-tsc` 仍因既有错误失败但不再包含本轮文件。 |
+| 2026-05-09 | 已完成，待视觉复核 | 已按截图微调顶部导航原组件：删除用户下拉中的“文档”入口，并将顶部待办/日程、消息通知、头像入口之间的相邻间距统一为 `8px`；`git diff --check` 通过，本轮未做浏览器截图验证。 |
 | 2026-05-07 | 已收尾 | 已按用户要求停止开发并完成规则复盘收尾：`AGENTS.md`、`docs/decision-records.md`、`docs/project-log.md`、`docs/todo-next.md` 已更新；新增/扩展平台组件必须单独确认，小反馈落到平台层也必须先补简版映射和影响范围。 |
 | 2026-05-07 | 已收尾 | 今天结束收尾：已更新接续文档，并将“新增或扩展平台组件必须单独确认”同步到 `AGENTS.md` 和 `docs/decision-records.md`；下一轮先审计 `/project/progress` 未完成 diff，再做 `/project/contract`、`/project/document`、`/project/evaluation`、`/project/progress` 视觉确认。 |
 | 2026-05-07 | 已暂停 | 今天结束收尾：已停止继续开发并停掉本轮 Vite 服务；`/project/progress` 纠偏阶段只完成部分平台组件雏形和数据源调整，未完成页面重构、删除页面专用组件或重新验证；下一轮需先审计当前 diff，再决定继续、回退或迁移。 |
@@ -183,9 +189,9 @@
 
 1. 用户输入“开工继续”或提出下一个开发需求后，先读取 `AGENTS.md`、`docs/project-log.md`、`docs/decision-records.md`、`docs/todo-next.md`。
 2. 输出项目接续摘要，明确当前项目目标、技术栈、最近完成内容、未完成事项、关键规则和建议执行顺序。
-3. 下一轮第一优先级：先审计当前 `/project/progress` 纠偏 diff，区分“已完成的一版页面”“未完成的平台组件雏形”“需要回退/删除/迁移的页面专用组件”，不要直接继续写代码。
-4. 审计后输出最终组件映射和回退/迁移清单，再由用户确认是否继续纠偏。
-5. 如用户要求视觉确认，再重新启动 Vite 并打开 `/project/contract`、`/project/progress`、`/project/evaluation`、`/project/document`；不要沿用今天的 `5672` / `5673` 端口状态。
+3. 下一轮第一优先级：先在隔离浏览器里复核 `/battery/construction`，重点确认 `PlatformQueryPanel` 的三列展开态、单行收起态、查询/重置/收起按钮顺序，以及“首次办理 / 许可证变更”在 `PlatformTableToolbar` 中的左侧排序。
+4. 视觉确认后，再决定是否把 `PlatformQueryPanel` 回收接入其他存量查询列表页；优先评估 `/project/information`、`/personnel/overview` 等已存在搜索/筛选区的页面。
+5. 如用户要求视觉确认，再重新启动 Vite 并打开 `/battery/construction`、`/project/contract`、`/project/progress`、`/project/evaluation`、`/project/document`；不要沿用今天的 `5672` / `5673` 端口状态。
 6. 如继续处理平台表格存量事项，再刷新 `/workbench/index` 和 `/project/information`，人工拖动横向滚动条确认 `PlatformTable` 表头与表体同步不再抖动。
 7. 如需继续查看典型页面，先确认当前 Vite 服务端口是否仍在运行；跨设备或新会话不要假设端口仍可用，应以实际 `lsof` 或新启动结果为准。
 8. 旧 `/system/user` 页面已解绑并删除壳文件，不再作为当前阶段目标；`人员全生命周期 - 人员总览` 当前恢复为 `/personnel/overview` 独立入口，`/platform/typical-page` 保留为人员档案管理，下一步优先做两个页面的视觉复核和新增弹窗交互细化。

@@ -3,9 +3,8 @@ import { computed, onMounted, watch } from 'vue';
 import { useRouter } from 'vue-router';
 
 import { AuthenticationLoginExpiredModal } from '@vben/common-ui';
-import { VBEN_DOC_URL } from '@vben/constants';
 import { useWatermark } from '@vben/hooks';
-import { BookOpenText, VbenIcon } from '@vben/icons';
+import { VbenIcon } from '@vben/icons';
 import {
   BasicLayout,
   LockScreen,
@@ -14,8 +13,6 @@ import {
 } from '@vben/layouts';
 import { preferences } from '@vben/preferences';
 import { useAccessStore, useUserStore } from '@vben/stores';
-import { openWindow } from '@vben/utils';
-
 import { UserOutlined } from '@antdv-next/icons';
 
 import { TenantToggle } from '#/components/tenant-toggle';
@@ -35,15 +32,6 @@ const { destroyWatermark, updateWatermark } = useWatermark();
 const tenantStore = useTenantStore();
 const menus = computed(() => {
   const defaultMenus = [
-    {
-      handler: () => {
-        openWindow(VBEN_DOC_URL, {
-          target: '_blank',
-        });
-      },
-      icon: BookOpenText,
-      text: $t('ui.widgets.document'),
-    },
     {
       handler: () => {
         router.push('/profile');
@@ -108,7 +96,7 @@ useVersionUpdate();
     <template #header-right-20>
       <button
         aria-label="日程管理"
-        class="platform-header-icon-action platform-header-icon-action--ring"
+        class="platform-header-icon-action platform-header-icon-action--ring mr-2"
         type="button"
       >
         <VbenIcon icon="lucide:calendar-days" class="size-5" />

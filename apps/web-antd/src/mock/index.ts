@@ -230,15 +230,15 @@ const mockBackendMenuList = [
     children: [
       {
         children: [],
-        component: 'platform/blank/index',
+        component: 'battery/construction/index',
         hidden: false,
         meta: {
-          icon: 'lucide:battery',
+          icon: 'lucide:hard-hat',
           noCache: false,
-          title: '空白占位',
+          title: '施工管理',
         },
-        name: 'BatteryIndex',
-        path: '/battery/index',
+        name: 'BatteryConstruction',
+        path: '/battery/construction',
       },
     ],
     component: 'Layout',

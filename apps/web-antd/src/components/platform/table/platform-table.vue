@@ -1,5 +1,10 @@
 <script setup lang="ts">
-import type { TableEmits, TableProps } from 'antdv-next';
+import type {
+  TableEmits,
+  TablePaginationConfig,
+  TableProps,
+} from 'antdv-next';
+import type { PlatformTableColumn, PlatformTableColumns } from './types';
 
 import {
   computed,
@@ -15,20 +20,30 @@ import {
 } from 'vue';
 
 import { Checkbox, CheckboxGroup, Table } from 'antdv-next';
+import { VbenIcon } from '@vben/icons';
 
-type PlatformTableColumn = NonNullable<TableProps['columns']>[number];
+import { PlatformRangePicker } from '../field';
 type PlatformTableIndexColumn = Partial<PlatformTableColumn>;
 type PlatformFilterKey = boolean | number | string;
+type PlatformFilterValue = PlatformFilterKey[];
 type PlatformFilterItem = {
   children?: PlatformFilterItem[];
   text?: VNodeChild;
   value?: PlatformFilterKey;
 };
 type PlatformFilterDropdownProps = {
+  clearFilters?: (param?: { closeDropdown?: boolean; confirm?: boolean }) => void;
   close?: () => void;
   confirm: (param?: { closeDropdown: boolean }) => void;
   filterMultiple?: boolean;
   filters?: PlatformFilterItem[];
+  selectedKeys: PlatformFilterKey[];
+  setSelectedKeys: (selectedKeys: PlatformFilterKey[]) => void;
+};
+type PlatformDateRangeFilterDropdownProps = {
+  clearFilters?: (param?: { closeDropdown?: boolean; confirm?: boolean }) => void;
+  close?: () => void;
+  confirm: (param?: { closeDropdown: boolean }) => void;
   selectedKeys: PlatformFilterKey[];
   setSelectedKeys: (selectedKeys: PlatformFilterKey[]) => void;
 };
@@ -53,7 +68,7 @@ const props = withDefaults(
     adaptiveHeight?: boolean;
     adaptiveHeightBottomOffset?: number;
     adaptiveHeightMin?: number;
-    columns?: TableProps['columns'];
+    columns?: PlatformTableColumns;
     columnSettingEnabled?: boolean;
     columnSettingKey?: string;
     indexColumn?: PlatformTableIndexColumn;
@@ -62,7 +77,7 @@ const props = withDefaults(
     showIndex?: boolean;
   }>(),
   {
-    adaptiveHeight: true,
+    adaptiveHeight: false,
     adaptiveHeightBottomOffset: 24,
     adaptiveHeightMin: 240,
     actionColumnWidth: 184,
@@ -86,6 +101,9 @@ const slots = useSlots();
 const tableWrapperRef = ref<HTMLElement>();
 const columnSettingPanelRef = ref<HTMLElement>();
 const adaptiveScrollY = ref<number>();
+const adaptiveWrapperMinHeight = ref<number>();
+const innerPaginationCurrent = ref(1);
+const innerPaginationPageSize = ref(10);
 const columnSettingOpen = ref(false);
 const columnSettingAnchor = ref<HTMLElement>();
 const columnSettingPosition = ref({
@@ -95,6 +113,8 @@ const columnSettingPosition = ref({
 const visibleColumnKeys = ref<string[]>([]);
 let resizeObserver: ResizeObserver | undefined;
 let updateFrame = 0;
+let refreshRequestContainer: HTMLElement | null = null;
+let previousPaginationSnapshot = '';
 
 const passthroughSlotNames = computed(() =>
   Object.keys(slots).filter((name) => name !== 'bodyCell'),
@@ -156,6 +176,32 @@ const mergedScroll = computed<TableProps['scroll']>(() => {
 
   return Object.keys(nextScroll).length > 0 ? nextScroll : undefined;
 });
+const mergedPagination = computed<TableProps['pagination']>(() => {
+  const pagination = props.pagination;
+
+  if (pagination === false) {
+    return false;
+  }
+
+  const basePagination =
+    pagination && typeof pagination !== 'boolean' ? pagination : {};
+
+  return {
+    current: innerPaginationCurrent.value,
+    pageSize: innerPaginationPageSize.value,
+    pageSizeOptions: ['10', '20', '50', '100'],
+    showSizeChanger: true,
+    ...basePagination,
+  };
+});
+const tableWrapperStyle = computed(() => ({
+  '--platform-table-body-min-height':
+    adaptiveScrollY.value !== undefined ? `${adaptiveScrollY.value}px` : undefined,
+  '--platform-table-wrapper-min-height':
+    adaptiveWrapperMinHeight.value !== undefined
+      ? `${adaptiveWrapperMinHeight.value}px`
+      : undefined,
+}));
 const checkedColumnKeys = computed({
   get: () => visibleColumnKeys.value,
   set: (value) => {
@@ -180,16 +226,16 @@ function getIndexCellValue(index: number) {
 }
 
 function getPaginationOffset() {
-  const pagination = props.pagination;
+  const pagination = mergedPagination.value;
   if (!pagination || typeof pagination === 'boolean') {
     return 0;
   }
 
   const current = Number(
-    pagination.current ?? pagination.defaultCurrent ?? 1,
+    pagination.current ?? 1,
   );
   const pageSize = Number(
-    pagination.pageSize ?? pagination.defaultPageSize ?? 10,
+    pagination.pageSize ?? 10,
   );
 
   return (Math.max(current, 1) - 1) * Math.max(pageSize, 1);
@@ -198,6 +244,14 @@ function getPaginationOffset() {
 function handleChange(
   ...args: Parameters<TableEmits['change']>
 ) {
+  const [pagination] = args;
+
+  innerPaginationCurrent.value = Number(
+    pagination?.current ?? innerPaginationCurrent.value,
+  );
+  innerPaginationPageSize.value = Number(
+    pagination?.pageSize ?? innerPaginationPageSize.value,
+  );
   emit('change', ...args);
 }
 
@@ -237,9 +291,12 @@ function getTableBodyTop() {
 function updateAdaptiveHeight() {
   if (!props.adaptiveHeight || props.scroll?.y !== undefined) {
     adaptiveScrollY.value = undefined;
+    adaptiveWrapperMinHeight.value = undefined;
     return;
   }
 
+  const wrapperTop =
+    tableWrapperRef.value?.getBoundingClientRect().top ?? getTableBodyTop();
   const tableBodyTop = getTableBodyTop();
   const paginationHeight = getElementHeight('.ant-pagination');
   const availableHeight =
@@ -251,6 +308,10 @@ function updateAdaptiveHeight() {
   adaptiveScrollY.value = Math.max(
     props.adaptiveHeightMin,
     Math.floor(availableHeight),
+  );
+  adaptiveWrapperMinHeight.value = Math.max(
+    props.adaptiveHeightMin,
+    Math.floor(window.innerHeight - wrapperTop - props.adaptiveHeightBottomOffset),
   );
 }
 
@@ -266,9 +327,16 @@ function scheduleAdaptiveHeightUpdate() {
 }
 
 onMounted(() => {
+  syncPaginationState(true);
   syncVisibleColumns();
   nextTick(scheduleAdaptiveHeightUpdate);
   window.addEventListener('resize', scheduleAdaptiveHeightUpdate);
+
+  refreshRequestContainer = tableWrapperRef.value?.parentElement ?? null;
+  refreshRequestContainer?.addEventListener(
+    'platform-table:refresh-request',
+    handleRefreshRequest as EventListener,
+  );
 
   if (tableWrapperRef.value && typeof ResizeObserver !== 'undefined') {
     resizeObserver = new ResizeObserver(scheduleAdaptiveHeightUpdate);
@@ -291,12 +359,26 @@ onBeforeUnmount(() => {
   if (updateFrame) {
     cancelAnimationFrame(updateFrame);
   }
+
+  refreshRequestContainer?.removeEventListener(
+    'platform-table:refresh-request',
+    handleRefreshRequest as EventListener,
+  );
+  refreshRequestContainer = null;
 });
 
 watch(
   () => props.columns,
   () => {
     syncVisibleColumns();
+  },
+  { deep: true },
+);
+
+watch(
+  () => props.pagination,
+  () => {
+    syncPaginationState();
   },
   { deep: true },
 );
@@ -309,36 +391,185 @@ function createPlatformFilterDropdown(column: PlatformTableColumn) {
     });
 }
 
+function handleRefreshRequest(event: Event) {
+  if (!(event instanceof CustomEvent)) {
+    return;
+  }
+
+  if (!hasActiveColumnFilters()) {
+    return;
+  }
+
+  event.preventDefault();
+  resetColumnFilters();
+}
+
+function hasActiveColumnFilters() {
+  return flattenColumns(baseColumns.value).some((column) => {
+    if (!isFilterableColumn(column)) {
+      return false;
+    }
+
+    const filteredValue = column.filteredValue;
+
+    return Array.isArray(filteredValue) && filteredValue.length > 0;
+  });
+}
+
+function isFilterableColumn(column: PlatformTableColumn) {
+  return Boolean(column.filters?.length || column.platformFilter);
+}
+
+function resetColumnFilters() {
+  const clearedFilters = flattenColumns(baseColumns.value).reduce<
+    Record<string, PlatformFilterValue | null>
+  >((result, column, index) => {
+    if (!isFilterableColumn(column)) {
+      return result;
+    }
+
+    result[getColumnIdentity(column, index)] = null;
+    return result;
+  }, {});
+
+  const pagination = resolveRefreshPagination();
+
+  emit('change', pagination, clearedFilters, {}, {
+    action: 'filter',
+    currentDataSource: [],
+  });
+}
+
+function resolveRefreshPagination(): TablePaginationConfig {
+  const pagination = mergedPagination.value;
+
+  if (!pagination || typeof pagination === 'boolean') {
+    return {};
+  }
+
+  return {
+    current: pagination.current,
+    pageSize: pagination.pageSize,
+    total: pagination.total,
+  };
+}
+
+function syncPaginationState(force = false) {
+  const pagination = props.pagination;
+
+  if (!pagination || typeof pagination === 'boolean') {
+    if (force) {
+      innerPaginationCurrent.value = 1;
+      innerPaginationPageSize.value = 10;
+      previousPaginationSnapshot = '';
+    }
+    return;
+  }
+
+  const snapshot = JSON.stringify({
+    current: pagination.current,
+    defaultCurrent: pagination.defaultCurrent,
+    pageSize: pagination.pageSize,
+    defaultPageSize: pagination.defaultPageSize,
+  });
+
+  if (!force && snapshot === previousPaginationSnapshot) {
+    return;
+  }
+
+  previousPaginationSnapshot = snapshot;
+  innerPaginationCurrent.value = Number(
+    pagination.current ?? pagination.defaultCurrent ?? 1,
+  );
+  innerPaginationPageSize.value = Number(
+    pagination.pageSize ?? pagination.defaultPageSize ?? 10,
+  );
+}
+
+function createPlatformDateRangeFilterDropdown(column: PlatformTableColumn) {
+  return (dropdownProps: PlatformDateRangeFilterDropdownProps) =>
+    h(PlatformTableDateRangeFilterDropdown, {
+      ...dropdownProps,
+      placeholder:
+        column.platformFilter?.type === 'dateRange'
+          ? column.platformFilter.placeholder
+          : undefined,
+      valueFormat:
+        column.platformFilter?.type === 'dateRange'
+          ? column.platformFilter.valueFormat
+          : undefined,
+    });
+}
+
 function enhancePlatformColumns(
-  columns: TableProps['columns'],
+  columns: PlatformTableColumns | undefined,
 ): TableProps['columns'] {
   return (columns ?? []).map((column) => {
+    const { platformFilter, ...plainColumn } = column as PlatformTableColumn & {
+      platformFilter?: PlatformTableColumn['platformFilter'];
+    };
+
     if ('children' in column && column.children?.length) {
       return {
-        ...column,
-        children: enhancePlatformColumns(column.children),
+        ...plainColumn,
+        children: enhancePlatformColumns(column.children as PlatformTableColumns),
       };
     }
 
-    const nextColumn = isActionColumn(column)
+    const nextColumn = isActionColumn(plainColumn)
       ? appendColumnClass(
           {
-            ...column,
+            ...plainColumn,
             width: props.actionColumnWidth,
           },
           'platform-table__action-column',
         )
-      : column;
+      : plainColumn;
 
-    if (!nextColumn.filters?.length || nextColumn.filterDropdown) {
+    if (nextColumn.filterDropdown) {
+      return nextColumn;
+    }
+
+    if (platformFilter?.type === 'dateRange') {
+      return {
+        ...nextColumn,
+        filterDropdown: createPlatformDateRangeFilterDropdown({
+          ...nextColumn,
+          platformFilter,
+        }),
+        filterIcon: createPlatformFilterIcon(nextColumn.filterIcon),
+      };
+    }
+
+    if (!nextColumn.filters?.length) {
       return nextColumn;
     }
 
     return {
       ...nextColumn,
       filterDropdown: createPlatformFilterDropdown(nextColumn),
+      filterIcon: createPlatformFilterIcon(nextColumn.filterIcon),
     };
-  });
+  }) as NonNullable<TableProps['columns']>;
+}
+
+function createPlatformFilterIcon(
+  customIcon?: PlatformTableColumn['filterIcon'],
+) {
+  return (filtered: boolean) => {
+    if (typeof customIcon === 'function') {
+      return customIcon(filtered);
+    }
+
+    if (customIcon) {
+      return customIcon;
+    }
+
+    return h(VbenIcon, {
+      class: 'platform-table__filter-icon',
+      icon: 'lucide:funnel',
+    });
+  };
 }
 
 function isActionColumn(column: PlatformTableColumn) {
@@ -774,15 +1005,130 @@ const PlatformTableFilterDropdown = defineComponent({
     };
   },
 });
+
+const PlatformTableDateRangeFilterDropdown = defineComponent({
+  name: 'PlatformTableDateRangeFilterDropdown',
+  props: {
+    clearFilters: {
+      default: undefined,
+      type: Function,
+    },
+    confirm: {
+      required: true,
+      type: Function,
+    },
+    placeholder: {
+      default: () => ['开始日期', '结束日期'],
+      type: Array,
+    },
+    selectedKeys: {
+      default: () => [],
+      type: Array,
+    },
+    setSelectedKeys: {
+      required: true,
+      type: Function,
+    },
+    valueFormat: {
+      default: 'YYYY-MM-DD',
+      type: String,
+    },
+  },
+  setup(componentProps) {
+    const pickerOpen = ref(true);
+    const rangeValue = computed(() => {
+      const firstKey = componentProps.selectedKeys?.[0];
+
+      if (typeof firstKey !== 'string' || !firstKey) {
+        return [];
+      }
+
+      const [startDate = '', endDate = ''] = firstKey.split('|');
+
+      return startDate && endDate ? [startDate, endDate] : [];
+    });
+
+    function handleChange(value: unknown) {
+      const nextValue = Array.isArray(value)
+        ? value.filter(
+            (item): item is string => typeof item === 'string' && item.length > 0,
+          )
+        : [];
+
+      if (nextValue.length === 2) {
+        pickerOpen.value = false;
+        componentProps.setSelectedKeys([nextValue.join('|')]);
+        componentProps.confirm({
+          closeDropdown: true,
+        });
+        return;
+      }
+
+      pickerOpen.value = false;
+      componentProps.setSelectedKeys([]);
+      componentProps.clearFilters?.({
+        closeDropdown: true,
+        confirm: true,
+      });
+    }
+
+    function handleClear() {
+      pickerOpen.value = false;
+      componentProps.setSelectedKeys([]);
+      componentProps.clearFilters?.({
+        closeDropdown: true,
+        confirm: true,
+      });
+    }
+
+    return () =>
+      h('div', { class: 'platform-table-filter-dropdown platform-table-filter-dropdown--date-range' }, [
+        h(PlatformRangePicker, {
+          allowClear: true,
+          class: 'platform-table-filter-dropdown__range-trigger',
+          format: componentProps.valueFormat,
+          getPopupContainer: (triggerNode: HTMLElement) =>
+            triggerNode.parentElement ?? triggerNode,
+          open: pickerOpen.value,
+          placeholder: componentProps.placeholder,
+          value: rangeValue.value,
+          valueFormat: componentProps.valueFormat,
+          onChange: handleChange,
+          onOpenChange: (open: boolean) => {
+            pickerOpen.value = open;
+          },
+        }),
+        h(
+          'div',
+          { class: 'platform-table-filter-dropdown__footer' },
+          [
+            h(
+              'button',
+              {
+                class: 'platform-table-filter-dropdown__footer-button',
+                type: 'button',
+                onClick: handleClear,
+              },
+              '清空',
+            ),
+          ],
+        ),
+      ]);
+  },
+});
 </script>
 
 <template>
-  <div ref="tableWrapperRef" class="platform-table-wrapper">
+  <div
+    ref="tableWrapperRef"
+    class="platform-table-wrapper"
+    :style="tableWrapperStyle"
+  >
     <Table
       v-bind="$attrs"
       class="platform-table"
       :columns="mergedColumns"
-      :pagination="pagination"
+      :pagination="mergedPagination"
       :scroll="mergedScroll"
       @change="handleChange"
     >
@@ -826,7 +1172,9 @@ const PlatformTableFilterDropdown = defineComponent({
 
 <style scoped>
 .platform-table-wrapper {
-  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: var(--platform-table-wrapper-min-height, 0);
 }
 
 .platform-table-column-setting-panel {
@@ -859,7 +1207,12 @@ const PlatformTableFilterDropdown = defineComponent({
 }
 
 .platform-table {
+  flex: 1;
   width: 100%;
+}
+
+.platform-table :deep(.ant-table-body) {
+  min-height: var(--platform-table-body-min-height, 0);
 }
 
 .platform-table :deep(.ant-table) {
@@ -1004,6 +1357,11 @@ const PlatformTableFilterDropdown = defineComponent({
   background: hsl(var(--st-color-fill-selected));
 }
 
+.platform-table :deep(.platform-table__filter-icon) {
+  width: 14px;
+  height: 14px;
+}
+
 :global(.platform-table-filter-dropdown) {
   min-width: 168px;
   max-height: 320px;
@@ -1067,5 +1425,46 @@ const PlatformTableFilterDropdown = defineComponent({
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+:global(.platform-table-filter-dropdown--date-range) {
+  min-width: 0;
+  max-height: none;
+  padding: 0;
+}
+
+:global(.platform-table-filter-dropdown--date-range .platform-table-filter-dropdown__range-trigger) {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+:global(.platform-table-filter-dropdown--date-range .ant-picker-dropdown) {
+  position: static !important;
+  inset: auto !important;
+  display: block !important;
+  min-width: 0 !important;
+  box-shadow: none !important;
+}
+
+:global(.platform-table-filter-dropdown__footer) {
+  display: flex;
+  justify-content: flex-end;
+  padding: 0 12px 12px;
+}
+
+:global(.platform-table-filter-dropdown__footer-button) {
+  color: hsl(var(--primary));
+  font-size: var(--st-font-size-sm);
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+}
+
+:global(.platform-table-filter-dropdown__footer-button:hover) {
+  color: hsl(var(--st-color-brand-hover));
 }
 </style>

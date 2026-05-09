@@ -250,6 +250,70 @@ function getRecordScore(record: unknown) {
       <section class="project-evaluation-workspace">
         <article class="platform-surface project-evaluation-panel">
           <PlatformTableToolbar
+            v-model:search-value="projectQuery.keyword"
+            search-placeholder="搜索项目 / 部门 / 负责人"
+            :tools="['search', 'refresh']"
+            title="待评估项目"
+            @refresh="loadEvaluationPage"
+            @search="() => {}"
+          />
+
+          <div class="project-evaluation-panel__body project-evaluation-panel__body--cards">
+            <article
+              v-for="project in filteredEvaluationProjects"
+              :key="project.id"
+              class="project-pending-card"
+            >
+              <div class="project-pending-card__hero">
+                <div class="project-pending-card__headline">
+                  <h3>{{ project.name }}</h3>
+                  <p>{{ project.department }} · {{ project.manager }}</p>
+                </div>
+                <PlatformButton
+                  size="small"
+                  type="primary"
+                  @click="handleCreateEvaluation(project)"
+                >
+                  <template #icon>
+                    <VbenIcon icon="lucide:plus" />
+                  </template>
+                  发起评估
+                </PlatformButton>
+              </div>
+              <div class="project-pending-card__tags">
+                <PlatformStatusTag
+                  :label="evaluationProjectStageMap[project.stage].label"
+                  :status="evaluationProjectStageMap[project.stage].status"
+                />
+                <PlatformStatusTag
+                  :label="evaluationProjectStatusMap[project.status].label"
+                  :status="evaluationProjectStatusMap[project.status].status"
+                />
+              </div>
+              <div class="project-pending-card__meta">
+                <span>截止 {{ project.dueDate }}</span>
+              </div>
+              <div class="project-pending-card__progress-row">
+                <div class="project-pending-card__progress">
+                  <span
+                    :style="{ width: `${project.progress}%` }"
+                    class="project-pending-card__progress-bar"
+                  ></span>
+                </div>
+                <span>进度 {{ project.progress }}%</span>
+              </div>
+            </article>
+            <div
+              v-if="filteredEvaluationProjects.length === 0"
+              class="project-evaluation-empty"
+            >
+              暂无符合条件的待评估项目
+            </div>
+          </div>
+        </article>
+
+        <article class="platform-surface project-evaluation-panel project-evaluation-panel--records">
+          <PlatformTableToolbar
             v-model:search-value="recordQuery.keyword"
             search-placeholder="搜索项目 / 评估组"
             :tools="['search', 'refresh']"
@@ -292,68 +356,6 @@ function getRecordScore(record: unknown) {
               </template>
             </template>
           </PlatformTable>
-        </article>
-
-        <article class="platform-surface project-evaluation-panel">
-          <PlatformTableToolbar
-            v-model:search-value="projectQuery.keyword"
-            search-placeholder="搜索项目 / 部门 / 负责人"
-            :tools="['search', 'refresh']"
-            title="待评估项目"
-            @refresh="loadEvaluationPage"
-            @search="() => {}"
-          />
-
-          <div class="project-evaluation-panel__body">
-            <article
-              v-for="project in filteredEvaluationProjects"
-              :key="project.id"
-              class="project-pending-card"
-            >
-              <div class="project-pending-card__main">
-                <div>
-                  <h3>{{ project.name }}</h3>
-                  <p>{{ project.department }} · {{ project.manager }}</p>
-                </div>
-                <PlatformStatusTag
-                  :label="evaluationProjectStageMap[project.stage].label"
-                  :status="evaluationProjectStageMap[project.stage].status"
-                />
-              </div>
-              <div class="project-pending-card__meta">
-                <span>截止 {{ project.dueDate }}</span>
-                <PlatformStatusTag
-                  :label="evaluationProjectStatusMap[project.status].label"
-                  :status="evaluationProjectStatusMap[project.status].status"
-                />
-              </div>
-              <div class="project-pending-card__progress">
-                <span
-                  :style="{ width: `${project.progress}%` }"
-                  class="project-pending-card__progress-bar"
-                ></span>
-              </div>
-              <div class="project-pending-card__footer">
-                <span>进度 {{ project.progress }}%</span>
-                <PlatformButton
-                  size="small"
-                  type="primary"
-                  @click="handleCreateEvaluation(project)"
-                >
-                  <template #icon>
-                    <VbenIcon icon="lucide:plus" />
-                  </template>
-                  发起评估
-                </PlatformButton>
-              </div>
-            </article>
-            <div
-              v-if="filteredEvaluationProjects.length === 0"
-              class="project-evaluation-empty"
-            >
-              暂无符合条件的待评估项目
-            </div>
-          </div>
         </article>
       </section>
     </div>
@@ -431,35 +433,39 @@ function getRecordScore(record: unknown) {
 
 .project-evaluation-workspace {
   display: grid;
-  flex: 1;
+  align-items: start;
   grid-template-columns: minmax(520px, 1.45fr) minmax(360px, 0.85fr);
   gap: var(--st-layout-section-gap);
-  min-height: 0;
 }
 
 .project-evaluation-panel {
   display: flex;
   flex-direction: column;
   min-width: 0;
-  min-height: 0;
   overflow: hidden;
 }
 
 .project-evaluation-panel__body {
   display: flex;
-  flex: 1;
   flex-direction: column;
   gap: 12px;
-  min-height: 0;
   overflow: auto;
+}
+
+.project-evaluation-panel__body--cards {
+  gap: 16px;
+}
+
+.project-evaluation-panel--records {
+  align-self: start;
 }
 
 .project-pending-card {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 18px;
   width: 100%;
-  padding: 18px;
+  padding: 24px;
   text-align: left;
   background: hsl(var(--st-color-card-bg));
   border: 1px solid hsl(var(--border));
@@ -471,36 +477,46 @@ function getRecordScore(record: unknown) {
   transform: translateY(-4px);
 }
 
-.project-pending-card__main,
+.project-pending-card__hero,
 .project-pending-card__meta,
-.project-pending-card__footer {
+.project-pending-card__progress-row {
   display: flex;
   align-items: center;
 }
 
-.project-pending-card__main,
-.project-pending-card__meta,
-.project-pending-card__footer {
+.project-pending-card__hero,
+.project-pending-card__progress-row {
   justify-content: space-between;
+  gap: 16px;
+}
+
+.project-pending-card__headline {
+  min-width: 0;
+}
+
+.project-pending-card__tags {
+  display: flex;
+  flex-wrap: wrap;
   gap: 12px;
 }
 
 .project-pending-card h3 {
-  font-size: var(--st-font-size-base);
-  line-height: 24px;
+  font-size: 18px;
+  line-height: 30px;
 }
 
 .project-pending-card p {
-  margin-top: 3px;
+  margin-top: 8px;
   font-size: var(--st-font-size-sm);
 }
 
 .project-pending-card__meta,
-.project-pending-card__footer {
+.project-pending-card__progress-row {
   font-size: var(--st-font-size-sm);
 }
 
 .project-pending-card__progress {
+  flex: 1;
   height: 6px;
   overflow: hidden;
   background: hsl(var(--muted));

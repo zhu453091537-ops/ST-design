@@ -206,6 +206,7 @@ onBeforeUnmount(() => {
         :content-class="[
           rootMenu.theme,
           nsMenu.e('popup-container'),
+          nsMenu.is('more-popup', isSubMenuMore),
           is(rootMenu.theme, true),
           opened ? '' : 'hidden',
           'overflow-auto',
@@ -232,13 +233,21 @@ onBeforeUnmount(() => {
           </SubMenuContent>
         </template>
         <div
-          :class="[nsMenu.is(mode, true), nsMenu.e('popup')]"
+          :class="[
+            nsMenu.is(mode, true),
+            nsMenu.e('popup'),
+            nsMenu.is('more-popup', isSubMenuMore),
+          ]"
           @focus="(e) => handleMouseenter(e, 100)"
           @mouseenter="(e) => handleMouseenter(e, 100)"
           @mouseleave="() => handleMouseleave(true)"
         >
           <ul
-            :class="[nsMenu.b(), is('rounded', rounded)]"
+            :class="[
+              nsMenu.b(),
+              nsMenu.is('more-popup', isSubMenuMore),
+              is('rounded', rounded),
+            ]"
             :style="subMenuStyle"
           >
             <slot></slot>

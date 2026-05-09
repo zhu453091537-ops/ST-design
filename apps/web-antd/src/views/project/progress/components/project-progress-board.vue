@@ -52,22 +52,24 @@ function getProgressColor(status: ProjectProgressStatus) {
         <span>{{ column.records.length }}</span>
       </header>
 
-      <article
-        v-for="record in column.records"
-        :key="record.id"
-        class="project-progress-board__card"
-      >
-        <h2>{{ record.name }}</h2>
-        <p>{{ record.department }} · {{ record.manager }}</p>
-        <div class="project-progress-board__track">
-          <span
-            :style="{
-              backgroundColor: getProgressColor(record.status),
-              width: getProgressWidth(record),
-            }"
-          ></span>
-        </div>
-      </article>
+      <div class="project-progress-board__column-body">
+        <article
+          v-for="record in column.records"
+          :key="record.id"
+          class="project-progress-board__card"
+        >
+          <h2>{{ record.name }}</h2>
+          <p>{{ record.department }} · {{ record.manager }}</p>
+          <div class="project-progress-board__track">
+            <span
+              :style="{
+                backgroundColor: getProgressColor(record.status),
+                width: getProgressWidth(record),
+              }"
+            ></span>
+          </div>
+        </article>
+      </div>
     </section>
   </div>
 </template>
@@ -75,20 +77,25 @@ function getProgressColor(status: ProjectProgressStatus) {
 <style scoped>
 .project-progress-board {
   display: grid;
+  align-items: start;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 16px;
 }
 
 .project-progress-board__column {
+  display: flex;
+  flex-direction: column;
   min-width: 0;
-  min-height: 520px;
   padding: 16px;
-  background: hsl(var(--st-color-border-subtle));
+  max-height: min(720px, calc(100dvh - 220px));
+  overflow: hidden;
+  background: hsl(var(--background));
   border: 1px solid hsl(var(--st-color-border-control));
   border-radius: var(--st-radius-card);
 }
 
 .project-progress-board__column-header {
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -96,8 +103,13 @@ function getProgressColor(status: ProjectProgressStatus) {
   color: hsl(var(--foreground));
 }
 
+.project-progress-board__column-body {
+  min-height: 0;
+  overflow-y: auto;
+}
+
 .project-progress-board__column-header strong {
-  font-size: var(--st-font-size-base);
+  font-size: 16px;
   font-weight: 700;
 }
 
@@ -124,7 +136,6 @@ function getProgressColor(status: ProjectProgressStatus) {
 
 .project-progress-board__card {
   padding: 16px;
-  margin-top: 12px;
   background: hsl(var(--st-color-card-bg));
   border: 1px solid hsl(var(--st-color-border-control));
   border-radius: var(--st-radius-card);

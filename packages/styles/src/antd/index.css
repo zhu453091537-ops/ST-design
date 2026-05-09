@@ -388,6 +388,32 @@ body {
   color: hsl(var(--st-color-text-disabled));
 }
 
+.ant-pagination .ant-pagination-options {
+  display: inline-flex;
+  align-items: center;
+  margin-inline-start: 16px;
+}
+
+.ant-pagination .ant-pagination-options .ant-select {
+  min-width: 108px;
+}
+
+.ant-pagination
+  .ant-pagination-options
+  .ant-select:not(.ant-select-customize-input)
+  .ant-select-selector {
+  min-height: var(--st-pagination-item-size);
+  padding-inline: 12px 30px;
+  background: hsl(var(--st-color-page-bg));
+  border-color: hsl(var(--st-color-border-control));
+  border-radius: var(--st-radius-control);
+}
+
+.ant-pagination .ant-pagination-options .ant-select-selection-item,
+.ant-pagination .ant-pagination-options .ant-select-selection-placeholder {
+  line-height: calc(var(--st-pagination-item-size) - 2px);
+}
+
 .ant-modal .ant-modal-content,
 .ant-drawer .ant-drawer-content {
   color: hsl(var(--foreground));

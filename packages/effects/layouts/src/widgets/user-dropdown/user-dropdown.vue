@@ -197,7 +197,7 @@ if (enableShortcutKey.value) {
 
     <DropdownMenu v-model:open="openPopover">
     <DropdownMenuTrigger ref="refTrigger" :disabled="props.trigger === 'hover'">
-      <div class="platform-header-icon-action mr-3 ml-1 cursor-pointer p-1.5">
+      <div class="platform-header-icon-action mr-3 ml-2 cursor-pointer p-1.5">
         <div class="flex-center">
           <VbenAvatar
             :alt="text"

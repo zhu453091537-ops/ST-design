@@ -59,7 +59,7 @@ function handleClick(item: NotificationItem) {
 <template>
   <VbenPopover v-model:open="open" content-class="relative right-2 w-90 p-0">
     <template #trigger>
-      <div class="mr-1 flex-center h-full" @click.stop="toggle()">
+      <div class="flex-center h-full" @click.stop="toggle()">
         <VbenIconButton
           class="platform-header-icon-action platform-header-icon-action--ring relative text-foreground"
         >

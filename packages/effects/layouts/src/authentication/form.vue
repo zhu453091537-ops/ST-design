@@ -20,7 +20,7 @@ defineProps<{
           <component
             :is="Component"
             :key="route.fullPath"
-            class="side-content mt-6 w-full sm:mx-auto md:max-w-md lg:max-w-[400px]"
+            class="side-content mt-6 w-full sm:mx-auto lg:max-w-[480px]"
             :data-side="dataSide"
           />
         </KeepAlive>

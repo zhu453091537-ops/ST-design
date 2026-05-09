@@ -3910,3 +3910,272 @@ Figma 截图驱动顶部导航栏源组件样式改造
 
 1. 后续需等待用户提供用户管理原型后，再重新做页面结构分析、组件映射和确认开发。
 2. 旧 `user-demo-source.ts` 当前已不被页面引用，是否删除需等后续原型范围确认。
+
+### 任务名称
+
+顶部导航栏原组件微调
+
+### 完成内容
+
+1. 按用户截图要求，删除用户下拉菜单中的“文档”入口，仅保留“个人中心”和退出登录能力。
+2. 将顶部“待办/日程管理” icon 与消息通知 icon 之间的间距统一调整为 `8px`。
+3. 将消息通知 icon 与头像入口之间的间距也统一调整为 `8px`。
+4. 本轮仅改布局业务侧注入配置和现有通知/用户下拉组件间距类名，未新增平台组件，也未改动 Vben 布局结构、路由、菜单逻辑或 ant-design-vue 源码。
+
+### 修改了哪些文件
+
+1. `apps/web-antd/src/layouts/basic.vue`
+2. `packages/effects/layouts/src/widgets/notification/notification.vue`
+3. `packages/effects/layouts/src/widgets/user-dropdown/user-dropdown.vue`
+4. `docs/project-log.md`
+5. `docs/todo-next.md`
+
+### 涉及哪些页面或组件
+
+1. 顶部导航用户下拉菜单：`UserDropdown`
+2. 顶部导航通知组件：`Notification`
+3. 受影响页面：所有使用基础布局顶部导航的页面
+
+### 验证结果
+
+1. 已执行 `git diff --check -- apps/web-antd/src/layouts/basic.vue packages/effects/layouts/src/widgets/notification/notification.vue packages/effects/layouts/src/widgets/user-dropdown/user-dropdown.vue`，结果通过。
+2. 本轮未做浏览器截图级验证，未操作用户系统 Chrome。
+
+### 遗留问题
+
+1. 仍需在隔离浏览器环境恢复后，对顶部导航待办、消息、头像三个入口的实际视觉间距和用户下拉菜单项顺序做一次肉眼复核。
+
+### 任务名称
+
+顶部导航栏窄屏“更多”浮窗源组件修正
+
+### 完成内容
+
+1. 按用户要求，将顶部导航窄屏态“更多”浮窗改为纯白背景层，不再沿用透明/半透明菜单背景。
+2. 浮窗内部菜单项已改为纯文字表现，移除图标和箭头，默认文字使用黑色变量。
+3. 浮窗菜单项 hover 已统一为品牌绿茶 10% 透明度背景，文字切换为品牌绿。
+4. 本轮改的是 `@vben-core/menu-ui` 公共源组件场景，不在业务页面或局部 scoped CSS 中兜底。
+
+### 修改了哪些文件
+
+1. `packages/@core/ui-kit/menu-ui/src/components/sub-menu.vue`
+2. `packages/@core/ui-kit/menu-ui/src/components/menu.vue`
+3. `docs/project-log.md`
+4. `docs/todo-next.md`
+
+### 涉及哪些页面或组件
+
+1. 顶部导航窄屏“更多”浮窗：`@vben-core/menu-ui`
+2. 受影响页面：所有使用基础布局顶部横向菜单且触发 overflow “更多”的页面
+
+### 验证结果
+
+1. 已执行 `git diff --check -- packages/@core/ui-kit/menu-ui/src/components/sub-menu.vue packages/@core/ui-kit/menu-ui/src/components/menu.vue`，结果通过。
+2. 本轮未做浏览器截图级验证，未操作用户系统 Chrome。
+
+### 遗留问题
+
+1. 仍需在隔离浏览器里缩窄窗口，确认“更多”浮窗白底、无图标、hover 态和文字颜色都符合截图预期。
+
+### 平台治理影响
+
+1. 本轮发现的 ant-design-vue 原生组件问题：无，问题落点在 Vben 菜单源组件的 overflow 浮窗场景。
+2. 已通过平台层解决的问题：窄屏顶部导航“更多”浮窗已统一为公共白底纯文字菜单规范，不再让页面各自覆盖。
+3. 仍是页面临时实现的问题：无。
+4. 哪些页面子组件未来必须回收为平台组件：无新增页面子组件，本轮直接在布局源组件收口。
+5. 后续新页面禁止继续复制哪些实现：不要在业务页单独覆盖“更多”浮窗背景、图标显隐或 hover 色。
+6. 哪些样式应进入主题变量或统一样式入口：该场景继续由菜单源组件和现有设计 token维护，不额外散落到业务 scoped CSS。
+7. 当前仍存在的页面级样式债务：顶部导航窄屏态仍需继续做窗口宽度断点下的肉眼回归。
+
+## 2026-05-09
+
+### 任务名称
+
+智能考勤管理施工管理页面与 PlatformQueryPanel 首版
+
+### 完成内容
+
+1. 新增 `PlatformQueryPanel` 平台查询面板，统一承载查询字段、查询/重置和收起/展开，内部继续复用现有平台按钮、字段组件和设计 token。
+2. 在 `智能考勤管理` 一级菜单下新增 `施工管理` 左侧菜单，替换原 `BatteryMenu` 的空白占位，并接入真实页面 `/battery/construction`。
+3. 新增施工管理列表页与专用受控数据源，按截图语义落地项目名称、项目年度、状态、提交人四项筛选，以及“首次办理 / 许可证变更”业务按钮、许可证列表和状态展示。
+4. 将查询面板与表格工具栏的分工沉淀到项目规则：`PlatformQueryPanel` 负责筛选区与动作区，`PlatformTableToolbar` 继续负责表格上方业务按钮和刷新、设置、全屏等通用工具。
+
+### 修改了哪些文件
+
+1. `apps/web-antd/src/components/platform/form/platform-query-panel.vue`
+2. `apps/web-antd/src/components/platform/form/index.ts`
+3. `apps/web-antd/src/views/battery/construction/index.vue`
+4. `apps/web-antd/src/views/battery/construction/construction-source.ts`
+5. `apps/web-antd/src/mock/index.ts`
+6. `AGENTS.md`
+7. `docs/decision-records.md`
+8. `docs/project-log.md`
+9. `docs/todo-next.md`
+
+### 涉及哪些页面或组件
+
+1. 平台组件：`PlatformQueryPanel`
+2. 平台组件：`PlatformTableToolbar`
+3. 页面：`/battery/construction`
+4. 菜单：`智能考勤管理 - 施工管理`
+
+### 验证结果
+
+1. 已执行 `git diff --check`，结果通过。
+2. 已执行 `./node_modules/.bin/vue-tsc --noEmit -p apps/web-antd/tsconfig.json 2>&1 | rg "battery/construction|platform-query-panel"`，结果无输出，说明当前类型错误未命中新增加的页面和组件文件。
+3. 已执行 `./node_modules/.bin/vue-tsc --noEmit -p apps/web-antd/tsconfig.json`，命令仍失败于项目既有存量类型错误，本轮未清理无关模块。
+4. 已执行 `curl -I http://127.0.0.1:5173/battery/construction`，返回 `200 OK`。
+5. 本轮未做隔离浏览器截图级验证，未操作用户系统 Chrome。
+
+### 遗留问题
+
+1. 仍需在隔离浏览器里确认 `PlatformQueryPanel` 三列展开态、单行收起态和查询按钮顺序是否符合预期。
+2. `PlatformQueryPanel` 当前先在 `/battery/construction` 首页验证，其他存量查询列表页尚未迁移。
+
+### 平台治理影响
+
+1. 本轮发现的 ant-design-vue 原生组件问题：基础 `Form + Button` 能满足功能，但高频查询列表页缺少统一的“筛选字段 + 查询/重置 + 收起/展开”复合平台壳。
+2. 已通过平台层解决的问题：查询面板的结构边界已回收到 `PlatformQueryPanel`，页面不再需要重复拼装字段区、按钮组和折叠状态。
+3. 仍是页面临时实现的问题：`/battery/construction` 的业务字段、状态文案、操作列和按钮提示文案仍由页面和专用 source 维护。
+4. 哪些页面子组件未来必须回收为平台组件：若后续多页都出现相同“列表页顶部查询面板”模式，优先继续让这些页面接入 `PlatformQueryPanel`，而不是复制旧查询区结构。
+5. 后续新页面禁止继续复制哪些实现：不要再在业务页手写 `PlatformSearchForm + 查询按钮 + 重置按钮 + 收起逻辑` 的散装组合。
+6. 哪些样式应进入主题变量或统一样式入口：查询面板字段间距、动作区间距、模块内边距继续跟随现有设计 token，不额外散落到业务 scoped CSS。
+7. 当前仍存在的页面级样式债务：施工管理页面当前仍保留项目名称单元格和列表区块的轻量业务排版，后续如出现同类列表单元格模式再评估是否继续平台化。
+
+### 任务名称
+
+登录页原组件宽度与品牌区纠偏
+
+### 完成内容
+
+1. 删除登录标题后的挥手 emoji。
+2. 关闭登录页“其他登录方式”区域，移除第三方登录图标和底部 `Copyright © 2024 Vben`。
+3. 将中心登录模块宽度统一收敛为 `480px`，默认居中显示。
+4. 调整登录页左上角品牌区：本地 `LOGO.svg` 改为品牌绿色，并同步放大 logo 与项目名称字号。
+5. 本轮改动落在认证布局源组件、登录公共组件和项目登录入口，不在业务页面局部样式里兜底。
+
+### 修改了哪些文件
+
+1. `packages/effects/common-ui/src/ui/authentication/login.vue`
+2. `apps/web-antd/src/views/_core/authentication/login.vue`
+3. `apps/web-antd/src/layouts/auth.vue`
+4. `packages/effects/layouts/src/authentication/authentication.vue`
+5. `packages/effects/layouts/src/authentication/form.vue`
+6. `apps/web-antd/public/LOGO.svg`
+7. `docs/project-log.md`
+8. `docs/todo-next.md`
+
+### 涉及哪些页面或组件
+
+1. 认证公共组件：`AuthenticationLogin`
+2. 认证布局：`AuthPageLayout` / `AuthenticationFormView`
+3. 项目登录页：`/auth/login`
+
+### 验证结果
+
+1. 已执行 `git diff --check -- packages/effects/common-ui/src/ui/authentication/login.vue apps/web-antd/src/views/_core/authentication/login.vue apps/web-antd/src/layouts/auth.vue packages/effects/layouts/src/authentication/authentication.vue packages/effects/layouts/src/authentication/form.vue apps/web-antd/public/LOGO.svg`，结果通过。
+2. 已执行目标文件 ESLint，结果通过。
+3. 本轮未做浏览器截图级验证，未操作用户系统 Chrome。
+
+### 遗留问题
+
+1. 仍需在隔离浏览器里打开登录页，确认 `480px` 宽度、居中效果、logo 绿色和品牌区字号与截图一致。
+
+### 平台治理影响
+
+1. 本轮发现的 ant-design-vue 原生组件问题：无，问题主要落在认证公共组件和布局源组件。
+2. 已通过平台层解决的问题：登录标题装饰、第三方登录区、版权显隐、登录卡片宽度和品牌区样式已回收到认证源组件层。
+3. 仍是页面临时实现的问题：无。
+4. 哪些页面子组件未来必须回收为平台组件：无新增页面子组件，本轮直接收口到认证原组件。
+5. 后续新页面禁止继续复制哪些实现：不要在业务登录页局部追加第三方登录区隐藏、宽度覆盖或 logo 颜色补丁。
+6. 哪些样式应进入主题变量或统一样式入口：认证卡片宽度、品牌区字号和 logo 视觉继续优先由认证布局源组件统一维护。
+7. 当前仍存在的页面级样式债务：登录页截图还需继续肉眼回归，确认与设计图的边距和字号没有偏差。
+
+### 任务名称
+
+平台表格刷新联动表头筛选修复
+
+### 完成内容
+
+1. 在 `PlatformTableToolbar` 刷新按钮点击时，新增“向同容器 `PlatformTable` 发起刷新请求”的平台联动。
+2. 在 `PlatformTable` 中新增对该刷新请求的接管：当表格当前存在激活的表头筛选时，优先在平台层清空筛选并主动触发一次 `change`，不再继续沿用旧筛选条件刷新。
+3. 保持原有兼容：如果当前容器没有表格接管刷新请求，或没有激活的表头筛选，则 `PlatformTableToolbar` 仍继续走页面原有 `refresh` 事件。
+4. 本轮未在施工管理页单独补丁，修复点落在表格原组件和工具栏原组件。
+
+### 修改了哪些文件
+
+1. `apps/web-antd/src/components/platform/table/platform-table-toolbar.vue`
+2. `apps/web-antd/src/components/platform/table/platform-table.vue`
+3. `docs/project-log.md`
+4. `docs/todo-next.md`
+
+### 涉及哪些页面或组件
+
+1. 平台组件：`PlatformTableToolbar`
+2. 平台组件：`PlatformTable`
+3. 受影响页面：所有使用这两者组合、且启用了表头筛选的列表页
+
+### 验证结果
+
+1. 已执行 `git diff --check`，结果通过。
+2. 已执行 `./node_modules/.bin/vue-tsc --noEmit -p apps/web-antd/tsconfig.json 2>&1 | rg "platform-table-toolbar|platform-table\\.vue|battery/construction"`，结果无输出，说明本轮新增逻辑未命中相关文件类型错误。
+3. 已执行 `curl -I http://127.0.0.1:5173/battery/construction`，返回 `200 OK`。
+4. 本轮未做隔离浏览器截图级验证，未操作用户系统 Chrome。
+
+### 遗留问题
+
+1. 仍需在隔离浏览器里确认：表头筛选激活后点击刷新，列表是否先清空筛选再刷新数据。
+2. 后续如出现“同一个模块容器内存在多个 `PlatformTable`”的复杂场景，需要再评估是否补充作用域键，避免同容器多表联动歧义。
+
+### 平台治理影响
+
+1. 本轮发现的 ant-design-vue 原生组件问题：无，问题在平台工具栏和平台表格之间缺少刷新语义联动。
+2. 已通过平台层解决的问题：刷新按钮不再只是页面级 `emit('refresh')`；当表头筛选激活时，平台会先统一清空筛选状态再触发刷新。
+3. 仍是页面临时实现的问题：无，本轮未在业务页额外加刷新补丁。
+4. 哪些页面子组件未来必须回收为平台组件：无新增页面子组件，本轮直接收口到平台表格和工具栏源组件。
+5. 后续新页面禁止继续复制哪些实现：不要在单个页面里手写“刷新时先清表头筛选”的额外逻辑。
+6. 哪些样式应进入主题变量或统一样式入口：本轮属于交互联动修复，无新增样式 token 诉求。
+7. 当前仍存在的页面级样式债务：无新增页面级样式债务。
+
+### 任务名称
+
+平台表格默认高度交互改为按页码完整展示
+
+### 完成内容
+
+1. 将 `PlatformTable` 默认 `adaptiveHeight` 从开启改为关闭，不再默认根据浏览器高度给表格 body 注入内部滚动高度。
+2. 保留原组件能力边界：只有调用方显式传入 `scroll.y`，或后续开发时明确要求启用表格内部滚动，才进入内部滚动模式。
+3. 将项目规则和决策记录同步更新为新默认交互：页码器一页展示多少条，就在页面完整展示多少条，超出浏览器高度时由页面整体上下滚动。
+
+### 修改了哪些文件
+
+1. `apps/web-antd/src/components/platform/table/platform-table.vue`
+2. `AGENTS.md`
+3. `docs/decision-records.md`
+4. `docs/project-log.md`
+5. `docs/todo-next.md`
+
+### 涉及哪些页面或组件
+
+1. 平台组件：`PlatformTable`
+2. 受影响页面：所有默认复用 `PlatformTable` 且未显式传入 `scroll.y` 的列表页
+
+### 验证结果
+
+1. 已执行 `git diff --check`，结果通过。
+2. 已执行 `curl -I http://127.0.0.1:5173/battery/construction`，返回 `200 OK`。
+3. 本轮未做隔离浏览器截图级验证，未操作用户系统 Chrome。
+
+### 遗留问题
+
+1. 仍需在隔离浏览器里确认：当页码器选择 `10条/页` 时，10 条数据完整展示，页面整体上下滚动，不再出现默认内部滚动。
+
+### 平台治理影响
+
+1. 本轮发现的 ant-design-vue 原生组件问题：无，问题在平台表格默认交互策略选择。
+2. 已通过平台层解决的问题：表格高度和滚动方式不再由业务页局部判断，统一改成平台默认“完整展示 + 页面整体滚动”。
+3. 仍是页面临时实现的问题：无，本轮未在施工管理页单独加高度补丁。
+4. 哪些页面子组件未来必须回收为平台组件：无新增页面子组件，本轮直接调整 `PlatformTable` 默认行为。
+5. 后续新页面禁止继续复制哪些实现：不要在业务页为了回到页面整体滚动而局部覆盖 `scroll.y` 或硬写容器高度。
+6. 哪些样式应进入主题变量或统一样式入口：本轮属于默认交互策略调整，无新增 token 诉求。
+7. 当前仍存在的页面级样式债务：无新增页面级样式债务。

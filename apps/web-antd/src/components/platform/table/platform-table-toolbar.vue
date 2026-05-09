@@ -64,6 +64,7 @@ const emit = defineEmits<{
 }>();
 
 const slots = useSlots();
+const toolbarRef = ref<HTMLElement>();
 const searchExpanded = ref(false);
 
 const toolMeta = {
@@ -159,6 +160,12 @@ function handleToolClick(tool: TableTool, event: MouseEvent) {
       break;
     }
     case 'refresh': {
+      const refreshHandled = dispatchRefreshRequest();
+
+      if (refreshHandled) {
+        break;
+      }
+
       emit('refresh');
       break;
     }
@@ -183,10 +190,32 @@ function normalizeWidth(width: number | string | undefined, fallback: string) {
   }
   return width || fallback;
 }
+
+function dispatchRefreshRequest() {
+  if (typeof window === 'undefined') {
+    return false;
+  }
+
+  const container = toolbarRef.value?.parentElement;
+
+  if (!container) {
+    return false;
+  }
+
+  const refreshEvent = new CustomEvent('platform-table:refresh-request', {
+    bubbles: false,
+    cancelable: true,
+  });
+
+  container.dispatchEvent(refreshEvent);
+
+  return refreshEvent.defaultPrevented;
+}
 </script>
 
 <template>
   <div
+    ref="toolbarRef"
     class="platform-table-toolbar"
     :class="{ 'platform-table-toolbar--bleed': bleed }"
     :style="toolbarStyle"

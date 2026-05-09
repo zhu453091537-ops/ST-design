@@ -93,10 +93,10 @@ const logoSrc = computed(() => {
             :key="logoSrc"
             :alt="appName"
             :src="logoSrc"
-            class="mr-2"
+            class="mr-4 size-14 object-contain"
             width="42"
           />
-          <p v-if="appName" class="m-0 text-xl font-medium">
+          <p v-if="appName" class="m-0 text-[28px] font-semibold tracking-tight">
             {{ appName }}
           </p>
         </div>
@@ -136,10 +136,10 @@ const logoSrc = computed(() => {
     </div>
 
     <!-- 中心认证面板 -->
-    <div v-if="authPanelCenter" class="relative flex-center w-full">
+    <div v-if="authPanelCenter" class="relative flex-center w-full px-6">
       <div class="login-background absolute top-0 left-0 size-full"></div>
       <AuthenticationFormView
-        class="w-full rounded-3xl pb-20 shadow-float shadow-primary/5 md:w-2/3 md:bg-background lg:w-1/2 xl:w-[36%]"
+        class="mx-auto w-full max-w-[480px] rounded-3xl pb-10 shadow-float shadow-primary/5 md:bg-background"
         data-side="bottom"
       >
         <template v-if="copyright" #copyright>
@@ -192,5 +192,11 @@ const logoSrc = computed(() => {
     );
     filter: blur(100px);
   }
+}
+
+:deep(.side-content) {
+  margin-top: 24px;
+  width: 100%;
+  max-width: 480px;
 }
 </style>
