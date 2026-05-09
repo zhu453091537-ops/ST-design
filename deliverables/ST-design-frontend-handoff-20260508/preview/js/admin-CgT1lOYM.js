@@ -1,1 +1,0 @@
-import{Fr as e,ur as t}from"./antdv-next-Bbl__uyc.js";import{t as n}from"./_plugin-vue_export-helper-DVsqMgR4.js";var r={},i={class:`size-full`,src:`http://localhost:9090/admin/applications`};function a(n,r){return e(),t(`iframe`,i)}var o=n(r,[[`render`,a]]);export{o as default};

@@ -111,7 +111,7 @@ const progressStyle = computed(() => ({
 .platform-task-card__meta,
 .platform-task-card__progress-row {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
 }
 
 .platform-task-card__hero,

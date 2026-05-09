@@ -4,6 +4,7 @@ import type {
   TablePaginationConfig,
   TableProps,
 } from 'antdv-next';
+
 import type { PlatformTableColumn, PlatformTableColumns } from './types';
 
 import {
@@ -19,8 +20,9 @@ import {
   watch,
 } from 'vue';
 
-import { Checkbox, CheckboxGroup, Table } from 'antdv-next';
 import { VbenIcon } from '@vben/icons';
+
+import { Checkbox, CheckboxGroup, Table } from 'antdv-next';
 
 import { PlatformRangePicker } from '../field';
 type PlatformTableIndexColumn = Partial<PlatformTableColumn>;
@@ -57,6 +59,9 @@ type PlatformColumnSettingItem = {
   label: string;
   required: boolean;
 };
+type PlatformColumnSettingRequestEvent = CustomEvent<{
+  anchor?: HTMLElement | MouseEvent;
+}>;
 
 defineOptions({
   inheritAttrs: false,
@@ -113,7 +118,7 @@ const columnSettingPosition = ref({
 const visibleColumnKeys = ref<string[]>([]);
 let resizeObserver: ResizeObserver | undefined;
 let updateFrame = 0;
-let refreshRequestContainer: HTMLElement | null = null;
+let platformRequestContainer: HTMLElement | null = null;
 let previousPaginationSnapshot = '';
 
 const passthroughSlotNames = computed(() =>
@@ -196,11 +201,11 @@ const mergedPagination = computed<TableProps['pagination']>(() => {
 });
 const tableWrapperStyle = computed(() => ({
   '--platform-table-body-min-height':
-    adaptiveScrollY.value !== undefined ? `${adaptiveScrollY.value}px` : undefined,
+    adaptiveScrollY.value === undefined ? undefined : `${adaptiveScrollY.value}px`,
   '--platform-table-wrapper-min-height':
-    adaptiveWrapperMinHeight.value !== undefined
-      ? `${adaptiveWrapperMinHeight.value}px`
-      : undefined,
+    adaptiveWrapperMinHeight.value === undefined
+      ? undefined
+      : `${adaptiveWrapperMinHeight.value}px`,
 }));
 const checkedColumnKeys = computed({
   get: () => visibleColumnKeys.value,
@@ -332,10 +337,14 @@ onMounted(() => {
   nextTick(scheduleAdaptiveHeightUpdate);
   window.addEventListener('resize', scheduleAdaptiveHeightUpdate);
 
-  refreshRequestContainer = tableWrapperRef.value?.parentElement ?? null;
-  refreshRequestContainer?.addEventListener(
+  platformRequestContainer = tableWrapperRef.value?.parentElement ?? null;
+  platformRequestContainer?.addEventListener(
     'platform-table:refresh-request',
     handleRefreshRequest as EventListener,
+  );
+  platformRequestContainer?.addEventListener(
+    'platform-table:column-setting-request',
+    handleColumnSettingRequest as EventListener,
   );
 
   if (tableWrapperRef.value && typeof ResizeObserver !== 'undefined') {
@@ -360,11 +369,15 @@ onBeforeUnmount(() => {
     cancelAnimationFrame(updateFrame);
   }
 
-  refreshRequestContainer?.removeEventListener(
+  platformRequestContainer?.removeEventListener(
     'platform-table:refresh-request',
     handleRefreshRequest as EventListener,
   );
-  refreshRequestContainer = null;
+  platformRequestContainer?.removeEventListener(
+    'platform-table:column-setting-request',
+    handleColumnSettingRequest as EventListener,
+  );
+  platformRequestContainer = null;
 });
 
 watch(
@@ -404,6 +417,17 @@ function handleRefreshRequest(event: Event) {
   resetColumnFilters();
 }
 
+function handleColumnSettingRequest(event: Event) {
+  if (!(event instanceof CustomEvent) || !props.columnSettingEnabled) {
+    return;
+  }
+
+  event.preventDefault();
+  openColumnSetting(
+    (event as PlatformColumnSettingRequestEvent).detail?.anchor,
+  );
+}
+
 function hasActiveColumnFilters() {
   return flattenColumns(baseColumns.value).some((column) => {
     if (!isFilterableColumn(column)) {
@@ -421,16 +445,15 @@ function isFilterableColumn(column: PlatformTableColumn) {
 }
 
 function resetColumnFilters() {
-  const clearedFilters = flattenColumns(baseColumns.value).reduce<
-    Record<string, PlatformFilterValue | null>
-  >((result, column, index) => {
+  const clearedFilters: Record<string, null | PlatformFilterValue> = {};
+
+  flattenColumns(baseColumns.value).forEach((column, index) => {
     if (!isFilterableColumn(column)) {
-      return result;
+      return;
     }
 
-    result[getColumnIdentity(column, index)] = null;
-    return result;
-  }, {});
+    clearedFilters[getColumnIdentity(column, index)] = null;
+  });
 
   const pagination = resolveRefreshPagination();
 

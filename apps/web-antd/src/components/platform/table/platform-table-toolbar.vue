@@ -178,6 +178,12 @@ function handleToolClick(tool: TableTool, event: MouseEvent) {
       break;
     }
     case 'setting': {
+      const settingHandled = dispatchColumnSettingRequest(event);
+
+      if (settingHandled) {
+        break;
+      }
+
       emit('setting', event);
       break;
     }
@@ -210,6 +216,30 @@ function dispatchRefreshRequest() {
   container.dispatchEvent(refreshEvent);
 
   return refreshEvent.defaultPrevented;
+}
+
+function dispatchColumnSettingRequest(anchor: MouseEvent) {
+  if (typeof window === 'undefined') {
+    return false;
+  }
+
+  const container = toolbarRef.value?.parentElement;
+
+  if (!container) {
+    return false;
+  }
+
+  const settingEvent = new CustomEvent('platform-table:column-setting-request', {
+    bubbles: false,
+    cancelable: true,
+    detail: {
+      anchor,
+    },
+  });
+
+  container.dispatchEvent(settingEvent);
+
+  return settingEvent.defaultPrevented;
 }
 </script>
 

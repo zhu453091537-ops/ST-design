@@ -258,7 +258,7 @@ function getProjectTags(project: EvaluationProject) {
           <PlatformTableToolbar
             v-model:search-value="projectQuery.keyword"
             search-placeholder="搜索项目 / 部门 / 负责人"
-            :tools="['search', 'refresh', 'setting', 'fullscreen']"
+            :tools="['search', 'refresh', 'fullscreen']"
             title="待评估项目"
             @refresh="loadEvaluationPage"
             @search="() => {}"
@@ -298,6 +298,7 @@ function getProjectTags(project: EvaluationProject) {
 
           <PlatformTable
             :adaptive-height-bottom-offset="48"
+            column-setting-key="project-evaluation-records"
             :columns="recordColumns"
             :data-source="filteredEvaluationRecords"
             :loading="loading"

@@ -1,1 +1,0 @@
-function e(e){let t={};return e.forEach(e=>{t[e.enumName]=e.value}),t}var t=[{label:`激活`,value:1,color:`success`,enumName:`Active`},{label:`挂起`,value:0,color:`error`,enumName:`Suspended`}];e(t);var n=[{label:`已发布`,value:1,color:`success`},{label:`未发布`,value:0,color:`warning`},{label:`失效`,value:9,color:`error`}];export{n,t};
