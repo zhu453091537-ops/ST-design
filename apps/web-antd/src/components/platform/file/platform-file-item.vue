@@ -27,7 +27,7 @@ const fileTypeMeta: Record<
 > = {
   doc: {
     className: 'platform-file-item__icon--doc',
-    icon: 'lucide:file-text',
+    icon: 'lucide:file-type-2',
     label: 'DOC',
   },
   other: {
@@ -37,12 +37,12 @@ const fileTypeMeta: Record<
   },
   pdf: {
     className: 'platform-file-item__icon--pdf',
-    icon: 'lucide:file-text',
+    icon: 'lucide:file-type',
     label: 'PDF',
   },
   report: {
     className: 'platform-file-item__icon--report',
-    icon: 'lucide:file-bar-chart',
+    icon: 'lucide:file-bar-chart-2',
     label: 'RPT',
   },
   xls: {
@@ -62,15 +62,20 @@ const secondaryText = computed(() =>
 
 <template>
   <li class="platform-file-item">
-    <span class="platform-file-item__icon" :class="meta.className">
-      <VbenIcon :icon="meta.icon" />
-      <span>{{ meta.label }}</span>
+    <span class="platform-file-item__icon-wrap">
+      <span class="platform-file-item__icon" :class="meta.className">
+        <VbenIcon :icon="meta.icon" />
+        <span>{{ meta.label }}</span>
+      </span>
     </span>
 
     <div class="platform-file-item__body">
       <strong>{{ item.name }}</strong>
-      <p v-if="secondaryText">{{ secondaryText }}</p>
-      <p v-else-if="item.description">{{ item.description }}</p>
+      <div class="platform-file-item__meta">
+        <p v-if="secondaryText">{{ secondaryText }}</p>
+        <p v-else-if="item.description">{{ item.description }}</p>
+        <span class="platform-file-item__date">{{ item.date }}</span>
+      </div>
     </div>
 
     <PlatformButton
@@ -89,82 +94,115 @@ const secondaryText = computed(() =>
 
 <style scoped>
 .platform-file-item {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
-  gap: 16px;
-  align-items: center;
-  min-height: 62px;
-  padding: 10px 12px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  min-height: 168px;
+  padding: 16px;
   background: hsl(var(--st-color-card-bg));
   border: 1px solid hsl(var(--st-color-table-outline));
   border-radius: var(--st-radius-control);
   transition:
-    background-color 0.18s ease,
-    border-color 0.18s ease,
-    box-shadow 0.18s ease;
+    transform 0.18s ease;
 }
 
 .platform-file-item:hover {
-  background: var(--st-color-table-row-hover-bg-solid);
-  border-color: hsl(var(--st-color-brand-outline));
-  box-shadow: var(--st-shadow-stat-card);
+  transform: translateY(-4px);
 }
 
 .platform-file-item__icon {
-  display: inline-flex;
+  position: relative;
+  display: flex;
   align-items: center;
   justify-content: center;
-  width: 42px;
-  height: 42px;
+  width: 72px;
+  height: 88px;
   flex-direction: column;
-  gap: 2px;
-  flex: 0 0 42px;
-  border-radius: var(--st-radius-control);
+  gap: 4px;
+  flex: 0 0 72px;
+  padding: 18px 10px 14px;
+  overflow: hidden;
+  border-radius: 8px;
+  clip-path: polygon(0 0, 76% 0, 100% 22%, 100% 100%, 0 100%);
+  box-shadow: 0 10px 24px rgb(15 23 42 / 12%);
+}
+
+.platform-file-item__icon-wrap {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin-top: 18px;
 }
 
 .platform-file-item__icon :deep(svg) {
-  width: 18px;
-  height: 18px;
+  width: 26px;
+  height: 26px;
 }
 
 .platform-file-item__icon span {
-  font-size: 9px;
+  font-size: 15px;
   font-weight: 800;
-  line-height: 10px;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  text-align: center;
+}
+
+.platform-file-item__icon::after {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  width: 24px;
+  height: 24px;
+  content: '';
+  background: linear-gradient(
+    135deg,
+    rgb(255 255 255 / 68%) 0%,
+    rgb(255 255 255 / 44%) 56%,
+    rgb(255 255 255 / 20%) 100%
+  );
+  border-radius: 4px;
+  filter: brightness(1.04);
+  transform: translateZ(0);
 }
 
 .platform-file-item__icon--pdf {
-  color: hsl(var(--st-color-danger));
-  background: hsl(var(--st-color-danger) / 10%);
+  color: #fff;
+  background: linear-gradient(180deg, #ff6b75 0%, #ea4453 100%);
 }
 
 .platform-file-item__icon--doc {
-  color: hsl(var(--st-color-stat-card-info));
-  background: hsl(var(--st-color-stat-card-info) / 10%);
+  color: #fff;
+  background: linear-gradient(180deg, #42b6f5 0%, #2798e6 100%);
 }
 
 .platform-file-item__icon--xls {
-  color: hsl(var(--success));
-  background: hsl(var(--success) / 10%);
+  color: #fff;
+  background: linear-gradient(180deg, #28d878 0%, #12bc61 100%);
 }
 
 .platform-file-item__icon--report {
-  color: hsl(var(--warning));
-  background: hsl(var(--warning) / 12%);
+  color: #fff;
+  background: linear-gradient(180deg, #8a7dff 0%, #6a58ef 100%);
 }
 
 .platform-file-item__icon--other {
-  color: hsl(var(--muted-foreground));
-  background: hsl(var(--muted));
+  color: #fff;
+  background: linear-gradient(
+    180deg,
+    hsl(var(--st-color-stat-card-info)) 0%,
+    hsl(var(--st-color-brand)) 100%
+  );
 }
 
 .platform-file-item__body {
   min-width: 0;
+  margin-top: 16px;
+  text-align: center;
 }
 
 .platform-file-item__body strong {
   display: block;
-  min-width: 0;
   overflow: hidden;
   color: hsl(var(--foreground));
   font-size: var(--st-font-size-base);
@@ -174,8 +212,17 @@ const secondaryText = computed(() =>
   white-space: nowrap;
 }
 
-.platform-file-item__body p {
-  margin: 2px 0 0;
+.platform-file-item__meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.platform-file-item__meta p {
+  flex: 1;
+  min-width: 0;
   overflow: hidden;
   color: hsl(var(--muted-foreground));
   font-size: var(--st-font-size-sm);
@@ -184,11 +231,33 @@ const secondaryText = computed(() =>
   white-space: nowrap;
 }
 
+.platform-file-item__date {
+  flex: 0 0 auto;
+  color: hsl(var(--muted-foreground));
+  font-size: var(--st-font-size-sm);
+  line-height: 20px;
+  white-space: nowrap;
+}
+
 .platform-file-item__download {
-  width: 36px;
-  min-width: 36px;
-  height: 36px;
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  width: 32px;
+  min-width: 32px;
+  height: 32px;
+  padding: 0;
   padding-inline: 0;
+  border: none;
+  border-radius: 999px;
+  background: transparent;
+  box-shadow: none;
+}
+
+.platform-file-item__download:hover {
+  background: hsl(var(--st-color-fill-selected));
+  border-color: transparent;
+  box-shadow: none;
 }
 
 .platform-file-item__download :deep(svg) {
@@ -198,12 +267,12 @@ const secondaryText = computed(() =>
 
 @media (max-width: 640px) {
   .platform-file-item {
-    grid-template-columns: auto minmax(0, 1fr);
+    min-height: 156px;
   }
 
   .platform-file-item__download {
-    grid-column: 2;
-    justify-self: start;
+    top: 14px;
+    right: 14px;
   }
 }
 </style>

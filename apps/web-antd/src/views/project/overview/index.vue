@@ -450,40 +450,69 @@ onMounted(loadOverview);
         layout="vertical"
       >
         <PlatformFormItem label="项目名称">
-          <PlatformInput v-model:value="formModel.name" />
+          <PlatformInput
+            v-model:value="formModel.name"
+            placeholder="请输入项目名称"
+          />
         </PlatformFormItem>
         <PlatformFormItem label="项目编号">
-          <PlatformInput v-model:value="formModel.code" />
+          <PlatformInput
+            v-model:value="formModel.code"
+            placeholder="请输入项目编号"
+          />
         </PlatformFormItem>
         <PlatformFormItem label="项目类型">
           <PlatformSelect
             v-model:value="formModel.type"
             :options="projectTypeOptions.filter((item) => item.value)"
+            placeholder="请选择项目类型"
           />
         </PlatformFormItem>
         <PlatformFormItem label="所属部门">
-          <PlatformInput v-model:value="formModel.department" />
+          <PlatformInput
+            v-model:value="formModel.department"
+            placeholder="请输入所属部门"
+          />
         </PlatformFormItem>
         <PlatformFormItem label="合同金额（万）">
-          <PlatformInput v-model:value="formModel.amount" type="number" />
+          <PlatformInput
+            v-model:value="formModel.amount"
+            placeholder="请输入合同金额"
+            type="number"
+          />
         </PlatformFormItem>
         <PlatformFormItem label="工期（天）">
-          <PlatformInput v-model:value="formModel.durationDays" type="number" />
+          <PlatformInput
+            v-model:value="formModel.durationDays"
+            placeholder="请输入工期"
+            type="number"
+          />
         </PlatformFormItem>
         <PlatformFormItem label="负责人">
-          <PlatformInput v-model:value="formModel.manager" />
+          <PlatformInput
+            v-model:value="formModel.manager"
+            placeholder="请输入负责人"
+          />
         </PlatformFormItem>
         <PlatformFormItem label="进度（%）">
-          <PlatformInput v-model:value="formModel.progress" type="number" />
+          <PlatformInput
+            v-model:value="formModel.progress"
+            placeholder="请输入进度"
+            type="number"
+          />
         </PlatformFormItem>
         <PlatformFormItem label="状态">
           <PlatformSelect
             v-model:value="formModel.status"
             :options="projectStatusOptions.filter((item) => item.value)"
+            placeholder="请选择状态"
           />
         </PlatformFormItem>
         <PlatformFormItem label="图标颜色">
-          <PlatformInput v-model:value="formModel.color" />
+          <PlatformInput
+            v-model:value="formModel.color"
+            placeholder="请输入图标颜色"
+          />
         </PlatformFormItem>
       </PlatformEditForm>
     </PlatformModal>

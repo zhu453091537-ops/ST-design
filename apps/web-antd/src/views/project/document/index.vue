@@ -153,7 +153,7 @@ async function handleUploadChange(event: Event) {
         />
 
         <PlatformFileList
-          :columns="2"
+          :columns="4"
           :downloading-id="downloadingId"
           empty-text="暂无文档"
           :items="documents"
@@ -188,7 +188,6 @@ async function handleUploadChange(event: Event) {
   min-height: 0;
   flex: 1;
   flex-direction: column;
-  gap: 16px;
 }
 
 .project-document-panel__header {

@@ -1,63 +1,67 @@
 # 页面组件映射
 
-本文件记录典型页面到平台组件的映射关系和 CSS 边界。长期决策写入 `docs/decision-records.md`，阶段完成记录写入 `docs/project-log.md`，后续待办写入 `docs/todo-next.md`。
+本文件记录已开发页面到平台组件的映射关系、CSS 边界和后续回收方向。长期决策写入 `docs/decision-records.md`，阶段完成记录写入 `docs/project-log.md`，待办写入 `docs/todo-next.md`。
 
-## 项目总览页 `/workbench/index`
+## 总体边界
 
-项目总览页作为“查询列表页 / 总览列表页”的典型页面，用来驱动平台组件能力收敛。当前原则是：页面负责业务结构和业务单元格，平台组件负责高频通用交互与视觉样式。
-
-### 组件映射表
-
-| 页面区域 | 当前实现 | 平台组件 / 原生组件 | 边界结论 | 样式落点 |
-| --- | --- | --- | --- | --- |
-| 顶部标题 / 操作区 | 页面内标题、说明、业务操作入口 | Vben `Page`、`PlatformButton` | 页面布局，暂不抽标题组件 | 页面 scoped CSS 只保留布局间距 |
-| 统计卡区域 | 页面 grid + 统计卡数据 | `PlatformStatCard` | 平台组件能力 | `components/platform/stat`、设计 token |
-| 查询筛选区 | 页面业务筛选状态 + 工具栏搜索入口 | `PlatformTableToolbar`、`PlatformInput` | 搜索入口与工具栏归平台，业务筛选状态归页面 | 工具栏样式在 `PlatformTableToolbar` |
-| 表格工具栏 | 新建、导出、搜索、刷新、设置、全屏 | `PlatformTableToolbar`、`PlatformButton` | 平台组件能力；主按钮最左、次按钮随后、常规工具在右侧 | `components/platform/table/platform-table-toolbar.vue` |
-| 表格 | 项目列表数据、分页、表头筛选、自适应高度 | `PlatformTable` + Ant Design Vue `Table` | 平台组件能力；分页与筛选状态由页面传入 | `components/platform/table/platform-table.vue` |
-| 类型 / 状态表头筛选 | `column.filters`、`filteredValue`、`change` | `PlatformTable` | 平台组件能力；“全部”、hover、选中态、无确认按钮由平台统一 | `PlatformTable` |
-| 项目信息单元格 | 项目头像、名称、编号 | 页面业务单元格 | 暂不新增 `PlatformEntityCell` | 页面 scoped CSS |
-| 进度列 | 项目进度和数值展示 | Ant Design Vue `Progress` | 暂不新增 `PlatformProgress` | 页面业务列样式 |
-| 状态列 | 项目状态标签 | `PlatformStatusTag` | 已有平台组件 | `components/platform/status` |
-| 操作列 | 查看、编辑、归档、删除 | `PlatformButton`、Ant Design Vue `Popconfirm` | 操作组合暂留页面，不新增 `PlatformActionGroup` | 页面业务操作布局 |
-| 新建 / 编辑弹窗 | 表单弹窗 | `PlatformModal`、`PlatformEditForm`、`PlatformFormItem` | 已复用平台组件 | `components/platform/modal`、`components/platform/form` |
-| 详情抽屉 | 详情信息 grid | `PlatformDrawer` + 页面详情布局 | 暂不新增 `PlatformDescriptions` | 页面业务详情布局 |
-
-### CSS 边界
-
-| 类型 | 可以留在页面 | 应沉淀到平台组件 |
+| 类型 | 当前原则 | 样式落点 |
 | --- | --- | --- |
-| 页面布局 | 页面整体间距、统计卡 grid、列表区域上下结构、业务详情 grid | 无 |
-| 业务单元格 | 项目头像、项目名称编号组合、进度列宽度、操作列排列 | 多页面复用后再评估抽象 |
-| 统计卡视觉 | 不在页面写图标尺寸、背景、边框、阴影 | `PlatformStatCard` 与 token |
-| 工具栏视觉 | 不在页面手写工具栏背景、按钮 hover、搜索展开高度 | `PlatformTableToolbar`、`PlatformButton` |
-| 表头筛选 | 不在页面覆盖筛选下拉 hover / selected / 全部项 | `PlatformTable` |
-| 表格高度 | 不在页面硬编码表格 body 高度 | `PlatformTable` 默认自适应高度 |
+| 页面标题区 | 二级页面默认使用 `PlatformViewToolbar` | `components/platform/view` |
+| 标准查询区 | 查询列表页优先使用 `PlatformQueryPanel`，表格工具栏不再混写筛选动作 | `components/platform/form` |
+| 表格工具栏 | 业务主按钮最左、次要按钮随后；搜索、刷新、设置、全屏在右侧 | `components/platform/table` |
+| 表格 | `PlatformTable` 默认提供序号列、表头筛选、列设置、分页与横向滚动能力 | `components/platform/table` |
+| 统计卡 | 业务页只传标题、数值、趋势、图标和类型 | `components/platform/stat`、设计 token |
+| 模块标题 | 优先使用 `PlatformSectionTitle` / `PlatformSection` / `PlatformEchartsPanel` | `components/platform/view`、`components/platform/chart` |
+| 页面 scoped CSS | 只保留页面布局、业务单元格和暂未平台化的业务结构 | 页面文件 |
 
-### 已沉淀的平台能力
+## 已开发页面映射
 
-| 能力 | 当前落点 | 说明 |
+| 页面 / 模块 | 页面类型 | 当前使用组件 | 是否复用现有组件 | 暂留页面私有结构 | 建议处理方式 |
+| --- | --- | --- | --- | --- | --- |
+| `/workbench/index` 项目总览 | 总览列表页 | `Page`、`PlatformViewToolbar`、`PlatformStatCard`、`PlatformTableToolbar`、`PlatformTable`、`PlatformModal`、`PlatformDrawer` | 是 | 项目头像单元格、进度列、详情抽屉字段 grid | 保留为列表页样板；后续评估 `PlatformEntityCell`、`PlatformDescriptions` |
+| `/project/information` 项目信息管理 | 查询列表页 + 分段表单弹窗 | `PlatformViewToolbar`、`PlatformQueryPanel`、`PlatformTableToolbar`、`PlatformTable`、`PlatformModal`、`PlatformSegmented`、平台表单控件 | 是 | 动态人员配置 / 设备清单行、弹窗表单分区稳高 | 查询区已接入 `PlatformQueryPanel`；后续评估 `PlatformDynamicRows` |
+| `/project/progress` 进度可视化跟踪 | 看板 / 甘特图页 | `PlatformViewToolbar`、`PlatformSectionTitle`、ECharts 插件 | 部分 | `ProjectProgressBoard`、`ProjectProgressGanttChart`、预警列表 | 先核对现有 `PlatformStatusBoard` 是否可承接看板，不要继续复制私有看板 |
+| `/project/contract` 合同与付款管理 | 多区块业务卡片页 | `PlatformViewToolbar`、`PlatformStatCard`、`PlatformStatusTag`、ECharts 插件 | 部分 | 合同卡片、`ContractPaymentMiniBar` | 付款节点暂留业务组件；出现第二个场景后再抽平台付款节点 / 步骤进度 |
+| `/project/document` 文档与台账管理 | 文档台账页 | `PlatformViewToolbar`、`PlatformStatCard`、`PlatformSectionTitle`、`PlatformFileList` | 是 | 隐藏上传 input 与上传触发逻辑 | 保留；后续如多页上传，抽统一上传入口 |
+| `/project/evaluation` 中期评估与验收 | 双区块业务页 + 表格 | `PlatformViewToolbar`、`PlatformStatCard`、`PlatformTableToolbar`、`PlatformTaskCard`、`PlatformTable`、`PlatformModal` | 是 | 评分样式、左右区块业务布局 | 待评估项目卡已接入 `PlatformTaskCard`；后续如更多任务卡复用，再扩展配置能力 |
+| `/personnel/overview` 人员总览 | 查询列表页 | `PlatformViewToolbar`、`PlatformQueryPanel`、`PlatformStatCard`、`PlatformTableToolbar`、`PlatformTable`、`PlatformModal` | 是 | 人员姓名编号单元格、新增保存 Mock | 查询区已接入 `PlatformQueryPanel`；人员单元格后续并入 `PlatformEntityCell` |
+| `/platform/typical-page` 人员档案管理 | 卡片档案页 + 详情抽屉 | `PlatformViewToolbar`、`PlatformButton`、`PlatformInput`、`PlatformModal`、`PlatformDrawer`、`PlatformStatusTag` | 部分 | 人员档案卡、卡片骨架屏、详情抽屉字段块 | 保留业务卡片；若与工时/评估卡共性增强，再抽实体卡平台能力 |
+| `/personnel/qualification` 资质与准入管控 | 预警列表 + 规则配置页 | `PlatformViewToolbar`、`PlatformStatCard`、`PlatformSection`、`PlatformNoticeList` | 部分 | 准入规则卡片 | `PlatformNoticeList` 可保留；规则卡多页复用后抽配置卡 |
+| `/personnel/turnover` 变动与流失率统计 | 统计图表页 | `PlatformViewToolbar`、`PlatformStatCard`、`PlatformEchartsPanel` | 是 | 流失率排行图 option、tooltip 避让、双侧标签 | 后续沉淀排行条形图 option 工厂 |
+| `/personnel/worktime` 工时与兼职管控 | 预警卡片页 | `PlatformViewToolbar`、`PlatformStatCard`、`PlatformSectionTitle`、`PlatformStatusTag`、`PlatformButton` | 部分 | 超工时预警卡、指标块、通知状态 | 优先评估 `PlatformAlertCard` 与 `PlatformMetricGrid` |
+| `/battery/construction` 施工管理 | 标准查询列表页 | `PlatformViewToolbar`、`PlatformQueryPanel`、`PlatformTableToolbar`、`PlatformTable` | 是 | 项目名称单元格、业务按钮提示文案 | 作为 `PlatformQueryPanel` 首个真实样板继续视觉复核 |
+
+## 当前已沉淀的平台能力
+
+| 能力 | 当前落点 | 已接入页面 |
 | --- | --- | --- |
-| 统计卡图标尺寸、背景、边框、文本色、阴影 | `PlatformStatCard`、设计 token | 业务页面只传标题、数值、趋势、图标和类型 |
-| 表格工具栏业务按钮与工具按钮排序 | `PlatformTableToolbar` | 主按钮在最左，次要按钮随后；搜索、刷新、设置、全屏在右侧 |
-| 搜索图标展开输入框 | `PlatformTableToolbar` | 默认图标入口，点击展开，再次点击收起 |
-| 工具按钮默认态与 hover 态 | `PlatformButton` | 默认无描边，hover 使用品牌绿描边、图标和 10% 背景 |
-| 表头筛选“全部”和即时生效 | `PlatformTable` | 不显示 Antdv 默认重置和确认按钮 |
-| 表格 body 自适应高度 | `PlatformTable` | 默认按浏览器高度计算，调用方显式 `scroll.y` 时尊重调用方 |
+| 页面标题 + 描述 + 动作区 | `PlatformViewToolbar` | 项目、人员、施工等已开发页面 |
+| 表格工具栏排序、搜索展开、刷新、设置、全屏 | `PlatformTableToolbar` | 项目总览、项目信息、人员总览、评估页、施工管理 |
+| 表格序号列、表头筛选、列设置、分页 | `PlatformTable` | 项目总览、项目信息、人员总览、评估记录、施工管理 |
+| 查询面板折叠、查询、重置 | `PlatformQueryPanel` | 施工管理、项目信息管理、人员总览 |
+| 任务卡片标题、标签、元信息、进度和操作 | `PlatformTaskCard` | 中期评估与验收 |
+| 统计卡视觉与图标尺寸 | `PlatformStatCard` | 项目、人员、合同、文档、评估、工时等页面 |
+| 状态标签 | `PlatformStatusTag` | 表格状态列、卡片状态、详情抽屉 |
+| 文件列表 | `PlatformFileList` / `PlatformFileItem` | 文档与台账管理 |
+| 预警列表 | `PlatformNoticeList` / `PlatformNoticeItem` | 资质与准入管控 |
+| 分段控件 | `PlatformSegmented` | 项目信息弹窗 |
 
-### 暂时留在页面的内容
+## 暂留页面层的内容
 
-| 内容 | 暂不抽象原因 |
-| --- | --- |
-| `PlatformEntityCell` | 目前只有项目总览页出现项目信息组合，复用不足 |
-| `PlatformProgress` | 当前只是项目进度列场景，复用不足 |
-| `PlatformDescriptions` | 当前详情抽屉字段和布局偏业务，复用不足 |
-| `PlatformActionGroup` | 操作列权限、确认文案、业务动作差异较大，本轮不抽 |
+| 内容 | 暂留原因 | 后续触发条件 |
+| --- | --- | --- |
+| 实体单元格 / 姓名编号 / 项目编号组合 | 当前字段与点击入口仍有业务差异 | 两个以上页面继续出现同类结构时抽 `PlatformEntityCell` |
+| 超工时预警卡、人员档案卡 | 信息层级和操作按钮差异仍较大 | 卡片壳、头像、指标块、footer 操作出现稳定共性时抽平台卡片 |
+| 动态明细行 | 目前只在项目信息进场信息中出现 | 后续弹窗继续出现“多行输入 + 增删”时抽 `PlatformDynamicRows` |
+| 付款节点 mini bar | 当前属于合同付款业务语义 | 第二个付款 / 节点进度场景出现后再抽 |
+| 甘特图 option 和排行图 option | 与具体业务数据强相关 | 同类图表出现第二个页面后沉淀 option 工厂 |
 
-### 后续可整理但本轮不做
+## 后续优先整理项
 
-| 事项 | 记录 |
-| --- | --- |
-| `PlatformTable` 筛选下拉逻辑 | 当前能力偏多，后续可拆 helper 整理，但本轮不拆组件 |
-| 全屏能力 | 当前页面已接入；后续评估下沉到 `PlatformTableToolbar` 或 `PlatformTable` |
-| 业务单元格抽象 | 等多个查询列表页出现相同实体信息、进度、详情结构后再抽 |
+| 优先级 | 事项 | 建议 |
+| --- | --- | --- |
+| 高 | `PlatformQueryPanel` 存量接入复核 | `/project/information` 和 `/personnel/overview` 已迁移；下一步复核更多查询列表页是否符合迁移条件 |
+| 高 | 卡片壳与指标块样式治理 | `/project/evaluation` 已沉淀 `PlatformTaskCard`；下一步从 `/personnel/worktime`、`/platform/typical-page` 继续观察共性 |
+| 中 | `PlatformStatusBoard` 与 `ProjectProgressBoard` 边界 | 决定复用、升级或删除未成熟平台组件 |
+| 中 | 演示目录清理 | `apps/web-antd/src/views/演示使用自行删除/` 已删除；后续仅保留对仍被路由引用的 `/views/demo` 做单独评估 |
+| 中 | 文档持续更新 | 新增页面或平台组件后同步维护本映射表 |

@@ -11,5 +11,6 @@ export * from './segmented';
 export * from './stat';
 export * from './status';
 export * from './table';
+export * from './task-card';
 export * from './tree';
 export * from './view';

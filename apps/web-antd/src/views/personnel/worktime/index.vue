@@ -11,6 +11,7 @@ import {
   PlatformSectionTitle,
   PlatformStatCard,
   PlatformStatusTag,
+  PlatformViewToolbar,
 } from '#/components/platform';
 
 import {
@@ -59,12 +60,10 @@ function getNameInitial(name: string) {
 <template>
   <Page :auto-content-height="true">
     <div class="personnel-worktime-page">
-      <header class="personnel-worktime-header">
-        <div>
-          <h1>工时与兼职管控</h1>
-          <p>工时预警、整改通知与兼职风险闭环管理</p>
-        </div>
-      </header>
+      <PlatformViewToolbar
+        description="工时预警、整改通知与兼职风险闭环管理"
+        title="工时与兼职管控"
+      />
 
       <section class="personnel-worktime-stat-grid">
         <PlatformStatCard
@@ -161,26 +160,12 @@ function getNameInitial(name: string) {
   min-height: 100%;
 }
 
-.personnel-worktime-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-}
-
-.personnel-worktime-header h1,
 .worktime-alert-card h3 {
   margin: 0;
   color: hsl(var(--foreground));
   font-weight: 700;
 }
 
-.personnel-worktime-header h1 {
-  font-size: 22px;
-  line-height: 32px;
-}
-
-.personnel-worktime-header p,
 .worktime-alert-card p,
 .worktime-alert-card__footer {
   margin: 0;
@@ -354,7 +339,6 @@ function getNameInitial(name: string) {
 }
 
 @media (max-width: 960px) {
-  .personnel-worktime-header,
   .worktime-alert-panel__header {
     align-items: stretch;
     flex-direction: column;

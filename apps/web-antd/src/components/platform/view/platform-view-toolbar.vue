@@ -68,6 +68,27 @@ const toolbarTools = computed(() =>
 const toolbarActions = computed(() =>
   props.actions.filter((action) => !action.hidden),
 );
+
+function handleToolClick(tool: PlatformViewTool) {
+  switch (tool) {
+    case 'export': {
+      emit('export');
+      break;
+    }
+    case 'fullscreen': {
+      emit('fullscreen');
+      break;
+    }
+    case 'refresh': {
+      emit('refresh');
+      break;
+    }
+    case 'setting': {
+      emit('setting');
+      break;
+    }
+  }
+}
 </script>
 
 <template>
@@ -95,7 +116,7 @@ const toolbarActions = computed(() =>
         :aria-label="tool.label"
         scene="toolbar"
         shape="circle"
-        @click="emit(tool.key)"
+        @click="handleToolClick(tool.key)"
         >
           <template #icon>
             <VbenIcon :icon="tool.icon" />

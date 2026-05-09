@@ -12,6 +12,7 @@ import {
   PlatformInput,
   PlatformModal,
   PlatformSelect,
+  PlatformViewToolbar,
 } from '#/components/platform';
 
 import PersonnelArchiveCard from './components/personnel-archive-card.vue';
@@ -131,12 +132,11 @@ onMounted(loadPersonnelArchive);
 <template>
   <Page :auto-content-height="true">
     <div class="personnel-archive-page">
-      <header class="personnel-archive-header">
-        <div>
-          <h1>人员档案管理</h1>
-          <p>人员全生命周期档案与详情抽屉管理</p>
-        </div>
-
+      <PlatformViewToolbar
+        description="人员全生命周期档案与详情抽屉管理"
+        title="人员档案管理"
+      >
+        <template #actions>
         <div class="personnel-archive-header__tools">
           <div class="personnel-archive-search">
             <PlatformInput
@@ -157,7 +157,8 @@ onMounted(loadPersonnelArchive);
             新增人员
           </PlatformButton>
         </div>
-      </header>
+        </template>
+      </PlatformViewToolbar>
 
       <section class="personnel-archive-grid">
         <template v-if="loading">
@@ -296,27 +297,6 @@ onMounted(loadPersonnelArchive);
   min-height: 100%;
   flex-direction: column;
   gap: var(--st-layout-section-gap);
-}
-
-.personnel-archive-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-}
-
-.personnel-archive-header h1 {
-  margin: 0;
-  color: hsl(var(--foreground));
-  font-size: 24px;
-  font-weight: 700;
-  line-height: 32px;
-}
-
-.personnel-archive-header p {
-  margin: 4px 0 0;
-  color: hsl(var(--muted-foreground));
-  font-size: var(--st-font-size-base);
 }
 
 .personnel-archive-header__tools {

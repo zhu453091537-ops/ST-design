@@ -22,6 +22,7 @@ import {
   PlatformFormItem,
   PlatformInput,
   PlatformModal,
+  PlatformQueryPanel,
   PlatformSelect,
   PlatformStatCard,
   PlatformStatusTag,
@@ -46,17 +47,20 @@ import {
   savePersonnelOverviewRecord,
 } from './personnel-overview-source';
 
-const query = reactive<PersonnelOverviewQuery>({
+const createDefaultQuery = (): PersonnelOverviewQuery => ({
   keyword: '',
   qualificationStatus: '',
   status: '',
 });
+
+const query = reactive<PersonnelOverviewQuery>(createDefaultQuery());
 const formModel = reactive<PersonnelOverviewFormModel>({});
 const tableRows = ref<PersonnelOverviewRecord[]>([]);
 const statCards = ref<PersonnelOverviewStatCard[]>([]);
 const loading = ref(false);
 const saving = ref(false);
 const formOpen = ref(false);
+const queryCollapsed = ref(true);
 const currentRecord = ref<null | PersonnelOverviewRecord>(null);
 const tablePanelRef = ref<HTMLElement>();
 const personnelTableRef = ref<InstanceType<typeof PlatformTable>>();
@@ -157,6 +161,11 @@ async function loadPersonnelOverview() {
 }
 
 async function handleSearch() {
+  await loadPersonnelOverview();
+}
+
+async function handleReset() {
+  Object.assign(query, createDefaultQuery());
   await loadPersonnelOverview();
 }
 
@@ -300,6 +309,28 @@ onMounted(loadPersonnelOverview);
         />
       </section>
 
+      <PlatformQueryPanel
+        v-model:collapsed="queryCollapsed"
+        :columns="3"
+        @query="handleSearch"
+        @reset="handleReset"
+      >
+        <PlatformFormItem label="人员状态">
+          <PlatformSelect
+            v-model:value="query.status"
+            :options="personnelStatusOptions"
+            placeholder="请选择人员状态"
+          />
+        </PlatformFormItem>
+        <PlatformFormItem label="资质状态">
+          <PlatformSelect
+            v-model:value="query.qualificationStatus"
+            :options="qualificationStatusOptions"
+            placeholder="请选择资质状态"
+          />
+        </PlatformFormItem>
+      </PlatformQueryPanel>
+
       <section
         ref="tablePanelRef"
         class="platform-surface personnel-overview-panel"
@@ -307,6 +338,7 @@ onMounted(loadPersonnelOverview);
         <PlatformTableToolbar
           v-model:search-value="query.keyword"
           search-placeholder="搜索姓名 / 编号 / 承包商 / 项目"
+          :tools="['search', 'refresh', 'setting', 'fullscreen']"
           @fullscreen="handleTableFullscreen"
           @refresh="handleSearch"
           @search="handleSearch"

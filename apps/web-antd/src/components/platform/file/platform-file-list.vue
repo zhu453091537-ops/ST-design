@@ -70,7 +70,7 @@ const listStyle = computed(() => ({
 .platform-file-list__items {
   display: grid;
   grid-template-columns: repeat(var(--platform-file-list-columns), minmax(0, 1fr));
-  gap: 10px;
+  gap: 20px;
   padding: 0;
   margin: 0;
   list-style: none;
@@ -79,7 +79,7 @@ const listStyle = computed(() => ({
 .platform-file-list__loading {
   display: grid;
   grid-template-columns: repeat(var(--platform-file-list-columns), minmax(0, 1fr));
-  gap: 10px;
+  gap: 20px;
 }
 
 .platform-file-list__skeleton {

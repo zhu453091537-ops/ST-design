@@ -2,6 +2,190 @@
 
 本文件记录项目阶段性工作日志，用于跨设备、跨聊天上下文恢复。只记录已经发生并完成的事项，不混入长期规则或下一步待办。
 
+## 2026-05-09
+
+### 任务名称
+
+平台治理收尾：查询面板迁移、任务卡沉淀与演示目录清理
+
+### 本次目标
+
+1. 完成系统复查后剩余的 `PlatformQueryPanel` 存量迁移、卡片能力沉淀和废弃演示目录清理。
+2. 明确表格工具栏职责：业务按钮放左侧，搜索、刷新、设置、全屏作为右侧标准工具保留。
+3. 同步项目日志、待办、页面组件映射和长期决策，避免下轮接续时继续按旧状态判断。
+
+### 完成内容
+
+1. 将 `/project/information`、`/personnel/overview` 的结构化筛选区迁移到 `PlatformQueryPanel`，保留关键词搜索在 `PlatformTableToolbar`。
+2. 新增 `PlatformTaskCard` 平台任务卡能力，并在 `/project/evaluation` 待评估项目卡片中接入，统一标题、描述、标签、截止信息、进度条和操作按钮。
+3. 修正 `/project/evaluation` 两个表格工具栏的工具配置，恢复 `search / refresh / setting / fullscreen` 四个右侧标准工具。
+4. 删除废弃目录 `apps/web-antd/src/views/演示使用自行删除/`，不处理仍可能被路由使用的 `/views/demo`。
+5. 更新 `docs/page-component-mapping.md`，把 `PlatformQueryPanel`、`PlatformTaskCard` 和演示目录清理状态同步为当前事实。
+
+### 修改了哪些文件
+
+1. `apps/web-antd/src/components/platform/index.ts`
+2. `apps/web-antd/src/components/platform/task-card/index.ts`
+3. `apps/web-antd/src/components/platform/task-card/platform-task-card.vue`
+4. `apps/web-antd/src/components/platform/task-card/types.ts`
+5. `apps/web-antd/src/views/project/evaluation/index.vue`
+6. `apps/web-antd/src/views/project/information/index.vue`
+7. `apps/web-antd/src/views/personnel/overview/index.vue`
+8. `apps/web-antd/src/views/演示使用自行删除/`
+9. `docs/page-component-mapping.md`
+10. `docs/project-log.md`
+11. `docs/todo-next.md`
+12. `docs/decision-records.md`
+
+### 新增组件
+
+1. `PlatformTaskCard`：平台任务卡，适用于“标题 + 描述 + 状态标签 + 元信息 + 进度 + 主操作”的任务 / 待办卡片场景。
+
+### 关键决策
+
+1. `PlatformQueryPanel` 只承载结构化筛选字段、查询、重置和折叠能力；关键词搜索继续放在 `PlatformTableToolbar`。
+2. `PlatformTableToolbar` 的右侧标准工具应包含 `search / refresh / setting / fullscreen`，不能把搜索误删为筛选区能力。
+3. `PlatformTaskCard` 只沉淀任务卡公共壳和节奏，不承接所有业务卡片；页面仍负责左右分栏、固定宽度等布局。
+4. 废弃中文演示目录已删除；仍可能被路由引用的 `/views/demo` 不在本轮清理范围内。
+
+### 验证结果
+
+1. 已执行目标文件 ESLint：通过。
+2. 已执行 `git diff --check`：通过。
+3. 已执行 `curl -I` 路由检查：`/project/evaluation`、`/project/information`、`/personnel/overview` 均返回 `200 OK`。
+4. 未执行全量 `vue-tsc`：项目仍有既有存量类型错误，本轮以目标文件 ESLint 和路由检查作为收尾验收。
+
+### 遗留问题
+
+1. `/personnel/worktime` 超工时预警卡、`/platform/typical-page` 人员档案卡仍为页面私有结构，后续继续观察是否需要沉淀为平台卡片能力。
+2. 更多查询列表页是否适合迁移到 `PlatformQueryPanel` 仍需逐页判断，不能批量替换。
+3. 当前工作区仍存在与本轮无关的既有修改和未跟踪资源文件，收尾时不得混入无关回滚或提交。
+
+### 下一步建议
+
+1. 本轮目标文件 ESLint、`git diff --check` 和三条关键路由检查已完成；后续按用户下一条视觉反馈继续处理。
+2. 后续继续治理卡片能力时，从 `/personnel/worktime` 与 `/platform/typical-page` 观察稳定共性，不要为了单页视觉继续新增平台组件。
+3. 后续清理无效内容时，先查路由引用，再决定是否处理 `/views/demo` 或其他示例资源。
+
+### 阶段验收结论
+
+本阶段代码侧剩余任务已基本收口：`PlatformQueryPanel` 存量迁移、任务卡平台能力沉淀、废弃演示目录清理均已完成；当前只剩验证与文档同步闭环，不建议继续追加新开发范围。
+
+### 平台治理影响
+
+1. 本轮发现的 ant-design-vue 原生组件问题：无新增原生组件缺陷，主要是平台组件职责边界需要收紧。
+2. 已通过平台层解决的问题：查询面板结构、任务卡公共壳、表格工具栏标准工具配置已回到平台组件体系。
+3. 仍是页面临时实现的问题：左右分栏宽度、人员卡和工时预警卡仍由页面 scoped CSS 维护。
+4. 哪些页面子组件未来必须回收为平台组件：如人员档案卡、超工时预警卡继续出现稳定共性，再评估 `PlatformEntityCard` 或 `PlatformAlertCard`。
+5. 后续新页面禁止继续复制哪些实现：不要把关键词搜索塞进查询面板，也不要删除表格工具栏搜索按钮。
+6. 哪些样式应进入主题变量或统一样式入口：任务卡内边距、标题字号、状态标签和进度节奏已由 `PlatformTaskCard` 组件变量承接。
+7. 当前仍存在的页面级样式债务：部分业务卡片、业务单元格和动态明细行仍在页面层。
+
+### 任务名称
+
+中期评估与验收页左右区块宽度与卡片间距治理
+
+### 完成内容
+
+1. 将 `/project/evaluation` 的左右工作区调整为“左侧待评估项目固定宽度，右侧评估记录自适应剩余空间”的布局。
+2. 为待评估项目卡片补充页面级局部变量，统一收口固定宽度、标题字号、常规区块间距和截止时间到进度条的间距。
+3. 将待评估项目标题调整为 `16px`，并把标题区、标签区、截止时间区的垂直节奏收紧到 `8px`，截止时间到底部进度条调整为 `4px`。
+4. 保持本轮修改只落在页面布局和页面私有卡片样式层，不新增平台组件，也不扩散到全局 token。
+
+### 修改了哪些文件
+
+1. `apps/web-antd/src/views/project/evaluation/index.vue`
+2. `docs/project-log.md`
+3. `docs/todo-next.md`
+
+### 涉及哪些页面或组件
+
+1. 页面：`/project/evaluation`
+2. 页面业务卡片：待评估项目卡片
+3. 页面业务布局：左右工作区
+
+### 验证结果
+
+1. 已执行目标文件 ESLint：通过。
+2. 已执行 `git diff --check`：通过。
+3. 已执行 `curl -I http://127.0.0.1:5173/project/evaluation`：返回 `200 OK`。
+4. 已使用系统 Chrome headless 临时会话完成隔离截图验证，未接管用户当前 Chrome；确认左侧待评估区固定宽度生效，右侧评估记录表格随剩余空间自适应展开。
+
+### 遗留问题
+
+1. 右侧评估记录表格虽然已获得更多横向空间，但当前列配置仍偏紧，后续若继续压缩浏览器宽度，仍可能需要进一步微调列宽或响应式策略。
+2. 待评估项目卡片仍是页面业务结构，后续如果更多页面出现同类“标题 + 状态标签 + 截止时间 + 进度条”卡片，再评估是否沉淀为平台卡片能力。
+
+### 平台治理影响
+
+1. 本轮发现的 ant-design-vue 原生组件问题：无，主要是业务页左右区块比例和业务卡片内部节奏不合理。
+2. 已通过平台层解决的问题：无，本轮不新增平台能力，仍保持在页面布局层治理。
+3. 仍是页面临时实现的问题：待评估项目卡片的字号、节奏和固定宽度仍是该页面私有结构。
+4. 哪些页面子组件未来必须回收为平台组件：若后续多页复用相同评估任务卡片，可评估沉淀统一任务卡片壳。
+5. 后续新页面禁止继续复制哪些实现：不要再为窄右栏强塞表格，先判断左右分栏比例是否合理。
+6. 哪些样式应进入主题变量或统一样式入口：当前只抽到页面局部变量，尚未达到进入全局 token 的复用强度。
+7. 当前仍存在的页面级样式债务：评估页左右区块与卡片节奏仍由页面 scoped CSS 维护，后续如同类场景增多需再统一。
+
+### 任务名称
+
+已开发页面与平台组件复查后的第一批治理
+
+### 完成内容
+
+1. 根据系统复查结果，先做低风险治理，不新增平台组件、不迁移查询面板、不删除演示目录。
+2. 将 `/platform/typical-page`、`/personnel/qualification`、`/personnel/worktime` 的手写页面头部统一替换为 `PlatformViewToolbar`。
+3. 补齐 `/workbench/index` 项目总览弹窗与 `/project/evaluation` 发起评估弹窗中缺失的业务化 placeholder。
+4. 修复 `PlatformViewToolbar` 内部工具按钮 `emit(tool.key)` 的 TypeScript 收窄问题，改为显式事件分发，不改变视觉和交互。
+5. 重写 `docs/page-component-mapping.md`，补齐当前已开发页面的组件映射、已沉淀平台能力、暂留页面层内容和后续整理项。
+
+### 修改了哪些文件
+
+1. `apps/web-antd/src/components/platform/view/platform-view-toolbar.vue`
+2. `apps/web-antd/src/views/platform/typical-page/index.vue`
+3. `apps/web-antd/src/views/personnel/qualification/index.vue`
+4. `apps/web-antd/src/views/personnel/worktime/index.vue`
+5. `apps/web-antd/src/views/project/overview/index.vue`
+6. `apps/web-antd/src/views/project/evaluation/index.vue`
+7. `docs/page-component-mapping.md`
+8. `docs/project-log.md`
+9. `docs/todo-next.md`
+
+### 涉及哪些页面或组件
+
+1. 平台组件：`PlatformViewToolbar`
+2. 页面：`/platform/typical-page`
+3. 页面：`/personnel/qualification`
+4. 页面：`/personnel/worktime`
+5. 页面：`/workbench/index`
+6. 页面：`/project/evaluation`
+7. 文档：页面组件映射表
+
+### 验证结果
+
+1. 已执行目标文件 ESLint：通过。
+2. 已执行 `git diff --check`：通过。
+3. 已执行 `vue-tsc --noEmit --skipLibCheck --project apps/web-antd/tsconfig.json`：仍失败，但本轮已修复 `PlatformViewToolbar` 类型错误；剩余错误集中在 `tenant-toggle`、`tinymce`、`tree-select-panel`、`utils/http`、`personnel/turnover`、`workflow`、`演示使用自行删除` 和 `code-mirror` 等既有范围。
+4. 已执行 `curl -I` 路由检查：`/platform/typical-page`、`/personnel/qualification`、`/personnel/worktime`、`/workbench/index`、`/project/evaluation` 均返回 `200 OK`。
+5. 已使用系统 Chrome headless 临时会话完成隔离视觉验证，未接管用户当前 Chrome：三处统一头部页面可正常进入，`/workbench/index` 新建项目弹窗与 `/project/evaluation` 发起评估弹窗的业务化 placeholder 均已抓取确认。
+
+### 遗留问题
+
+1. `PlatformQueryPanel` 仍只在 `/battery/construction` 接入，存量查询列表页尚未迁移。
+2. 工时预警卡、待评估项目卡、人员档案卡仍是页面级结构，尚未抽成平台卡片能力。
+3. `apps/web-antd/src/views/演示使用自行删除/` 仍未删除，需用户确认清理范围后再处理。
+4. 全量 `vue-tsc` 仍存在存量错误，其中 `/personnel/turnover` 的 `x/y` 可能为 `undefined` 可作为下一轮小修项之一。
+5. 隔离截图发现 `/project/evaluation` 右侧“评估记录”窄卡片内表格信息仍有横向挤压风险，建议后续结合 `PlatformTable` 列宽、横向滚动或左右栏比例专项处理。
+
+### 平台治理影响
+
+1. 本轮发现的 ant-design-vue 原生组件问题：无新增原生组件视觉问题，主要是平台头部组件 TypeScript 事件分发问题和业务页未统一复用平台头部。
+2. 已通过平台层解决的问题：`PlatformViewToolbar` 工具按钮事件分发已改为显式分支，消除平台组件自身类型错误。
+3. 仍是页面临时实现的问题：卡片壳、指标块、实体单元格、动态明细行、图表 option 工厂仍暂留页面层。
+4. 哪些页面子组件未来必须回收为平台组件：`/personnel/worktime` 超工时预警卡、`/project/evaluation` 待评估项目卡、`/platform/typical-page` 人员档案卡可优先评估统一卡片壳。
+5. 后续新页面禁止继续复制哪些实现：不要继续复制手写页面 header；二级页面标题区默认使用 `PlatformViewToolbar`。
+6. 哪些样式应进入主题变量或统一样式入口：本轮未新增 token；后续卡片壳、指标块、实体单元格如复用稳定，应进入平台组件或公共 class。
+7. 当前仍存在的页面级样式债务：工时页、评估页、人员档案页仍有较多业务卡片 CSS，后续需要专项治理。
+
 ## 2026-05-08
 
 ### 任务名称

@@ -127,6 +127,7 @@ export const overridesPreferences = defineOverridesPreferences({
    */
   logo: {
     enable: true,
-    source: '/LOGO.svg',
+    source: '/LOGO-white.svg',
+    sourceDark: '/LOGO-white.svg',
   },
 });

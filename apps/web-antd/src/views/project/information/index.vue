@@ -20,6 +20,7 @@ import {
   PlatformFormItem,
   PlatformInput,
   PlatformModal,
+  PlatformQueryPanel,
   PlatformSegmented,
   PlatformSelect,
   PlatformStatusTag,
@@ -52,16 +53,19 @@ type EntryStaffingItem = {
   role: string;
 };
 
-const query = reactive<ProjectInformationQuery>({
+const createDefaultQuery = (): ProjectInformationQuery => ({
   keyword: '',
   status: '',
   type: '',
 });
+
+const query = reactive<ProjectInformationQuery>(createDefaultQuery());
 const formModel = reactive<ProjectFormModel>({});
 const tableRows = ref<ProjectInformationRecord[]>([]);
 const loading = ref(false);
 const saving = ref(false);
 const formOpen = ref(false);
+const queryCollapsed = ref(true);
 const currentRecord = ref<null | ProjectInformationRecord>(null);
 const projectListPanelRef = ref<HTMLElement>();
 const projectTableRef = ref<InstanceType<typeof PlatformTable>>();
@@ -154,6 +158,11 @@ async function loadProjectInformation() {
 }
 
 async function handleSearch() {
+  await loadProjectInformation();
+}
+
+async function handleReset() {
+  Object.assign(query, createDefaultQuery());
   await loadProjectInformation();
 }
 
@@ -421,6 +430,28 @@ onMounted(loadProjectInformation);
         title="项目信息管理"
       />
 
+      <PlatformQueryPanel
+        v-model:collapsed="queryCollapsed"
+        :columns="3"
+        @query="handleSearch"
+        @reset="handleReset"
+      >
+        <PlatformFormItem label="项目类型">
+          <PlatformSelect
+            v-model:value="query.type"
+            :options="projectInformationTypeOptions"
+            placeholder="请选择项目类型"
+          />
+        </PlatformFormItem>
+        <PlatformFormItem label="项目状态">
+          <PlatformSelect
+            v-model:value="query.status"
+            :options="projectInformationStatusOptions"
+            placeholder="请选择项目状态"
+          />
+        </PlatformFormItem>
+      </PlatformQueryPanel>
+
       <section
         ref="projectListPanelRef"
         class="platform-surface project-information-panel"
@@ -428,6 +459,7 @@ onMounted(loadProjectInformation);
         <PlatformTableToolbar
           v-model:search-value="query.keyword"
           search-placeholder="搜索项目名称 / 编号 / 负责人"
+          :tools="['search', 'refresh', 'setting', 'fullscreen']"
           @fullscreen="handleTableFullscreen"
           @refresh="handleSearch"
           @search="handleSearch"

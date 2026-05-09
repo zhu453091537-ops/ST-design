@@ -12,6 +12,7 @@ import {
   PlatformNoticeList,
   PlatformSection,
   PlatformStatCard,
+  PlatformViewToolbar,
 } from '#/components/platform';
 
 import {
@@ -55,12 +56,10 @@ async function handleSendReminder(item: PlatformNoticeListItem) {
 <template>
   <Page :auto-content-height="true">
     <div class="personnel-qualification-page">
-      <header class="personnel-qualification-header">
-        <div>
-          <h1>资质与准入管控</h1>
-          <p>资质到期预警、准入规则自动校验</p>
-        </div>
-      </header>
+      <PlatformViewToolbar
+        description="资质到期预警、准入规则自动校验"
+        title="资质与准入管控"
+      />
 
       <section class="personnel-qualification-stat-grid">
         <PlatformStatCard
@@ -114,27 +113,6 @@ async function handleSendReminder(item: PlatformNoticeListItem) {
   min-height: 100%;
   flex-direction: column;
   gap: var(--st-layout-section-gap);
-}
-
-.personnel-qualification-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-}
-
-.personnel-qualification-header h1 {
-  margin: 0;
-  color: hsl(var(--foreground));
-  font-size: 22px;
-  font-weight: 700;
-  line-height: 32px;
-}
-
-.personnel-qualification-header p {
-  margin: 4px 0 0;
-  color: hsl(var(--muted-foreground));
-  font-size: var(--st-font-size-base);
 }
 
 .personnel-qualification-stat-grid,

@@ -6,6 +6,9 @@
 
 | 优先级 | 事项 | 状态 | 说明 |
 | --- | --- | --- | --- |
+| 高 | 平台治理收尾：查询面板迁移、任务卡沉淀与演示目录清理 | 已完成 | `/project/information`、`/personnel/overview` 已接入 `PlatformQueryPanel`；`/project/evaluation` 已接入新增 `PlatformTaskCard`，并恢复表格工具栏 `search / refresh / setting / fullscreen` 四个右侧标准工具；`apps/web-antd/src/views/演示使用自行删除/` 已删除；目标 ESLint、`git diff --check` 和三条路由 HTTP 检查通过。 |
+| 高 | `/project/evaluation` 右侧评估记录表格挤压治理 | 已完成 | 已将 `/project/evaluation` 左侧待评估区调整为固定 `440px`，右侧评估记录自适应剩余宽度；待评估卡片标题改为 `16px`，常规垂直节奏统一为 `8px`，截止时间到进度条为 `4px`；目标文件 ESLint、`git diff --check`、HTTP 路由和隔离截图验证通过。 |
+| 高 | 已开发页面与平台组件第一批治理 | 已完成 | 已将 `/platform/typical-page`、`/personnel/qualification`、`/personnel/worktime` 的手写页面头部统一为 `PlatformViewToolbar`，补齐 `/workbench/index` 和 `/project/evaluation` 弹窗暗文本，重写 `docs/page-component-mapping.md` 全量映射，并修复 `PlatformViewToolbar` 工具按钮事件分发类型错误；已完成目标 ESLint、`git diff --check`、路由检查和隔离 Chrome headless 视觉验证。 |
 | 高 | 平台表格刷新联动表头筛选 | 已完成，待视觉复核 | 已在 `PlatformTableToolbar + PlatformTable` 平台层补上刷新请求联动：当存在激活的表头筛选时，点击刷新优先由 `PlatformTable` 清空筛选并触发一次平台 `change`，不再沿用页面里的旧筛选条件刷新。 |
 | 高 | 智能考勤管理 - 施工管理与 PlatformQueryPanel 首版 | 已完成，待视觉复核 | 已新增 `PlatformQueryPanel` 平台查询面板，并落地 `/battery/construction` 施工管理列表页；菜单已从 `BatteryMenu` 空白占位切到真实页面，需继续确认查询面板折叠手感、字段换行、按钮顺序和状态列观感。 |
 | 高 | 登录页原组件宽度与品牌区纠偏 | 已完成，待视觉复核 | 已删除标题挥手和“其他登录方式”整块，关闭底部版权，登录模块宽度统一为 `480px` 并默认居中，左上角 `LOGO.svg` 改为品牌绿；需继续在隔离浏览器确认字号、边距和居中效果。 |
@@ -189,8 +192,8 @@
 
 1. 用户输入“开工继续”或提出下一个开发需求后，先读取 `AGENTS.md`、`docs/project-log.md`、`docs/decision-records.md`、`docs/todo-next.md`。
 2. 输出项目接续摘要，明确当前项目目标、技术栈、最近完成内容、未完成事项、关键规则和建议执行顺序。
-3. 下一轮第一优先级：先在隔离浏览器里复核 `/battery/construction`，重点确认 `PlatformQueryPanel` 的三列展开态、单行收起态、查询/重置/收起按钮顺序，以及“首次办理 / 许可证变更”在 `PlatformTableToolbar` 中的左侧排序。
-4. 视觉确认后，再决定是否把 `PlatformQueryPanel` 回收接入其他存量查询列表页；优先评估 `/project/information`、`/personnel/overview` 等已存在搜索/筛选区的页面。
+3. 下一轮第一优先级：基于用户下一条明确反馈继续做页面视觉细节或平台组件治理；`PlatformQueryPanel` 已回收接入 `/project/information`、`/personnel/overview`，不再作为待迁移事项。
+4. 如继续处理 `/project/evaluation`，优先判断右侧评估记录表格在更窄浏览器宽度下是否还需要进一步微调列宽或响应式策略。
 5. 如用户要求视觉确认，再重新启动 Vite 并打开 `/battery/construction`、`/project/contract`、`/project/progress`、`/project/evaluation`、`/project/document`；不要沿用今天的 `5672` / `5673` 端口状态。
 6. 如继续处理平台表格存量事项，再刷新 `/workbench/index` 和 `/project/information`，人工拖动横向滚动条确认 `PlatformTable` 表头与表体同步不再抖动。
 7. 如需继续查看典型页面，先确认当前 Vite 服务端口是否仍在运行；跨设备或新会话不要假设端口仍可用，应以实际 `lsof` 或新启动结果为准。
@@ -238,10 +241,11 @@
 14. 当前预览已删除可见的 Vben 示例模块入口；如后续需要业务模块，应按真实业务范围重新接入，避免直接恢复示例模块造成平台范围混乱。
 15. Figma MCP Go 已恢复连接，但不同电脑上本机二进制缓存路径可能变化；如再次断开，应优先按 `AGENTS.md` 第 8 节重新定位 `figma-mcp-go` 二进制并更新 MCP 配置。
 16. 本轮 Vite 构建曾产生 `apps/web-antd/dist` 与 `apps/web-antd/dist.zip` 临时产物，现已清理；后续每次构建后仍需复查，避免把构建产物纳入源码提交。
-17. `角色管理` 页面入口已删除，但 `system/user` 仍依赖角色数据范围配置；后续如果继续清理角色相关代码，需要先确认不会影响用户新增/编辑抽屉。
-18. 当前 `agent-browser` 命令不可用，Playwright 浏览器二进制未下载，系统 Chrome headless 会被本机权限/进程策略中断；后续自动化视觉验证前需要先修复浏览器验证链路。
-19. 当前 Browser Use in-app backend 初始化不可用，Computer Use 不能操作 Codex 应用；左侧导航栏与顶部右侧图标按钮已做源码、包级类型验证和本地 HTTP 验证，但截图级视觉复核仍需等隔离浏览器链路恢复。
-20. 当前典型页使用受控数据源只是后端不可用下的验证方案，不能替代真实 `/system/user` 联调；后端恢复后需要优先切回真实接口并复核筛选、分页、状态切换和操作入口。
-21. 当前菜单骨架已让未开发菜单使用独立 path + Blank component，但 `/system/user` 直访问未正确进入原页面；如果下次直接改菜单核心或 route-to-menu，可能误伤 breadcrumb、tabs、权限路由和刷新激活态，必须先做最小归因。
-22. 如果继续保留被 Git 跟踪的 `node_modules` 和 Vite 缓存，后续安装依赖、启动开发服务或热更新都可能造成大量无意义 diff。
-23. 如果后续静态页面 Mock 数据没有统一组织，新增、编辑、删除、详情、筛选等前端模拟交互容易分散在页面内部，后续联调迁移成本会上升。
+17. 2026-05-09 第一批治理后，全量 `vue-tsc` 仍失败；`PlatformViewToolbar` 类型错误已清除，`apps/web-antd/src/views/演示使用自行删除/` 已删除，剩余错误仍需以后按实际命令输出重新确认。
+18. `角色管理` 页面入口已删除，但 `system/user` 仍依赖角色数据范围配置；后续如果继续清理角色相关代码，需要先确认不会影响用户新增/编辑抽屉。
+19. 当前 `agent-browser` 命令不可用，Playwright 浏览器二进制未下载；本轮可通过系统 Chrome headless 临时会话完成隔离验证，但需要提升权限，后续如需常态化自动视觉验证仍建议修复浏览器验证链路。
+20. 当前 Browser Use in-app backend 初始化不可用；不要改用用户当前 Mac Chrome 窗口做验证，除非用户明确确认。
+21. 当前典型页使用受控数据源只是后端不可用下的验证方案，不能替代真实 `/system/user` 联调；后端恢复后需要优先切回真实接口并复核筛选、分页、状态切换和操作入口。
+22. 当前菜单骨架已让未开发菜单使用独立 path + Blank component，但 `/system/user` 直访问未正确进入原页面；如果下次直接改菜单核心或 route-to-menu，可能误伤 breadcrumb、tabs、权限路由和刷新激活态，必须先做最小归因。
+23. 如果继续保留被 Git 跟踪的 `node_modules` 和 Vite 缓存，后续安装依赖、启动开发服务或热更新都可能造成大量无意义 diff。
+24. 如果后续静态页面 Mock 数据没有统一组织，新增、编辑、删除、详情、筛选等前端模拟交互容易分散在页面内部，后续联调迁移成本会上升。

@@ -10,10 +10,8 @@ import type {
 import { computed, onMounted, reactive, ref } from 'vue';
 
 import { Page } from '@vben/common-ui';
-import { VbenIcon } from '@vben/icons';
 
 import {
-  PlatformButton,
   PlatformEditForm,
   PlatformFormItem,
   PlatformInput,
@@ -23,6 +21,7 @@ import {
   PlatformStatusTag,
   PlatformTable,
   PlatformTableToolbar,
+  PlatformTaskCard,
   PlatformViewToolbar,
 } from '#/components/platform';
 
@@ -228,6 +227,13 @@ function getRecordResultMeta(record: unknown) {
 function getRecordScore(record: unknown) {
   return getEvaluationRecord(record).score;
 }
+
+function getProjectTags(project: EvaluationProject) {
+  return [
+    evaluationProjectStageMap[project.stage],
+    evaluationProjectStatusMap[project.status],
+  ];
+}
 </script>
 
 <template>
@@ -252,57 +258,25 @@ function getRecordScore(record: unknown) {
           <PlatformTableToolbar
             v-model:search-value="projectQuery.keyword"
             search-placeholder="搜索项目 / 部门 / 负责人"
-            :tools="['search', 'refresh']"
+            :tools="['search', 'refresh', 'setting', 'fullscreen']"
             title="待评估项目"
             @refresh="loadEvaluationPage"
             @search="() => {}"
           />
 
           <div class="project-evaluation-panel__body project-evaluation-panel__body--cards">
-            <article
+            <PlatformTaskCard
               v-for="project in filteredEvaluationProjects"
               :key="project.id"
-              class="project-pending-card"
-            >
-              <div class="project-pending-card__hero">
-                <div class="project-pending-card__headline">
-                  <h3>{{ project.name }}</h3>
-                  <p>{{ project.department }} · {{ project.manager }}</p>
-                </div>
-                <PlatformButton
-                  size="small"
-                  type="primary"
-                  @click="handleCreateEvaluation(project)"
-                >
-                  <template #icon>
-                    <VbenIcon icon="lucide:plus" />
-                  </template>
-                  发起评估
-                </PlatformButton>
-              </div>
-              <div class="project-pending-card__tags">
-                <PlatformStatusTag
-                  :label="evaluationProjectStageMap[project.stage].label"
-                  :status="evaluationProjectStageMap[project.stage].status"
-                />
-                <PlatformStatusTag
-                  :label="evaluationProjectStatusMap[project.status].label"
-                  :status="evaluationProjectStatusMap[project.status].status"
-                />
-              </div>
-              <div class="project-pending-card__meta">
-                <span>截止 {{ project.dueDate }}</span>
-              </div>
-              <div class="project-pending-card__progress-row">
-                <div class="project-pending-card__progress">
-                  <span
-                    :style="{ width: `${project.progress}%` }"
-                    class="project-pending-card__progress-bar"
-                  ></span>
-                </div>
-                <span>进度 {{ project.progress }}%</span>
-              </div>
-            </article>
+              action-label="发起评估"
+              :description="`${project.department} · ${project.manager}`"
+              :meta="`截止 ${project.dueDate}`"
+              :progress="project.progress"
+              :progress-label="`进度 ${project.progress}%`"
+              :tags="getProjectTags(project)"
+              :title="project.name"
+              @action="handleCreateEvaluation(project)"
+            />
             <div
               v-if="filteredEvaluationProjects.length === 0"
               class="project-evaluation-empty"
@@ -316,7 +290,7 @@ function getRecordScore(record: unknown) {
           <PlatformTableToolbar
             v-model:search-value="recordQuery.keyword"
             search-placeholder="搜索项目 / 评估组"
-            :tools="['search', 'refresh']"
+            :tools="['search', 'refresh', 'setting', 'fullscreen']"
             title="评估记录"
             @refresh="loadEvaluationPage"
             @search="() => {}"
@@ -375,13 +349,21 @@ function getRecordScore(record: unknown) {
             <PlatformSelect
               v-model:value="formModel.projectId"
               :options="projectOptions"
+              placeholder="请选择待评估项目"
             />
           </PlatformFormItem>
           <PlatformFormItem label="评估人 / 评估组">
-            <PlatformInput v-model:value="formModel.evaluator" />
+            <PlatformInput
+              v-model:value="formModel.evaluator"
+              placeholder="请输入评估人或评估组"
+            />
           </PlatformFormItem>
           <PlatformFormItem label="评估得分">
-            <PlatformInput v-model:value="formModel.score" type="number" />
+            <PlatformInput
+              v-model:value="formModel.score"
+              placeholder="请输入评估得分"
+              type="number"
+            />
           </PlatformFormItem>
           <PlatformFormItem label="当前进度">
             <PlatformInput
@@ -405,24 +387,14 @@ function getRecordScore(record: unknown) {
 
 <style scoped>
 .project-evaluation-page {
+  --project-evaluation-pending-panel-width: 440px;
+  --project-evaluation-panel-bottom-space: 24px;
+
   display: flex;
   flex-direction: column;
   gap: var(--st-layout-section-gap);
   height: 100%;
   min-height: 0;
-}
-
-.project-pending-card h3 {
-  margin: 0;
-  color: hsl(var(--foreground));
-  font-weight: 700;
-}
-.project-pending-card p,
-.project-pending-card p,
-.project-pending-card__meta,
-.project-pending-card__footer {
-  margin: 0;
-  color: hsl(var(--muted-foreground));
 }
 
 .project-evaluation-stat-grid {
@@ -433,101 +405,38 @@ function getRecordScore(record: unknown) {
 
 .project-evaluation-workspace {
   display: grid;
-  align-items: start;
-  grid-template-columns: minmax(520px, 1.45fr) minmax(360px, 0.85fr);
+  align-items: stretch;
+  flex: 1;
+  grid-template-columns: var(--project-evaluation-pending-panel-width) minmax(0, 1fr);
   gap: var(--st-layout-section-gap);
+  min-height: 0;
 }
 
 .project-evaluation-panel {
   display: flex;
   flex-direction: column;
+  height: 100%;
   min-width: 0;
+  min-height: 0;
   overflow: hidden;
 }
 
 .project-evaluation-panel__body {
   display: flex;
   flex-direction: column;
+  flex: 1;
   gap: 12px;
+  min-height: 0;
   overflow: auto;
 }
 
 .project-evaluation-panel__body--cards {
   gap: 16px;
+  padding-bottom: var(--project-evaluation-panel-bottom-space);
 }
 
 .project-evaluation-panel--records {
   align-self: start;
-}
-
-.project-pending-card {
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-  width: 100%;
-  padding: 24px;
-  text-align: left;
-  background: hsl(var(--st-color-card-bg));
-  border: 1px solid hsl(var(--border));
-  border-radius: var(--st-radius-card);
-  transition: transform 0.18s ease;
-}
-
-.project-pending-card:hover {
-  transform: translateY(-4px);
-}
-
-.project-pending-card__hero,
-.project-pending-card__meta,
-.project-pending-card__progress-row {
-  display: flex;
-  align-items: center;
-}
-
-.project-pending-card__hero,
-.project-pending-card__progress-row {
-  justify-content: space-between;
-  gap: 16px;
-}
-
-.project-pending-card__headline {
-  min-width: 0;
-}
-
-.project-pending-card__tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-}
-
-.project-pending-card h3 {
-  font-size: 18px;
-  line-height: 30px;
-}
-
-.project-pending-card p {
-  margin-top: 8px;
-  font-size: var(--st-font-size-sm);
-}
-
-.project-pending-card__meta,
-.project-pending-card__progress-row {
-  font-size: var(--st-font-size-sm);
-}
-
-.project-pending-card__progress {
-  flex: 1;
-  height: 6px;
-  overflow: hidden;
-  background: hsl(var(--muted));
-  border-radius: 999px;
-}
-
-.project-pending-card__progress-bar {
-  display: block;
-  height: 100%;
-  background: hsl(var(--st-color-brand));
-  border-radius: inherit;
 }
 
 .project-record-name {
@@ -574,7 +483,7 @@ function getRecordScore(record: unknown) {
 
 @media (max-width: 1200px) {
   .project-evaluation-workspace {
-    grid-template-columns: minmax(420px, 1.2fr) minmax(320px, 0.95fr);
+    grid-template-columns: var(--project-evaluation-pending-panel-width) minmax(0, 1fr);
   }
 }
 
