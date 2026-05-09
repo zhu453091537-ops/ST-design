@@ -436,6 +436,44 @@ function getProjectTags(project: EvaluationProject) {
   padding-bottom: var(--project-evaluation-panel-bottom-space);
 }
 
+.project-evaluation-panel__body--cards :deep(.platform-task-card) {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  column-gap: 24px;
+  row-gap: 8px;
+}
+
+.project-evaluation-panel__body--cards :deep(.platform-task-card__hero),
+.project-evaluation-panel__body--cards :deep(.platform-task-card__headline) {
+  display: contents;
+}
+
+.project-evaluation-panel__body--cards :deep(.platform-task-card__headline h3) {
+  grid-column: 1 / -1;
+}
+
+.project-evaluation-panel__body--cards :deep(.platform-task-card__headline p) {
+  grid-column: 1;
+  margin-top: 0;
+}
+
+.project-evaluation-panel__body--cards :deep(.platform-task-card__hero > .platform-button) {
+  grid-column: 2;
+  grid-row: 2 / span 2;
+  align-self: center;
+  margin-top: 0;
+}
+
+.project-evaluation-panel__body--cards :deep(.platform-task-card__tags) {
+  grid-column: 1;
+  margin-bottom: 0;
+}
+
+.project-evaluation-panel__body--cards :deep(.platform-task-card__meta),
+.project-evaluation-panel__body--cards :deep(.platform-task-card__progress-row) {
+  grid-column: 1 / -1;
+}
+
 .project-evaluation-panel--records {
   align-self: start;
 }

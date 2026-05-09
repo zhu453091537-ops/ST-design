@@ -6,6 +6,8 @@
 
 | 优先级 | 事项 | 状态 | 说明 |
 | --- | --- | --- | --- |
+| 高 | 平台母版设计变量可视化一期 | 待执行 | 下一轮优先做颜色、字号、字重、圆角的可视化管理规划与最小实现；平台母版必须旁路建设，不影响 `apps/web-antd` 当前开发，不批量迁移现有组件或业务页面。 |
+| 高 | `/project/evaluation` 待评估项目“发起评估”按钮纵向对齐微调 | 已完成，待视觉复核 | 已按截图反馈在页面 scoped CSS 中将待评估卡片头部按钮下移 `6px`；未改 `PlatformTaskCard` 源组件，建议下次隔离浏览器顺手确认与左侧内容组是否完全齐平。 |
 | 高 | 平台治理收尾：查询面板迁移、任务卡沉淀与演示目录清理 | 已完成 | `/project/information`、`/personnel/overview` 已接入 `PlatformQueryPanel`；`/project/evaluation` 已接入新增 `PlatformTaskCard`，并恢复表格工具栏 `search / refresh / setting / fullscreen` 四个右侧标准工具；`apps/web-antd/src/views/演示使用自行删除/` 已删除；目标 ESLint、`git diff --check` 和三条路由 HTTP 检查通过。 |
 | 高 | `/project/evaluation` 右侧评估记录表格挤压治理 | 已完成 | 已将 `/project/evaluation` 左侧待评估区调整为固定 `440px`，右侧评估记录自适应剩余宽度；待评估卡片标题改为 `16px`，常规垂直节奏统一为 `8px`，截止时间到进度条为 `4px`；目标文件 ESLint、`git diff --check`、HTTP 路由和隔离截图验证通过。 |
 | 高 | 已开发页面与平台组件第一批治理 | 已完成 | 已将 `/platform/typical-page`、`/personnel/qualification`、`/personnel/worktime` 的手写页面头部统一为 `PlatformViewToolbar`，补齐 `/workbench/index` 和 `/project/evaluation` 弹窗暗文本，重写 `docs/page-component-mapping.md` 全量映射，并修复 `PlatformViewToolbar` 工具按钮事件分发类型错误；已完成目标 ESLint、`git diff --check`、路由检查和隔离 Chrome headless 视觉验证。 |
@@ -192,11 +194,12 @@
 
 1. 用户输入“开工继续”或提出下一个开发需求后，先读取 `AGENTS.md`、`docs/project-log.md`、`docs/decision-records.md`、`docs/todo-next.md`。
 2. 输出项目接续摘要，明确当前项目目标、技术栈、最近完成内容、未完成事项、关键规则和建议执行顺序。
-3. 下一轮第一优先级：基于用户下一条明确反馈继续做页面视觉细节或平台组件治理；`PlatformQueryPanel` 已回收接入 `/project/information`、`/personnel/overview`，不再作为待迁移事项。
-4. 如继续处理 `/project/evaluation`，优先判断右侧评估记录表格在更窄浏览器宽度下是否还需要进一步微调列宽或响应式策略。
-5. 如用户要求视觉确认，再重新启动 Vite 并打开 `/battery/construction`、`/project/contract`、`/project/progress`、`/project/evaluation`、`/project/document`；不要沿用今天的 `5672` / `5673` 端口状态。
-6. 如继续处理平台表格存量事项，再刷新 `/workbench/index` 和 `/project/information`，人工拖动横向滚动条确认 `PlatformTable` 表头与表体同步不再抖动。
-7. 如需继续查看典型页面，先确认当前 Vite 服务端口是否仍在运行；跨设备或新会话不要假设端口仍可用，应以实际 `lsof` 或新启动结果为准。
+3. 下一轮第一优先级：先做平台母版设计变量可视化一期，只围绕颜色、字号、字重、圆角建立统一管理和展示能力，不展开大规模包迁移。
+4. 变量可视化实施前，先确认落点是 `apps/web-antd` 内轻量页面，还是新增 `apps/platform-showcase`；默认采用旁路建设，不能影响 `apps/web-antd` 当前开发。
+5. 如继续处理 `/project/evaluation`，优先判断右侧评估记录表格在更窄浏览器宽度下是否还需要进一步微调列宽或响应式策略。
+6. 如用户要求视觉确认，再重新启动 Vite 并打开 `/battery/construction`、`/project/contract`、`/project/progress`、`/project/evaluation`、`/project/document`；不要沿用今天的 `5672` / `5673` 端口状态。
+7. 如继续处理平台表格存量事项，再刷新 `/workbench/index` 和 `/project/information`，人工拖动横向滚动条确认 `PlatformTable` 表头与表体同步不再抖动。
+8. 如需继续查看典型页面，先确认当前 Vite 服务端口是否仍在运行；跨设备或新会话不要假设端口仍可用，应以实际 `lsof` 或新启动结果为准。
 8. 旧 `/system/user` 页面已解绑并删除壳文件，不再作为当前阶段目标；`人员全生命周期 - 人员总览` 当前恢复为 `/personnel/overview` 独立入口，`/platform/typical-page` 保留为人员档案管理，下一步优先做两个页面的视觉复核和新增弹窗交互细化。
 9. 继续抽查其他真实业务页，确认是否也已统一接入平台组件和 Vxe 适配层；`system/post`、`system/dept` 已验证，`system/role` 已删除。
 10. Figma MCP Go 已恢复连接；后续如继续做 Figma 对齐，优先读取顶部导航节点 `2045-1586`，对照 `LayoutHeader`、`VbenLogo`、水平 `Menu` 和右侧按钮做节点级尺寸与切图校准。
@@ -249,3 +252,4 @@
 22. 当前菜单骨架已让未开发菜单使用独立 path + Blank component，但 `/system/user` 直访问未正确进入原页面；如果下次直接改菜单核心或 route-to-menu，可能误伤 breadcrumb、tabs、权限路由和刷新激活态，必须先做最小归因。
 23. 如果继续保留被 Git 跟踪的 `node_modules` 和 Vite 缓存，后续安装依赖、启动开发服务或热更新都可能造成大量无意义 diff。
 24. 如果后续静态页面 Mock 数据没有统一组织，新增、编辑、删除、详情、筛选等前端模拟交互容易分散在页面内部，后续联调迁移成本会上升。
+25. 如果平台母版一开始就批量迁移 `web-antd` 组件或业务页，可能打断当前业务开发；下一阶段必须先做变量可视化旁路能力，再逐步评估接入。
