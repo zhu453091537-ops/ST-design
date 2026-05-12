@@ -7,6 +7,7 @@ import { VbenIcon } from '@vben/icons';
 
 import { PlatformButton } from '../button';
 import { PlatformInput, PlatformSelect } from '../field';
+import { PlatformIcon } from '../icon';
 
 type TableTool =
   | 'add'
@@ -69,11 +70,11 @@ const searchExpanded = ref(false);
 
 const toolMeta = {
   add: {
-    icon: 'lucide:plus',
+    icon: 'icon-xinzeng',
     label: '新增',
   },
   export: {
-    icon: 'lucide:download',
+    icon: 'icon-xiazai1',
     label: '导出',
   },
   fullscreen: {
@@ -317,7 +318,7 @@ function dispatchColumnSettingRequest(anchor: MouseEvent) {
         @click="handleToolClick(tool.key, $event)"
       >
         <template #icon>
-          <VbenIcon :icon="tool.icon" />
+          <PlatformIcon :icon="tool.icon" />
         </template>
       </PlatformButton>
       <slot name="tools-after"></slot>

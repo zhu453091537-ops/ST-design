@@ -6,7 +6,28 @@
 
 | 优先级 | 事项 | 状态 | 说明 |
 | --- | --- | --- | --- |
-| 高 | 平台母版设计变量可视化一期 | 待执行 | 下一轮优先做颜色、字号、字重、圆角的可视化管理规划与最小实现；平台母版必须旁路建设，不影响 `apps/web-antd` 当前开发，不批量迁移现有组件或业务页面。 |
+| 高 | 人员总览查看入口接入详情页返回壳 | 已完成，待内容补充与点击复核 | 已将 `/personnel/overview` 的“查看”接入隐藏路由 `/personnel/overview/detail`，新增空白详情页壳并落地顶部返回 icon + 标题；下一步先补详情正文内容，并在隔离浏览器实际点击验证进入和返回链路。 |
+| 高 | 收口项目详情抽屉页面残留间距 | 已完成，待视觉复核 | 已移除 `/project/overview` 项目详情头像摘要区原有的底部分隔线和 `padding-bottom`，只保留 `margin-bottom: 24px` 与描述列表衔接；建议下次优先复核标题区与内容区之间是否已不再出现多余分隔与堆叠间距。 |
+| 高 | 统一 `PlatformDrawer` 标题区与内容区内边距 | 已完成，待视觉复核 | 已将 `PlatformDrawer` header 改为 `padding: var(--ant-padding) var(--ant-padding-lg)`，body 改为 `padding: 24px 40px 24px 40px`；建议下次隔离浏览器优先复核项目详情等抽屉的标题区高度、下划线位置和内容区留白。 |
+| 高 | 平台详情展示组件首版与下拉框描边统一 | 已完成，待视觉复核 | 已新增 `PlatformDescriptions` 并接入 `/project/overview` 项目详情抽屉，同时在全局样式入口中加固 `Select` selector 的 `1px` 描边覆盖；建议下次隔离浏览器优先复核项目详情抽屉结构，以及 `/project/information` 新建项目弹窗里下拉框与输入框描边是否一致。 |
+| 高 | 平台下拉箭头改为本地 SVG 并继续观察分页箭头 | 已完成，待视觉复核 | 已在平台字段、查询面板和树组件中切换为本地 `pull down.svg`，并保持颜色继承与树节点旋转；分页左右箭头暂未替换，后续如要统一再单独评估。 |
+| 高 | 平台弹窗内容区与 footer 间距统一收口到 PlatformModal | 已完成，待视觉复核 | 已将 `PlatformModal` 的内容区左右 40px、footer 顶线与按钮区内边距统一回收至平台组件，并改用语义化 `styles.body / styles.footer` 规避 `antdv-next` 默认 modal 变量；后续所有接入 `PlatformModal` 的新增/编辑弹窗都会一起生效。 |
+| 高 | 平台统计卡主数字字号统一为 32px | 已完成，待视觉复核 | 已将 `PlatformStatCard` 主数字统一改为 `32px`，并继续使用 `DIN Alternate Bold.ttf` 字体；建议下一步优先在 `personnel/overview` 及其他统计卡页面复核数字和单位的间距、行高与卡片纵向节奏。 |
+| 高 | 平台统计卡主数字 DIN 字体视觉复核 | 已完成，待视觉复核 | 已将 `DIN Alternate Bold.ttf` 接入全局数字字体入口，并仅在 `PlatformStatCard` 主数字上启用；建议下一步优先复核 `/project/overview`、`/project/evaluation`、`/project/document`、`/project/contract`、`/personnel/overview` 等含统计卡页面的数字字重、间距和单位组合观感。 |
+| 高 | 数字专用字体文件接入与数字场景启用范围确认 | 已完成资源位，待字体文件落位 | 已在 `apps/web-antd/src/assets/fonts/` 建好公共目录，并在 `apps/web-antd/src/bootstrap.ts` 全局引入 `index.css`；后续拿到真实 `.woff2/.woff/.ttf` 字体文件后，只需放进该目录并补全 `@font-face` 文件名，再确认哪些统计卡、金额列、看板数字需要默认启用 `.st-number-font`。 |
+| 高 | 项目总览查看进度看板按钮跳转进度可视化跟踪页 | 已完成，待点击复核 | 已将 `/workbench/index` 头部“查看进度看板”按钮从提示占位改为跳转 `/project/progress`；需继续在页面点击确认目标页已正常打开。 |
+| 高 | 平台弹窗标题回归原生 header 层重构 | 已完成，待视觉复核 | 已确认问题根因在于之前把标题层塞进 body，现已回退为原生 `title` 层重构：标题、下划线、右侧全屏/关闭按钮都回到 header 语义层，全屏只作用于 wrap / modal 根层，建议下次隔离浏览器优先复核 `/project/information`、`/personnel/overview`、`/battery/construction` 等页面是否恢复正常层级与滚动行为。 |
+| 高 | 撤回平台表格金额列自动右对齐 | 已完成，待视觉复核 | 已从 `PlatformTable` 源组件撤回金额语义列自动右对齐规则，恢复为原来的左对齐；原因是当前列宽与内边距下右对齐会造成左侧留白过大、右侧贴近相邻列；建议下次隔离浏览器优先复核 `/battery/construction`、`/project/information`、`/project/overview` 的金额列观感是否已恢复正常。 |
+| 高 | 施工管理查看弹窗宽度与审批进度节点节奏再微调 | 已完成，待视觉复核 | 已将施工管理查看弹窗宽度调为 `1200px`，右侧审批进度默认/最小宽度调为 `360px`，并补上审批节点 icon 外部配置、节点间距收紧到约 `20px` 和内容区大描边；建议下次隔离浏览器确认右侧更窄后的阅读节奏与整体外框观感。 |
+| 高 | `PlatformSegmented` 改造成 Ant segmented 风格平台组件 | 已完成，待视觉复核 | 已将 `PlatformSegmented` 从下划线式切换为更接近 Ant Design Vue 原生 segmented 的品牌化版本，选中态品牌绿底白字、未选中 hover 文字变品牌绿，字号统一为 `14px`；本轮又补了选中项与 hover 文本的强制颜色覆盖，避免内部样式把品牌色盖回去；建议下次隔离浏览器优先复核 `/project/information` 新增项目弹窗中的分段控件观感。 |
+| 高 | 施工管理查看弹窗左右分栏与审批进度平台化 | 已完成，待视觉复核 | 已将右侧审批进度抽成 `PlatformApprovalProgress`，施工管理“查看”弹窗宽度固定为 `1024px`，右侧宽度可在 `440px` 到 `720px` 间拖拽；建议下次隔离浏览器确认左侧空白区、分隔线手感和右侧审批节点节奏。 |
+| 高 | 项目信息管理与人员总览移除顶部筛选区 | 已完成，待视觉复核 | 已删除 `/project/information` 与 `/personnel/overview` 顶部 `PlatformQueryPanel`，当前仅保留工具栏搜索和表格表头筛选；建议后续在隔离浏览器确认两个页面顶部留白、表头筛选与关键字搜索交互，并等待客户方向后再沉淀常规列表页规范。 |
+| 高 | 合同与付款管理付款节点金额移到进度条上方 | 已完成，待视觉复核 | 已将 `/project/contract` 的 `ContractPaymentMiniBar` 改为“金额在进度条上方、下方只保留节点标题与状态”的结构，删除下方重复金额；最新又按 DevTools 标注删除金额行 `margin-bottom: 6px`、把节点列 `gap` 调整为 `4px`，并把付款节点区底部留白收成 `16px`；需继续肉眼确认金额与绿色/橙色/灰色区块是否完全居中。 |
+| 高 | 平台表格底部分页上间距统一为 `24px` | 已完成，待视觉复核 | 已将 `.ant-table-wrapper .ant-table-pagination.ant-pagination` 统一改为 `margin: 24px 0 0;`，即分页距上 `24px`、距下 `0px`；建议下次隔离浏览器顺手确认 `/personnel/overview` 等表格页分页区与表格底部的留白节奏。 |
+| 高 | 平台表格 hover 背景统一为 `#F3F4FA` | 已完成，待视觉复核 | 已将 Ant Design Vue 平台表格普通行 hover 与 `PlatformTable` 固定操作列 hover 统一为 `#F3F4FA`，并保留表格选中态原有品牌浅绿色；建议下次隔离浏览器优先复核 `/personnel/overview` 的右侧固定操作列与普通列移入底色是否完全一致。 |
+| 高 | `/platform/typical-page` 人员档案管理卡片去除静态描边 | 已完成，待视觉复核 | 已删除人员档案卡片默认态 `border: 1px solid hsl(var(--border));`，当前卡片默认无边框；建议下次隔离浏览器顺手确认无边框状态下的阴影层次是否符合预期。 |
+| 高 | `PlatformStatCard` 去除灰色描边 | 已完成，待视觉复核 | 已从平台统计卡源组件移除灰色边框，影响 `人员总览` 及所有已接入 `PlatformStatCard` 的统计卡页面；建议下次隔离浏览器统一复核统计卡阴影、顶部色条和无边框观感。 |
+| 高 | `/platform/typical-page` 人员档案管理卡片 hover 去除描边变色 | 已完成，待视觉复核 | 已将人员档案卡片 hover 调整为只上移和投影，不再出现边框变色；键盘 `focus-visible` 轮廓保留，建议下次隔离浏览器顺手确认 hover 与焦点态是否都符合预期。 |
 | 高 | `/project/evaluation` 待评估项目“发起评估”按钮纵向对齐微调 | 已完成，待视觉复核 | 已按截图反馈在页面 scoped CSS 中将待评估卡片头部按钮下移 `6px`；未改 `PlatformTaskCard` 源组件，建议下次隔离浏览器顺手确认与左侧内容组是否完全齐平。 |
 | 高 | 平台治理收尾：查询面板迁移、任务卡沉淀与演示目录清理 | 已完成 | `/project/information`、`/personnel/overview` 已接入 `PlatformQueryPanel`；`/project/evaluation` 已接入新增 `PlatformTaskCard`，并恢复表格工具栏 `search / refresh / setting / fullscreen` 四个右侧标准工具；`apps/web-antd/src/views/演示使用自行删除/` 已删除；目标 ESLint、`git diff --check` 和三条路由 HTTP 检查通过。 |
 | 高 | `/project/evaluation` 右侧评估记录表格挤压治理 | 已完成 | 已将 `/project/evaluation` 左侧待评估区调整为固定 `440px`，右侧评估记录自适应剩余宽度；待评估卡片标题改为 `16px`，常规垂直节奏统一为 `8px`，截止时间到进度条为 `4px`；目标文件 ESLint、`git diff --check`、HTTP 路由和隔离截图验证通过。 |
@@ -20,7 +41,7 @@
 | 高 | 项目总览表格操作列移除详情按钮 | 已完成，待视觉复核 | 已将 `/project/overview` 表格操作列中的“详情”移除，保留标题点击打开详情；需继续确认操作列宽度与标题点击交互符合预期。 |
 | 高 | 变动与流失率统计 hover 与右侧数据列校准 | 已完成，待视觉复核 | 已在 `/personnel/turnover` 将 hover 阴影改为极淡灰色，tooltip 避让右侧数据列，并继续扩大右侧留白与标签宽度；需继续肉眼确认 `33.3%（1/3）` 一类数据完整可读且柱图区比例合适。 |
 | 高 | 合同与付款管理付款节点标题行微调 | 已完成，待视觉复核 | 已将 `/project/contract` 付款节点圆点移动到“预付款 30% / 中期款 40% / 尾款 30%”标题行左侧；本轮只改页面业务组件 `ContractPaymentMiniBar`，需继续肉眼确认节点行间距和对齐。 |
-| 高 | 明确当前项目目标和业务范围 | 已确认 | 当前已确认按“平台母版 + 真实业务页验证”二者结合推进。 |
+| 高 | 明确当前项目目标和业务范围 | 已确认 | 当前已确认按“平台组件治理 + 真实业务页验证”推进。 |
 | 高 | 梳理当前技术栈和应用结构 | 部分完成 | 已确认仓库为 `vben-admin-monorepo`，主应用为 `apps/web-antd/src`；已新增平台组件源头，仍需审计真实业务页引用关系。 |
 | 高 | 前端联调源码交付包与交付说明 | 已完成 | 已新增 `docs/handoff-frontend.md` 并生成 `ST-design-source-handoff-20260508.zip`；源码包按 monorepo 整体交付，排除 `.git`、`node_modules`、`apps/web-antd/dist` 和本机临时文件。 |
 | 高 | 本地预览快速打开规则 | 已完成 | 默认检查 `5173/5174`，不要把 `5000` 当作项目端口；`pnpm` 不可用时直接在 `apps/web-antd` 使用本地 Vite 二进制启动。 |
@@ -194,33 +215,34 @@
 
 1. 用户输入“开工继续”或提出下一个开发需求后，先读取 `AGENTS.md`、`docs/project-log.md`、`docs/decision-records.md`、`docs/todo-next.md`。
 2. 输出项目接续摘要，明确当前项目目标、技术栈、最近完成内容、未完成事项、关键规则和建议执行顺序。
-3. 下一轮第一优先级：先做平台母版设计变量可视化一期，只围绕颜色、字号、字重、圆角建立统一管理和展示能力，不展开大规模包迁移。
-4. 变量可视化实施前，先确认落点是 `apps/web-antd` 内轻量页面，还是新增 `apps/platform-showcase`；默认采用旁路建设，不能影响 `apps/web-antd` 当前开发。
-5. 如继续处理 `/project/evaluation`，优先判断右侧评估记录表格在更窄浏览器宽度下是否还需要进一步微调列宽或响应式策略。
-6. 如用户要求视觉确认，再重新启动 Vite 并打开 `/battery/construction`、`/project/contract`、`/project/progress`、`/project/evaluation`、`/project/document`；不要沿用今天的 `5672` / `5673` 端口状态。
-7. 如继续处理平台表格存量事项，再刷新 `/workbench/index` 和 `/project/information`，人工拖动横向滚动条确认 `PlatformTable` 表头与表体同步不再抖动。
-8. 如需继续查看典型页面，先确认当前 Vite 服务端口是否仍在运行；跨设备或新会话不要假设端口仍可用，应以实际 `lsof` 或新启动结果为准。
-8. 旧 `/system/user` 页面已解绑并删除壳文件，不再作为当前阶段目标；`人员全生命周期 - 人员总览` 当前恢复为 `/personnel/overview` 独立入口，`/platform/typical-page` 保留为人员档案管理，下一步优先做两个页面的视觉复核和新增弹窗交互细化。
-9. 继续抽查其他真实业务页，确认是否也已统一接入平台组件和 Vxe 适配层；`system/post`、`system/dept` 已验证，`system/role` 已删除。
-10. Figma MCP Go 已恢复连接；后续如继续做 Figma 对齐，优先读取顶部导航节点 `2045-1586`，对照 `LayoutHeader`、`VbenLogo`、水平 `Menu` 和右侧按钮做节点级尺寸与切图校准。
-11. 对表格工具栏继续遵守统一规则：业务主按钮放最左，次要按钮随后；搜索、刷新、设置、全屏等常规工具统一由平台表格工具栏或 Vxe 适配层承载。
-12. 围绕 `/platform/typical-page` 继续做视觉对齐，由用户指出 Button、Table、Tree、Form、Modal、Drawer 等具体样式问题后回到平台组件源头改造。
-13. 如果后续继续统一头部交互态，优先复用 `platform-header-icon-action`，把主题切换、时区等剩余头部图标按钮收口到同一套 hover/focus 规则。
-14. 当前典型页面 Demo 下一步建议：先让用户在 `http://127.0.0.1:5173/platform/typical-page` 上确认第一版真实业务验证场的结构和组件问题。
-15. 后端数据源可用后，在 `apps/web-antd/src/views/platform/typical-page/user-demo-source.ts` 内把受控数据源切回 `/system/user/list`、`/system/user/deptTree` 等真实接口，尽量不改页面主体。
-16. 典型页面 Demo 开发时，顶部导航、左侧导航和面包屑必须纳入验证范围；组件视觉样式优先沉淀到平台组件场景，页面 scoped CSS 只写布局。
-17. 后续用户提供截图或指出组件样式问题时，即使没有特别强调全局修改，也默认映射到 ant-design-vue 原生组件、平台薄封装和全局样式源头处理。
-18. 如果用户提供截图或页面需求，先按 `AGENTS.md` 的截图与页面需求分析输出规则判断输出强度：简单组件反馈用简版映射，复杂页面再输出完整表格。
-19. `/project/evaluation` 后续建议补充评估详情、评估模板配置、验收附件和导出能力；当前发起评估只是前端模拟流程。
-20. 所有典型页面、截图页面、Figma 页面或业务右侧内容页收尾时，必须补“平台治理影响”章节，不得只写完成和验证。
-21. 等用户确认后，再开始下一步具体平台组件改造、方案设计或代码修改。
+3. 下一轮第一优先级：继续按已完成业务页的收尾与复核推进，不再展开新的平台规划方向。
+4. 优先在 `/project/information` 与 `/personnel/overview` 做一次视觉复核，确认顶部筛选区移除后页面节奏正常，且表头筛选仍满足当前演示目的。
+5. 如需新增独立验证页，只能在不影响 `apps/web-antd` 当前开发的前提下单独评估，不批量迁移现有组件或业务页面。
+6. 如继续处理 `/project/evaluation`，优先判断右侧评估记录表格在更窄浏览器宽度下是否还需要进一步微调列宽或响应式策略。
+7. 如用户要求视觉确认，再重新启动 Vite 并打开 `/battery/construction`、`/project/contract`、`/project/progress`、`/project/evaluation`、`/project/document`；不要沿用今天的 `5672` / `5673` 端口状态。
+8. 如继续处理平台表格存量事项，再刷新 `/workbench/index` 和 `/project/information`，人工拖动横向滚动条确认 `PlatformTable` 表头与表体同步不再抖动。
+9. 如需继续查看典型页面，先确认当前 Vite 服务端口是否仍在运行；跨设备或新会话不要假设端口仍可用，应以实际 `lsof` 或新启动结果为准。
+10. 旧 `/system/user` 页面已解绑并删除壳文件，不再作为当前阶段目标；`人员全生命周期 - 人员总览` 当前恢复为 `/personnel/overview` 独立入口，`/platform/typical-page` 保留为人员档案管理，下一步优先做两个页面的视觉复核和新增弹窗交互细化。
+11. 继续抽查其他真实业务页，确认是否也已统一接入平台组件和 Vxe 适配层；`system/post`、`system/dept` 已验证，`system/role` 已删除。
+12. Figma MCP Go 已恢复连接；后续如继续做 Figma 对齐，优先读取顶部导航节点 `2045-1586`，对照 `LayoutHeader`、`VbenLogo`、水平 `Menu` 和右侧按钮做节点级尺寸与切图校准。
+13. 对表格工具栏继续遵守统一规则：业务主按钮放最左，次要按钮随后；搜索、刷新、设置、全屏等常规工具统一由平台表格工具栏或 Vxe 适配层承载。
+14. 围绕 `/platform/typical-page` 继续做视觉对齐，由用户指出 Button、Table、Tree、Form、Modal、Drawer 等具体样式问题后回到平台组件源头改造。
+15. 如果后续继续统一头部交互态，优先复用 `platform-header-icon-action`，把主题切换、时区等剩余头部图标按钮收口到同一套 hover/focus 规则。
+16. 当前典型页面 Demo 下一步建议：先让用户在 `http://127.0.0.1:5173/platform/typical-page` 上确认第一版真实业务验证场的结构和组件问题。
+17. 后端数据源可用后，在 `apps/web-antd/src/views/platform/typical-page/user-demo-source.ts` 内把受控数据源切回 `/system/user/list`、`/system/user/deptTree` 等真实接口，尽量不改页面主体。
+18. 典型页面 Demo 开发时，顶部导航、左侧导航和面包屑必须纳入验证范围；组件视觉样式优先沉淀到平台组件场景，页面 scoped CSS 只写布局。
+19. 后续用户提供截图或指出组件样式问题时，即使没有特别强调全局修改，也默认映射到 ant-design-vue 原生组件、平台薄封装和全局样式源头处理。
+20. 如果用户提供截图或页面需求，先按 `AGENTS.md` 的截图与页面需求分析输出规则判断输出强度：简单组件反馈用简版映射，复杂页面再输出完整表格。
+21. `/project/evaluation` 后续建议补充评估详情、评估模板配置、验收附件和导出能力；当前发起评估只是前端模拟流程。
+22. 所有典型页面、截图页面、Figma 页面或业务右侧内容页收尾时，必须补“平台治理影响”章节，不得只写完成和验证。
+23. 等用户确认后，再开始下一步具体平台组件改造、方案设计或代码修改。
 
 ## 暂时不处理的问题
 
 1. 暂不批量迁移真实业务页面到 `components/platform`，应先完成 Vxe 适配层和首批真实页验证。
 2. 暂不直接用当前 `PlatformTable` 替换真实业务页的 `useVbenVxeGrid`，真实业务页短期仍以 Vben Vxe 表格路线为主。
 3. 暂不将截图分析模板拆分为独立规范文档，待后续页面需求增多后再判断是否需要。
-4. 暂不将 dist 静态包、mock 数据、平台母版和业务项目解耦等规则写成项目强约束，待结合实际需求确认后再沉淀。
+4. 暂不将 dist 静态包、mock 数据和业务项目解耦等规则写成项目强约束，待结合实际需求确认后再沉淀。
 5. 暂不继续清理 `api/system/role` 和 `views/system/role/data.tsx`，因为 `system/user` 仍复用角色相关数据配置，接口层清理需要另行确认范围。
 6. 暂不清理 `.DS_Store`，除非用户明确确认清理范围；`apps/web-antd/dist/` 与 `apps/web-antd/dist.zip` 已按用户确认从工作区改动中移除。
 7. 暂不对接真实后端登录、用户信息、权限或菜单接口，因为当前阶段以静态页面开发和 Mock 交互为主。
@@ -252,4 +274,4 @@
 22. 当前菜单骨架已让未开发菜单使用独立 path + Blank component，但 `/system/user` 直访问未正确进入原页面；如果下次直接改菜单核心或 route-to-menu，可能误伤 breadcrumb、tabs、权限路由和刷新激活态，必须先做最小归因。
 23. 如果继续保留被 Git 跟踪的 `node_modules` 和 Vite 缓存，后续安装依赖、启动开发服务或热更新都可能造成大量无意义 diff。
 24. 如果后续静态页面 Mock 数据没有统一组织，新增、编辑、删除、详情、筛选等前端模拟交互容易分散在页面内部，后续联调迁移成本会上升。
-25. 如果平台母版一开始就批量迁移 `web-antd` 组件或业务页，可能打断当前业务开发；下一阶段必须先做变量可视化旁路能力，再逐步评估接入。
+25. 如果一开始就批量迁移 `web-antd` 组件或业务页，可能打断当前业务开发；后续如有新增独立验证页，也必须先评估边界再接入。

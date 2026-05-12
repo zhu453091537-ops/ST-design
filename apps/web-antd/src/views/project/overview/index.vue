@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { TableEmits, TableProps } from 'antdv-next';
+import type { DescriptionsProps, TableEmits, TableProps } from 'antdv-next';
 
 import type {
   ProjectOverviewQuery,
@@ -7,18 +7,20 @@ import type {
   ProjectStatus,
 } from './project-overview-source';
 
-import { computed, onMounted, reactive, ref } from 'vue';
+import { computed, h, onMounted, reactive, ref } from 'vue';
+import { useRouter } from 'vue-router';
 
 import { Page } from '@vben/common-ui';
-import { VbenIcon } from '@vben/icons';
 
 import { Popconfirm, Progress } from 'antdv-next';
 
 import {
   PlatformButton,
+  PlatformDescriptions,
   PlatformDrawer,
   PlatformEditForm,
   PlatformFormItem,
+  PlatformIcon,
   PlatformInput,
   PlatformModal,
   PlatformSelect,
@@ -47,6 +49,7 @@ const query = reactive<ProjectOverviewQuery>({
   status: '',
   type: '',
 });
+const router = useRouter();
 const formModel = reactive<ProjectFormModel>({});
 const tableRows = ref<ProjectRecord[]>([]);
 const statCards = ref<Awaited<ReturnType<typeof getProjectOverviewStats>>>([]);
@@ -59,7 +62,7 @@ const projectListPanelRef = ref<HTMLElement>();
 const projectTableRef = ref<InstanceType<typeof PlatformTable>>();
 const headerActions = [
   {
-    icon: 'lucide:bar-chart-3',
+    icon: 'icon-shuiliduixiangshuju',
     key: 'board',
     label: '查看进度看板',
   },
@@ -139,6 +142,67 @@ const pagination = computed(() => ({
   showTotal: (total: number) => `共 ${total} 条`,
   total: tableRows.value.length,
 }));
+const detailDescriptionItems = computed<DescriptionsProps['items']>(() => {
+  const record = currentRecord.value;
+
+  if (!record) {
+    return [];
+  }
+
+  return [
+    {
+      content: record.type,
+      label: '项目类型',
+    },
+    {
+      content: record.department,
+      label: '所属部门',
+    },
+    {
+      content: formatAmount(record.amount),
+      label: '合同金额',
+    },
+    {
+      content: `${record.durationDays}天`,
+      label: '工期',
+    },
+    {
+      content: record.manager,
+      label: '负责人',
+    },
+    {
+      content: h(
+        'div',
+        {
+          class: [
+            'project-detail-status-bar',
+            `project-detail-status-bar--${projectStatusMap[record.status].status}`,
+          ],
+        },
+        projectStatusMap[record.status].label,
+      ),
+      label: '项目状态',
+    },
+    {
+      content: `${record.startDate} 至 ${record.endDate}`,
+      label: '计划周期',
+    },
+    {
+      content: h('div', { class: 'project-detail-progress-cell' }, [
+        h(Progress, {
+          class: 'project-detail-progress',
+          percent: record.progress,
+          showInfo: false,
+          size: 'small',
+          strokeColor: 'hsl(var(--primary))',
+          strokeWidth: 6,
+        }),
+        h('span', `${record.progress}%`),
+      ]),
+      label: '当前进度',
+    },
+  ];
+});
 
 async function loadOverview() {
   loading.value = true;
@@ -168,7 +232,7 @@ async function handleTableChange(
 }
 
 function handleBoardEntry() {
-  window.message.info('进度看板入口已保留，后续确认页面后再接入路由。');
+  router.push('/project/progress');
 }
 
 function handleHeaderAction(key: string) {
@@ -325,13 +389,13 @@ onMounted(loadOverview);
           <template #actions>
             <PlatformButton scene="toolbar" type="primary" @click="handleAdd">
               <template #icon>
-                <VbenIcon icon="lucide:plus" />
+                <PlatformIcon icon="icon-xinzeng" />
               </template>
               新建项目
             </PlatformButton>
             <PlatformButton scene="toolbar" @click="handleExport">
               <template #icon>
-                <VbenIcon icon="lucide:download" />
+                <PlatformIcon icon="icon-xiazai1" />
               </template>
               导出
             </PlatformButton>
@@ -536,36 +600,7 @@ onMounted(loadOverview);
             <p>{{ currentRecord.code }}</p>
           </div>
         </div>
-        <div class="project-detail-grid">
-          <span>项目类型</span>
-          <strong>{{ currentRecord.type }}</strong>
-          <span>所属部门</span>
-          <strong>{{ currentRecord.department }}</strong>
-          <span>合同金额</span>
-          <strong>{{ formatAmount(currentRecord.amount) }}</strong>
-          <span>工期</span>
-          <strong>{{ currentRecord.durationDays }}天</strong>
-          <span>负责人</span>
-          <strong>{{ currentRecord.manager }}</strong>
-          <span>项目状态</span>
-          <PlatformStatusTag
-            :label="projectStatusMap[currentRecord.status].label"
-            :status="projectStatusMap[currentRecord.status].status"
-          />
-          <span>计划周期</span>
-          <strong>{{ currentRecord.startDate }} 至 {{ currentRecord.endDate }}</strong>
-          <span>当前进度</span>
-          <div class="project-progress-cell">
-            <Progress
-              :percent="currentRecord.progress"
-              :show-info="false"
-              :stroke-width="6"
-              class="project-progress"
-              size="small"
-            />
-            <span>{{ currentRecord.progress }}%</span>
-          </div>
-        </div>
+        <PlatformDescriptions :items="detailDescriptionItems" />
       </div>
     </PlatformDrawer>
   </Page>
@@ -621,14 +656,16 @@ onMounted(loadOverview);
   font-size: 18px;
 }
 
-.project-progress-cell {
+.project-progress-cell,
+.project-detail-progress-cell {
   display: flex;
   align-items: center;
   gap: 8px;
   min-width: 0;
 }
 
-.project-progress {
+.project-progress,
+.project-detail-progress {
   width: 92px;
 }
 
@@ -642,9 +679,7 @@ onMounted(loadOverview);
   display: flex;
   align-items: center;
   gap: 12px;
-  padding-bottom: 18px;
-  margin-bottom: 18px;
-  border-bottom: 1px solid hsl(var(--border));
+  margin-bottom: 24px;
 }
 
 .project-detail-title h3 {
@@ -652,15 +687,35 @@ onMounted(loadOverview);
   font-size: 18px;
 }
 
-.project-detail-grid {
-  display: grid;
-  grid-template-columns: 96px minmax(0, 1fr);
-  gap: 14px 18px;
+.project-detail-status-bar {
+  display: inline-flex;
+  width: 100%;
+  min-height: 26px;
   align-items: center;
+  justify-content: center;
+  padding: 0 12px;
+  color: hsl(var(--primary-foreground));
+  border-radius: var(--st-radius-control);
 }
 
-.project-detail-grid > span {
-  color: hsl(var(--muted-foreground));
+.project-detail-status-bar--processing {
+  background: hsl(var(--st-color-stat-card-info));
+}
+
+.project-detail-status-bar--success {
+  background: hsl(var(--primary));
+}
+
+.project-detail-status-bar--warning {
+  background: hsl(var(--warning));
+}
+
+.project-detail-status-bar--default {
+  background: hsl(var(--muted-foreground));
+}
+
+.project-detail-status-bar--error {
+  background: hsl(var(--destructive));
 }
 
 @media (max-width: 1280px) {

@@ -14,7 +14,6 @@ const props = defineProps<{
   options?: SelectProps['options'];
   width?: number | string;
 }>();
-
 const triggerChars = computed(() => {
   const maxLabelLength = getMaxOptionLabelLength(props.options);
   if (maxLabelLength > 0) {
@@ -77,6 +76,14 @@ function getOptionLabel(option: NonNullable<SelectProps['options']>[number]) {
     :popup-match-select-width="false"
     :style="selectStyle"
   >
+    <template #suffixIcon="slotProps">
+      <slot name="suffixIcon" v-bind="slotProps || {}">
+        <i
+          class="platform-select__suffix-icon iconfont icon-jiantouxia"
+          aria-hidden="true"
+        ></i>
+      </slot>
+    </template>
     <template v-for="(_, name) in $slots" #[name]="slotProps">
       <slot :name="name" v-bind="slotProps || {}"></slot>
     </template>
@@ -87,6 +94,17 @@ function getOptionLabel(option: NonNullable<SelectProps['options']>[number]) {
 .platform-select {
   min-width: var(--platform-select-width, 0);
   width: var(--platform-select-width, 100%);
+}
+
+.platform-select__suffix-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 12px;
+  height: 12px;
+  color: currentColor;
+  font-size: 12px;
+  line-height: 1;
 }
 
 .platform-select :deep(.ant-select-selection-item),

@@ -118,7 +118,6 @@ const trendIcon = computed(() => {
   padding: var(--st-module-content-padding);
   overflow: hidden;
   background: hsl(var(--st-color-stat-card-bg));
-  border: 1px solid hsl(var(--st-color-stat-card-border));
   border-radius: var(--st-radius-card);
   box-shadow: var(--st-shadow-stat-card);
   transition: transform 0.18s ease;
@@ -194,8 +193,11 @@ const trendIcon = computed(() => {
 }
 
 .platform-stat-card__value strong {
-  font-size: 26px;
-  line-height: 32px;
+  font-family: var(--st-font-family-number);
+  font-size: 32px;
+  font-variant-numeric: lining-nums tabular-nums;
+  font-weight: 700;
+  line-height: 40px;
   color: var(--platform-stat-color);
 }
 

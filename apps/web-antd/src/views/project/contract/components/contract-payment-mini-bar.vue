@@ -110,6 +110,12 @@ function renderChart() {
 
 <template>
   <div class="contract-payment-mini-bar">
+    <ul class="contract-payment-mini-bar__amounts">
+      <li v-for="node in nodes" :key="`${node.label}-amount`">
+        <strong>{{ formatAmount(node.amount) }}</strong>
+      </li>
+    </ul>
+
     <EchartsUI ref="chartRef" height="34px" width="100%" />
 
     <ul class="contract-payment-mini-bar__nodes">
@@ -122,7 +128,6 @@ function renderChart() {
           <strong>{{ node.label }} {{ node.percent }}%</strong>
         </div>
         <span>{{ paymentNodeStatusMap[node.status].label }}</span>
-        <em>{{ formatAmount(node.amount) }}</em>
       </li>
     </ul>
   </div>
@@ -132,23 +137,50 @@ function renderChart() {
 .contract-payment-mini-bar {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 0;
 }
 
+.contract-payment-mini-bar__amounts,
 .contract-payment-mini-bar__nodes {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 10px;
   padding: 0;
   margin: 0;
   list-style: none;
 }
 
+.contract-payment-mini-bar__amounts {
+  gap: 0;
+}
+
+.contract-payment-mini-bar__amounts li,
 .contract-payment-mini-bar__nodes li {
   display: flex;
   flex-direction: column;
-  gap: 8px;
   min-width: 0;
+}
+
+.contract-payment-mini-bar__amounts li {
+  align-items: center;
+  justify-content: center;
+}
+
+.contract-payment-mini-bar__amounts strong {
+  min-width: 0;
+  color: hsl(var(--foreground));
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 26px;
+  text-align: center;
+}
+
+.contract-payment-mini-bar__nodes {
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.contract-payment-mini-bar__nodes li {
+  gap: 4px;
 }
 
 .contract-payment-mini-bar__title {
@@ -177,14 +209,8 @@ function renderChart() {
   color: hsl(var(--muted-foreground));
 }
 
-.contract-payment-mini-bar__nodes em {
-  min-width: 0;
-  color: hsl(var(--foreground));
-  font-style: normal;
-  font-weight: 700;
-}
-
 @media (max-width: 720px) {
+  .contract-payment-mini-bar__amounts,
   .contract-payment-mini-bar__nodes {
     grid-template-columns: 1fr;
   }

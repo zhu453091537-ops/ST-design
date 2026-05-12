@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import type { PlatformViewOption } from './types';
 
-import { VbenIcon } from '@vben/icons';
-
 import { PlatformButton } from '../button';
+import { PlatformIcon } from '../icon';
 
 defineProps<{
   modelValue: string;
@@ -25,7 +24,7 @@ const emit = defineEmits<{
       @click="emit('update:modelValue', option.value)"
     >
       <template v-if="option.icon" #icon>
-        <VbenIcon :icon="option.icon" />
+        <PlatformIcon :icon="option.icon" />
       </template>
       {{ option.label }}
     </PlatformButton>
@@ -37,6 +36,11 @@ const emit = defineEmits<{
   display: inline-flex;
   flex: none;
   gap: 8px;
+}
+
+.platform-view-switch :deep(.platform-button .platform-icon.iconfont) {
+  font-size: 20px;
+  line-height: 1;
 }
 
 @media (max-width: 768px) {

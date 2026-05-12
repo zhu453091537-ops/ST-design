@@ -31,6 +31,10 @@ function menuIcon(menu: MenuRecordRaw) {
     ? menu.activeIcon || menu.icon
     : menu.icon;
 }
+
+function isIconfont(icon: NormalMenuProps['menus'][number]['icon']) {
+  return typeof icon === 'string' && icon.startsWith('icon-');
+}
 </script>
 
 <template>
@@ -50,7 +54,13 @@ function menuIcon(menu: MenuRecordRaw) {
         @click="() => emit('select', menu)"
         @mouseenter="() => emit('enter', menu)"
       >
-        <VbenIcon :class="e('icon')" :icon="menuIcon(menu)" fallback />
+        <i
+          v-if="isIconfont(menuIcon(menu))"
+          class="iconfont"
+          :class="[e('icon'), menuIcon(menu)]"
+          aria-hidden="true"
+        ></i>
+        <VbenIcon v-else :class="e('icon')" :icon="menuIcon(menu)" fallback />
 
         <span :class="e('name')" class="truncate"> {{ menu.name }}</span>
       </li>
@@ -145,8 +155,17 @@ function menuIcon(menu: MenuRecordRaw) {
 .vben-normal-menu__icon {
   @apply max-h-5;
 
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   font-size: calc(var(--font-size-base, 16px) * 1.25);
+  line-height: 1;
   transition: all 0.25s ease;
+}
+
+.vben-normal-menu__icon.iconfont {
+  font-size: calc(var(--font-size-base, 16px) * 1.25);
+  transform: translateY(-1px);
 }
 
 .vben-normal-menu__name {

@@ -3,9 +3,8 @@ import type { PlatformTaskCardTag } from './types';
 
 import { computed } from 'vue';
 
-import { VbenIcon } from '@vben/icons';
-
 import { PlatformButton } from '../button';
+import { PlatformIcon } from '../icon';
 import { PlatformStatusTag } from '../status';
 
 const props = withDefaults(
@@ -20,7 +19,7 @@ const props = withDefaults(
     title: string;
   }>(),
   {
-    actionIcon: 'lucide:plus',
+    actionIcon: 'icon-xinzeng',
     actionLabel: '',
     description: '',
     meta: '',
@@ -54,7 +53,7 @@ const progressStyle = computed(() => ({
           @click="emit('action')"
         >
           <template #icon>
-            <VbenIcon :icon="actionIcon" />
+            <PlatformIcon :icon="actionIcon" />
           </template>
           {{ actionLabel }}
         </PlatformButton>

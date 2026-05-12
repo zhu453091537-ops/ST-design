@@ -7,9 +7,8 @@ import type {
 
 import { computed } from 'vue';
 
-import { VbenIcon } from '@vben/icons';
-
 import { PlatformButton } from '../button';
+import { PlatformIcon } from '../icon';
 import PlatformViewSwitch from './platform-view-switch.vue';
 
 const props = withDefaults(
@@ -42,7 +41,7 @@ const emit = defineEmits<{
 
 const toolMeta = {
   export: {
-    icon: 'lucide:download',
+    icon: 'icon-xiazai1',
     label: '导出',
   },
   fullscreen: {
@@ -119,7 +118,7 @@ function handleToolClick(tool: PlatformViewTool) {
         @click="handleToolClick(tool.key)"
         >
           <template #icon>
-            <VbenIcon :icon="tool.icon" />
+            <PlatformIcon :icon="tool.icon" />
           </template>
         </PlatformButton>
       <PlatformButton
@@ -133,7 +132,7 @@ function handleToolClick(tool: PlatformViewTool) {
         @click="emit('action', action.key)"
       >
         <template v-if="action.icon" #icon>
-          <VbenIcon :icon="action.icon" />
+          <PlatformIcon :icon="action.icon" />
         </template>
         {{ action.label }}
       </PlatformButton>
@@ -184,6 +183,16 @@ function handleToolClick(tool: PlatformViewTool) {
   gap: 8px;
   flex-wrap: wrap;
   justify-content: flex-end;
+}
+
+.platform-view-toolbar__actions :deep(.platform-button .platform-icon.iconfont) {
+  font-size: 20px;
+  line-height: 1;
+}
+
+.platform-view-toolbar__actions
+  :deep(.platform-button .platform-icon.icon-shuiliduixiangshuju) {
+  font-size: 22px;
 }
 
 @media (max-width: 960px) {

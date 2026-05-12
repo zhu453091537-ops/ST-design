@@ -34,7 +34,7 @@ const downloadingId = ref<null | number | string>(null);
 const fileInputRef = ref<HTMLInputElement>();
 const headerActions = computed(() => [
   {
-    icon: 'lucide:download',
+    icon: 'icon-xiazai1',
     key: 'export',
     label: '导出台账',
     loading: exporting.value,

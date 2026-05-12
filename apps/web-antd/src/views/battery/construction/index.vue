@@ -1,23 +1,26 @@
 <script setup lang="ts">
-import type { PlatformTableColumn } from '#/components/platform';
-
 import type {
+  ConstructionDetail,
   ConstructionQuery,
   ConstructionRecord,
 } from './construction-source';
 
-import { computed, onMounted, reactive, ref } from 'vue';
+import type { PlatformTableColumn } from '#/components/platform';
+
+import { computed, onBeforeUnmount, onMounted, reactive, ref } from 'vue';
 
 import { Page } from '@vben/common-ui';
 
 import { Space } from 'antdv-next';
 
 import {
-  PlatformRangePicker,
+  PlatformApprovalProgress,
   PlatformButton,
   PlatformFormItem,
   PlatformInput,
+  PlatformModal,
   PlatformQueryPanel,
+  PlatformRangePicker,
   PlatformSelect,
   PlatformStatusTag,
   PlatformTable,
@@ -29,9 +32,15 @@ import {
   constructionBusinessTypeOptions,
   constructionStatusOptions,
   constructionYearOptions,
+  getConstructionDetail,
   getConstructionList,
   getConstructionStatusMeta,
 } from './construction-source';
+
+const CONSTRUCTION_VIEW_MODAL_WIDTH = 1200;
+const APPROVAL_PANEL_DEFAULT_WIDTH = 360;
+const APPROVAL_PANEL_MAX_WIDTH = 720;
+const APPROVAL_PANEL_MIN_WIDTH = 360;
 
 const createDefaultQuery = (): ConstructionQuery => ({
   businessType: '',
@@ -48,6 +57,11 @@ const loading = ref(false);
 const tableRows = ref<ConstructionRecord[]>([]);
 const panelRef = ref<HTMLElement>();
 const constructionTableRef = ref<InstanceType<typeof PlatformTable>>();
+const viewModalOpen = ref(false);
+const detailLoading = ref(false);
+const selectedDetail = ref<ConstructionDetail | null>(null);
+const approvalPanelWidth = ref(APPROVAL_PANEL_DEFAULT_WIDTH);
+
 type TableFilterValue = Array<boolean | number | string> | null;
 
 const tableColumns = computed<PlatformTableColumn[]>(() => [
@@ -139,14 +153,26 @@ const tableColumns = computed<PlatformTableColumn[]>(() => [
     width: 220,
   },
 ]);
+
 const pagination = computed(() => ({
   pageSize: 10,
   showTotal: (total: number) => `共 ${total} 条`,
   total: tableRows.value.length,
 }));
 
+let approvalDragState:
+  | null
+  | {
+      startWidth: number;
+      startX: number;
+    } = null;
+
 onMounted(async () => {
   await loadConstructionList();
+});
+
+onBeforeUnmount(() => {
+  stopApprovalResize();
 });
 
 async function loadConstructionList() {
@@ -188,8 +214,17 @@ function handlePermitChange() {
   window.message.info('已保留许可证变更入口，后续确认流程后再接入。');
 }
 
-function handleView(record: ConstructionRecord) {
-  window.message.info(`已保留“${record.projectName}”查看入口。`);
+async function handleView(record: ConstructionRecord) {
+  viewModalOpen.value = true;
+  detailLoading.value = true;
+  selectedDetail.value = null;
+  approvalPanelWidth.value = APPROVAL_PANEL_DEFAULT_WIDTH;
+
+  try {
+    selectedDetail.value = await getConstructionDetail(record.id);
+  } finally {
+    detailLoading.value = false;
+  }
 }
 
 function handlePrint(record: ConstructionRecord) {
@@ -217,6 +252,41 @@ async function handleTableFullscreen() {
   } catch {
     window.message.warning('当前浏览器暂不支持全屏展示。');
   }
+}
+
+function startApprovalResize(event: MouseEvent) {
+  approvalDragState = {
+    startWidth: approvalPanelWidth.value,
+    startX: event.clientX,
+  };
+
+  window.addEventListener('mousemove', handleApprovalResize);
+  window.addEventListener('mouseup', stopApprovalResize);
+  event.preventDefault();
+}
+
+function handleApprovalResize(event: MouseEvent) {
+  if (!approvalDragState) {
+    return;
+  }
+
+  const nextWidth =
+    approvalDragState.startWidth - (event.clientX - approvalDragState.startX);
+  approvalPanelWidth.value = clamp(
+    nextWidth,
+    APPROVAL_PANEL_MIN_WIDTH,
+    APPROVAL_PANEL_MAX_WIDTH,
+  );
+}
+
+function stopApprovalResize() {
+  approvalDragState = null;
+  window.removeEventListener('mousemove', handleApprovalResize);
+  window.removeEventListener('mouseup', stopApprovalResize);
+}
+
+function clamp(value: number, min: number, max: number) {
+  return Math.min(max, Math.max(min, value));
 }
 
 function toConstructionRecord(record: unknown) {
@@ -405,6 +475,41 @@ function serializeDateRange(value: string[]) {
           </template>
         </PlatformTable>
       </section>
+
+      <PlatformModal
+        v-model:open="viewModalOpen"
+        :body-style="{ padding: 0 }"
+        :footer="null"
+        :mask-closable="false"
+        :style="{ top: '24px' }"
+        :width="CONSTRUCTION_VIEW_MODAL_WIDTH"
+        class="construction-management-view-modal"
+        title="审批进度"
+      >
+        <div class="construction-management-view">
+          <div class="construction-management-view__main">
+            <div class="construction-management-view__placeholder"></div>
+          </div>
+
+          <div
+            class="construction-management-view__splitter"
+            @mousedown="startApprovalResize"
+          >
+            <span></span>
+          </div>
+
+          <div
+            class="construction-management-view__progress"
+            :style="{ width: `${approvalPanelWidth}px` }"
+          >
+            <PlatformApprovalProgress
+              v-if="!detailLoading && selectedDetail"
+              :items="selectedDetail.approvalItems"
+            />
+            <PlatformApprovalProgress v-else :items="[]" />
+          </div>
+        </div>
+      </PlatformModal>
     </div>
   </Page>
 </template>
@@ -437,5 +542,66 @@ function serializeDateRange(value: string[]) {
 .construction-management-project-cell span {
   color: hsl(var(--muted-foreground));
   font-size: var(--st-font-size-sm);
+}
+
+.construction-management-view-modal :deep(.ant-modal-body) {
+  padding: 0;
+}
+
+.construction-management-view {
+  display: flex;
+  width: 100%;
+  min-height: 720px;
+  overflow: hidden;
+  background: hsl(var(--background));
+  border: 1px solid hsl(var(--border));
+  border-radius: 12px;
+}
+
+.construction-management-view__main {
+  flex: 1;
+  min-width: 0;
+  background: hsl(var(--background));
+}
+
+.construction-management-view__placeholder {
+  width: 100%;
+  height: 100%;
+  min-height: 720px;
+}
+
+.construction-management-view__splitter {
+  position: relative;
+  flex: 0 0 12px;
+  cursor: col-resize;
+  background: hsl(var(--background));
+}
+
+.construction-management-view__splitter::before {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 1px;
+  content: '';
+  background: hsl(var(--border));
+  transform: translateX(-50%);
+}
+
+.construction-management-view__splitter span {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 4px;
+  height: 48px;
+  background: hsl(var(--border));
+  border-radius: 999px;
+  transform: translate(-50%, -50%);
+}
+
+.construction-management-view__progress {
+  flex: 0 0 auto;
+  min-width: 360px;
+  max-width: 720px;
 }
 </style>

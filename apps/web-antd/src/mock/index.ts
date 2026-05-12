@@ -73,7 +73,7 @@ const mockBackendMenuList = [
         component: 'project/overview/index',
         hidden: false,
         meta: {
-          icon: 'lucide:layout-dashboard',
+          icon: 'icon-xiangmuzonglan',
           noCache: false,
           title: '项目总览',
         },
@@ -85,7 +85,7 @@ const mockBackendMenuList = [
         component: 'project/information/index',
         hidden: false,
         meta: {
-          icon: 'lucide:folder-open',
+          icon: 'icon-xiangmuxinxiguanli',
           noCache: false,
           title: '项目信息管理',
         },
@@ -97,7 +97,7 @@ const mockBackendMenuList = [
         component: 'project/progress/index',
         hidden: false,
         meta: {
-          icon: 'lucide:list-todo',
+          icon: 'icon-jindukeshihuagenzong',
           noCache: false,
           title: '进度可视化跟踪',
         },
@@ -109,7 +109,7 @@ const mockBackendMenuList = [
         component: 'project/contract/index',
         hidden: false,
         meta: {
-          icon: 'lucide:file-signature',
+          icon: 'icon-hetongyufukuanguanli',
           noCache: false,
           title: '合同与付款管理',
         },
@@ -121,7 +121,7 @@ const mockBackendMenuList = [
         component: 'project/document/index',
         hidden: false,
         meta: {
-          icon: 'lucide:files',
+          icon: 'icon-wendangyutaizhangguanli',
           noCache: false,
           title: '文档与台账管理',
         },
@@ -133,7 +133,7 @@ const mockBackendMenuList = [
         component: 'project/evaluation/index',
         hidden: false,
         meta: {
-          icon: 'lucide:clipboard-check',
+          icon: 'icon-zhongqipingguyuyanshouguanli',
           noCache: false,
           title: '中期评估与验收',
         },
@@ -159,7 +159,7 @@ const mockBackendMenuList = [
         component: 'personnel/overview/index',
         hidden: false,
         meta: {
-          icon: 'lucide:users',
+          icon: 'icon-renyuanzonglan',
           noCache: false,
           title: '人员总览',
         },
@@ -168,10 +168,22 @@ const mockBackendMenuList = [
       },
       {
         children: [],
+        component: 'personnel/detail/index',
+        hidden: true,
+        meta: {
+          icon: 'icon-renyuanzonglan',
+          noCache: false,
+          title: '人员详情',
+        },
+        name: 'PersonnelOverviewDetail',
+        path: '/personnel/overview/detail',
+      },
+      {
+        children: [],
         component: 'platform/typical-page/index',
         hidden: false,
         meta: {
-          icon: 'lucide:badge-check',
+          icon: 'icon-renyuandanganguanli',
           noCache: false,
           title: '人员档案管理',
         },
@@ -183,7 +195,7 @@ const mockBackendMenuList = [
         component: 'personnel/qualification/index',
         hidden: false,
         meta: {
-          icon: 'lucide:badge-check',
+          icon: 'icon-zizhiyuzhunruguankong',
           noCache: false,
           title: '资质与准入管控',
         },
@@ -195,7 +207,7 @@ const mockBackendMenuList = [
         component: 'personnel/turnover/index',
         hidden: false,
         meta: {
-          icon: 'lucide:repeat-2',
+          icon: 'icon-biandongyuliushishuaitongji',
           noCache: false,
           title: '变动与流失率统计',
         },
@@ -207,7 +219,7 @@ const mockBackendMenuList = [
         component: 'personnel/worktime/index',
         hidden: false,
         meta: {
-          icon: 'lucide:clock-3',
+          icon: 'icon-gongshiyujianzhiguankong',
           noCache: false,
           title: '工时与兼职管控',
         },

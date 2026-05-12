@@ -9,6 +9,7 @@ import {
   PlatformDatePicker,
   PlatformEditForm,
   PlatformFormItem,
+  PlatformIcon,
   PlatformInput,
   PlatformModal,
   PlatformSelect,
@@ -152,7 +153,7 @@ onMounted(loadPersonnelArchive);
 
           <PlatformButton scene="toolbar" type="primary" @click="handleAdd">
             <template #icon>
-              <VbenIcon icon="lucide:user-plus" />
+              <PlatformIcon icon="icon-xinzeng" />
             </template>
             新增人员
           </PlatformButton>

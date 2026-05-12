@@ -2,11 +2,9 @@
 import { computed, useSlots } from 'vue';
 
 import { Tree } from 'antdv-next';
-
 defineOptions({
   inheritAttrs: false,
 });
-
 const slots = useSlots();
 const passthroughSlotNames = computed(() =>
   Object.keys(slots).filter((name) => name !== 'switcherIcon'),
@@ -32,8 +30,9 @@ function isExpanded(slotProps: any) {
       <slot name="switcherIcon" v-bind="slotProps || {}">
         <span
           v-if="!isLeafNode(slotProps)"
-          class="platform-tree__switcher"
+          class="platform-tree__switcher iconfont icon-jiantouxia"
           :class="{ 'is-expanded': isExpanded(slotProps) }"
+          aria-hidden="true"
         ></span>
       </slot>
     </template>
@@ -66,12 +65,14 @@ function isExpanded(slotProps: any) {
 }
 
 .platform-tree__switcher {
-  display: inline-block;
-  width: 0;
-  height: 0;
-  border-top: 5px solid transparent;
-  border-bottom: 5px solid transparent;
-  border-left: 6px solid hsl(var(--st-color-tree-switcher));
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 12px;
+  height: 12px;
+  color: hsl(var(--st-color-tree-switcher));
+  font-size: 12px;
+  line-height: 1;
   transition: transform 0.16s ease;
 }
 

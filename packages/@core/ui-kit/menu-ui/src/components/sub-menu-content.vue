@@ -71,6 +71,9 @@ const iconComp = computed(() => {
 const iconArrowStyle = computed(() => {
   return opened.value ? { transform: `rotate(180deg)` } : {};
 });
+const isIconfont = computed(
+  () => typeof props.icon === 'string' && props.icon.startsWith('icon-'),
+);
 </script>
 <template>
   <div
@@ -82,8 +85,14 @@ const iconArrowStyle = computed(() => {
   >
     <slot></slot>
 
+    <i
+      v-if="!isMenuMore && isIconfont"
+      class="iconfont"
+      :class="[nsMenu.e('icon'), icon]"
+      aria-hidden="true"
+    ></i>
     <VbenIcon
-      v-if="!isMenuMore"
+      v-else-if="!isMenuMore"
       :class="nsMenu.e('icon')"
       :icon="icon"
       fallback
