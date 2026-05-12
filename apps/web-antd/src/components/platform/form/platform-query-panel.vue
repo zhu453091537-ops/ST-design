@@ -1,9 +1,7 @@
 <script setup lang="ts">
 import type { PropType, VNode } from 'vue';
 
-import { Comment, Fragment, Text, computed, defineComponent, ref, useSlots, watch } from 'vue';
-
-import { VbenIcon } from '@vben/icons';
+import { Comment, computed, defineComponent, Fragment, ref, Text, useSlots, watch } from 'vue';
 
 import { PlatformButton } from '../button';
 
@@ -46,7 +44,6 @@ const emit = defineEmits<{
   search: [];
   'update:collapsed': [value: boolean];
 }>();
-
 const RenderVNode = defineComponent({
   name: 'PlatformQueryPanelRenderVNode',
   props: {
@@ -102,8 +99,10 @@ const hasActions = computed(
 const collapseLabel = computed(() =>
   collapsedState.value ? '展开' : '收起',
 );
-const collapseIcon = computed(() =>
-  collapsedState.value ? 'lucide:chevron-down' : 'lucide:chevron-up',
+const collapseIconClass = computed(() =>
+  collapsedState.value
+    ? 'platform-query-panel__collapse-icon iconfont icon-jiantouxia'
+    : 'platform-query-panel__collapse-icon iconfont icon-jiantouxia platform-query-panel__collapse-icon--expanded',
 );
 const actionsStyle = computed(() => {
   const columns = columnCount.value;
@@ -187,11 +186,11 @@ function flattenNodes(nodes: VNode[]): VNode[] {
   >
     <div class="platform-query-panel__grid">
       <div
-        v-for="(node, index) in visibleFieldNodes"
-        :key="node.key ?? `platform-query-panel-field-${index}`"
+        v-for="(fieldNode, index) in visibleFieldNodes"
+        :key="fieldNode.key ?? `platform-query-panel-field-${index}`"
         class="platform-query-panel__field"
       >
-        <RenderVNode :node="node" />
+        <RenderVNode :node="fieldNode" />
       </div>
 
       <div
@@ -223,7 +222,7 @@ function flattenNodes(nodes: VNode[]): VNode[] {
         >
           {{ collapseLabel }}
           <template #icon>
-            <VbenIcon :icon="collapseIcon" />
+            <i :class="collapseIconClass" aria-hidden="true"></i>
           </template>
         </PlatformButton>
       </div>
@@ -299,6 +298,22 @@ function flattenNodes(nodes: VNode[]): VNode[] {
   justify-content: flex-end;
   gap: var(--st-search-form-action-gap);
   min-width: 0;
+}
+
+.platform-query-panel__collapse-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 12px;
+  height: 12px;
+  color: currentColor;
+  font-size: 12px;
+  line-height: 1;
+  transition: transform 0.16s ease;
+}
+
+.platform-query-panel__collapse-icon--expanded {
+  transform: rotate(180deg);
 }
 
 @media (max-width: 768px) {

@@ -33,6 +33,9 @@ const active = computed(() => props.path === rootMenu?.activePath);
 const menuIcon = computed(() =>
   active.value ? props.activeIcon || props.icon : props.icon,
 );
+const isIconfont = computed(
+  () => typeof menuIcon.value === 'string' && menuIcon.value.startsWith('icon-'),
+);
 
 const isHttp = computed(() => isHttpUrl(item.parentPaths.at(-1)));
 
@@ -114,7 +117,13 @@ onBeforeUnmount(() => {
       >
         <template #trigger>
           <div :class="[nsMenu.be('tooltip', 'trigger')]">
-            <VbenIcon :class="nsMenu.e('icon')" :icon="menuIcon" fallback />
+            <i
+              v-if="isIconfont"
+              class="iconfont"
+              :class="[nsMenu.e('icon'), menuIcon]"
+              aria-hidden="true"
+            ></i>
+            <VbenIcon v-else :class="nsMenu.e('icon')" :icon="menuIcon" fallback />
             <slot></slot>
             <span v-if="collapseShowTitle" :class="nsMenu.e('name')">
               <slot name="title"></slot>
@@ -129,7 +138,13 @@ onBeforeUnmount(() => {
           class="right-2"
           v-bind="props"
         />
-        <VbenIcon :class="nsMenu.e('icon')" :icon="menuIcon" />
+        <i
+          v-if="isIconfont"
+          class="iconfont"
+          :class="[nsMenu.e('icon'), menuIcon]"
+          aria-hidden="true"
+        ></i>
+        <VbenIcon v-else :class="nsMenu.e('icon')" :icon="menuIcon" />
         <slot></slot>
         <slot name="title"></slot>
       </div>

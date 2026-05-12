@@ -1,3 +1,5 @@
+import type { PlatformApprovalProgressItem } from '#/components/platform';
+
 export type ConstructionStatus = 'completed' | 'draft' | 'pending';
 
 export interface ConstructionQuery {
@@ -10,17 +12,24 @@ export interface ConstructionQuery {
 }
 
 export interface ConstructionRecord {
+  approvalItems?: PlatformApprovalProgressItem[];
+  businessType: '许可证办理' | '许可证变更';
   id: number;
   permitCode: string;
-  businessType: '许可证办理' | '许可证变更';
+  plannedEndDate: string;
+  plannedStartDate: string;
   projectCode: string;
   projectName: string;
   projectYear: number;
-  plannedEndDate: string;
-  plannedStartDate: string;
   status: ConstructionStatus;
-  submitter: string;
   submittedAt: string;
+  submitter: string;
+}
+
+export interface ConstructionDetail {
+  approvalItems: PlatformApprovalProgressItem[];
+  id: number;
+  projectName: string;
 }
 
 type ConstructionStatusMeta = {
@@ -77,8 +86,59 @@ export const constructionStatusMap: Record<
   },
 };
 
+function createApprovalItems(
+  items: Array<{
+    assignee: string;
+    department?: string;
+    id: string;
+    status: PlatformApprovalProgressItem['status'];
+    time?: string;
+    title: string;
+  }>,
+): PlatformApprovalProgressItem[] {
+  return items;
+}
+
 const constructionRows: ConstructionRecord[] = [
   {
+    approvalItems: createApprovalItems([
+      {
+        assignee: '黄锦威',
+        avatarIcon: 'lucide:user-round',
+        department: '设备工程部',
+        dotIcon: 'lucide:check',
+        id: '1-start',
+        status: 'finished',
+        time: '2025-12-08 09:32',
+        title: '提交施工许可证变更申请',
+      },
+      {
+        assignee: '梁宇翔',
+        avatarIcon: 'lucide:user-round',
+        department: '项目负责人',
+        dotIcon: 'lucide:clock-3',
+        id: '1-current',
+        status: 'current',
+        time: '2025-12-08 10:16',
+        title: '项目负责人审批',
+      },
+      {
+        assignee: '待审批',
+        avatarIcon: 'lucide:user-round',
+        department: '部门负责人',
+        id: '1-next',
+        status: 'pending',
+        title: '部门负责人审批',
+      },
+      {
+        assignee: '待审批',
+        avatarIcon: 'lucide:user-round',
+        department: '安全负责人',
+        id: '1-last',
+        status: 'pending',
+        title: '安全负责人审批',
+      },
+    ]),
     businessType: '许可证变更',
     id: 1,
     permitCode: '',
@@ -92,6 +152,31 @@ const constructionRows: ConstructionRecord[] = [
     submitter: '',
   },
   {
+    approvalItems: createApprovalItems([
+      {
+        assignee: '李林杰',
+        department: '电仪项目组',
+        id: '2-start',
+        status: 'finished',
+        time: '2025-04-10 13:51',
+        title: '提交施工许可证申请',
+      },
+      {
+        assignee: '李德勇',
+        department: '项目负责人',
+        id: '2-current',
+        status: 'current',
+        time: '2025-04-10 14:08',
+        title: '项目负责人审批',
+      },
+      {
+        assignee: '待审批',
+        department: '部门负责人',
+        id: '2-next',
+        status: 'pending',
+        title: '部门负责人审批',
+      },
+    ]),
     businessType: '许可证办理',
     id: 2,
     permitCode: '',
@@ -105,6 +190,38 @@ const constructionRows: ConstructionRecord[] = [
     submitter: '李林杰',
   },
   {
+    approvalItems: createApprovalItems([
+      {
+        assignee: '王栋',
+        department: '电厂项目部',
+        id: '3-start',
+        status: 'finished',
+        time: '2026-01-09 15:04',
+        title: '提交施工许可证申请',
+      },
+      {
+        assignee: '陈文格',
+        department: '项目负责人',
+        id: '3-current',
+        status: 'current',
+        time: '2026-01-09 16:20',
+        title: '项目负责人审批',
+      },
+      {
+        assignee: '待审批',
+        department: '部门负责人',
+        id: '3-next',
+        status: 'pending',
+        title: '部门负责人审批',
+      },
+      {
+        assignee: '待审批',
+        department: '安全专责',
+        id: '3-last',
+        status: 'pending',
+        title: '安全专责审批',
+      },
+    ]),
     businessType: '许可证办理',
     id: 3,
     permitCode: '',
@@ -118,6 +235,40 @@ const constructionRows: ConstructionRecord[] = [
     submitter: '王栋',
   },
   {
+    approvalItems: createApprovalItems([
+      {
+        assignee: '周敬然',
+        department: '项目发起人',
+        id: '4-start',
+        status: 'finished',
+        time: '2024-08-19 15:57',
+        title: '提交施工许可证申请',
+      },
+      {
+        assignee: '王海川',
+        department: '项目负责人',
+        id: '4-step-2',
+        status: 'finished',
+        time: '2024-08-19 16:20',
+        title: '项目负责人审批',
+      },
+      {
+        assignee: '梁泽明',
+        department: '部门负责人',
+        id: '4-step-3',
+        status: 'finished',
+        time: '2024-08-19 16:42',
+        title: '部门负责人审批',
+      },
+      {
+        assignee: '黄靖涛',
+        department: '安全负责人',
+        id: '4-step-4',
+        status: 'finished',
+        time: '2024-08-19 17:05',
+        title: '安全负责人审批',
+      },
+    ]),
     businessType: '许可证办理',
     id: 4,
     permitCode: '2024001',
@@ -131,6 +282,40 @@ const constructionRows: ConstructionRecord[] = [
     submitter: '周敬然',
   },
   {
+    approvalItems: createApprovalItems([
+      {
+        assignee: '张乾方',
+        department: '项目发起人',
+        id: '5-start',
+        status: 'finished',
+        time: '2024-08-26 08:17',
+        title: '提交施工许可证申请',
+      },
+      {
+        assignee: '陈文格',
+        department: '项目负责人',
+        id: '5-step-2',
+        status: 'finished',
+        time: '2024-08-26 08:35',
+        title: '项目负责人审批',
+      },
+      {
+        assignee: '梁泽明',
+        department: '部门负责人',
+        id: '5-step-3',
+        status: 'finished',
+        time: '2024-08-26 09:10',
+        title: '部门负责人审批',
+      },
+      {
+        assignee: '黄靖涛',
+        department: '安全负责人',
+        id: '5-step-4',
+        status: 'finished',
+        time: '2024-08-26 09:36',
+        title: '安全负责人审批',
+      },
+    ]),
     businessType: '许可证办理',
     id: 5,
     permitCode: '2024002',
@@ -144,6 +329,32 @@ const constructionRows: ConstructionRecord[] = [
     submitter: '张乾方',
   },
   {
+    approvalItems: createApprovalItems([
+      {
+        assignee: '宋腾飞',
+        department: '项目发起人',
+        id: '6-start',
+        status: 'finished',
+        time: '2024-09-11 08:52',
+        title: '提交施工许可证申请',
+      },
+      {
+        assignee: '陈文格',
+        department: '项目负责人',
+        id: '6-step-2',
+        status: 'finished',
+        time: '2024-09-11 09:10',
+        title: '项目负责人审批',
+      },
+      {
+        assignee: '黄靖涛',
+        department: '安全负责人',
+        id: '6-step-3',
+        status: 'finished',
+        time: '2024-09-11 09:40',
+        title: '安全负责人审批',
+      },
+    ]),
     businessType: '许可证办理',
     id: 6,
     permitCode: '2024004',
@@ -157,6 +368,32 @@ const constructionRows: ConstructionRecord[] = [
     submitter: '宋腾飞',
   },
   {
+    approvalItems: createApprovalItems([
+      {
+        assignee: '李西彤',
+        department: '项目发起人',
+        id: '7-start',
+        status: 'finished',
+        time: '2024-10-23 10:13',
+        title: '提交施工许可证申请',
+      },
+      {
+        assignee: '周志辉',
+        department: '项目负责人',
+        id: '7-step-2',
+        status: 'finished',
+        time: '2024-10-23 10:38',
+        title: '项目负责人审批',
+      },
+      {
+        assignee: '黄靖涛',
+        department: '安全负责人',
+        id: '7-step-3',
+        status: 'finished',
+        time: '2024-10-23 11:06',
+        title: '安全负责人审批',
+      },
+    ]),
     businessType: '许可证办理',
     id: 7,
     permitCode: '2024006',
@@ -210,6 +447,22 @@ export async function getConstructionList(query: ConstructionQuery) {
       matchesSubmittedRange
     );
   });
+}
+
+export async function getConstructionDetail(
+  id: ConstructionRecord['id'],
+): Promise<ConstructionDetail | null> {
+  const matched = constructionRows.find((item) => item.id === id);
+
+  if (!matched) {
+    return null;
+  }
+
+  return {
+    approvalItems: matched.approvalItems ?? [],
+    id: matched.id,
+    projectName: matched.projectName,
+  };
 }
 
 export function getConstructionStatusMeta(status: ConstructionStatus) {

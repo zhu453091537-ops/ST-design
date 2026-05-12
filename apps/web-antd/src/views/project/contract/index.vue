@@ -176,7 +176,7 @@ function formatAmount(value: number) {
 }
 
 .project-contract-card__payment-chart {
-  padding-bottom: 22px;
+  padding-bottom: 16px;
 }
 
 @media (max-width: 1200px) {

@@ -18,9 +18,9 @@ import {
   PlatformDatePicker,
   PlatformEditForm,
   PlatformFormItem,
+  PlatformIcon,
   PlatformInput,
   PlatformModal,
-  PlatformQueryPanel,
   PlatformSegmented,
   PlatformSelect,
   PlatformStatusTag,
@@ -65,7 +65,6 @@ const tableRows = ref<ProjectInformationRecord[]>([]);
 const loading = ref(false);
 const saving = ref(false);
 const formOpen = ref(false);
-const queryCollapsed = ref(true);
 const currentRecord = ref<null | ProjectInformationRecord>(null);
 const projectListPanelRef = ref<HTMLElement>();
 const projectTableRef = ref<InstanceType<typeof PlatformTable>>();
@@ -158,11 +157,6 @@ async function loadProjectInformation() {
 }
 
 async function handleSearch() {
-  await loadProjectInformation();
-}
-
-async function handleReset() {
-  Object.assign(query, createDefaultQuery());
   await loadProjectInformation();
 }
 
@@ -430,28 +424,6 @@ onMounted(loadProjectInformation);
         title="项目信息管理"
       />
 
-      <PlatformQueryPanel
-        v-model:collapsed="queryCollapsed"
-        :columns="3"
-        @query="handleSearch"
-        @reset="handleReset"
-      >
-        <PlatformFormItem label="项目类型">
-          <PlatformSelect
-            v-model:value="query.type"
-            :options="projectInformationTypeOptions"
-            placeholder="请选择项目类型"
-          />
-        </PlatformFormItem>
-        <PlatformFormItem label="项目状态">
-          <PlatformSelect
-            v-model:value="query.status"
-            :options="projectInformationStatusOptions"
-            placeholder="请选择项目状态"
-          />
-        </PlatformFormItem>
-      </PlatformQueryPanel>
-
       <section
         ref="projectListPanelRef"
         class="platform-surface project-information-panel"
@@ -468,7 +440,7 @@ onMounted(loadProjectInformation);
           <template #actions>
             <PlatformButton scene="toolbar" type="primary" @click="handleAdd">
               <template #icon>
-                <VbenIcon icon="lucide:plus" />
+                <PlatformIcon icon="icon-xinzeng" />
               </template>
               新建项目
             </PlatformButton>
@@ -728,7 +700,7 @@ onMounted(loadProjectInformation);
                       @click.prevent="addStaffingRow"
                     >
                       <template #icon>
-                        <VbenIcon icon="lucide:plus" />
+                        <PlatformIcon icon="icon-xinzeng" />
                       </template>
                     </PlatformButton>
                     <PlatformButton
@@ -770,7 +742,7 @@ onMounted(loadProjectInformation);
                       @click.prevent="addEquipmentRow"
                     >
                       <template #icon>
-                        <VbenIcon icon="lucide:plus" />
+                        <PlatformIcon icon="icon-xinzeng" />
                       </template>
                     </PlatformButton>
                     <PlatformButton

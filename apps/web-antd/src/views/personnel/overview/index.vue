@@ -9,9 +9,9 @@ import type {
 } from './personnel-overview-source';
 
 import { computed, onMounted, reactive, ref } from 'vue';
+import { useRouter } from 'vue-router';
 
 import { Page } from '@vben/common-ui';
-import { VbenIcon } from '@vben/icons';
 
 import { Popconfirm, Space } from 'antdv-next';
 
@@ -20,9 +20,9 @@ import {
   PlatformDatePicker,
   PlatformEditForm,
   PlatformFormItem,
+  PlatformIcon,
   PlatformInput,
   PlatformModal,
-  PlatformQueryPanel,
   PlatformSelect,
   PlatformStatCard,
   PlatformStatusTag,
@@ -54,13 +54,13 @@ const createDefaultQuery = (): PersonnelOverviewQuery => ({
 });
 
 const query = reactive<PersonnelOverviewQuery>(createDefaultQuery());
+const router = useRouter();
 const formModel = reactive<PersonnelOverviewFormModel>({});
 const tableRows = ref<PersonnelOverviewRecord[]>([]);
 const statCards = ref<PersonnelOverviewStatCard[]>([]);
 const loading = ref(false);
 const saving = ref(false);
 const formOpen = ref(false);
-const queryCollapsed = ref(true);
 const currentRecord = ref<null | PersonnelOverviewRecord>(null);
 const tablePanelRef = ref<HTMLElement>();
 const personnelTableRef = ref<InstanceType<typeof PlatformTable>>();
@@ -164,11 +164,6 @@ async function handleSearch() {
   await loadPersonnelOverview();
 }
 
-async function handleReset() {
-  Object.assign(query, createDefaultQuery());
-  await loadPersonnelOverview();
-}
-
 async function handleTableChange(...args: Parameters<TableEmits['change']>) {
   const [, filters] = args;
   query.status = getFirstFilterValue(
@@ -195,9 +190,12 @@ function handleEdit(record: unknown) {
 
 function handleView(record: unknown) {
   const personnel = toPersonnelRecord(record);
-  window.message.info(
-    `已保留“${personnel.name}”查看入口，详情展示待后续设计确认后接入。`,
-  );
+  router.push({
+    path: '/personnel/overview/detail',
+    query: {
+      id: String(personnel.id),
+    },
+  });
 }
 
 async function handleSave() {
@@ -309,28 +307,6 @@ onMounted(loadPersonnelOverview);
         />
       </section>
 
-      <PlatformQueryPanel
-        v-model:collapsed="queryCollapsed"
-        :columns="3"
-        @query="handleSearch"
-        @reset="handleReset"
-      >
-        <PlatformFormItem label="人员状态">
-          <PlatformSelect
-            v-model:value="query.status"
-            :options="personnelStatusOptions"
-            placeholder="请选择人员状态"
-          />
-        </PlatformFormItem>
-        <PlatformFormItem label="资质状态">
-          <PlatformSelect
-            v-model:value="query.qualificationStatus"
-            :options="qualificationStatusOptions"
-            placeholder="请选择资质状态"
-          />
-        </PlatformFormItem>
-      </PlatformQueryPanel>
-
       <section
         ref="tablePanelRef"
         class="platform-surface personnel-overview-panel"
@@ -347,7 +323,7 @@ onMounted(loadPersonnelOverview);
           <template #actions>
             <PlatformButton scene="toolbar" type="primary" @click="handleAdd">
               <template #icon>
-                <VbenIcon icon="lucide:plus" />
+                <PlatformIcon icon="icon-xinzeng" />
               </template>
               新增人员
             </PlatformButton>

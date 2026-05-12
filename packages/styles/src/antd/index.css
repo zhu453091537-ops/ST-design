@@ -169,9 +169,20 @@ body {
   min-height: var(--st-control-height);
   color: hsl(var(--foreground));
   background: hsl(var(--background));
-  border-color: hsl(var(--input));
+  border: 1px solid hsl(var(--input));
   border-radius: var(--st-radius-control);
   box-shadow: none;
+  transition:
+    border-color 0.16s ease,
+    box-shadow 0.16s ease,
+    background-color 0.16s ease;
+}
+
+.ant-select:not(.ant-select-customize-input) .ant-select-selector {
+  border-color: hsl(var(--input)) !important;
+  border-style: solid !important;
+  border-width: 1px !important;
+  box-shadow: none !important;
 }
 
 .ant-input,
@@ -201,6 +212,11 @@ body {
   border-color: hsl(var(--primary) / 45%);
 }
 
+.ant-select:not(.ant-select-disabled):not(.ant-select-customize-input)
+  .ant-select-selector:hover {
+  border-color: hsl(var(--primary) / 45%) !important;
+}
+
 .ant-input:focus,
 .ant-input-focused,
 .ant-input-affix-wrapper:focus,
@@ -210,6 +226,11 @@ body {
 .ant-select-focused:not(.ant-select-customize-input) .ant-select-selector {
   border-color: hsl(var(--primary));
   box-shadow: 0 0 0 2px hsl(var(--primary) / 10%);
+}
+
+.ant-select-focused:not(.ant-select-customize-input) .ant-select-selector {
+  border-color: hsl(var(--primary)) !important;
+  box-shadow: 0 0 0 2px hsl(var(--primary) / 10%) !important;
 }
 
 .ant-select-single {
@@ -342,11 +363,15 @@ body {
 }
 
 .ant-table-wrapper .ant-table-tbody > tr.ant-table-row:hover > td {
-  background: hsl(var(--st-color-fill-selected));
+  background: var(--st-color-table-row-hover-bg-solid);
 }
 
 .ant-table-wrapper .ant-table-tbody > tr.ant-table-row-selected > td {
   background: hsl(var(--st-color-fill-selected));
+}
+
+.ant-table-wrapper .ant-table-pagination.ant-pagination {
+  margin: 24px 0 0;
 }
 
 .ant-pagination {
@@ -420,9 +445,23 @@ body {
   border-radius: var(--st-radius-card);
 }
 
+.ant-modal .ant-modal-container {
+  padding: 0 !important;
+}
+
 .ant-modal .ant-modal-header,
 .ant-drawer .ant-drawer-header {
   border-bottom-color: hsl(var(--st-color-border-subtle));
+}
+
+.ant-drawer .ant-drawer-section.platform-drawer > .ant-drawer-header {
+  padding: 0 !important;
+  border-bottom: none !important;
+  box-shadow: none !important;
+}
+
+.ant-drawer .ant-drawer-section.platform-drawer > .ant-drawer-body {
+  padding: 24px 40px 24px 40px !important;
 }
 
 .ant-modal .ant-modal-title,

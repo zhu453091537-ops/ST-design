@@ -33,12 +33,12 @@ const warnings = ref<ProjectProgressWarning[]>([]);
 const loading = ref(false);
 const viewOptions: PlatformViewOption[] = [
   {
-    icon: 'lucide:chart-gantt',
+    icon: 'icon-gantetu',
     label: '甘特图',
     value: 'gantt',
   },
   {
-    icon: 'lucide:columns-3',
+    icon: 'icon-kanban',
     label: '看板',
     value: 'board',
   },

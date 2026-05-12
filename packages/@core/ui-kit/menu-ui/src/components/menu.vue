@@ -802,12 +802,21 @@ $namespace: vben;
   }
 
   &__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     flex-shrink: 0;
     width: var(--menu-item-icon-size);
     height: var(--menu-item-icon-size);
     margin-right: 8px;
+    line-height: 1;
     vertical-align: middle;
     text-align: center;
+  }
+
+  &__icon.iconfont {
+    font-size: var(--menu-item-icon-size);
+    transform: translateY(-1px);
   }
 }
 

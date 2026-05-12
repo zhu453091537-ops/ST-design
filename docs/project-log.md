@@ -2,52 +2,987 @@
 
 本文件记录项目阶段性工作日志，用于跨设备、跨聊天上下文恢复。只记录已经发生并完成的事项，不混入长期规则或下一步待办。
 
-## 2026-05-09
-
 ### 任务名称
 
-平台母版方向讨论与设计变量可视化阶段规划
+人员总览查看入口接入详情页返回壳
 
 ### 完成内容
 
-1. 确认平台母版整体方向：未来可采用 `apps/web-antd` 作为当前业务项目、`apps/platform-showcase` 作为平台验证场、`packages/platform-ui / platform-styles / platform-adapter / platform-types / platform-utils` 作为平台能力包的结构。
-2. 明确关键边界：平台母版建设必须旁路推进，不能影响当前正在开发的 `apps/web-antd`，不能直接搬走或替换现有 `apps/web-antd/src/components/platform`。
-3. 调整近期目标：现阶段不展开大规模包迁移，不一次性建设完整平台母版；优先把颜色、字号、字重、圆角等设计变量做成可视化管理能力，用于后续继续开发时统一色彩和基础样式。
-4. 将上述长期边界同步到 `AGENTS.md` 和 `docs/decision-records.md`，方便下一轮接续时先按变量可视化阶段推进。
+1. 将 `/personnel/overview` 表格操作列中的“查看”从占位提示改为真实路由跳转，点击后进入详情页。
+2. 新增隐藏路由 `/personnel/overview/detail`，并补充 `activePath` 映射，确保进入详情页时左侧菜单仍保持高亮在“人员总览”。
+3. 新建人员详情页壳，顶部按当前截图要求落地“返回 icon + 标题”编组：图标 `20px`、标题 `16px / 700`、图文间距 `6px`，整体与页面左上保持 `24px` 间距。
+4. 当前详情页正文区先留空，作为后续继续承接页面内容的占位容器。
 
 ### 修改了哪些文件
 
-1. `AGENTS.md`
-2. `docs/project-log.md`
-3. `docs/todo-next.md`
-4. `docs/decision-records.md`
+1. `apps/web-antd/src/views/personnel/overview/index.vue`
+2. `apps/web-antd/src/views/personnel/detail/index.vue`
+3. `apps/web-antd/src/mock/index.ts`
+4. `apps/web-antd/src/router/access.ts`
+5. `docs/project-log.md`
+6. `docs/todo-next.md`
 
 ### 涉及哪些页面或组件
 
-1. 暂未涉及具体业务页面。
-2. 下一阶段候选范围：平台变量可视化页面或 `platform-showcase` 验证入口。
-3. 下一阶段候选变量：颜色、字号、字重、圆角。
+1. 页面：`/personnel/overview`
+2. 页面：`/personnel/overview/detail`
+3. 复用平台组件：`PlatformButton`、`PlatformIcon`
 
 ### 验证结果
 
-1. 本轮为规划与文档收尾，未修改业务代码。
-2. 未启动 Vite、未做浏览器验证、未执行类型检查。
+1. 已执行 `./node_modules/.bin/eslint apps/web-antd/src/views/personnel/overview/index.vue apps/web-antd/src/views/personnel/detail/index.vue apps/web-antd/src/mock/index.ts apps/web-antd/src/router/access.ts`，通过。
+2. 已执行 `git diff --check -- apps/web-antd/src/views/personnel/overview/index.vue apps/web-antd/src/views/personnel/detail/index.vue apps/web-antd/src/mock/index.ts apps/web-antd/src/router/access.ts`，通过。
+3. 已执行 `curl -I http://127.0.0.1:5173/personnel/overview` 与 `curl -I http://127.0.0.1:5173/personnel/overview/detail`，均返回 `200 OK`。
+4. 本轮未做隔离浏览器点击复核；需要后续实际点击“查看”并验证返回按钮是否稳定回到人员总览。
 
 ### 遗留问题
 
-1. 还需要在下一轮确认变量可视化的落点：先在 `apps/web-antd` 内做轻量页面，还是先建立 `apps/platform-showcase`。
-2. 还需要盘点当前已有 token、CSS 变量和散落在业务页面里的颜色值，作为变量可视化的数据来源。
-3. 还需要确定色彩问题的优先治理范围：先处理品牌色、状态色、表格/卡片背景，还是先做完整色板。
+1. 当前详情页只有顶部返回导航和空白内容区，具体详情模块仍待下一轮按你提供的内容继续补齐。
+2. 标题文案当前先按“人员详情”落地；如果后续要改成姓名或更细的业务标题，再一并调整。
 
 ### 平台治理影响
 
-1. 本轮发现的 ant-design-vue 原生组件问题：暂无，本轮是平台母版方向和变量治理范围讨论。
-2. 已通过平台层解决的问题：暂无代码层解决，但已固化“不影响 `web-antd` 当前开发”的平台母版旁路建设边界。
-3. 哪些仍是页面临时实现：当前颜色、字号、字重、圆角仍散落在已有平台组件、全局样式和业务页面中，尚未形成可视化管理入口。
-4. 哪些页面子组件未来必须回收为平台组件：本轮暂不新增组件回收任务。
-5. 后续新页面禁止继续复制哪些实现：不要继续随手写新的品牌色、状态色、字号、字重和圆角值；应优先复用或补充统一变量。
-6. 哪些样式应进入主题变量或统一样式入口：颜色、字号、字重、圆角是下一阶段优先进入平台变量可视化的样式类型。
-7. 当前仍存在的页面级样式债务：现有业务页色彩不统一，下一轮需要先审计变量来源再治理。
+1. 本轮发现的 ant-design-vue 原生组件问题：无新增，这次不需要扩展 Ant Design Vue 原生头部组件。
+2. 已通过平台层解决的问题：无，本轮未新增或改造平台源组件，只复用既有 `PlatformIcon` 与路由体系。
+3. 哪些仍是页面临时实现：详情页顶部返回头目前是页面级轻量结构，尚未抽成通用平台组件。
+4. 哪些页面子组件未来必须回收为平台组件：如果后续多个详情页都采用相同“返回 + 标题”头部，再评估沉淀统一的详情页返回头。
+5. 后续新页面禁止继续复制哪些实现：在复用度未明确前，不要在多个页面各自散写不同版本的返回头。
+6. 哪些样式应进入主题变量或统一样式入口：当前无需新增 token，继续沿用现有 `24px` 页面节奏变量。
+7. 当前仍存在的页面级样式债务：详情页正文内容尚未接入，返回头样式暂存页面本地。
+
+### 任务名称
+
+收口项目详情抽屉页面残留间距
+
+### 完成内容
+
+1. 根据项目详情抽屉视觉复核反馈，继续收口 `/project/overview` 页面中残留的详情头部间距样式。
+2. 删除 `project-detail-title` 自带的底部分隔线和 `padding-bottom`，避免继续叠加出与 `PlatformDrawer` 标题区不一致的额外视觉边界。
+3. 仅保留更纯粹的 `margin-bottom: 24px` 作为头像摘要与详情描述列表之间的内容间距，让抽屉整体 spacing 主要由 `PlatformDrawer` 原组件控制。
+
+### 修改了哪些文件
+
+1. `apps/web-antd/src/views/project/overview/index.vue`
+2. `docs/project-log.md`
+3. `docs/todo-next.md`
+
+### 涉及哪些页面或组件
+
+1. 页面：`/project/overview`
+2. 平台组件：`PlatformDrawer`
+3. 平台组件：`PlatformDescriptions`
+
+### 验证结果
+
+1. 本轮将执行目标文件 `git diff --check` 作为最小自检。
+2. 已完成代码级收口，未再修改 `PlatformDrawer` 原组件 API。
+3. 未执行隔离浏览器截图复核；建议下次优先确认项目详情抽屉标题区与内容区之间是否不再出现多余的分隔和堆叠间距。
+
+### 遗留问题
+
+1. 如果后续仍觉得项目头像摘要区与描述列表之间节奏偏大或偏小，再继续在该页面局部微调 `margin-bottom`，不再回退到额外分隔线方案。
+
+### 平台治理影响
+
+1. 本轮发现的 ant-design-vue 原生组件问题：无新增，问题来自页面层旧的详情头部样式残留。
+2. 已通过平台层解决的问题：抽屉标题区 spacing 已由 `PlatformDrawer` 接管，页面残留分隔线已移除。
+3. 哪些仍是页面临时实现：头像摘要区本身仍是 `project/overview` 页面特有结构。
+4. 哪些页面子组件未来必须回收为平台组件：如更多详情抽屉都出现“头像摘要头部”场景，再评估平台详情摘要头组件。
+5. 后续新页面禁止继续复制哪些实现：不要在详情抽屉内容区重复加一条与抽屉标题区平行的分隔线。
+6. 哪些样式应进入主题变量或统一样式入口：当前不新增全局变量，仍以 `PlatformDrawer` spacing 为主、页面局部内容间距为辅。
+7. 当前仍存在的页面级样式债务：项目详情头像摘要区仍在页面层维护。
+
+### 任务名称
+
+统一 `PlatformDrawer` 标题区与内容区内边距
+
+### 完成内容
+
+1. 在 `PlatformDrawer` 原组件中，将抽屉 header 内边距统一改为 `padding: var(--ant-padding) var(--ant-padding-lg)`。
+2. 将抽屉 body 内容区内边距统一改为 `padding: 24px 40px 24px 40px`，保证左右 `40px`、上下 `24px`。
+3. 本轮不在任何业务抽屉页面写局部 spacing 覆盖，只调整平台抽屉源组件。
+
+### 修改了哪些文件
+
+1. `apps/web-antd/src/components/platform/drawer/platform-drawer.vue`
+2. `docs/project-log.md`
+3. `docs/todo-next.md`
+
+### 涉及哪些页面或组件
+
+1. 平台组件：`PlatformDrawer`
+2. 当前反馈页面：`/project/overview`
+3. 已同步受影响页面：所有接入 `PlatformDrawer` 的抽屉页面，如项目详情、人员档案详情等
+
+### 验证结果
+
+1. 已完成目标文件 `git diff --check`：通过。
+2. 已完成平台源组件代码级 spacing 调整。
+3. 未执行隔离浏览器截图复核；建议下次集中视觉验收时优先确认抽屉标题区高度、下划线位置和 body 内容区的 `24 / 40 / 24 / 40` 留白是否符合预期。
+
+### 遗留问题
+
+1. 当前只统一了 `PlatformDrawer` header/body 的 spacing；如后续还要把 footer、右侧关闭按钮热区或抽屉宽度策略也统一，再继续在平台层收口。
+
+### 平台治理影响
+
+1. 本轮发现的 ant-design-vue 原生组件问题：Drawer 默认 header/body 内边距与当前平台弹窗节奏不一致，需要平台层统一。
+2. 已通过平台层解决的问题：`PlatformDrawer` 的标题区与内容区 spacing 已统一到平台规范。
+3. 哪些仍是页面临时实现：无，本轮未在业务页写抽屉内边距覆盖。
+4. 哪些页面子组件未来必须回收为平台组件：暂无新增。
+5. 后续新页面禁止继续复制哪些实现：不要在单个抽屉页再局部写 header/body padding。
+6. 哪些样式应进入主题变量或统一样式入口：抽屉标题区与内容区 spacing 继续由 `PlatformDrawer` 源组件统一维护。
+7. 当前仍存在的页面级样式债务：无新增。
+
+### 任务名称
+
+平台详情展示组件首版与下拉框描边统一
+
+### 完成内容
+
+1. 新增 `PlatformDescriptions` 平台描述组件，底层基于 Ant Design Vue `Descriptions`，统一详情项边框、label 列宽、文字层级与圆角。
+2. 将 `/project/overview` 的“项目详情”抽屉从页面手写网格改为 `PlatformSectionTitle + PlatformDescriptions` 结构，并保留项目头像、状态条和当前进度条等业务展示内容。
+3. 在全局 Ant Design Vue 样式入口中，为 `Select` 的 selector 再补一层显式 `1px solid` 描边覆盖，确保数据录入下拉框与输入框描边保持一致。
+4. 本轮改动继续落在平台组件和全局样式源头，不在业务页面写局部描边或详情布局覆盖。
+
+### 修改了哪些文件
+
+1. `apps/web-antd/src/components/platform/view/platform-descriptions.vue`
+2. `apps/web-antd/src/components/platform/view/index.ts`
+3. `apps/web-antd/src/views/project/overview/index.vue`
+4. `packages/styles/src/antd/index.css`
+5. `docs/project-log.md`
+6. `docs/todo-next.md`
+
+### 涉及哪些页面或组件
+
+1. 新增平台组件：`PlatformDescriptions`
+2. 平台标题组件：`PlatformSectionTitle`
+3. 平台抽屉：`PlatformDrawer`
+4. 平台字段控件：`PlatformSelect`
+5. 当前反馈页面：`/project/overview`、`/project/information`
+
+### 验证结果
+
+1. 已完成目标文件 `git diff --check`：通过。
+2. 已完成代码级接线与样式源头调整。
+3. 未执行隔离浏览器截图复核；建议下次集中视觉验收时优先确认 `/project/overview` 的详情抽屉结构是否接近期望，以及 `/project/information` 新建项目弹窗里的下拉框描边是否与输入框一致。
+
+### 遗留问题
+
+1. `PlatformDescriptions` 当前先落地在项目详情抽屉首个场景；如后续还要承接日志详情、审批详情等场景，再继续补充尺寸、slot 和状态型内容能力。
+2. 如果后续还要把弹窗标题区统一强制使用 `PlatformSectionTitle`，建议与 `PlatformModal` 标题栏结构一起整体评估，不要在单页零散接入。
+
+### 平台治理影响
+
+1. 本轮发现的 ant-design-vue 原生组件问题：`Descriptions` 与 `Select` 默认样式在当前平台视觉下都需要统一封装与覆写。
+2. 已通过平台层解决的问题：详情展示已具备可复用的平台描述组件；下拉框 selector 描边已与输入类控件统一。
+3. 哪些仍是页面临时实现：项目头像、状态条和进度条仍保留在 `project/overview` 页面层组织。
+4. 哪些页面子组件未来必须回收为平台组件：如更多详情抽屉继续出现一致的“摘要头部 + 描述列表”结构，可继续补平台详情头部组件。
+5. 后续新页面禁止继续复制哪些实现：不要在业务页继续手写两列详情 grid，也不要为单个下拉框单独补描边样式。
+6. 哪些样式应进入主题变量或统一样式入口：详情描述边框、label 列宽、录入控件描边统一由平台组件和 `packages/styles/src/antd/index.css` 维护。
+7. 当前仍存在的页面级样式债务：项目详情中的状态条与头像摘要仍在页面层，后续视复用度再回收。
+
+### 任务名称
+
+平台下拉箭头切换为本地 SVG 并统一继承颜色
+
+### 完成内容
+
+1. 将 `apps/web-antd/src/assets/svg/pull down.svg` 改成 `currentColor` 继承模式。
+2. 在 `PlatformSelect`、`PlatformDatePicker`、`PlatformRangePicker`、`PlatformQueryPanel`、`PlatformTree` 中改用本地 SVG 作为箭头来源。
+3. `PlatformTree` 的展开态保留旋转处理，`PlatformQueryPanel` 的收起/展开图标也改为同一本地图标复用。
+4. 本轮未改分页箭头，避免一次性把全量列表页影响面拉太大。
+
+### 修改了哪些文件
+
+1. `apps/web-antd/src/assets/svg/pull down.svg`
+2. `apps/web-antd/src/assets/svg/箭头下.svg`
+3. `apps/web-antd/src/assets/svg/Collapse fullscreen.svg`
+4. `apps/web-antd/src/assets/svg/弹窗全屏.svg`
+5. `apps/web-antd/src/components/platform/field/platform-select.vue`
+6. `apps/web-antd/src/components/platform/field/platform-date-picker.vue`
+7. `apps/web-antd/src/components/platform/field/platform-range-picker.vue`
+8. `apps/web-antd/src/components/platform/form/platform-query-panel.vue`
+9. `apps/web-antd/src/components/platform/tree/platform-tree.vue`
+10. `docs/project-log.md`
+11. `docs/todo-next.md`
+
+### 涉及哪些页面或组件
+
+1. 平台组件：`PlatformSelect`、`PlatformDatePicker`、`PlatformRangePicker`、`PlatformQueryPanel`、`PlatformTree`
+2. 受影响页面：所有使用上述平台组件的业务页
+
+### 验证结果
+
+1. 已完成源码替换。
+2. 本轮将执行目标文件 ESLint 与 `git diff --check` 作为最小自检。
+3. 未做浏览器验证；建议后续优先看 `personnel/overview`、`project/information`、`battery/construction`。
+
+### 遗留问题
+
+1. 分页左右箭头暂未替换，如后续要统一，可再单独处理。
+
+### 平台治理影响
+
+1. 本轮发现的 ant-design-vue 原生组件问题：原生下拉箭头与平台图标体系不统一。
+2. 已通过平台层解决的问题：平台字段、树和查询面板已切换为本地 SVG 入口。
+3. 哪些仍是页面临时实现：分页箭头仍是原生样式。
+4. 哪些页面子组件未来必须回收为平台组件：同类下拉/展开箭头后续应继续优先走平台字段和树组件。
+5. 后续新页面禁止继续复制哪些实现：不要在业务页单独写下拉箭头 SVG。
+6. 哪些样式应进入主题变量或统一样式入口：箭头颜色继续由组件当前 `color` 决定。
+7. 当前仍存在的页面级样式债务：分页箭头未统一。
+
+### 任务名称
+
+平台弹窗内容区与 footer 间距统一回收至 PlatformModal
+
+### 完成内容
+
+1. 将 `PlatformModal` 的内容区左右 40px、footer 分隔线与按钮区内边距统一收口到平台组件。
+2. 将 `PlatformModal` 的 body/footer 间距改为语义化 `styles.body` / `styles.footer`，避免被 `antdv-next` 默认 modal 变量压回去。
+3. 删除 `project/overview` 页面里原先单独给 `.project-form-grid` 追加的 40px 内容区 padding，避免只在单页生效。
+4. 当前平台弹窗的内容区和 footer 间距已改为组件级统一控制，后续接入 `PlatformModal` 的页面都会一起生效。
+
+### 修改了哪些文件
+
+1. `apps/web-antd/src/components/platform/modal/platform-modal.vue`
+2. `apps/web-antd/src/views/project/overview/index.vue`
+3. `AGENTS.md`
+4. `docs/decision-records.md`
+5. `docs/project-log.md`
+6. `docs/todo-next.md`
+
+### 涉及哪些页面或组件
+
+1. 平台组件：`PlatformModal`
+2. 受影响页面：`/project/overview`
+3. 未来所有接入 `PlatformModal` 的业务页面
+
+### 验证结果
+
+1. 已执行 `./node_modules/.bin/eslint apps/web-antd/src/components/platform/modal/platform-modal.vue apps/web-antd/src/views/project/overview/index.vue`，通过。
+2. 已执行 `git diff --check -- apps/web-antd/src/components/platform/modal/platform-modal.vue apps/web-antd/src/views/project/overview/index.vue`，通过。
+3. 浏览器视觉复核仍待下一步确认。
+
+### 遗留问题
+
+1. 仍需继续在真实页面里确认 footer 顶线与按钮间距是否和设计稿一致。
+
+### 平台治理影响
+
+1. 本轮发现的 ant-design-vue 原生组件问题：`ant-modal` 的内容区边距如果放在业务页里，会导致同一平台弹窗在不同页面出现不同节奏。
+2. 已通过平台层解决的问题：`PlatformModal` 现在统一负责内容区与 footer 间距，避免单页补丁。
+3. 哪些仍是页面临时实现：`project/overview` 的局部内容区 padding 已删除，不再保留为页面临时实现。
+4. 哪些页面子组件未来必须回收为平台组件：所有使用 `PlatformModal` 的新增/编辑弹窗都应直接继承平台层规则。
+5. 后续新页面禁止继续复制哪些实现：不要再在业务页里单独给 `.ant-modal-body` 或表单网格补平台弹窗内容边距。
+6. 哪些样式应进入主题变量或统一样式入口：弹窗标题、内容区边距、footer 顶线与按钮区内边距继续由平台组件统一维护。
+7. 当前仍存在的页面级样式债务：需要继续确认是否还有其他业务页残留局部 modal body padding。
+
+### 任务名称
+
+平台统计卡主数字字号统一为 32px
+
+### 完成内容
+
+1. 按浏览器标注反馈，将 `PlatformStatCard` 主数字字号统一调整为 `32px`。
+2. 保持 `DIN Alternate Bold.ttf` 字体接入不变，仅放大主数值，不影响标题、趋势文案、说明文字和其他页面数字。
+3. 本轮修改只作用于平台统计卡原组件，所有已接入 `PlatformStatCard` 的统计卡页面都会同步生效。
+
+### 修改了哪些文件
+
+1. `apps/web-antd/src/components/platform/stat/platform-stat-card.vue`
+2. `docs/project-log.md`
+3. `docs/todo-next.md`
+
+### 涉及哪些页面或组件
+
+1. 平台组件：`PlatformStatCard`
+2. 已接入页面：`/project/overview`、`/project/evaluation`、`/project/document`、`/project/contract`、`/personnel/overview`、`/personnel/qualification`、`/personnel/worktime`、`/personnel/turnover`
+
+### 验证结果
+
+1. 已完成目标文件修改。
+2. 本轮将执行目标文件 ESLint 与 `git diff --check` 作为最小自检。
+3. 未做浏览器复核；建议下一步在 `personnel/overview` 等统计卡页面确认 32px 字号与单位排列是否舒展。
+
+### 遗留问题
+
+1. 若后续某些卡片想保留更小字号，需要再按页面或组件层级单独拆分，而不是继续在业务页覆盖。
+
+### 平台治理影响
+
+1. 本轮发现的 ant-design-vue 原生组件问题：无，属于平台统计卡数字字号统一。
+2. 已通过平台层解决的问题：统计卡主数字字号已统一到 `32px`。
+3. 哪些仍是页面临时实现：无，本轮未在业务页写局部字号样式。
+4. 哪些页面子组件未来必须回收为平台组件：后续同类 KPI 卡仍应优先复用 `PlatformStatCard`。
+5. 后续新页面禁止继续复制哪些实现：不要在单页里单独把统计卡主数字改回其他字号。
+6. 哪些样式应进入主题变量或统一样式入口：统计卡主数字字号和字体族继续由平台组件维护。
+7. 当前仍存在的页面级样式债务：无新增。
+
+### 任务名称
+
+平台统计卡主数字接入 DIN Alternate Bold 数字字体
+
+### 完成内容
+
+1. 将用户已放入仓库的 `apps/web-antd/src/assets/fonts/DIN Alternate Bold.ttf` 接入全局数字字体入口。
+2. 在 `apps/web-antd/src/assets/fonts/index.css` 中启用 `@font-face`，统一定义 `ST Number` 数字字体族变量。
+3. 仅在 `PlatformStatCard` 的主数值 `strong` 上启用该数字字体，不影响标题、趋势文案、说明文字和其他页面数字。
+4. 本轮按用户要求只处理数据卡片重点数字场景，未扩散到表格金额、看板数字和正文数字。
+
+### 修改了哪些文件
+
+1. `apps/web-antd/src/assets/fonts/index.css`
+2. `apps/web-antd/src/components/platform/stat/platform-stat-card.vue`
+3. `docs/project-log.md`
+4. `docs/todo-next.md`
+
+### 涉及哪些页面或组件
+
+1. 平台组件：`PlatformStatCard`
+2. 当前已接入该组件的页面：`/project/overview`、`/project/evaluation`、`/project/document`、`/project/contract`、`/personnel/overview`、`/personnel/qualification`、`/personnel/worktime`、`/personnel/turnover`
+3. 影响范围：仅统计卡主数字
+
+### 验证结果
+
+1. 已执行目标文件 ESLint 与 `git diff --check`，需以本轮最终结果为准。
+2. 本轮未做隔离浏览器视觉复核；建议下一步优先打开含统计卡页面确认数字字体观感与字重。
+
+### 遗留问题
+
+1. 当前只给 `PlatformStatCard` 主数字启用该字体；如后续合同金额、图表大数字、看板 KPI 也要统一使用，需要再按组件边界分别接入。
+
+### 平台治理影响
+
+1. 本轮发现的 ant-design-vue 原生组件问题：无，属于平台统计卡数字表现统一。
+2. 已通过平台层解决的问题：统计卡主数字字体已收口到 `PlatformStatCard`，不需要各业务页重复声明。
+3. 哪些仍是页面临时实现：无，本轮未在业务页面写局部数字字体样式。
+4. 哪些页面子组件未来必须回收为平台组件：后续如出现新的高频 KPI 数字展示壳，仍应优先复用 `PlatformStatCard` 或在平台展示组件层统一接入。
+5. 后续新页面禁止继续复制哪些实现：不要在单个业务页给统计卡数字手写 `font-family`。
+6. 哪些样式应进入主题变量或统一样式入口：数字字体声明和字体族变量继续统一维护在 `src/assets/fonts/index.css`。
+7. 当前仍存在的页面级样式债务：无新增。
+
+### 任务名称
+
+数字专用字体资源位与全局接入口初始化
+
+### 完成内容
+
+1. 在 `apps/web-antd/src/assets/fonts/` 新建数字字体公共目录，作为 `ant-web` 后续接收特殊数字字体文件的固定落点。
+2. 新增 `apps/web-antd/src/assets/fonts/index.css`，补上数字字体入口说明、`--st-font-family-number` 变量和 `.st-number-font` / `[data-number-font='true']` 复用选择器。
+3. 在 `apps/web-antd/src/bootstrap.ts` 全局引入数字字体样式入口，确保后续字体文件接入后不需要逐页补 import。
+4. 本轮只完成资源位和样式接入口初始化，未放入真实字体文件，也未把数字字体强制覆盖到现有全部数字场景。
+
+### 修改了哪些文件
+
+1. `apps/web-antd/src/assets/fonts/.gitkeep`
+2. `apps/web-antd/src/assets/fonts/index.css`
+3. `apps/web-antd/src/bootstrap.ts`
+4. `docs/project-log.md`
+5. `docs/todo-next.md`
+
+### 涉及哪些页面或组件
+
+1. 应用全局样式入口：`apps/web-antd/src/bootstrap.ts`
+2. 全局字体资源目录：`apps/web-antd/src/assets/fonts/`
+3. 后续可接入页面：所有需要数字专用字体的统计卡、表格金额、进度数值和看板数字场景
+
+### 验证结果
+
+1. 已执行 `./node_modules/.bin/eslint apps/web-antd/src/bootstrap.ts`，需以本轮最终结果为准。
+2. 已执行 `git diff --check -- apps/web-antd/src/bootstrap.ts apps/web-antd/src/assets/fonts/index.css apps/web-antd/src/assets/fonts/.gitkeep`，通过。
+3. 本轮未做浏览器验证；当前还没有真实字体文件，因此只验证代码接入链路，不验证视觉效果。
+
+### 遗留问题
+
+1. 仓库里仍没有真实的数字字体文件；收到 `.woff2` / `.woff` / `.ttf` 后，还需补全 `@font-face` 的实际文件名。
+2. 当前只提供全局变量和复用类，后续若要让某些统计卡、金额列或看板数字默认启用该字体，还需再指定具体接入范围。
+
+### 平台治理影响
+
+1. 本轮发现的 ant-design-vue 原生组件问题：无，属于应用级静态资源接入。
+2. 已通过平台层解决的问题：已统一数字字体资源目录和全局样式入口，避免后续在业务页分散维护字体声明。
+3. 哪些仍是页面临时实现：暂无，本轮未在业务页面写局部字体样式。
+4. 哪些页面子组件未来必须回收为平台组件：暂无新增；如后续高频数字展示需要默认启用，可再评估沉淀为平台展示规则。
+5. 后续新页面禁止继续复制哪些实现：不要在单个页面手写 `@font-face` 或把字体文件散落到业务目录。
+6. 哪些样式应进入主题变量或统一样式入口：数字字体族变量已进入全局字体入口，后续继续沿用 `--st-font-family-number`。
+7. 当前仍存在的页面级样式债务：无新增。
+
+### 任务名称
+
+项目总览查看进度看板按钮接入进度可视化跟踪路由
+
+### 完成内容
+
+1. 将 `/workbench/index` 项目总览页右侧头部动作“查看进度看板”从提示占位改为真实路由跳转。
+2. 当前点击该按钮后，直接进入 `/project/progress` 对应的“进度可视化跟踪”页面。
+3. 本轮只处理项目总览页按钮事件，不改页面结构、平台组件或目标页内容。
+
+### 修改了哪些文件
+
+1. `apps/web-antd/src/views/project/overview/index.vue`
+2. `docs/project-log.md`
+3. `docs/todo-next.md`
+
+### 涉及哪些页面或组件
+
+1. 页面：`/workbench/index`
+2. 目标页面：`/project/progress`
+3. 页面头部动作：`查看进度看板`
+
+### 验证结果
+
+1. 已执行 `./node_modules/.bin/eslint apps/web-antd/src/views/project/overview/index.vue`，结果通过。
+2. 已执行 `git diff --check -- apps/web-antd/src/views/project/overview/index.vue docs/project-log.md docs/todo-next.md`，结果通过。
+3. 本轮未做隔离浏览器点击验证；需在 `/workbench/index` 页面点击“查看进度看板”确认已跳转到 `/project/progress`。
+
+### 遗留问题
+
+1. 当前只接了项目总览头部的“查看进度看板”入口；如果后续还有表格行内、统计卡或其他模块也要跳到进度页，再统一梳理入口策略。
+
+### 平台治理影响
+
+1. 本轮发现的 ant-design-vue 原生组件问题：无，属于页面动作事件接线。
+2. 已通过平台层解决的问题：无，本轮未修改平台组件。
+3. 哪些仍是页面临时实现：项目总览页头部动作仍由页面自身定义和接线。
+4. 哪些页面子组件未来必须回收为平台组件：暂无新增，本轮不涉及平台抽象升级。
+5. 后续新页面禁止继续复制哪些实现：不要把“查看进度看板”继续保留成只弹提示的占位按钮。
+6. 哪些样式应进入主题变量或统一样式入口：无新增。
+7. 当前仍存在的页面级样式债务：无新增页面级样式债务。
+
+### 任务名称
+
+平台弹窗标题回归原生 header 层重构
+
+### 完成内容
+
+1. 先梳理 `PlatformModal -> antdv-next Modal` 的底层结构，确认标题、body、footer、wrap 和 fullscreen 状态各自的落点。
+2. 将 `PlatformModal` 回退为原生 `title` 层插槽重构，不再把 header 假装塞进 body。
+3. 在原生 title 层里补齐左侧 `18px / 600` 标题、底部 `3px` 深色下划线、右侧 `28px` 操作按钮。
+4. 全屏状态改为作用在 modal/wrap 根层，避免只改 body 高度和页面继续上下滚动。
+5. 右侧全屏按钮 hover 仅切换 `#E7EBF4` 圆角底与图标显隐，不再做位置抖动。
+
+### 修改了哪些文件
+
+1. `apps/web-antd/src/components/platform/modal/platform-modal.vue`
+2. `docs/project-log.md`
+3. `docs/todo-next.md`
+
+### 涉及哪些页面或组件
+
+1. 平台组件：`PlatformModal`
+2. 当前会受影响的已接入页面：`/project/information`、`/personnel/overview`、`/project/overview`、`/project/evaluation`、`/battery/construction`、`/platform/typical-page`
+
+### 验证结果
+
+1. 已执行 `./node_modules/.bin/eslint apps/web-antd/src/components/platform/modal/platform-modal.vue`，通过。
+2. 已执行 `git diff --check -- apps/web-antd/src/components/platform/modal/platform-modal.vue`，通过。
+3. 已启动本地 Vite，`http://127.0.0.1:5173/project/information` 返回 `200 OK`。
+4. 未完成隔离浏览器截图复核：当前先完成底层结构回退，仍需重新打开页面看标题层是否恢复正常。
+5. 已在这轮重构后重新执行 `./node_modules/.bin/eslint apps/web-antd/src/components/platform/modal/platform-modal.vue` 与 `git diff --check -- apps/web-antd/src/components/platform/modal/platform-modal.vue`，均通过。
+
+### 遗留问题
+
+1. 本轮已完成标题区结构和全屏交互下沉，但还未做真实页面的肉眼对稿，需要下一轮隔离浏览器确认标题垂直节奏、图标轮廓和全屏后内容滚动体验。
+2. `PlatformDrawer` 仍保持旧壳，后续如果抽屉标题也要统一成同一套动作区，再单独评估是否同步平台化。
+
+### 平台治理影响
+
+1. 本轮发现的 ant-design-vue 原生组件问题：默认 `Modal` 标题区不满足当前平台对“左标题 + 右功能按钮 + 全屏切换”的统一规范。
+2. 已通过平台层解决的问题：标题字号、下划线、右侧按钮布局、全屏图标切换和关闭按钮图标已收口到 `PlatformModal`。
+3. 哪些仍是页面临时实现：暂无新增，本轮未在业务页写局部 modal header 样式。
+4. 哪些页面子组件未来必须回收为平台组件：后续如业务页仍手写弹窗标题操作区，应回收并统一复用 `PlatformModal` 的标题壳。
+5. 后续新页面禁止继续复制哪些实现：不要在业务页面自写 modal header 的全屏按钮、关闭按钮和下划线标题。
+6. 哪些样式应进入主题变量或统一样式入口：弹窗标题区内边距、标题字号、图标 hover 背景和全屏态尺寸继续由平台组件维护。
+7. 当前仍存在的页面级样式债务：尚未验证是否有个别业务页通过局部 CSS 覆盖了 modal header，需后续视觉复核时一并检查。
+
+### 任务名称
+
+撤回平台表格金额列自动右对齐
+
+### 完成内容
+
+1. 根据视觉复核反馈，撤回 `PlatformTable` 中“金额语义列自动右对齐”的平台规则。
+2. 原因是当前表格列宽、内边距和相邻列节奏下，金额列右对齐会带来明显的左侧留白过大、右侧贴近相邻列的问题，整体观感不佳。
+3. 本轮先恢复为原来的左对齐，不继续追加金额列专属宽度或 padding 规则，避免把简单需求升级成更重的平台改造。
+
+### 修改了哪些文件
+
+1. `apps/web-antd/src/components/platform/table/platform-table.vue`
+2. `docs/project-log.md`
+3. `docs/todo-next.md`
+
+### 涉及哪些页面或组件
+
+1. 平台组件：`PlatformTable`
+2. 当前反馈页面：`/battery/construction`
+3. 已恢复页面：所有原本会受到“金额自动右对齐”规则影响的 `PlatformTable` 表格页
+
+### 验证结果
+
+1. 已完成平台源组件代码级回退。
+2. 本轮将执行目标文件 `git diff --check` 作为最小自检。
+3. 未执行隔离浏览器截图复核；建议下次集中视觉验收时确认金额列已恢复左对齐，且表格列间距观感回到改动前状态。
+
+### 遗留问题
+
+1. 如果后续仍想优化金额列观感，建议改成“页面显式指定 + 列宽 / padding 一起调”的方案，而不是平台层默认自动右对齐。
+
+### 平台治理影响
+
+1. 本轮发现的 ant-design-vue 原生组件问题：无新增，主要是平台层自动右对齐在当前视觉体系下不适配。
+2. 已通过平台层解决的问题：已撤回不合适的金额自动右对齐规则，恢复当前页面体系更稳定的左对齐表现。
+3. 哪些仍是页面临时实现：无，本轮未在业务页面写金额列局部样式。
+4. 哪些页面子组件未来必须回收为平台组件：暂无新增。
+5. 后续新页面禁止继续复制哪些实现：不要默认把所有金额列做平台自动右对齐，除非后续先把列宽、padding 和数字栅格方案一起定义清楚。
+6. 哪些样式应进入主题变量或统一样式入口：当前暂不新增金额列全局对齐规则。
+7. 当前仍存在的页面级样式债务：无新增。
+
+### 任务名称
+
+施工管理查看弹窗改为 1200px 宽的左右分栏审批弹窗
+
+### 完成内容
+
+1. 将 `施工管理` 页面“查看”入口接入真实弹窗，弹窗宽度调整为 `1200px`。
+2. 将右侧审批进度改为平台组件 `PlatformApprovalProgress`，默认/最小宽度调整为 `360px`，最大宽度保持 `720px`。
+3. 为审批进度组件增加外部可配置 icon 能力，支持由数据源传入节点图标与头像图标。
+4. 将右侧审批节点之间的垂直节奏收紧，第一、第二条审批之间的间距收成约 `20px`。
+5. 给弹窗内容区补上整体大描边，左侧留白与右侧审批区统一包在同一个外框里。
+
+### 修改了哪些文件
+
+1. `apps/web-antd/src/components/platform/approval/platform-approval-progress.vue`
+2. `apps/web-antd/src/components/platform/approval/types.ts`
+3. `apps/web-antd/src/views/battery/construction/construction-source.ts`
+4. `apps/web-antd/src/views/battery/construction/index.vue`
+5. `docs/project-log.md`
+6. `docs/todo-next.md`
+7. `docs/decision-records.md`
+
+### 涉及哪些页面或组件
+
+1. 页面：`/battery/construction`
+2. 平台组件：`PlatformApprovalProgress`
+3. 平台弹窗：`PlatformModal`
+
+### 验证结果
+
+1. 已完成目标文件 ESLint 检查，通过。
+2. 已完成目标文件 `git diff --check`，通过。
+3. 已完成路由 HTTP 检查，`http://127.0.0.1:5173/battery/construction` 返回 `200 OK`。
+4. 未执行隔离浏览器截图复核；当前先完成代码与文档同步。
+
+### 遗留问题
+
+1. 左侧空白区仍是结构占位，后续若要放流程图再按新截图补。
+2. 右侧审批进度节点文案、图标和空态样式后续仍可能继续细调。
+
+### 平台治理影响
+
+1. 本轮发现的 ant-design-vue 原生组件问题：审批进度的节点图标、头像和时间线间距需要统一收口。
+2. 已通过平台层解决的问题：审批进度已沉淀为 `PlatformApprovalProgress`，业务页只负责传数据。
+3. 哪些仍是页面临时实现：左右分栏、拖拽分隔线和左侧空白区仍在页面层。
+4. 哪些页面子组件未来必须回收为平台组件：后续所有审批进度、审批详情类右侧时间线都应优先复用该平台组件。
+5. 后续新页面禁止继续复制哪些实现：不要在业务页重新手写审批时间线、节点图标和头像布局。
+6. 哪些样式应进入主题变量或统一样式入口：节点图标大小、头像背景、时间线间距继续由平台组件维护。
+7. 当前仍存在的页面级样式债务：内容区大描边与左侧占位布局仍是页面层控制。
+
+### 任务名称
+
+`PlatformSegmented` 改造成 Ant segmented 风格平台组件
+
+### 完成内容
+
+1. 根据 `项目信息管理 - 新增项目` 弹窗反馈，复用现有 `PlatformSegmented`，将原来的“下划线式”切换改造成更接近 Ant Design Vue segmented 的“选中块”样式。
+2. 统一调整平台分段控件交互：保留 Ant Design Vue segmented 的原生结构，只做轻量品牌化，选中态改为品牌绿底、白字；未选中项鼠标移入时文字变为品牌绿。
+3. 为避免 Ant segmented 内部样式覆盖平台品牌色，本轮补充选中项和 hover 态的强制颜色覆盖，确保选中背景稳定为品牌绿、文本稳定为白色。
+4. 本轮只修改平台源组件，不在 `/project/information` 页面写局部 segmented 样式覆盖。
+
+### 修改了哪些文件
+
+1. `apps/web-antd/src/components/platform/segmented/platform-segmented.vue`
+2. `docs/project-log.md`
+3. `docs/todo-next.md`
+
+### 涉及哪些页面或组件
+
+1. 平台组件：`PlatformSegmented`
+2. 当前反馈页面：`/project/information`
+3. 当前已定位接入场景：新增项目弹窗中的“基础信息 / 招采信息 / 进场信息”分段切换
+
+### 验证结果
+
+1. 已完成平台源组件代码级调整。
+2. 本轮将执行目标文件 `git diff --check` 作为最小自检。
+3. 未执行隔离浏览器截图复核；建议下次集中视觉验收时优先确认新增项目弹窗中的分段控件选中块高度、圆角和 hover 文本色。
+
+### 遗留问题
+
+1. 当前只统一了 `PlatformSegmented` 的品牌色、hover/selected 交互和 `14px` 字号；如果后续你还希望补充尺寸档位、全宽模式或 icon+text 组合态，再继续在平台组件层扩展。
+
+### 平台治理影响
+
+1. 本轮发现的 ant-design-vue 原生组件问题：默认 segmented 表现与当前平台弹窗中的分段切换视觉不一致，需要平台层统一改造。
+2. 已通过平台层解决的问题：`PlatformSegmented` 已从下划线式切换为品牌块状选中样式。
+3. 哪些仍是页面临时实现：无，本轮未在业务页面写局部 segmented 样式。
+4. 哪些页面子组件未来必须回收为平台组件：暂无新增，本轮继续复用既有 `PlatformSegmented`。
+5. 后续新页面禁止继续复制哪些实现：不要在单个弹窗或页面里重新手写 segmented 选中底色和 hover 文本色。
+6. 哪些样式应进入主题变量或统一样式入口：分段控件的选中背景、文字色、边框和圆角继续由平台组件统一维护。
+7. 当前仍存在的页面级样式债务：无新增。
+
+### 任务名称
+
+施工管理查看弹窗改为 1024px 宽的左右分栏审批弹窗
+
+### 完成内容
+
+1. 将 `施工管理` 页面“查看”入口从占位消息改为真实弹窗，弹窗宽度统一为 `1024px`。
+2. 左侧主内容区按要求预留空白，不再渲染红框区域内的流程内容。
+3. 将右侧审批进度抽成平台组件 `PlatformApprovalProgress`，并通过 `ant-design-vue Timeline` 封装节点、状态、时间和审批人信息，便于后续统一修改。
+4. 在弹窗中加入可拖拽分隔线，右侧审批进度宽度支持在 `440px` 到 `720px` 之间调整，默认值为 `440px`。
+5. 为施工管理页面补充审批进度 mock 数据，完成查看详情的本地联调闭环。
+
+### 修改了哪些文件
+
+1. `apps/web-antd/src/components/platform/approval/platform-approval-progress.vue`
+2. `apps/web-antd/src/components/platform/approval/index.ts`
+3. `apps/web-antd/src/components/platform/approval/types.ts`
+4. `apps/web-antd/src/components/platform/index.ts`
+5. `apps/web-antd/src/views/battery/construction/construction-source.ts`
+6. `apps/web-antd/src/views/battery/construction/index.vue`
+7. `docs/project-log.md`
+8. `docs/todo-next.md`
+9. `docs/decision-records.md`
+
+### 涉及哪些页面或组件
+
+1. 页面：`/battery/construction`
+2. 平台组件：`PlatformApprovalProgress`
+3. 平台弹窗：`PlatformModal`
+4. 平台表格与查询区：`PlatformTable`、`PlatformQueryPanel`
+
+### 验证结果
+
+1. 已完成目标文件 ESLint 检查，通过。
+2. 已执行目标文件 `git diff --check`，通过。
+3. 已完成路由 HTTP 检查：`http://127.0.0.1:5173/battery/construction` 返回 `200 OK`。
+4. 未执行隔离浏览器截图复核；本轮已先保证代码级联通与本地路由可达。
+
+### 遗留问题
+
+1. 左侧空白区当前只保留结构占位，后续若要放流程图或业务摘要，再按新的截图继续补。
+2. 右侧审批进度当前为平台化通用壳，后续如果要支持更多节点样式或交互，再继续扩展组件 API。
+
+### 平台治理影响
+
+1. 本轮发现的 ant-design-vue 原生组件问题：审批进度需要统一时间线、节点状态和头像/标识展示，单页手写会重复造轮子。
+2. 已通过平台层解决的问题：审批进度已下沉为平台组件，施工管理页仅负责传入数据和宽度控制。
+3. 哪些仍是页面临时实现：左右分栏、拖拽分隔线和左侧空白占位仍保留在页面层。
+4. 哪些页面子组件未来必须回收为平台组件：后续所有审批进度、审批详情类右侧时间线，应优先复用 `PlatformApprovalProgress`。
+5. 后续新页面禁止继续复制哪些实现：不要在业务页重新手写右侧审批时间线、节点圆点和状态文本布局。
+6. 哪些样式应进入主题变量或统一样式入口：审批节点颜色、时间线间距、标题字号和头像背景后续继续从平台组件与 token 收口。
+7. 当前仍存在的页面级样式债务：页面层仍有拖拽分栏样式和空白区域布局，需要按后续截图继续细化。
+
+### 任务名称
+
+项目信息管理与人员总览移除顶部筛选区
+
+### 完成内容
+
+1. 删除 `/project/information` 与 `/personnel/overview` 顶部 `PlatformQueryPanel` 筛选区，当前先只保留工具栏搜索与表格表头筛选。
+2. 保持两页表格列筛选、关键字搜索、刷新和新增/编辑弹窗逻辑不变，不额外调整数据源或页面布局策略。
+3. 同步清理两个页面中仅用于顶部筛选区的 `PlatformQueryPanel` 引用与 `queryCollapsed` 无用状态，避免残留死代码。
+4. 本轮只处理页面接入层，不修改 `PlatformQueryPanel` 平台源组件，也不把当前方案直接上升为长期规范。
+
+### 修改了哪些文件
+
+1. `apps/web-antd/src/views/project/information/index.vue`
+2. `apps/web-antd/src/views/personnel/overview/index.vue`
+3. `docs/project-log.md`
+4. `docs/todo-next.md`
+
+### 涉及哪些页面或组件
+
+1. 页面：`/project/information`
+2. 页面：`/personnel/overview`
+3. 保留的平台能力：`PlatformTable` 表头筛选、`PlatformTableToolbar` 搜索与通用工具
+
+### 验证结果
+
+1. 已执行 `./node_modules/.bin/eslint apps/web-antd/src/views/project/information/index.vue apps/web-antd/src/views/personnel/overview/index.vue`，结果通过。
+2. 已执行 `git diff --check -- apps/web-antd/src/views/project/information/index.vue apps/web-antd/src/views/personnel/overview/index.vue docs/project-log.md docs/todo-next.md`，结果通过。
+3. 本轮未做隔离浏览器截图复核；需要后续在 `/project/information` 与 `/personnel/overview` 肉眼确认顶部筛选区已移除，且表头筛选与关键字搜索仍符合预期。
+
+### 遗留问题
+
+1. 当前这两个页面只是临时收口为“工具栏搜索 + 表头筛选 + 表格”结构，是否作为常规列表页最终规范仍待确认。
+2. 后续如果客户方向明确，仍需回到典型页面整理“常规表格列表页规范”。
+
+### 平台治理影响
+
+1. 本轮发现的 ant-design-vue 原生组件问题：无，本轮是页面层筛选方案取舍，不是原生组件缺陷修复。
+2. 已通过平台层解决的问题：无，本轮未修改平台组件源头。
+3. 哪些仍是页面临时实现：`/project/information` 与 `/personnel/overview` 当前只保留表头筛选，属于页面级临时方案收口，尚未上升为平台标准。
+4. 哪些页面子组件未来必须回收为平台组件：无新增；待常规列表页规范确认后，再决定是否继续推广 `PlatformQueryPanel`。
+5. 后续新页面禁止继续复制哪些实现：在筛选规范未定前，不要默认同时叠加顶部查询区和表头筛选两套方案。
+6. 哪些样式应进入主题变量或统一样式入口：无新增，本轮未产生新的样式 token 诉求。
+7. 当前仍存在的页面级样式债务：常规表格列表页筛选结构仍未统一，后续需在典型页面层补一版明确规范。
+
+### 任务名称
+
+合同与付款管理付款节点金额上移到进度条上方
+
+### 完成内容
+
+1. 根据最新原型反馈，调整 `/project/contract` 付款节点 mini bar 的金额行结构，将每段金额移动到彩色进度条正上方。
+2. 让金额行与下方三段节点说明继续共用同一套三列布局，保证金额自动对应绿色、橙色、灰色区块并左右居中。
+3. 将金额字号统一改为 `18px`，保留现有加粗风格；本轮不改 ECharts 进度条本体，也不扩散到平台组件层。
+4. 根据浏览器批注继续收口：删除下方重复金额，仅保留顶部金额；同时把顶部金额到底部彩色进度条的间距精确收成 `6px`。
+5. 根据最新浏览器 DevTools 标注继续微调：删除金额行的 `margin-bottom: 6px`，将下方节点列间距从 `8px` 收成 `4px`，并把付款节点区底部内边距从 `22px` 调整为 `16px`。
+
+### 修改了哪些文件
+
+1. `apps/web-antd/src/views/project/contract/components/contract-payment-mini-bar.vue`
+2. `docs/project-log.md`
+3. `docs/todo-next.md`
+
+### 涉及哪些页面或组件
+
+1. 页面：`/project/contract`
+2. 页面业务组件：`ContractPaymentMiniBar`
+
+### 验证结果
+
+1. 已执行 `./node_modules/.bin/eslint apps/web-antd/src/views/project/contract/components/contract-payment-mini-bar.vue`，结果通过。
+2. 已执行 `git diff --check -- apps/web-antd/src/views/project/contract/components/contract-payment-mini-bar.vue docs/project-log.md docs/todo-next.md`，结果通过。
+3. 本轮未做隔离浏览器截图复核；需要在 `/project/contract` 页面肉眼确认金额与色块的居中关系、节点标题与状态的 `4px` 垂直间距，以及付款节点区底部 `16px` 留白观感。
+
+### 遗留问题
+
+1. 当前金额与节点说明已经对齐到统一三列，但仍需你在页面里确认中间 `40%` 段在真实卡片宽度下是否足够舒展。
+2. 当前下方只保留状态文案，如果后续你希望状态与标题之间再压缩或拉开，再继续按页面组件微调。
+
+### 平台治理影响
+
+1. 本轮发现的 ant-design-vue 原生组件问题：无，属于合同付款业务组件内部排版调整。
+2. 已通过平台层解决的问题：无，本轮未修改平台组件和全局样式入口。
+3. 哪些仍是页面临时实现：`ContractPaymentMiniBar` 仍是 `/project/contract` 页面专用组件，金额、节点标题和状态文案继续由页面业务组件维护。
+4. 哪些页面子组件未来必须回收为平台组件：如果后续出现第二个“分段进度条 + 分段金额 + 节点状态”场景，再评估沉淀统一节点进度组件。
+5. 后续新页面禁止继续复制哪些实现：不要在其他页面直接复制当前付款节点金额行 DOM；先判断是否需要平台化。
+6. 哪些样式应进入主题变量或统一样式入口：当前 `18px` 金额字号和对应排版还属于合同付款业务语义，暂不进入平台 token。
+7. 当前仍存在的页面级样式债务：付款节点三列节奏、金额与标题间距、状态文案层级仍在页面业务组件内维护。
+
+### 任务名称
+
+平台表格底部分页上间距统一为 `24px`
+
+### 完成内容
+
+1. 根据表格分页截图反馈，在全局 Ant Design Vue 样式入口中为“表格底部分页”单独补充边距规则。
+2. 将 `.ant-table-wrapper .ant-table-pagination.ant-pagination` 的 `margin` 统一改为 `24px 0 0`，即距离表格内容上方 `24px`、距离下方 `0px`。
+3. 本轮不修改业务页面和单页 scoped CSS，只调整平台通用样式源头。
+
+### 修改了哪些文件
+
+1. `packages/styles/src/antd/index.css`
+2. `docs/project-log.md`
+3. `docs/todo-next.md`
+
+### 涉及哪些页面或组件
+
+1. 全局 Ant Design Vue 表格样式入口：`packages/styles/src/antd/index.css`
+2. 当前反馈页面：`/personnel/overview`
+3. 已同步受影响页面：所有使用 Ant Design Vue 表格底部分页的页面
+
+### 验证结果
+
+1. 已完成全局样式代码级调整。
+2. 本轮将执行目标文件 `git diff --check` 作为最小自检。
+3. 未执行隔离浏览器截图复核；建议下次集中视觉验收时顺手确认分页与表格底部的间距是否为 `24px`。
+
+### 遗留问题
+
+1. 当前只统一了 Ant Design Vue 表格分页的上下边距；如果后续你希望普通独立分页组件也使用同样节奏，再单独评估是否扩展到非表格场景。
+
+### 平台治理影响
+
+1. 本轮发现的 ant-design-vue 原生组件问题：表格底部分页默认边距不符合当前平台节奏，需要平台层统一覆写。
+2. 已通过平台层解决的问题：所有 Ant 表格底部分页统一改为上 `24px`、下 `0px`。
+3. 哪些仍是页面临时实现：无，本轮未在业务页面写局部分页边距覆盖。
+4. 哪些页面子组件未来必须回收为平台组件：暂无新增，本轮继续复用全局样式入口。
+5. 后续新页面禁止继续复制哪些实现：不要在单个表格页面重新写分页 `margin-top`。
+6. 哪些样式应进入主题变量或统一样式入口：表格分页与表格内容区的垂直间距继续由全局 Ant 样式入口统一维护。
+7. 当前仍存在的页面级样式债务：无新增。
+
+### 任务名称
+
+平台表格 hover 背景统一为 `#F3F4FA`
+
+### 完成内容
+
+1. 根据 `人员总览` 表格操作列截图反馈，将平台表格行 hover 背景统一调整为 `#F3F4FA`。
+2. 同步修正 `PlatformTable` 右侧固定操作列 hover 背景，避免普通列与固定列在移入时出现两种不同底色。
+3. 保持表格选中态仍沿用原有品牌浅绿色，避免本轮 hover 调整误伤已存在的选中反馈。
+
+### 修改了哪些文件
+
+1. `apps/web-antd/src/components/platform/table/platform-table.vue`
+2. `packages/styles/src/antd/index.css`
+3. `packages/@core/base/design/src/design-tokens/default.css`
+4. `docs/project-log.md`
+5. `docs/todo-next.md`
+
+### 涉及哪些页面或组件
+
+1. 平台组件：`PlatformTable`
+2. 全局 Ant Design Vue 表格样式入口：`packages/styles/src/antd/index.css`
+3. 当前反馈页面：`/personnel/overview`
+4. 已同步受影响页面：所有接入 `PlatformTable` 且包含固定列/操作列的业务表格页
+
+### 验证结果
+
+1. 已完成平台源组件和全局表格样式代码级调整。
+2. 已执行目标文件 `git diff --check`：通过。
+3. 未执行隔离浏览器截图复核；建议下次集中视觉验收时优先复核 `/personnel/overview` 的普通行与右侧固定操作列 hover 是否完全同色。
+
+### 遗留问题
+
+1. 当前只统一了 Ant Design Vue 平台表格 hover 色；Vxe 表格仍沿用既有 hover 变量，若你后续希望两套表格完全一致，再单独评估是否同步收口。
+
+### 平台治理影响
+
+1. 本轮发现的 ant-design-vue 原生组件问题：原生表格普通列与固定列 hover 背景需要平台层额外统一。
+2. 已通过平台层解决的问题：`PlatformTable` 普通行与右侧固定操作列 hover 背景已统一为 `#F3F4FA`。
+3. 哪些仍是页面临时实现：无，本轮未在业务页面写局部覆盖。
+4. 哪些页面子组件未来必须回收为平台组件：暂无新增，本轮继续复用既有 `PlatformTable`。
+5. 后续新页面禁止继续复制哪些实现：不要在单个页面给操作列或固定列单独补 hover 背景色。
+6. 哪些样式应进入主题变量或统一样式入口：表格 hover 背景色继续由设计 token 与平台表格样式入口统一维护。
+7. 当前仍存在的页面级样式债务：无新增，本轮改动已回收到平台源头与全局样式入口。
+
+### 任务名称
+
+人员档案管理卡片去除静态描边
+
+### 完成内容
+
+1. 根据截图反馈，删除 `/platform/typical-page` 人员档案管理卡片默认态的灰色边框，不再使用 `border: 1px solid hsl(var(--border));`。
+2. 本轮继续保持改动只落在页面私有卡片组件，不扩散到平台组件源头。
+
+### 修改了哪些文件
+
+1. `apps/web-antd/src/views/platform/typical-page/components/personnel-archive-card.vue`
+2. `docs/project-log.md`
+3. `docs/todo-next.md`
+
+### 涉及哪些页面或组件
+
+1. 页面：`/platform/typical-page`
+2. 页面业务组件：`personnel-archive-card.vue`
+3. 平台组件引用：`PlatformStatusTag`（未改源组件）
+
+### 验证结果
+
+1. 已完成代码级定位与样式调整。
+2. 本轮将执行目标文件 `git diff --check` 作为最小自检。
+3. 未执行隔离浏览器截图复核；建议与你后续下一条视觉反馈一起复核卡片无边框观感。
+
+### 遗留问题
+
+1. 人员档案卡片当前已去掉 hover 描边和默认静态描边；若后续还要继续收口阴影强度、圆角或内边距，可继续在该私有组件中调整。
+
+### 平台治理影响
+
+1. 本轮发现的 ant-design-vue 原生组件问题：无。
+2. 已通过平台层解决的问题：无，本轮未修改平台组件源头。
+3. 哪些仍是页面临时实现：人员档案卡片仍是典型页私有卡片结构，边框、阴影和布局节奏都在页面组件内维护。
+4. 哪些页面子组件未来必须回收为平台组件：如后续多个页面复用同类“人员实体卡片”，再评估沉淀统一实体卡片壳。
+5. 后续新页面禁止继续复制哪些实现：不要在该卡片上重新补回默认描边，除非后续确认属于统一平台视觉。
+6. 哪些样式应进入主题变量或统一样式入口：当前未达到进入 token 或平台组件入口的复用强度。
+7. 当前仍存在的页面级样式债务：人员档案卡片的头像块、标签节奏、阴影和布局仍在页面私有组件中。
+
+### 任务名称
+
+PlatformStatCard 去除灰色描边
+
+### 完成内容
+
+1. 根据 `人员总览` 截图反馈，删除 `PlatformStatCard` 源组件中的灰色边框定义，不再使用 `border: 1px solid hsl(var(--st-color-stat-card-border));`。
+2. 本轮按平台层收口统计卡视觉，避免只在 `人员总览` 页面写局部覆盖，保持所有已接入统计卡页面风格一致。
+
+### 修改了哪些文件
+
+1. `apps/web-antd/src/components/platform/stat/platform-stat-card.vue`
+2. `docs/project-log.md`
+3. `docs/todo-next.md`
+
+### 涉及哪些页面或组件
+
+1. 平台组件：`PlatformStatCard`
+2. 页面：`/personnel/overview`
+3. 已同步受影响页面：`/personnel/qualification`、`/personnel/worktime`、`/personnel/turnover`、`/project/overview`、`/project/evaluation`、`/project/contract`、`/project/document`
+
+### 验证结果
+
+1. 已完成平台源组件代码级调整。
+2. 本轮将执行目标文件 `git diff --check` 作为最小自检。
+3. 未执行隔离浏览器截图复核；建议下次集中视觉验收时一并检查各统计卡页面。
+
+### 遗留问题
+
+1. 统计卡当前仍保留阴影和顶部色条；如果你后续还想继续收口为更纯净的卡片风格，可以继续在 `PlatformStatCard` 源组件统一调整。
+
+### 平台治理影响
+
+1. 本轮发现的 ant-design-vue 原生组件问题：无，属于平台统计卡视觉样式收口。
+2. 已通过平台层解决的问题：统计卡灰色描边已从平台源组件统一移除。
+3. 哪些仍是页面临时实现：各页面统计卡的数量、文案、图标和色彩类型仍由页面配置传入。
+4. 哪些页面子组件未来必须回收为平台组件：暂无新增，本轮继续复用既有 `PlatformStatCard`。
+5. 后续新页面禁止继续复制哪些实现：不要在单个页面重新补回统计卡边框，若需恢复应重新评估是否属于平台统一视觉。
+6. 哪些样式应进入主题变量或统一样式入口：统计卡背景、阴影、顶部色条和圆角继续保留在平台组件与设计 token 体系内。
+7. 当前仍存在的页面级样式债务：个别业务页统计区布局间距仍在页面层维护，但卡片本体已继续收口到平台组件。
+
+### 任务名称
+
+人员档案管理卡片 hover 去除描边变色
+
+### 完成内容
+
+1. 根据截图反馈，调整 `/platform/typical-page` 人员档案管理卡片的 hover 交互，只保留上移和阴影，不再出现边框变色。
+2. 将鼠标 hover 与键盘 `focus-visible` 状态拆开处理，避免为了满足视觉要求误删键盘可访问性提示。
+
+### 修改了哪些文件
+
+1. `apps/web-antd/src/views/platform/typical-page/components/personnel-archive-card.vue`
+2. `docs/project-log.md`
+3. `docs/todo-next.md`
+
+### 涉及哪些页面或组件
+
+1. 页面：`/platform/typical-page`
+2. 页面业务组件：`personnel-archive-card.vue`
+3. 平台组件引用：`PlatformStatusTag`（未改源组件）
+
+### 验证结果
+
+1. 已完成代码级定位与样式调整。
+2. 已执行目标文件 `git diff --check`：通过。
+3. 未执行隔离浏览器截图复核；本轮为低风险 hover 样式修正，建议与你后续下一条视觉反馈一起复核。
+
+### 遗留问题
+
+1. 当前只去掉了 hover 描边变色；键盘焦点态仍保留 outline，若后续有统一的无障碍视觉规范，再统一处理。
+
+### 平台治理影响
+
+1. 本轮发现的 ant-design-vue 原生组件问题：无。
+2. 已通过平台层解决的问题：无，本轮未修改平台组件源头。
+3. 哪些仍是页面临时实现：人员档案管理卡片仍是典型页私有卡片结构，hover 节奏由页面组件维护。
+4. 哪些页面子组件未来必须回收为平台组件：如后续多个页面复用同类“人员实体卡片”，再评估沉淀统一实体卡片壳。
+5. 后续新页面禁止继续复制哪些实现：不要在 hover 上追加品牌描边，卡片类默认只保留上移反馈。
+6. 哪些样式应进入主题变量或统一样式入口：当前未达到进入 token 或平台组件入口的复用强度。
+7. 当前仍存在的页面级样式债务：人员档案卡片的布局、头像块和标签节奏仍在页面私有组件中。
 
 ### 任务名称
 
@@ -3364,7 +4299,7 @@ Figma MCP Go 连接规则沉淀与典型页面 Demo 一期审计方案
 
 1. 真实业务页面尚未接入 `#/components/platform`，下一阶段需要输出引用关系审计和迁移优先级。
 2. `PlatformTable` 与现有 `useVbenVxeGrid` 的长期边界仍需确认，不能直接批量替换真实业务页表格。
-3. 当前项目定位仍需确认：平台母版、具体业务项目，还是二者结合推进。
+3. 当前项目定位仍需确认：平台组件治理、具体业务项目，还是二者结合推进。
 
 ## 2026-05-05
 
@@ -3496,7 +4431,7 @@ Figma MCP Go 连接规则沉淀与典型页面 Demo 一期审计方案
 
 ### 遗留问题
 
-1. 尚未完成当前项目目标、业务范围、平台母版与具体业务项目边界确认。
+1. 尚未完成当前项目目标、业务范围、平台组件治理与具体业务项目边界确认。
 2. 尚未完成 ant-design-vue 原生组件与平台组件引用关系审计。
 3. 尚未确认平台组件展示页的实际路径和覆盖范围。
 4. 尚未执行浏览器验证，因为本轮变更均为文档规则与接续治理。
@@ -3870,7 +4805,7 @@ Vxe 表格平台适配层一期
 1. `system/user` 登录后的 Vxe 表格工具栏真实视觉验证仍未完成。
 2. `system/user/dept-tree.vue` 尚未平台化，仍是下一步树结构源组件改造的第一候选。
 3. 真实业务页仍大量直接使用 `antdv-next` 和 Vben Vxe 能力，后续需要分批治理，不能一次性替换。
-4. 当前项目是平台母版、具体业务项目还是二者结合推进，仍需用户确认。
+4. 当前项目是平台组件治理、具体业务项目还是二者结合推进，仍需用户确认。
 
 ### 任务名称
 
@@ -3878,7 +4813,7 @@ Vxe 表格平台适配层一期
 
 ### 完成内容
 
-1. 结合用户已确认的“平台母版 + 真实业务页验证”定位，先对 `/platform/typical-page` 和 `system/user` 做了结构分析、组件映射和平台/业务边界确认。
+1. 结合用户已确认的“平台组件治理 + 真实业务页验证”定位，先对 `/platform/typical-page` 和 `system/user` 做了结构分析、组件映射和平台/业务边界确认。
 2. 在 `apps/web-antd/src/components/platform/tree` 新增 `PlatformTreePanel`，将树筛选头部、搜索框、刷新按钮、骨架屏、空态和树主体组合沉淀到平台源头。
 3. 将 `apps/web-antd/src/views/system/user/dept-tree.vue` 切换为使用 `PlatformTreePanel`，保留部门树接口请求、筛选联动、节点高亮和 `reload/select` 业务事件不变。
 4. 将 `apps/web-antd/src/views/platform/typical-page/index.vue` 左侧组织树验证区切换为使用 `PlatformTreePanel`，让典型页和真实页共享同一套树筛选平台壳。

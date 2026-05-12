@@ -32,4 +32,10 @@ export interface PlatformViewAction {
   type?: 'dashed' | 'default' | 'link' | 'primary' | 'text';
 }
 
+export interface PlatformBreadcrumbItem {
+  icon?: string;
+  path?: string;
+  title: string;
+}
+
 export type PlatformViewTool = 'export' | 'fullscreen' | 'refresh' | 'setting';

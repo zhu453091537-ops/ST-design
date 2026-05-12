@@ -1323,8 +1323,13 @@ const PlatformTableDateRangeFilterDropdown = defineComponent({
   :deep(.ant-table-tbody > tr > td.ant-table-cell-fix-right.ant-table-cell-row-hover),
 .platform-table
   :deep(.ant-table-tbody > tr > td.ant-table-cell-fix-left-last.ant-table-cell-row-hover),
-.platform-table
-  :deep(.ant-table-tbody > tr > td.ant-table-cell-fix-right-first.ant-table-cell-row-hover),
+.platform-table :deep(.ant-table-tbody > tr > td.ant-table-cell-fix-right-first.ant-table-cell-row-hover) {
+  z-index: 32 !important;
+  background: var(--st-color-table-row-hover-bg-solid) !important;
+  background-color: var(--st-color-table-row-hover-bg-solid) !important;
+  background-image: none !important;
+}
+
 .platform-table
   :deep(
     .ant-table-tbody
@@ -1344,8 +1349,8 @@ const PlatformTableDateRangeFilterDropdown = defineComponent({
       > td.ant-table-cell-fix-right
   ) {
   z-index: 32 !important;
-  background: var(--st-color-table-row-hover-bg-solid) !important;
-  background-color: var(--st-color-table-row-hover-bg-solid) !important;
+  background: hsl(var(--st-color-fill-selected)) !important;
+  background-color: hsl(var(--st-color-fill-selected)) !important;
   background-image: none !important;
 }
 

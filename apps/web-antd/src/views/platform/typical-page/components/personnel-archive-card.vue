@@ -85,18 +85,14 @@ function handleKeydown(event: KeyboardEvent) {
   overflow: hidden;
   cursor: pointer;
   background: hsl(var(--background));
-  border: 1px solid hsl(var(--border));
   border-radius: var(--st-radius-card);
   box-shadow: 0 1px 2px rgb(15 23 42 / 4%);
   transition:
     transform 0.18s ease,
-    box-shadow 0.18s ease,
-    border-color 0.18s ease;
+    box-shadow 0.18s ease;
 }
 
-.personnel-archive-card:hover,
-.personnel-archive-card:focus-visible {
-  border-color: hsl(var(--primary) / 20%);
+.personnel-archive-card:hover {
   box-shadow:
     0 12px 24px rgb(15 23 42 / 8%),
     0 2px 8px rgb(15 23 42 / 6%);
@@ -104,6 +100,10 @@ function handleKeydown(event: KeyboardEvent) {
 }
 
 .personnel-archive-card:focus-visible {
+  box-shadow:
+    0 12px 24px rgb(15 23 42 / 8%),
+    0 2px 8px rgb(15 23 42 / 6%);
+  transform: translateY(-4px);
   outline: 2px solid hsl(var(--primary) / 28%);
   outline-offset: 1px;
 }
