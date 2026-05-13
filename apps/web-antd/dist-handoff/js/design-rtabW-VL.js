@@ -1,1 +1,0 @@
-import{Fr as e,cr as t,gr as n}from"./antdv-next-Bbl__uyc.js";import{t as r}from"./flow-designer-6jDHr6-2.js";var i=n({__name:`design`,setup(n){return(n,i)=>(e(),t(r))}});export{i as default};

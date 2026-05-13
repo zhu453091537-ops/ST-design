@@ -72,8 +72,8 @@ function handleNavigate(path?: string) {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  font-size: 16px;
-  line-height: 24px;
+  font-size: 14px;
+  line-height: 22px;
 }
 
 .platform-page-breadcrumb__link {
@@ -107,6 +107,6 @@ function handleNavigate(path?: string) {
 .platform-page-breadcrumb :deep(.ant-breadcrumb-separator) {
   margin-inline: 12px;
   color: hsl(var(--muted-foreground) / 0.72);
-  font-size: 16px;
+  font-size: 14px;
 }
 </style>

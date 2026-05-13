@@ -128,7 +128,7 @@ function withPlatformIndexColumn(
     field: '__platform_index',
     title: '序号',
     type: 'seq' as const,
-    width: 72,
+    width: 88,
   };
 
   if (columns?.[0]?.type !== 'checkbox') {

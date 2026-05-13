@@ -4,6 +4,478 @@
 
 ### 任务名称
 
+项目冗余文件清理一期
+
+### 完成内容
+
+1. 确认 `apps/platform-showcase 17.36.28` 只是静态 showcase 打包产物，不是当前主业务应用源码。
+2. 删除 `apps/platform-showcase 17.36.28`，并确认当前 `apps/` 下只剩 `web-antd` 主应用相关目录。
+3. 保留旧 `apps/platform-showcase/dist` 的 Git 删除状态，作为平台 showcase 产物清理结果。
+4. 清理仓库工作区中的 `.DS_Store` 系统文件；`.git` 内部两个 `.DS_Store` 因系统权限未强制处理。
+5. 新增根 `.gitignore`，忽略 `.DS_Store`、`node_modules/`、构建产物、交付目录和本地环境文件。
+6. 本轮未物理删除 `node_modules`、`deliverables/`、`apps/web-antd/dist` 或 `apps/web-antd/dist-handoff`，避免影响本地启动与当前交付快照。
+
+### 修改了哪些文件
+
+1. `.gitignore`
+2. `apps/platform-showcase/dist/**`
+3. `apps/platform-showcase 17.36.28/**`
+4. `.DS_Store` 系统文件
+
+### 涉及哪些页面或组件
+
+1. 无业务页面改造。
+2. 无平台组件改造。
+
+### 验证结果
+
+1. 已确认 `apps/platform-showcase 17.36.28` 不存在。
+2. 已确认源码范围内无 `platform-showcase` 引用。
+3. 已确认 `apps/` 下只剩 `web-antd` 主应用目录。
+4. 已执行 `git diff --check -- .gitignore apps/platform-showcase`，通过。
+
+### 遗留问题
+
+1. `apps/web-antd/dist`、`apps/web-antd/dist-handoff`、`deliverables/` 仍是生成/交付产物，后续可在确认交付包备份策略后继续清理 Git 跟踪。
+2. `node_modules` 仍不建议物理删除；后续只建议从 Git 跟踪中移除并依赖 `pnpm-lock.yaml` 复原。
+
+### 平台治理影响
+
+1. 本轮没有新增 ant-design-vue 平台组件改造。
+2. 本轮主要清理平台 showcase 产物和系统文件，降低后续打包 hash 文件反复污染 Git 状态的风险。
+3. 当前主应用仍以 `apps/web-antd` 为准，平台组件源头仍在 `apps/web-antd/src/components/platform`。
+
+### 任务名称
+
+重新整理 Windows 优先的前端客户演示与联调交付包
+
+### 完成内容
+
+1. 按“项目经理 Windows 电脑双击演示、客户确认后前端源码联调上线”的目标，重新生成 `ST-design-frontend-handoff-20260513` 交付目录。
+2. 重建 `preview/` 为 handoff 模式构建，使用相对资源路径、hash 路由和 Mock 登录链路。
+3. 新增 Windows 主启动器 `Start-Preview-Windows.vbs` / `Start-Preview-Windows.cmd`，通过 PowerShell/.NET 在本机启动静态服务并打开登录页，不依赖 Node、pnpm、Python。
+4. 保留 `Start-Preview-Mac.command` 作为 Mac 备用入口。
+5. 精简 `README.md` 和 `docs/handoff-frontend.md`，去掉截图展示页思路，只保留客户演示入口、源码启动方式、页面清单、Mock 位置、接口替换和字段映射。
+6. 生成最终压缩包 `deliverables/ST-design-frontend-handoff-20260513.zip`。
+
+### 修改了哪些文件
+
+1. `AGENTS.md`
+2. `docs/decision-records.md`
+3. `docs/project-log.md`
+4. `docs/todo-next.md`
+5. `deliverables/ST-design-frontend-handoff-20260513/**`
+6. `deliverables/ST-design-frontend-handoff-20260513.zip`
+
+### 涉及哪些页面或组件
+
+1. 客户演示入口：`preview/index.html#/auth/login`
+2. 登录后首页：`preview/index.html#/workbench/index`
+3. 源码联调入口：`source/apps/web-antd`
+
+### 验证结果
+
+1. 已执行 handoff 构建，生成 `apps/web-antd/dist-handoff` 并同步到交付包 `preview/`。
+2. 已通过 HTTP 验证 `http://127.0.0.1:8020/preview/index.html` 返回 `200 OK`。
+3. 已用隔离浏览器打开登录页，标题为“登录 - 委外项目综合管理平台”，页面无 400/500 响应错误。
+4. 已用隔离浏览器点击 Mock 登录，成功进入 `/workbench/index`，标题为“项目总览 - 委外项目综合管理平台”，页面无 400/500 响应错误。
+5. 已检查 zip 内容包含 Windows 启动器、Mac 备用启动器、`preview/`、完整 `source/`、README 和联调文档；zip 中未包含 `node_modules`、旧 `dist-handoff`、`deliverables` 或 `.DS_Store`。
+
+### 遗留问题
+
+1. 当前无法在本机直接执行 Windows `.vbs/.cmd`，但脚本已按 Windows 系统内置 PowerShell/.NET 能力编写，交付给 Windows 电脑后优先验证一次双击链路。
+
+### 平台治理影响
+
+1. 本轮没有新增 ant-design-vue 平台组件改造。
+2. 本轮沉淀的是交付方式规则：客户演示包主入口按 Windows 双击启动器处理，不再强行用 `file://` 直开 Vue/Vite SPA。
+3. 前端联调仍以 `source/` 完整源码为准，`preview/` 只作为客户演示快照。
+
+### 任务名称
+
+顶部导航与登录页 logo 改为字体图标引用
+
+### 完成内容
+
+1. 将项目 logo 的默认引用从 svg 图片改为字体图标协议 `iconfont:icon-LOGO-green`。
+2. 在顶部导航使用的 `VbenLogo` 原组件中补充 `iconfont:` 识别：当 logo 来源是字体图标协议时，内部渲染为字体图标而不是图片。
+3. 在登录页认证壳 `Authentication` 中同步补充相同的 `iconfont:` 识别逻辑，并将登录页传入的 logo 引用改为字体图标。
+4. 本轮只替换引用来源与渲染方式，不主动调整原有尺寸、颜色、间距样式。
+
+### 修改了哪些文件
+
+1. `apps/web-antd/src/preferences.ts`
+2. `apps/web-antd/src/layouts/auth.vue`
+3. `packages/@core/ui-kit/shadcn-ui/src/components/logo/logo.vue`
+4. `packages/effects/layouts/src/authentication/authentication.vue`
+
+### 涉及哪些页面或组件
+
+1. 顶部导航原组件：`VbenLogo`
+2. 登录页：`/auth/login`
+3. 认证壳：`Authentication`
+
+### 验证结果
+
+1. 已执行 `./node_modules/.bin/eslint apps/web-antd/src/layouts/auth.vue packages/@core/ui-kit/shadcn-ui/src/components/logo/logo.vue packages/effects/layouts/src/authentication/authentication.vue apps/web-antd/src/preferences.ts`，通过。
+2. 已执行 `git diff --check -- apps/web-antd/src/layouts/auth.vue packages/@core/ui-kit/shadcn-ui/src/components/logo/logo.vue packages/effects/layouts/src/authentication/authentication.vue apps/web-antd/src/preferences.ts`，通过。
+3. 本轮未做浏览器视觉复核；需要后续确认顶部导航与登录页 logo 已由字体图标渲染，且视觉尺寸与原样式保持一致。
+
+### 遗留问题
+
+1. 还需在真实页面确认 logo 不再以 svg 图片加载，而是正常显示字体图标。
+
+### 平台治理影响
+
+1. 本轮发现的 ant-design-vue 原生组件问题：无新增，问题在于项目 logo 来源仍走图片引用。
+2. 已通过平台层解决的问题：顶部导航原组件和登录页认证壳都支持用统一字体图标协议渲染 logo。
+3. 哪些仍是页面临时实现：无，本轮未在业务页面追加局部 logo 样式。
+4. 哪些页面子组件未来必须回收为平台组件：无新增。
+5. 后续新页面禁止继续复制哪些实现：不要在单页再单独塞一份 logo 图片或手写重复的字体图标结构。
+6. 哪些样式应进入主题变量或统一样式入口：当前无需新增 token，logo 的来源统一由平台壳组件识别。
+7. 当前仍存在的页面级样式债务：无新增。
+
+### 任务名称
+
+修复前端联调交付包预览入口卡在启动页
+
+### 完成内容
+
+1. 为 `apps/web-antd` 新增专用 `.env.handoff`，把交付预览构建切换到 `VITE_BASE=./`、`VITE_ROUTER_HISTORY=hash` 和 `VITE_USE_MOCK=true`。
+2. 重新构建 `preview/`，修正预览包中动态 chunk 资源的绝对路径问题，解决双击后一直停在 `Plus Admin` 启动页的问题。
+3. 补齐交付包根目录缺失的 `LOGO*.svg`，消除登录页进入后剩余的 logo 404。
+4. 更新 `打开预览.command`、`README.md` 和 `docs/handoff-frontend.md`，把“直接可打开”的预览方式改成可验证的真实链路。
+
+### 修改了哪些文件
+
+1. `AGENTS.md`
+2. `apps/web-antd/.env.handoff`
+3. `docs/decision-records.md`
+4. `docs/project-log.md`
+5. `docs/todo-next.md`
+6. `deliverables/ST-design-frontend-handoff-20260512/README.md`
+7. `deliverables/ST-design-frontend-handoff-20260512/docs/handoff-frontend.md`
+8. `deliverables/ST-design-frontend-handoff-20260512/打开预览.command`
+9. `deliverables/ST-design-frontend-handoff-20260512/LOGO-green.svg`
+10. `deliverables/ST-design-frontend-handoff-20260512/LOGO-white.svg`
+11. `deliverables/ST-design-frontend-handoff-20260512/LOGO.svg`
+12. `deliverables/ST-design-frontend-handoff-20260512/preview/**`
+13. `deliverables/ST-design-frontend-handoff-20260512/source/apps/web-antd/.env.handoff`
+
+### 涉及哪些页面或组件
+
+1. 交付包根入口：`deliverables/ST-design-frontend-handoff-20260512/index.html`
+2. 交付包启动脚本：`deliverables/ST-design-frontend-handoff-20260512/打开预览.command`
+3. 交付包预览资源：`deliverables/ST-design-frontend-handoff-20260512/preview/index.html`
+4. 源码联调环境：`apps/web-antd/.env.handoff`
+
+### 验证结果
+
+1. 隔离浏览器访问 `http://127.0.0.1:8013/index.html` 后会自动跳到 `http://127.0.0.1:8013/preview/index.html#/auth/login`。
+2. 点击登录后可进入 `/workbench/index`，页面标题为“项目总览 - 委外项目综合管理平台”。
+3. 当前验证未再出现资源 404 或页面错误，登录页和首页都能正常渲染。
+
+### 遗留问题
+
+1. 需要把新生成的 `deliverables/ST-design-frontend-handoff-20260512.zip` 重新写出一遍，确保压缩包与当前交付目录一致。
+2. `apps/web-antd/dist.zip` 是构建过程中顺手生成的旧产物，后续可按需清理。
+
+### 平台治理影响
+
+1. 本轮没有新的 ant-design-vue 平台组件改造。
+2. 本轮主要是交付包构建模式修正，不影响业务页面组件边界。
+3. 新增的 `apps/web-antd/.env.handoff` 属于交付预览构建配置，不是业务页面临时实现。
+
+### 任务名称
+
+前端联调交付压缩包整理
+
+### 完成内容
+
+1. 基于当前 ST-design 工作区已完成页面，重新整理前端联调交付包结构，目标不再是单独交一个 `dist`，而是交付源码项目、离线预览、联调文档和启动说明。
+2. 重建 `apps/web-antd/dist-handoff` 预览产物，并生成根目录可双击打开的静态预览首页方案，用于不启动项目时快速查看页面成果。
+3. 升级 `docs/handoff-frontend.md` 为完整联调文档，补充页面路由、源码文件、页面专用 source 文件、字段映射、交互说明、待接接口建议和浏览器自检结果。
+4. 生成页面截图，用于交付首页缩略图预览和联调文档中的浏览器自检凭据。
+
+### 修改了哪些文件
+
+1. `docs/handoff-frontend.md`
+2. `docs/project-log.md`
+3. `docs/todo-next.md`
+4. `deliverables/ST-design-frontend-handoff-20260512/**`
+
+### 涉及哪些页面或组件
+
+1. 项目总览：`/workbench/index`
+2. 项目信息管理：`/project/information`
+3. 进度可视化跟踪：`/project/progress`
+4. 合同与付款管理：`/project/contract`
+5. 文档与台账管理：`/project/document`
+6. 中期评估与验收管理：`/project/evaluation`
+7. 人员总览：`/personnel/overview`
+8. 资质与准入管控：`/personnel/qualification`
+9. 变动与流失率统计：`/personnel/turnover`
+10. 工时与兼职管控：`/personnel/worktime`
+11. 施工管理：`/battery/construction`
+12. 人员档案管理典型页：`/platform/typical-page`
+
+### 验证结果
+
+1. 已执行 `curl -I http://127.0.0.1:5173/`，返回 `200 OK`。
+2. 已执行 `curl -I http://127.0.0.1:5173/workbench/index`，返回 `200 OK`。
+3. 已执行 `curl -I http://127.0.0.1:5173/project/information`，返回 `200 OK`。
+4. 已执行 `curl -I http://127.0.0.1:5173/personnel/overview`，返回 `200 OK`。
+5. 已在隔离 Chrome headless 中逐页打开并截图：`/workbench/index`、`/project/information`、`/project/progress`、`/project/contract`、`/project/document`、`/project/evaluation`、`/personnel/overview`、`/personnel/qualification`、`/personnel/turnover`、`/personnel/worktime`、`/battery/construction`、`/platform/typical-page`。
+
+### 遗留问题
+
+1. `preview/` 内的离线 SPA 产物仍更适合作为归档和补充资源；真正完整的登录链路、菜单流转和接口联调仍建议通过 `source/` 启动本地项目完成。
+2. `/personnel/overview/detail` 仍只有壳页面，未纳入“完整已交付页面”范畴。
+
+### 任务名称
+
+中期评估与验收管理区块标题切回纯标题组件
+
+### 完成内容
+
+1. 将 `/project/evaluation` 中“待评估项目”“评估记录”两个区块的标题壳，从 `PlatformTableToolbar` 改为纯标题组件 `PlatformSectionTitle`。
+2. 移除这两个区块右侧原本自带的搜索、刷新、设置、全屏等工具入口，使其表现与“文档列表”这类纯标题区块保持一致。
+3. 同步清理页面中已不再需要的关键字搜索状态，保留评估记录表头筛选能力不变。
+
+### 修改了哪些文件
+
+1. `apps/web-antd/src/views/project/evaluation/index.vue`
+
+### 涉及哪些页面或组件
+
+1. 页面：`/project/evaluation`
+2. 平台组件：`PlatformSectionTitle`
+3. 被替换的页面组合壳：`PlatformTableToolbar`
+
+### 验证结果
+
+1. 已执行 `./node_modules/.bin/eslint apps/web-antd/src/views/project/evaluation/index.vue`，通过。
+2. 已执行 `git diff --check -- apps/web-antd/src/views/project/evaluation/index.vue`，通过。
+3. 本轮未做登录后浏览器视觉复核；需要后续在真实页面确认两个区块标题与截图 2 的纯标题风格一致。
+
+### 遗留问题
+
+1. 需继续肉眼确认标题下方留白、区块起始位置和卡片/表格顶部间距是否符合预期。
+
+### 平台治理影响
+
+1. 本轮发现的 ant-design-vue 原生组件问题：无新增，问题在于页面组合层误用了带右侧工具区的标题壳。
+2. 已通过平台层解决的问题：无新增平台源组件改造，本轮改为复用已有 `PlatformSectionTitle`。
+3. 哪些仍是页面临时实现：是否使用纯标题还是工具栏式标题，当前仍由页面组合层按场景决定。
+4. 哪些页面子组件未来必须回收为平台组件：暂无新增。
+5. 后续新页面禁止继续复制哪些实现：不需要右侧工具时，不要继续用 `PlatformTableToolbar` 充当纯标题。
+6. 哪些样式应进入主题变量或统一样式入口：当前无需新增 token，继续复用 `PlatformSectionTitle` 现有样式。
+7. 当前仍存在的页面级样式债务：无新增。
+
+### 任务名称
+
+登录后默认落点强制回到项目总览
+
+### 完成内容
+
+1. 调整登录成功后的回跳优先级，不再让登录页 URL 中残留的 `redirect` 参数覆盖平台首页落点。
+2. 即使登录页是从 `人员档案管理`、`变动与流失率统计` 等业务页跳转过来，登录成功后也统一优先进入 `项目全景管理 - 项目总览`。
+3. 保持未登录访问业务页时仍会先跳登录页的拦截逻辑不变，本轮只改“登录成功后先去哪里”。
+
+### 修改了哪些文件
+
+1. `apps/web-antd/src/router/guard.ts`
+2. `docs/project-log.md`
+3. `docs/todo-next.md`
+4. `docs/decision-records.md`
+
+### 涉及哪些页面或组件
+
+1. 登录后默认首页：`/workbench/index`
+2. 登录守卫：`apps/web-antd/src/router/guard.ts`
+3. 受影响登录场景：从任意业务页跳到 `/auth/login` 后再次登录
+
+### 验证结果
+
+1. 已执行 `./node_modules/.bin/eslint apps/web-antd/src/router/guard.ts`，通过。
+2. 已执行 `git diff --check -- apps/web-antd/src/router/guard.ts`，通过。
+3. 已在隔离 Safari 中验证：登录页地址仍带 `redirect=%252Fpersonnel%252Fturnover` 时，点击登录后实际进入 `/workbench/index`，页面标题为“项目总览”。
+
+### 遗留问题
+
+1. 若后续有明确业务要求“从某个受保护详情页登录后必须回原页”，需要再单独设计白名单策略；当前按你的要求统一先回平台首页。
+
+### 任务名称
+
+登录页 logo 标题移到登录卡片上方
+
+### 完成内容
+
+1. 将登录页的 `Logo + 应用标题` 从页面左上角迁移到登录卡片上方。
+2. 让该标题块与登录卡片保持 `24px` 间距，并与卡片同宽居中展示。
+3. 保持登录页主体表单与背景不变，只调整品牌标题的视觉落点。
+
+### 修改了哪些文件
+
+1. `packages/effects/layouts/src/authentication/authentication.vue`
+2. `docs/project-log.md`
+3. `docs/todo-next.md`
+
+### 涉及哪些页面或组件
+
+1. 登录页：`/auth/login`
+2. 认证布局：`AuthPageLayout`
+
+### 验证结果
+
+1. 代码已将标题块改为登录卡片上方的居中布局。
+2. 下一步需在隔离浏览器刷新 `/auth/login`，确认间距为 `24px` 且未再回到页面左上角。
+
+### 遗留问题
+
+1. 如果本地浏览器缓存了旧页面状态，可能需要刷新一次才能看到新布局。
+
+### 任务名称
+
+修正登录页默认居中与认证工具栏显示
+
+### 完成内容
+
+1. 将登录页默认认证布局切回 `panel-center`，避免因为本地缓存或历史偏好继续落到右居布局。
+2. 在登录页布局容器中关闭认证工具栏，隐藏右上角的颜色和布局切换按钮。
+3. 保持登录页左侧品牌插画与右侧登录表单结构不变，只修正默认进入态。
+
+### 修改了哪些文件
+
+1. `apps/web-antd/src/preferences.ts`
+2. `apps/web-antd/src/layouts/auth.vue`
+3. `docs/project-log.md`
+4. `docs/todo-next.md`
+5. `docs/decision-records.md`
+
+### 涉及哪些页面或组件
+
+1. 登录页：`/auth/login`
+2. 认证布局：`AuthPageLayout`
+
+### 验证结果
+
+1. 代码层已将默认认证布局和工具栏显式收口。
+2. 下一步在隔离浏览器刷新登录页，确认右上角按钮已消失且内容重新居中。
+
+### 遗留问题
+
+1. 若用户本机还有旧的认证偏好缓存，首次加载前可能需要刷新页面让新配置生效，但代码默认已切到居中。
+
+### 任务名称
+
+平台表格序号列表头禁止换行
+
+### 完成内容
+
+1. 在 `PlatformTable` 源组件中，为平台默认序号列补充专用 header / cell class。
+2. 将序号列表头与序号单元格统一设置为 `white-space: nowrap`，避免“序号”在首列内边距挤压下被拆成两行。
+3. 继续保持修复落点在平台表格源组件，不在 `施工管理` 等业务页面写局部表头补丁。
+
+### 修改了哪些文件
+
+1. `apps/web-antd/src/components/platform/table/platform-table.vue`
+
+### 涉及哪些页面或组件
+
+1. 平台组件：`PlatformTable`
+2. 当前反馈页面：`/battery/construction`
+3. 潜在受影响页面：所有使用平台默认序号列的 Ant Design Vue 表格页面
+
+### 验证结果
+
+1. 已执行 `git diff --check -- apps/web-antd/src/components/platform/table/platform-table.vue apps/web-antd/src/adapter/vxe-table.ts`，通过。
+2. 已执行 `./node_modules/.bin/eslint apps/web-antd/src/components/platform/table/platform-table.vue`；命中该文件既有的 `vue/one-component-per-file` 规则报错，不是本轮序号列修复新引入的问题。
+3. 本轮未完成登录后浏览器复核；Safari 打开业务路由时落回登录页，需后续在已登录状态下确认“序号”表头已保持单行。
+
+### 遗留问题
+
+1. 还需在真实业务页已登录状态下肉眼确认 `施工管理` 等页面的“序号”表头不再换行。
+
+### 平台治理影响
+
+1. 本轮发现的 ant-design-vue 原生组件问题：平台默认序号列在当前首列内边距规则下，表头文本可能被挤成两行。
+2. 已通过平台层解决的问题：平台默认序号列已具备专用不换行约束，不再依赖业务页局部 `nowrap`。
+3. 哪些仍是页面临时实现：无，本轮未在业务页追加样式。
+4. 哪些页面子组件未来必须回收为平台组件：无新增。
+5. 后续新页面禁止继续复制哪些实现：不要在单个列表页单独给“序号”表头写局部不换行补丁。
+6. 哪些样式应进入主题变量或统一样式入口：序号列稳定展示继续由 `PlatformTable` 源组件统一维护。
+7. 当前仍存在的页面级样式债务：无新增。
+
+### 任务名称
+
+项目总览切回登录后默认首页
+
+### 完成内容
+
+1. 将项目配置中的默认首页从 `/platform/typical-page` 切回 `/workbench/index`。
+2. 将旧 `dashboard / analytics / workspace / about / changelog` 等历史入口的隐藏重定向统一改为跳转项目总览，避免登录后或访问旧入口时继续落到典型页。
+3. 保持“项目全景管理”菜单结构与“项目总览”页面内容不变，本轮只调整首页进入链路。
+4. 同步更新接续文档，明确当前登录后的平台首页应为“项目全景管理 - 项目总览”。
+
+### 修改了哪些文件
+
+1. `apps/web-antd/src/preferences.ts`
+2. `apps/web-antd/src/router/routes/modules/dashboard.ts`
+3. `docs/project-log.md`
+4. `docs/todo-next.md`
+5. `docs/decision-records.md`
+
+### 涉及哪些页面或组件
+
+1. 默认首页：`/workbench/index`
+2. 历史隐藏入口：`/dashboard`、`/analytics`、`/workspace`、`/vben-admin/about`、`/changelog`
+3. 业务模块：`项目全景管理 > 项目总览`
+
+### 验证结果
+
+1. 已执行 `curl -I http://127.0.0.1:5173/`，服务返回 `200 OK`，确认本地预览在线。
+2. 已执行 `./node_modules/.bin/eslint apps/web-antd/src/preferences.ts apps/web-antd/src/router/routes/modules/dashboard.ts`，通过。
+3. 已执行 `git diff --check -- apps/web-antd/src/preferences.ts apps/web-antd/src/router/routes/modules/dashboard.ts docs/project-log.md docs/todo-next.md docs/decision-records.md`，通过。
+4. 已在隔离浏览器验证根路由 `/` 和登录后落点当前都进入 `/workbench/index`；旧入口重定向代码已统一切换，后续可再顺手补一次登录态直访复核。
+
+### 遗留问题
+
+1. 如果浏览器本地缓存了旧的首页配置，首次访问仍可能受旧 `localStorage` 影响；刷新后若仍异常，再清一次站点本地缓存即可。
+
+### 任务名称
+
+施工管理菜单下新增人员档案与考勤管理入口
+
+### 完成内容
+
+1. 在 `智能考勤管理 > 施工管理` 同级菜单下新增 `考勤管理` 入口。
+2. 新菜单当前复用空白占位页，右侧内容区暂时保持空白。
+3. 保留原有 `施工管理` 菜单与页面不变，避免影响现有施工管理内容。
+
+### 修改了哪些文件
+
+1. `apps/web-antd/src/mock/index.ts`
+2. `docs/project-log.md`
+3. `docs/todo-next.md`
+
+### 涉及哪些页面或组件
+
+1. 菜单：`智能考勤管理`
+2. 菜单：`施工管理`
+3. 新增菜单：`考勤管理`
+
+### 验证结果
+
+1. 已完成菜单数据接入，尚未做浏览器点击复核。
+2. 右侧内容区当前为现成空白占位页，符合“暂时为空”的要求。
+
+### 遗留问题
+
+1. 新菜单目前只有空白壳，后续需要再按具体业务补充页面内容。
+
+### 任务名称
+
 人员总览查看入口接入详情页返回壳
 
 ### 完成内容
@@ -450,6 +922,48 @@
 5. 后续新页面禁止继续复制哪些实现：不要把“查看进度看板”继续保留成只弹提示的占位按钮。
 6. 哪些样式应进入主题变量或统一样式入口：无新增。
 7. 当前仍存在的页面级样式债务：无新增页面级样式债务。
+
+## 2026-05-12
+
+### 任务
+
+补充“打开浏览器”默认直开 5173 规则
+
+### 完成内容
+
+1. 收紧 `AGENTS.md` 中的本地预览快速打开规则，明确本项目固定预览端口就是 `5173`。
+2. 明确用户在本仓库内说“打开浏览器”“打开页面”“打开本地预览”等口令时，Codex 应默认先检查 `http://127.0.0.1:5173/`，未启动就立即拉起 Vite，再直接执行打开。
+3. 明确同一动作不再重复向用户确认，也不要求用户反复重复“打开 5173”之类的口令。
+
+### 修改了哪些文件
+
+1. `AGENTS.md`
+2. `docs/project-log.md`
+3. `docs/todo-next.md`
+
+### 涉及哪些页面或组件
+
+1. 本地预览打开流程
+2. `apps/web-antd` 开发服务启动流程
+
+### 验证结果
+
+1. 本轮未改业务代码，仅补充协作规则。
+2. 规则文本已写入 `AGENTS.md` 与接续文档。
+
+### 遗留问题
+
+1. 无新增遗留问题。
+
+### 平台治理影响
+
+1. 本轮发现的 ant-design-vue 原生组件问题：无。
+2. 已通过平台层解决的问题：无，本轮仅补充协作与预览打开规则。
+3. 仍是页面临时实现的问题：无。
+4. 哪些页面子组件未来必须回收为平台组件：无新增项。
+5. 后续新页面禁止继续复制哪些实现：无新增项。
+6. 哪些样式应进入主题变量或统一样式入口：无。
+7. 当前仍存在的页面级样式债务：无新增债务。
 
 ### 任务名称
 

@@ -110,10 +110,10 @@ function setupAccessGuard(router: Router) {
     accessStore.setAccessMenus(accessibleMenus);
     accessStore.setAccessRoutes(accessibleRoutes);
     accessStore.setIsAccessChecked(true);
-    const redirectPath = (from.query.redirect ??
-      (to.path === preferences.app.defaultHomePath
-        ? userInfo.homePath || preferences.app.defaultHomePath
-        : to.fullPath)) as string;
+    // 登录成功后默认优先进入平台首页，不再让登录页上的 redirect 参数覆盖首页落点。
+    const redirectPath = (to.path === preferences.app.defaultHomePath
+      ? userInfo.homePath || preferences.app.defaultHomePath
+      : (from.query.redirect ?? to.fullPath)) as string;
 
     return {
       ...router.resolve(decodeURIComponent(redirectPath)),

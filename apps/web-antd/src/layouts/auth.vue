@@ -7,8 +7,8 @@ import { preferences } from '@vben/preferences';
 import { $t } from '#/locales';
 
 const appName = computed(() => preferences.app.name);
-const logo = computed(() => '/LOGO-green.svg');
-const logoDark = computed(() => '/LOGO-green.svg');
+const logo = computed(() => 'iconfont:icon-LOGO-green');
+const logoDark = computed(() => 'iconfont:icon-LOGO-green');
 </script>
 
 <template>
@@ -19,6 +19,7 @@ const logoDark = computed(() => '/LOGO-green.svg');
     :logo-dark="logoDark"
     :page-description="$t('authentication.pageDesc')"
     :page-title="$t('authentication.pageTitle')"
+    :toolbar="false"
   >
     <!-- 自定义工具栏 -->
     <!-- <template #toolbar></template> -->

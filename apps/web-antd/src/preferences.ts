@@ -34,7 +34,8 @@ export const overridesPreferences = defineOverridesPreferences({
      * 然后路由会进行合并
      */
     accessMode: 'mixed',
-    defaultHomePath: '/platform/typical-page',
+    defaultHomePath: '/workbench/index',
+    authPageLayout: 'panel-center',
     /**
      * 不需要refresh token 由后端处理
      */
@@ -127,7 +128,7 @@ export const overridesPreferences = defineOverridesPreferences({
    */
   logo: {
     enable: true,
-    source: '/LOGO-white.svg',
-    sourceDark: '/LOGO-white.svg',
+    source: 'iconfont:icon-LOGO-green',
+    sourceDark: 'iconfont:icon-LOGO-green',
   },
 });

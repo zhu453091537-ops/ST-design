@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { Page } from '@vben/common-ui';
 
-import { PlatformPageBreadcrumb } from '#/components/platform';
+import ditieIcon from '#/assets/images/ditie.png';
+import { PlatformPageBreadcrumb, PlatformSectionTitle } from '#/components/platform';
 
 const breadcrumbItems = [
   {
@@ -20,7 +21,20 @@ const breadcrumbItems = [
     <div class="personnel-detail-page">
       <PlatformPageBreadcrumb :items="breadcrumbItems" />
 
-      <section class="platform-surface personnel-detail-page__content"></section>
+      <section class="platform-surface personnel-detail-page__content">
+        <PlatformSectionTitle
+          divider
+          image-alt="基本信息"
+          :icon-gap="4"
+          :icon-height="16"
+          :icon-src="ditieIcon"
+          :icon-width="28"
+          padding="0 0 14px"
+          title="基本信息"
+          :title-size="16"
+          :title-weight="600"
+        />
+      </section>
     </div>
   </Page>
 </template>
@@ -29,7 +43,7 @@ const breadcrumbItems = [
 .personnel-detail-page {
   display: flex;
   flex-direction: column;
-  gap: var(--st-layout-section-gap);
+  gap: 16px;
   min-height: 100%;
 }
 

@@ -1,2 +1,0 @@
-import{Un as e,bi as t,gr as n,xi as r,yi as i,yr as a}from"./antdv-next-Bbl__uyc.js";var o=n({name:`RenderContent`,props:{content:{default:void 0,type:[Object,String,Function]},renderBr:{default:!1,type:Boolean}},setup(n,{attrs:o,slots:s}){return()=>{if(!n.content)return null;if(!((t(n.content)||i(n.content))&&n.content!==null))if(n.renderBr&&r(n.content)){let e=n.content.split(`
-`),t=[];for(let[n,r]of e.entries())t.push(a(`p`,{key:n},r));return t}else return n.content;return a(n.content,e(e({},o),{},{props:e(e({},n),o)}),s)}}});export{o as t};

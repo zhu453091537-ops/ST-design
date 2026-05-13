@@ -16,11 +16,11 @@ import {
   PlatformFormItem,
   PlatformInput,
   PlatformModal,
+  PlatformSectionTitle,
   PlatformSelect,
   PlatformStatCard,
   PlatformStatusTag,
   PlatformTable,
-  PlatformTableToolbar,
   PlatformTaskCard,
   PlatformViewToolbar,
 } from '#/components/platform';
@@ -54,11 +54,7 @@ const statCards = ref<EvaluationStatCard[]>([]);
 const loading = ref(false);
 const saving = ref(false);
 const formOpen = ref(false);
-const projectQuery = reactive({
-  keyword: '',
-});
 const recordQuery = reactive({
-  keyword: '',
   result: '',
 });
 
@@ -78,29 +74,11 @@ const recordResultOptions = computed(() => [
 const currentProject = computed(() =>
   evaluationProjects.value.find((item) => item.id === formModel.projectId),
 );
-const filteredEvaluationProjects = computed(() =>
-  evaluationProjects.value.filter((project) => {
-    const keyword = projectQuery.keyword.trim().toLowerCase();
-    const matchKeyword =
-      !keyword ||
-      [project.name, project.department, project.manager].some((value) =>
-        value.toLowerCase().includes(keyword),
-      );
-
-    return matchKeyword;
-  }),
-);
 const filteredEvaluationRecords = computed(() =>
   evaluationRecords.value.filter((record) => {
-    const keyword = recordQuery.keyword.trim().toLowerCase();
-    const matchKeyword =
-      !keyword ||
-      [record.name, record.evaluator].some((value) =>
-        value.toLowerCase().includes(keyword),
-      );
     const matchResult = !recordQuery.result || record.result === recordQuery.result;
 
-    return matchKeyword && matchResult;
+    return matchResult;
   }),
 );
 const recordColumns = computed<TableProps['columns']>(() => [
@@ -255,18 +233,14 @@ function getProjectTags(project: EvaluationProject) {
 
       <section class="project-evaluation-workspace">
         <article class="platform-surface project-evaluation-panel">
-          <PlatformTableToolbar
-            v-model:search-value="projectQuery.keyword"
-            search-placeholder="搜索项目 / 部门 / 负责人"
-            :tools="['search', 'refresh', 'fullscreen']"
+          <PlatformSectionTitle
+            padding="0 0 24px"
             title="待评估项目"
-            @refresh="loadEvaluationPage"
-            @search="() => {}"
           />
 
           <div class="project-evaluation-panel__body project-evaluation-panel__body--cards">
             <PlatformTaskCard
-              v-for="project in filteredEvaluationProjects"
+              v-for="project in evaluationProjects"
               :key="project.id"
               action-label="发起评估"
               :description="`${project.department} · ${project.manager}`"
@@ -278,7 +252,7 @@ function getProjectTags(project: EvaluationProject) {
               @action="handleCreateEvaluation(project)"
             />
             <div
-              v-if="filteredEvaluationProjects.length === 0"
+              v-if="evaluationProjects.length === 0"
               class="project-evaluation-empty"
             >
               暂无符合条件的待评估项目
@@ -287,13 +261,9 @@ function getProjectTags(project: EvaluationProject) {
         </article>
 
         <article class="platform-surface project-evaluation-panel project-evaluation-panel--records">
-          <PlatformTableToolbar
-            v-model:search-value="recordQuery.keyword"
-            search-placeholder="搜索项目 / 评估组"
-            :tools="['search', 'refresh', 'setting', 'fullscreen']"
+          <PlatformSectionTitle
+            padding="0 0 24px"
             title="评估记录"
-            @refresh="loadEvaluationPage"
-            @search="() => {}"
           />
 
           <PlatformTable

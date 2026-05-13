@@ -1,0 +1,19 @@
+.DS_Store
+
+# Dependencies
+node_modules/
+apps/*/node_modules/
+
+# Build outputs
+dist/
+dist-handoff/
+dist.zip
+*.tsbuildinfo
+
+# Local preview and handoff artifacts
+deliverables/
+
+# Logs and local environment files
+*.log
+.env.local
+.env.*.local

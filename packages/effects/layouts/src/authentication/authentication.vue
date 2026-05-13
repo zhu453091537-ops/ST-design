@@ -50,6 +50,13 @@ const logoSrc = computed(() => {
   // 否则使用默认的 logo
   return props.logo;
 });
+
+const logoIconfontClassName = computed(() => {
+  if (!logoSrc.value?.startsWith('iconfont:')) {
+    return '';
+  }
+  return logoSrc.value.replace('iconfont:', '').trim();
+});
 </script>
 
 <template>
@@ -77,31 +84,6 @@ const logoSrc = computed(() => {
         </slot>
       </template>
     </AuthenticationFormView>
-
-    <slot name="logo">
-      <!-- 头部 Logo 和应用名称 -->
-      <div
-        v-if="logoSrc || appName"
-        class="absolute top-0 left-0 z-10 flex flex-1"
-        @click="clickLogo"
-      >
-        <div
-          class="mt-4 ml-4 flex flex-1 items-center text-foreground sm:top-6 sm:left-6 lg:text-foreground"
-        >
-          <img
-            v-if="logoSrc"
-            :key="logoSrc"
-            :alt="appName"
-            :src="logoSrc"
-            class="mr-4 size-14 object-contain"
-            width="42"
-          />
-          <p v-if="appName" class="m-0 text-[28px] font-semibold tracking-tight">
-            {{ appName }}
-          </p>
-        </div>
-      </div>
-    </slot>
 
     <!-- 系统介绍 -->
     <div v-if="!authPanelCenter" class="relative hidden w-0 flex-1 lg:block">
@@ -136,21 +118,56 @@ const logoSrc = computed(() => {
     </div>
 
     <!-- 中心认证面板 -->
-    <div v-if="authPanelCenter" class="relative flex-center w-full px-6">
+    <div
+      v-if="authPanelCenter"
+      class="relative flex min-h-full w-full items-center justify-center px-6"
+    >
       <div class="login-background absolute top-0 left-0 size-full"></div>
-      <AuthenticationFormView
-        class="mx-auto w-full max-w-[480px] rounded-3xl pb-10 shadow-float shadow-primary/5 md:bg-background"
-        data-side="bottom"
-      >
-        <template v-if="copyright" #copyright>
-          <slot name="copyright">
-            <Copyright
-              v-if="preferences.copyright.enable"
-              v-bind="preferences.copyright"
-            />
-          </slot>
-        </template>
-      </AuthenticationFormView>
+      <div class="relative z-10 flex w-full flex-col items-center">
+        <slot name="logo">
+          <div
+            v-if="logoSrc || appName"
+            class="mb-6 flex w-full max-w-[480px] justify-center text-foreground"
+            @click="clickLogo"
+          >
+            <div class="flex items-center justify-center text-foreground">
+              <i
+                v-if="logoIconfontClassName"
+                :aria-label="appName"
+                class="mr-4 size-14 auth-page-logo__iconfont iconfont"
+                :class="logoIconfontClassName"
+              ></i>
+              <img
+                v-else-if="logoSrc"
+                :key="logoSrc"
+                :alt="appName"
+                :src="logoSrc"
+                class="mr-4 size-14 object-contain"
+                width="42"
+              />
+              <p
+                v-if="appName"
+                class="m-0 text-[28px] font-semibold tracking-tight"
+              >
+                {{ appName }}
+              </p>
+            </div>
+          </div>
+        </slot>
+        <AuthenticationFormView
+          class="mx-auto w-full max-w-[480px] rounded-3xl pb-10 shadow-float shadow-primary/5 md:bg-background"
+          data-side="bottom"
+        >
+          <template v-if="copyright" #copyright>
+            <slot name="copyright">
+              <Copyright
+                v-if="preferences.copyright.enable"
+                v-bind="preferences.copyright"
+              />
+            </slot>
+          </template>
+        </AuthenticationFormView>
+      </div>
     </div>
 
     <!-- 右侧认证面板 -->
@@ -198,5 +215,13 @@ const logoSrc = computed(() => {
   margin-top: 24px;
   width: 100%;
   max-width: 480px;
+}
+
+.auth-page-logo__iconfont {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 56px;
+  line-height: 1;
 }
 </style>

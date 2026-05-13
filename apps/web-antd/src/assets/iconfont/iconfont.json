@@ -6,6 +6,13 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "47556103",
+      "name": "LOGO",
+      "font_class": "LOGO-green",
+      "unicode": "ec27",
+      "unicode_decimal": 60455
+    },
+    {
       "icon_id": "47548050",
       "name": "合同与付款管理",
       "font_class": "hetongyufukuanguanli",

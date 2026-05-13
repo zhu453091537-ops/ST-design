@@ -5,7 +5,7 @@ import { computed } from 'vue';
 
 import { VbenIcon } from '@vben/icons';
 
-import { Avatar, Empty, Timeline, TimelineItem } from 'antdv-next';
+import { Empty, Timeline, TimelineItem } from 'antdv-next';
 
 const props = withDefaults(
   defineProps<{
@@ -42,9 +42,6 @@ function getDotIcon(item: PlatformApprovalProgressItem) {
   }
 }
 
-function getAvatarIcon(item: PlatformApprovalProgressItem) {
-  return item.avatarIcon || 'lucide:user-round';
-}
 </script>
 
 <template>
@@ -80,9 +77,6 @@ function getAvatarIcon(item: PlatformApprovalProgressItem) {
             </div>
 
             <div class="platform-approval-progress__assignee">
-              <Avatar class="platform-approval-progress__avatar" :size="28">
-                <VbenIcon :icon="getAvatarIcon(item)" />
-              </Avatar>
               <div class="platform-approval-progress__meta">
                 <strong>{{ item.assignee }}</strong>
                 <span v-if="item.department">{{ item.department }}</span>
@@ -108,7 +102,6 @@ function getAvatarIcon(item: PlatformApprovalProgressItem) {
 
 .platform-approval-progress__header {
   padding: 18px 24px 16px;
-  border-bottom: 1px solid hsl(var(--border));
 }
 
 .platform-approval-progress__header h3 {
@@ -122,7 +115,7 @@ function getAvatarIcon(item: PlatformApprovalProgressItem) {
 .platform-approval-progress__body {
   flex: 1;
   min-height: 0;
-  padding: 24px 24px 8px;
+  padding: 8px 24px 24px 24px;
   overflow: auto;
 }
 
@@ -192,7 +185,12 @@ function getAvatarIcon(item: PlatformApprovalProgressItem) {
 }
 
 .platform-approval-progress__title {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
   color: hsl(var(--muted-foreground));
+  text-overflow: ellipsis;
+  white-space: nowrap;
   font-size: 15px;
   line-height: 24px;
 }
@@ -206,24 +204,14 @@ function getAvatarIcon(item: PlatformApprovalProgressItem) {
 
 .platform-approval-progress__assignee {
   display: flex;
-  gap: 12px;
-  align-items: flex-start;
-}
-
-.platform-approval-progress__avatar {
-  flex-shrink: 0;
-  color: hsl(var(--st-color-brand));
-  background: hsl(var(--st-color-brand) / 0.1);
-}
-
-.platform-approval-progress__avatar :deep(.iconify) {
-  font-size: 18px;
+  align-items: center;
 }
 
 .platform-approval-progress__meta {
   display: flex;
-  flex-direction: column;
-  gap: 2px;
+  flex-wrap: wrap;
+  gap: 2px 12px;
+  align-items: center;
   min-width: 0;
 }
 

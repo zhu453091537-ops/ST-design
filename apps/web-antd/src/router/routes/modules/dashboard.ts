@@ -1,6 +1,6 @@
 import type { RouteRecordRaw } from 'vue-router';
 
-const PLATFORM_HOME_PATH = '/platform/typical-page';
+const PLATFORM_HOME_PATH = '/workbench/index';
 
 const routes: RouteRecordRaw[] = [
   {

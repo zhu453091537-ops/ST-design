@@ -20,8 +20,6 @@ import {
   watch,
 } from 'vue';
 
-import { VbenIcon } from '@vben/icons';
-
 import { Checkbox, CheckboxGroup, Table } from 'antdv-next';
 
 import { PlatformRangePicker } from '../field';
@@ -62,6 +60,7 @@ type PlatformColumnSettingItem = {
 type PlatformColumnSettingRequestEvent = CustomEvent<{
   anchor?: HTMLElement | MouseEvent;
 }>;
+type PlatformTableCellProps = Record<string, any>;
 
 defineOptions({
   inheritAttrs: false,
@@ -134,10 +133,18 @@ const baseColumns = computed(() => {
   ) {
     const indexColumn: PlatformTableColumn = {
       align: 'center',
+      customCell: createColumnCellClassExtender(
+        props.indexColumn.customCell,
+        'platform-table__index-column-cell',
+      ),
+      customHeaderCell: createColumnCellClassExtender(
+        props.indexColumn.customHeaderCell,
+        'platform-table__index-column-header',
+      ),
       dataIndex: '__platform_index',
       key: '__platform_index',
       title: '序号',
-      width: 72,
+      width: 88,
       ...props.indexColumn,
     };
     nextColumns = [indexColumn, ...columns];
@@ -228,6 +235,30 @@ const checkedColumnKeys = computed({
 
 function getIndexCellValue(index: number) {
   return getPaginationOffset() + index + 1;
+}
+
+function createColumnCellClassExtender(
+  originalHandler: ((...args: any[]) => PlatformTableCellProps) | undefined,
+  className: string,
+) {
+  return (...args: any[]) => {
+    const originalProps = originalHandler?.(...args) ?? {};
+    const mergedClassName = mergeClassNames(
+      originalProps.className,
+      originalProps.class,
+      className,
+    );
+
+    return {
+      ...originalProps,
+      class: mergedClassName,
+      className: mergedClassName,
+    };
+  };
+}
+
+function mergeClassNames(...classNames: Array<null | string | undefined>) {
+  return classNames.filter(Boolean).join(' ');
 }
 
 function getPaginationOffset() {
@@ -588,9 +619,9 @@ function createPlatformFilterIcon(
       return customIcon;
     }
 
-    return h(VbenIcon, {
-      class: 'platform-table__filter-icon',
-      icon: 'lucide:funnel',
+    return h('i', {
+      class: 'platform-table__filter-icon iconfont icon-shaixuan',
+      'aria-hidden': 'true',
     });
   };
 }
@@ -1274,6 +1305,12 @@ const PlatformTableDateRangeFilterDropdown = defineComponent({
   font-weight: 500;
 }
 
+.platform-table :deep(.platform-table__index-column-header),
+.platform-table :deep(.platform-table__index-column-header .ant-table-column-title),
+.platform-table :deep(.platform-table__index-column-cell) {
+  white-space: nowrap;
+}
+
 .platform-table :deep(.ant-table-thead > tr > th:first-child),
 .platform-table :deep(.ant-table-tbody > tr > td:first-child),
 .platform-table :deep(.platform-table__action-column) {
@@ -1357,7 +1394,7 @@ const PlatformTableDateRangeFilterDropdown = defineComponent({
 .platform-table :deep(.ant-table-filter-column) {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: 2px;
   max-width: 100%;
 }
 
@@ -1371,7 +1408,7 @@ const PlatformTableDateRangeFilterDropdown = defineComponent({
   justify-content: center;
   width: 22px;
   height: 22px;
-  margin-inline-start: 2px;
+  margin-inline-start: 0;
   color: hsl(var(--st-color-text-tertiary));
   border-radius: var(--st-radius-control);
   transition:
@@ -1386,8 +1423,13 @@ const PlatformTableDateRangeFilterDropdown = defineComponent({
 }
 
 .platform-table :deep(.platform-table__filter-icon) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   width: 14px;
   height: 14px;
+  font-size: 16px;
+  line-height: 1;
 }
 
 :global(.platform-table-filter-dropdown) {

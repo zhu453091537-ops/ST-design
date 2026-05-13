@@ -478,7 +478,7 @@ function serializeDateRange(value: string[]) {
 
       <PlatformModal
         v-model:open="viewModalOpen"
-        :body-style="{ padding: 0 }"
+        :body-style="{ padding: '24px 40px' }"
         :footer="null"
         :mask-closable="false"
         :style="{ top: '24px' }"
@@ -545,7 +545,7 @@ function serializeDateRange(value: string[]) {
 }
 
 .construction-management-view-modal :deep(.ant-modal-body) {
-  padding: 0;
+  padding: 24px 40px;
 }
 
 .construction-management-view {

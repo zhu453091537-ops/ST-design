@@ -1,1 +1,0 @@
-import{Kt as e,or as t,si as n}from"./antdv-next-Bbl__uyc.js";function r(){let r=n();return{primitiveElement:r,currentElement:t(()=>{var t,n;return[`#text`,`#comment`].includes((t=r.value)==null?void 0:t.$el.nodeName)?(n=r.value)==null?void 0:n.$el.nextElementSibling:e(r)})}}export{r as t};

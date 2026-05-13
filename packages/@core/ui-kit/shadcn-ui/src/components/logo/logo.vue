@@ -63,6 +63,13 @@ const logoSrc = computed(() => {
   // 否则使用默认的 src
   return props.src;
 });
+
+const iconfontClassName = computed(() => {
+  if (!logoSrc.value?.startsWith('iconfont:')) {
+    return '';
+  }
+  return logoSrc.value.replace('iconfont:', '').trim();
+});
 </script>
 
 <template>
@@ -72,8 +79,14 @@ const logoSrc = computed(() => {
       :href="href"
       class="vben-logo__link flex h-full items-center gap-2 overflow-hidden text-lg leading-normal transition-all duration-500"
     >
+      <i
+        v-if="iconfontClassName"
+        :aria-label="text"
+        class="vben-logo__iconfont iconfont"
+        :class="iconfontClassName"
+      ></i>
       <VbenAvatar
-        v-if="logoSrc"
+        v-else-if="logoSrc"
         :alt="text"
         :src="logoSrc"
         :size="logoSize"
@@ -104,5 +117,11 @@ const logoSrc = computed(() => {
   font-size: 24px;
   line-height: 24px;
   letter-spacing: 0;
+}
+
+.vben-logo__iconfont {
+  flex: 0 0 auto;
+  font-size: v-bind('`${props.logoSize}px`');
+  line-height: 1;
 }
 </style>

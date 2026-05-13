@@ -252,6 +252,18 @@ const mockBackendMenuList = [
         name: 'BatteryConstruction',
         path: '/battery/construction',
       },
+      {
+        children: [],
+        component: 'platform/blank/index',
+        hidden: false,
+        meta: {
+          icon: 'lucide:calendar-check-2',
+          noCache: false,
+          title: '考勤管理',
+        },
+        name: 'BatteryAttendance',
+        path: '/battery/attendance',
+      },
     ],
     component: 'Layout',
     hidden: false,
