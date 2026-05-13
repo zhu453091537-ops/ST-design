@@ -1,1 +1,6 @@
 @import '@vben/tailwind-config/theme';
+
+.size-4 {
+  width: calc(var(--spacing) * 5);
+  height: calc(var(--spacing) * 5);
+}

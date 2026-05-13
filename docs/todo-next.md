@@ -6,6 +6,8 @@
 
 | 优先级 | 事项 | 状态 | 说明 |
 | --- | --- | --- | --- |
+| 高 | 左侧导航箭头间距与全局 size-4 尺寸调整 | 已完成，待浏览器复核 | 已将子菜单箭头 `margin-right` 调整为 `4px`，并把全局 `.size-4` 覆盖到 `calc(var(--spacing) * 5)`；后续需确认左侧导航箭头位置，以及其他使用 `size-4` 的图标是否都符合预期。 |
+| 高 | 智能考勤管理菜单新增档案管理分组 | 已完成，待浏览器复核 | 已在 `智能考勤管理` 下新增 `档案管理`，并补出 `安全学习安排`、`文档管理`、`文档列表` 3 个子菜单；右侧当前统一复用空白页，下一步只需展开左侧菜单确认结构正确。 |
 | 高 | 项目冗余文件清理一期 | 已完成，待二期确认 | 已删除 `apps/platform-showcase 17.36.28`，保留旧 `apps/platform-showcase/dist` 删除状态，并新增根 `.gitignore` 忽略系统文件、依赖目录、构建产物和交付目录；下一步如继续精简，需要确认 `apps/web-antd/dist`、`apps/web-antd/dist-handoff`、`deliverables/` 是否从 Git 跟踪中移除。 |
 | 高 | Windows 优先客户演示与源码联调交付包 | 已完成，待 Windows 实机双击复核 | 已生成 `deliverables/ST-design-frontend-handoff-20260513.zip`；包内含 Windows 主启动器、Mac 备用启动器、`preview/` 和完整 `source/`。本机已完成 HTTP 与隔离浏览器验证，下一步建议在项目经理 Windows 电脑上双击 `Start-Preview-Windows.vbs` 复核一次。 |
 | 高 | 顶部导航与登录页 logo 改为字体图标引用 | 已完成，待浏览器复核 | 已将顶部导航原组件与登录页 logo 的默认引用切为 `iconfont:icon-LOGO-green`，并让 `VbenLogo` 与 `Authentication` 支持该协议；后续只需确认两处视觉尺寸未变且不再走 svg 图片。 |

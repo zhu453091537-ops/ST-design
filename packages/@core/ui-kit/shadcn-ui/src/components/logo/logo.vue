@@ -120,8 +120,14 @@ const iconfontClassName = computed(() => {
 }
 
 .vben-logo__iconfont {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   flex: 0 0 auto;
+  color: hsl(var(--header-foreground, var(--foreground)));
   font-size: v-bind('`${props.logoSize}px`');
   line-height: 1;
+  width: v-bind('`${props.logoSize}px`');
+  height: v-bind('`${props.logoSize}px`');
 }
 </style>

@@ -4,6 +4,91 @@
 
 ### 任务名称
 
+左侧导航箭头间距与全局 size-4 尺寸调整
+
+### 完成内容
+
+1. 将左侧导航子菜单箭头 `.vben-sub-menu-content__icon-arrow` 的 `margin-right` 从 `0` 调整为 `4px`。
+2. 在全局设计样式入口覆盖 `.size-4` utility，使其宽高从 `calc(var(--spacing) * 4)` 调整为 `calc(var(--spacing) * 5)`。
+3. 本轮未在单页做局部覆盖，调整直接落在菜单源样式与全局 design 样式层。
+
+### 修改了哪些文件
+
+1. `packages/@core/ui-kit/menu-ui/src/components/menu.vue`
+2. `packages/@core/base/design/src/css/global.css`
+
+### 涉及哪些页面或组件
+
+1. 左侧导航原组件：`menu-ui`
+2. 全局 utility：`.size-4`
+3. 潜在受影响范围：所有使用 `size-4` 的组件
+
+### 验证结果
+
+1. 已执行 `./node_modules/.bin/eslint packages/@core/ui-kit/menu-ui/src/components/menu.vue packages/@core/base/design/src/css/global.css`。
+2. 其中 `menu.vue` 无报错；`global.css` 仅提示“File ignored because no matching configuration was supplied”，不是错误。
+3. 已执行 `git diff --check -- packages/@core/ui-kit/menu-ui/src/components/menu.vue packages/@core/base/design/src/css/global.css`，通过。
+4. 本轮未做浏览器视觉复核；需要后续确认左侧导航箭头位置，以及其他 `size-4` 图标是否符合新的 20px 预期。
+
+### 遗留问题
+
+1. 由于 `.size-4` 是全局 utility，后续若发现个别组件不应同步变大，需要再按组件局部回调。
+
+### 平台治理影响
+
+1. 本轮发现的 ant-design-vue 原生组件问题：无新增，问题在于菜单组件样式与全局 utility 尺寸需要统一调整。
+2. 已通过平台层解决的问题：左侧导航箭头间距和 `size-4` 尺寸均已在源头收口。
+3. 哪些仍是页面临时实现：无。
+4. 哪些页面子组件未来必须回收为平台组件：无新增。
+5. 后续新页面禁止继续复制哪些实现：不要在业务页单独给子菜单箭头补 `margin-right`，也不要再局部手改 `size-4` 尺寸。
+6. 哪些样式应进入主题变量或统一样式入口：本轮 `size-4` 已进入全局 design 样式入口，子菜单箭头间距留在 `menu-ui` 源组件。
+7. 当前仍存在的页面级样式债务：无新增。
+
+### 任务名称
+
+智能考勤管理菜单新增档案管理分组
+
+### 完成内容
+
+1. 在 `智能考勤管理` 模块下新增 `档案管理` 菜单分组。
+2. 在 `档案管理` 下补充 3 个子菜单：`安全学习安排`、`文档管理`、`文档列表`。
+3. 以上 3 个子菜单右侧内容区暂时统一复用 `platform/blank/index` 空白页，便于后续继续补业务内容。
+
+### 修改了哪些文件
+
+1. `apps/web-antd/src/mock/index.ts`
+
+### 涉及哪些页面或组件
+
+1. 菜单模块：`智能考勤管理`
+2. 一级分组：`档案管理`
+3. 子菜单：`安全学习安排`
+4. 子菜单：`文档管理`
+5. 子菜单：`文档列表`
+
+### 验证结果
+
+1. 已执行 `./node_modules/.bin/eslint apps/web-antd/src/mock/index.ts`，通过。
+2. 已执行 `git diff --check -- apps/web-antd/src/mock/index.ts`，通过。
+3. 已执行 `curl -I http://127.0.0.1:5173/battery/construction`，返回 `200 OK`。
+4. 本轮未做浏览器点击复核；需要后续在左侧导航中展开 `档案管理`，确认 3 个子菜单已出现且右侧内容区为空白。
+
+### 遗留问题
+
+1. `安全学习安排`、`文档管理`、`文档列表` 当前只有空白壳，后续需分别补业务内容。
+
+### 平台治理影响
+
+1. 本轮发现的 ant-design-vue 原生组件问题：无新增。
+2. 已通过平台层解决的问题：无新增平台组件改造，本轮仅调整菜单数据源。
+3. 哪些仍是页面临时实现：3 个子菜单当前都只是空白占位页。
+4. 哪些页面子组件未来必须回收为平台组件：暂无新增。
+5. 后续新页面禁止继续复制哪些实现：在未确认内容前，继续复用统一空白壳，不要先散写多个临时页面结构。
+6. 哪些样式应进入主题变量或统一样式入口：本轮无新增样式治理项。
+7. 当前仍存在的页面级样式债务：无新增。
+
+### 任务名称
+
 项目冗余文件清理一期
 
 ### 完成内容

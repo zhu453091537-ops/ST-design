@@ -253,6 +253,55 @@ const mockBackendMenuList = [
         path: '/battery/construction',
       },
       {
+        children: [
+          {
+            children: [],
+            component: 'platform/blank/index',
+            hidden: false,
+            meta: {
+              icon: 'lucide:book-open-check',
+              noCache: false,
+              title: '安全学习安排',
+            },
+            name: 'BatteryArchiveSafetyStudy',
+            path: '/battery/archive/safety-study',
+          },
+          {
+            children: [],
+            component: 'platform/blank/index',
+            hidden: false,
+            meta: {
+              icon: 'lucide:folder-open',
+              noCache: false,
+              title: '文档管理',
+            },
+            name: 'BatteryArchiveDocumentManagement',
+            path: '/battery/archive/document-management',
+          },
+          {
+            children: [],
+            component: 'platform/blank/index',
+            hidden: false,
+            meta: {
+              icon: 'lucide:file-text',
+              noCache: false,
+              title: '文档列表',
+            },
+            name: 'BatteryArchiveDocumentList',
+            path: '/battery/archive/document-list',
+          },
+        ],
+        component: 'platform/blank/index',
+        hidden: false,
+        meta: {
+          icon: 'lucide:folder-kanban',
+          noCache: false,
+          title: '档案管理',
+        },
+        name: 'BatteryArchiveManagement',
+        path: '/battery/archive',
+      },
+      {
         children: [],
         component: 'platform/blank/index',
         hidden: false,

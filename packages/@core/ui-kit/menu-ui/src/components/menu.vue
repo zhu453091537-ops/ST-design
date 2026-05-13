@@ -947,7 +947,7 @@ $namespace: vben;
     right: 10px;
     width: inherit;
     margin-top: -8px;
-    margin-right: 0;
+    margin-right: 4px;
     // font-size: 16px;
     font-weight: normal;
     opacity: 1;
