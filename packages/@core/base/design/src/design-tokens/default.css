@@ -39,6 +39,7 @@
   --st-color-table-header-bg: var(--st-color-border-subtle);
   --st-color-table-outline: var(--st-color-border-control);
   --st-color-table-row-hover-bg-solid: #f3f4fa;
+  --st-color-table-row-selected-bg: 146 44.4% 92.9%;
   --st-color-stat-card-bg: var(--st-color-card-bg);
   --st-color-stat-card-border: var(--st-color-border-subtle);
   --st-color-stat-card-text: var(--st-color-text-tertiary);

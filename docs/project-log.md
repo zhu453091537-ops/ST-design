@@ -4,6 +4,143 @@
 
 ### 任务名称
 
+平台组件修改流程优化：先源码再改动
+
+### 完成内容
+
+1. 将“修改平台组件时先读源码和生效链路，再决定修改点”的流程写入 `AGENTS.md`。
+2. 将同一规则同步沉淀到 `docs/decision-records.md`，作为后续 Table、Modal、Drawer、Menu、Tree、Form、Select 等通用组件的默认排查顺序。
+3. 明确后续遇到“看起来没生效”的平台组件问题时，不再优先拿业务页 scoped CSS 试错，而是先查组件源码、主题注入、适配层和全局 token。
+
+### 修改了哪些文件
+
+1. `AGENTS.md`
+2. `docs/decision-records.md`
+
+### 涉及哪些页面或组件
+
+1. 平台级通用组件：`Table`、`Modal`、`Drawer`、`Menu`、`Tree`、`Form`、`Select`
+2. 平台样式链路：`ConfigProvider`、theme、token、适配层
+
+### 验证结果
+
+1. 已完成文档更新。
+2. 未涉及代码运行验证。
+
+### 遗留问题
+
+1. 无。
+
+### 平台治理影响
+
+1. 本轮发现的 ant-design-vue 原生组件问题：很多组件“改了没生效”并不是页面样式没写，而是底层主题注入或组件内部 token 在起作用。
+2. 已通过平台层解决的问题：把排查顺序前置到源码和生效链路，减少后续反复试错。
+3. 哪些仍是页面临时实现：无。
+4. 哪些页面子组件未来必须回收为平台组件：无新增。
+5. 后续新页面禁止继续复制哪些实现：不要直接在业务页 scoped CSS 里盲改通用组件效果。
+6. 哪些样式应进入主题变量或统一样式入口：涉及通用组件的视觉结果优先进入 token、theme 或平台适配层。
+7. 当前仍存在的页面级样式债务：无新增。
+
+### 任务名称
+
+平台表格选中行背景色调整为 `#E5F5EC`
+
+### 完成内容
+
+1. 将平台表格选中行背景从复用通用 `--st-color-fill-selected` 改为独立的 `--st-color-table-row-selected-bg`。
+2. 将亮色主题下的表格选中背景统一收口为 `#E5F5EC` 对应的 HSL 值，避免影响树、按钮、菜单等其他复用 `selected` 语义的组件。
+3. 在 `apps/web-antd/src/app.vue` 的 `ConfigProvider` 底层主题里补齐 `Table.rowSelectedBg` / `Table.rowSelectedHoverBg`，让 Ant Design Vue 原组件直接产出正确选中态。
+4. 同步覆盖 `PlatformTable` 固定列选中态，以及 `#/adapter/vxe-table` 的单选、多选、当前行选中背景变量，保证两套表格实现一致。
+
+### 修改了哪些文件
+
+1. `packages/@core/base/design/src/design-tokens/default.css`
+2. `packages/@core/base/design/src/design-tokens/dark.css`
+3. `apps/web-antd/src/app.vue`
+4. `packages/styles/src/antd/index.css`
+5. `packages/effects/plugins/src/vxe-table/style.css`
+6. `apps/web-antd/src/components/platform/table/platform-table.vue`
+
+### 涉及哪些页面或组件
+
+1. 平台组件：`PlatformTable`
+2. 表格适配层：`#/adapter/vxe-table`
+3. Ant Design Vue 主题注入：`ConfigProvider` / `Table` component token
+4. 潜在受影响范围：所有接入平台表格或 Vxe 表格适配层的选中行场景
+
+### 验证结果
+
+1. 已执行 `git diff --check -- apps/web-antd/src/components/platform/table/platform-table.vue packages/styles/src/antd/index.css packages/effects/plugins/src/vxe-table/style.css packages/@core/base/design/src/design-tokens/default.css packages/@core/base/design/src/design-tokens/dark.css`，通过。
+2. 已执行 `./node_modules/.bin/eslint apps/web-antd/src/app.vue apps/web-antd/src/components/platform/table/platform-table.vue packages/styles/src/antd/index.css packages/effects/plugins/src/vxe-table/style.css packages/@core/base/design/src/design-tokens/default.css packages/@core/base/design/src/design-tokens/dark.css`。
+3. 其中仅 `platform-table.vue` 继续存在仓库既有 `vue/one-component-per-file` 规则报错；本轮未新增新的 lint 报错。
+4. 已在 Safari 隔离浏览器实测 `/battery/archive/document-list`，点击第一行后选中态已呈现浅绿色背景，维护信息同步解锁。
+
+### 遗留问题
+
+1. 深色主题下表格选中态当前先给了独立深色值，后续如项目实际启用深色主题，建议再做一次视觉复核。
+
+### 平台治理影响
+
+1. 本轮发现的 ant-design-vue 原生组件问题：原有表格选中态与树、按钮、菜单共用同一 `selected` token，无法只定向修改表格选中背景。
+2. 已通过平台层解决的问题：已为表格体系拆出独立 `--st-color-table-row-selected-bg`，避免再通过公共 token 误伤其他组件。
+3. 哪些仍是页面临时实现：无。
+4. 哪些页面子组件未来必须回收为平台组件：无新增，当前已在平台 token 和表格样式层收口。
+5. 后续新页面禁止继续复制哪些实现：不要在业务页 scoped CSS 中单独覆盖表格选中背景色。
+6. 哪些样式应进入主题变量或统一样式入口：表格选中态已进入设计 token 和平台表格统一样式入口。
+7. 当前仍存在的页面级样式债务：暂无本轮新增债务。
+
+### 任务名称
+
+智能考勤管理 - 档案管理 - 文档列表右侧内容页接入
+
+### 完成内容
+
+1. 新增 `文档列表` 右侧真实内容页，接入左侧搜索树、右侧标题区、文档列表表格、维护信息表单和底部固定按钮。
+2. 复核并确认该页面使用的都是现有平台组件组合：`PlatformTreePanel`、`PlatformSectionTitle`、`PlatformTable`、`PlatformEditForm`、`PlatformFormItem`、`PlatformInput`、`PlatformButton`。
+3. 定位右侧内容区空白根因：不是页面组件本身选错，而是父级菜单 `档案管理` 仍配置成 `platform/blank/index`，导致子路由没有由容器组件承载。
+4. 将 `档案管理` 父级组件改为 `ParentView`，恢复子路由承载后，`/battery/archive/document-list` 右侧内容页正常渲染。
+5. Safari 实测通过：文档列表页可正常显示；点击上方表格行后，下方维护信息从禁用态切换为可编辑态，底部 `暂存 / 保存` 按钮同步启用。
+
+### 修改了哪些文件
+
+1. `apps/web-antd/src/views/battery/archive/document-list/index.vue`
+2. `apps/web-antd/src/views/battery/archive/document-list/document-list-source.ts`
+3. `apps/web-antd/src/mock/index.ts`
+
+### 涉及哪些页面或组件
+
+1. 页面：`/battery/archive/document-list`
+2. 父级菜单承载：`档案管理`
+3. 平台组件：`PlatformTreePanel`
+4. 平台组件：`PlatformSectionTitle`
+5. 平台组件：`PlatformTable`
+6. 平台组件：`PlatformEditForm` / `PlatformFormItem` / `PlatformInput`
+7. 平台组件：`PlatformButton`
+
+### 验证结果
+
+1. 已执行 `./node_modules/.bin/eslint apps/web-antd/src/views/battery/archive/document-list/index.vue apps/web-antd/src/views/battery/archive/document-list/document-list-source.ts apps/web-antd/src/mock/index.ts`，通过。
+2. 已执行 `git diff --check -- apps/web-antd/src/views/battery/archive/document-list/index.vue apps/web-antd/src/views/battery/archive/document-list/document-list-source.ts apps/web-antd/src/mock/index.ts`，通过。
+3. 已重新拉起本地 Vite，并确认 `http://127.0.0.1:5173/battery/archive/document-list` 可访问。
+4. 已使用 Safari 隔离验证：页面不再空白，树/表格/维护信息/底部按钮均正常显示。
+5. 已在 Safari 实点表格首行，确认上方选中状态、下方维护信息解锁和底部按钮启用联动均正常。
+
+### 遗留问题
+
+1. 当前“上传文件”“暂存”“保存”仍为前端提示态，后续如继续做业务流程，再补真实交互或 Mock 提交逻辑。
+
+### 平台治理影响
+
+1. 本轮发现的 ant-design-vue 原生组件问题：无新增原生样式问题。
+2. 已通过平台层解决的问题：无新增平台组件改造，本轮问题本质是菜单父级路由承载配置错误。
+3. 哪些仍是页面临时实现：`文档列表` 的上传/暂存/保存仍是页面内前端提示态。
+4. 哪些页面子组件未来必须回收为平台组件：当前无需新增平台组件，继续优先复用现有平台组件组合。
+5. 后续新页面禁止继续复制哪些实现：有子级菜单的分组节点不要再挂 `platform/blank/index` 充当父级承载，避免子路由右侧内容空白。
+6. 哪些样式应进入主题变量或统一样式入口：本轮无新增全局样式治理项。
+7. 当前仍存在的页面级样式债务：底部固定按钮区目前仍由页面布局承载，若后续多个类似录入页复用，再评估是否抽平台页面壳。
+
+### 任务名称
+
 左侧导航箭头间距与全局 size-4 尺寸调整
 
 ### 完成内容

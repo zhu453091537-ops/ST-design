@@ -6,6 +6,13 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "46034051",
+      "name": "三角",
+      "font_class": "qiehuan",
+      "unicode": "ebec",
+      "unicode_decimal": 60396
+    },
+    {
       "icon_id": "47556103",
       "name": "LOGO",
       "font_class": "LOGO-green",

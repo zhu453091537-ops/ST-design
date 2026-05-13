@@ -45,6 +45,7 @@ const props = withDefaults(
 
 const emit = defineEmits<{
   reload: [];
+  search: [value: string];
   select: [keys: TreeKey[]];
 }>();
 
@@ -75,6 +76,10 @@ const treeAttrs = computed(() => {
 function handleSelect(keys: TreeKey[]) {
   emit('select', keys);
 }
+
+function handleSearch() {
+  emit('search', searchValue.value);
+}
 </script>
 
 <template>
@@ -96,7 +101,19 @@ function handleSelect(keys: TreeKey[]) {
               v-model:value="searchValue"
               allow-clear
               :placeholder="searchPlaceholder"
-            />
+              @press-enter="handleSearch"
+            >
+              <template #suffix>
+                <span
+                  class="platform-tree-panel__search-icon iconfont icon-sousuo"
+                  aria-hidden="true"
+                  role="button"
+                  tabindex="0"
+                  @click="handleSearch"
+                  @keydown.enter.prevent="handleSearch"
+                ></span>
+              </template>
+            </PlatformInput>
             <PlatformButton
               v-if="showRefresh"
               aria-label="刷新树结构"
@@ -141,12 +158,13 @@ function handleSelect(keys: TreeKey[]) {
 }
 
 .platform-tree-panel__surface {
+  --platform-tree-panel-padding: 24px;
   display: flex;
   height: 100%;
   min-height: 0;
   flex-direction: column;
   overflow: hidden;
-  border-radius: var(--st-radius-card);
+  border-radius: 6px;
   background: hsl(var(--background));
 }
 
@@ -158,7 +176,7 @@ function handleSelect(keys: TreeKey[]) {
   flex-direction: column;
   align-items: stretch;
   gap: 8px;
-  padding: 8px;
+  padding: var(--platform-tree-panel-padding);
   background: hsl(var(--background));
 }
 
@@ -175,6 +193,15 @@ function handleSelect(keys: TreeKey[]) {
   gap: 8px;
 }
 
+.platform-tree-panel__toolbar :deep(.platform-input .ant-input) {
+  min-height: 36px;
+  padding-inline: 12px;
+}
+
+.platform-tree-panel__toolbar :deep(.platform-input .ant-input::placeholder) {
+  color: hsl(var(--foreground) / 40%);
+}
+
 .platform-tree-panel__content {
   min-height: 0;
   flex: 1;
@@ -184,14 +211,34 @@ function handleSelect(keys: TreeKey[]) {
 .platform-tree-panel__tree {
   height: 100%;
   overflow: auto;
-  padding-inline: 8px;
+  padding: 0 var(--platform-tree-panel-padding)
+    var(--platform-tree-panel-padding);
 }
 
 .platform-tree-panel__empty {
-  padding: 20px 8px;
+  padding: 20px var(--platform-tree-panel-padding)
+    var(--platform-tree-panel-padding);
 }
 
 .platform-tree-panel__skeleton {
   height: 100%;
+}
+
+.platform-tree-panel__search-icon {
+  display: inline-flex;
+  width: 20px;
+  height: 20px;
+  align-items: center;
+  justify-content: center;
+  color: hsl(var(--foreground));
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+  transition: color 0.16s ease;
+}
+
+.platform-tree-panel__search-icon:hover,
+.platform-tree-panel__search-icon:focus-visible {
+  color: hsl(var(--primary));
 }
 </style>

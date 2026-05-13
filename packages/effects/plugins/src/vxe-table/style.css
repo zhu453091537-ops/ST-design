@@ -37,16 +37,22 @@
   --vxe-ui-table-row-hover-background-color: hsl(var(--st-color-fill-selected));
   --vxe-ui-table-row-striped-background-color: hsl(var(--primary) / 6%);
   --vxe-ui-table-row-hover-striped-background-color: hsl(var(--st-color-fill-selected));
-  --vxe-ui-table-row-radio-checked-background-color: hsl(var(--st-color-fill-selected));
+  --vxe-ui-table-row-radio-checked-background-color: hsl(
+    var(--st-color-table-row-selected-bg)
+  );
   --vxe-ui-table-row-hover-radio-checked-background-color: hsl(
-    var(--st-color-fill-selected)
+    var(--st-color-table-row-selected-bg)
   );
-  --vxe-ui-table-row-checkbox-checked-background-color: hsl(var(--st-color-fill-selected));
+  --vxe-ui-table-row-checkbox-checked-background-color: hsl(
+    var(--st-color-table-row-selected-bg)
+  );
   --vxe-ui-table-row-hover-checkbox-checked-background-color: hsl(
-    var(--st-color-fill-selected)
+    var(--st-color-table-row-selected-bg)
   );
-  --vxe-ui-table-row-current-background-color: hsl(var(--st-color-fill-selected));
-  --vxe-ui-table-row-hover-current-background-color: hsl(var(--st-color-fill-selected));
+  --vxe-ui-table-row-current-background-color: hsl(var(--st-color-table-row-selected-bg));
+  --vxe-ui-table-row-hover-current-background-color: hsl(
+    var(--st-color-table-row-selected-bg)
+  );
   --vxe-ui-font-primary-tinge-color: hsl(var(--primary));
   --vxe-ui-font-primary-lighten-color: hsl(var(--primary) / 60%);
   --vxe-ui-font-primary-darken-color: hsl(var(--primary));

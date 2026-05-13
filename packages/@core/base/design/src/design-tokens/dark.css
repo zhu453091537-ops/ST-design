@@ -116,6 +116,7 @@
   --st-color-table-header-bg: var(--st-color-border-subtle);
   --st-color-table-outline: var(--border);
   --st-color-table-row-hover-bg-solid: #20362a;
+  --st-color-table-row-selected-bg: 146 24% 24%;
 
   color-scheme: dark;
 }

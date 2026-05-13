@@ -280,7 +280,7 @@ const mockBackendMenuList = [
           },
           {
             children: [],
-            component: 'platform/blank/index',
+            component: 'battery/archive/document-list/index',
             hidden: false,
             meta: {
               icon: 'lucide:file-text',
@@ -291,7 +291,7 @@ const mockBackendMenuList = [
             path: '/battery/archive/document-list',
           },
         ],
-        component: 'platform/blank/index',
+        component: 'ParentView',
         hidden: false,
         meta: {
           icon: 'lucide:folder-kanban',

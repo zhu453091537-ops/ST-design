@@ -1386,8 +1386,8 @@ const PlatformTableDateRangeFilterDropdown = defineComponent({
       > td.ant-table-cell-fix-right
   ) {
   z-index: 32 !important;
-  background: hsl(var(--st-color-fill-selected)) !important;
-  background-color: hsl(var(--st-color-fill-selected)) !important;
+  background: hsl(var(--st-color-table-row-selected-bg)) !important;
+  background-color: hsl(var(--st-color-table-row-selected-bg)) !important;
   background-image: none !important;
 }
 

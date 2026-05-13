@@ -812,6 +812,14 @@ onMounted(loadProjectInformation);
   margin-bottom: 0;
 }
 
+.project-form-grid :deep(.ant-picker),
+.project-form-grid :deep(.ant-select),
+.project-form-grid :deep(.ant-input-affix-wrapper),
+.project-form-grid :deep(.ant-input-number),
+.project-form-grid :deep(.ant-input) {
+  width: 100%;
+}
+
 .project-form-item--full {
   grid-column: 1 / -1;
 }
@@ -831,24 +839,29 @@ onMounted(loadProjectInformation);
 
 .project-form-inline {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
-  gap: 8px;
-  align-items: center;
-  justify-content: flex-start;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) auto;
+  gap: 12px 16px;
+  align-items: end;
 }
 
 .project-form-inline--equipment {
   grid-template-columns:
-    minmax(0, 1.2fr)
     minmax(0, 1fr)
-    minmax(0, 0.8fr)
+    minmax(0, 1fr)
+    minmax(0, 1fr)
     auto;
+}
+
+.project-form-inline > * {
+  min-width: 0;
 }
 
 .project-form-inline__actions {
   display: flex;
-  gap: 4px;
+  gap: 8px;
   align-items: center;
+  align-self: end;
+  padding-bottom: 4px;
 }
 
 .project-form-inline :deep(.project-form-inline__icon-button.ant-btn) {

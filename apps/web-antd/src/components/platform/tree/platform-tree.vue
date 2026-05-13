@@ -30,7 +30,7 @@ function isExpanded(slotProps: any) {
       <slot name="switcherIcon" v-bind="slotProps || {}">
         <span
           v-if="!isLeafNode(slotProps)"
-          class="platform-tree__switcher iconfont icon-jiantouxia"
+          class="platform-tree__switcher iconfont icon-qiehuan"
           :class="{ 'is-expanded': isExpanded(slotProps) }"
           aria-hidden="true"
         ></span>
@@ -48,35 +48,83 @@ function isExpanded(slotProps: any) {
 }
 
 .platform-tree :deep(.ant-tree-treenode) {
-  min-height: var(--st-tree-node-height);
+  min-height: 32px;
   align-items: center;
 }
 
+.platform-tree :deep(.ant-tree-indent-unit) {
+  width: 20px;
+}
+
 .platform-tree :deep(.ant-tree-node-content-wrapper) {
-  min-height: calc(var(--st-tree-node-height) - 2px);
+  min-height: 32px;
   display: inline-flex;
   align-items: center;
+  padding: 8px 4px;
+  border-radius: 4px;
+  color: hsl(var(--foreground));
+  font-size: 14px;
+  line-height: 18px;
+  transition:
+    color 0.16s ease,
+    background-color 0.16s ease;
 }
 
 .platform-tree :deep(.ant-tree-switcher) {
   display: inline-flex;
+  width: 28px;
+  min-width: 28px;
+  height: 28px;
   align-items: center;
   justify-content: center;
+  align-self: center;
+  border-radius: 6px;
+  flex: 0 0 28px;
+  transition: background-color 0.16s ease;
 }
 
 .platform-tree__switcher {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 12px;
-  height: 12px;
+  width: 18px;
+  height: 18px;
   color: hsl(var(--st-color-tree-switcher));
-  font-size: 12px;
+  font-size: 18px;
   line-height: 1;
-  transition: transform 0.16s ease;
+  transform: translate(1px, 1px);
+  transition:
+    color 0.16s ease,
+    transform 0.16s ease;
+}
+
+.platform-tree :deep(.ant-tree-switcher:hover) {
+  background: transparent;
+}
+
+.platform-tree :deep(.ant-tree-node-content-wrapper:hover) {
+  color: hsl(var(--primary));
+  background: hsl(var(--primary) / 10%);
+}
+
+.platform-tree :deep(.ant-tree-node-content-wrapper.ant-tree-node-selected) {
+  color: hsl(var(--primary));
+  background: hsl(var(--primary) / 10%);
+}
+
+.platform-tree :deep(.ant-tree-node-content-wrapper:hover),
+.platform-tree :deep(.ant-tree-node-content-wrapper:hover .ant-tree-title),
+.platform-tree :deep(.ant-tree-node-content-wrapper.ant-tree-node-selected),
+.platform-tree :deep(.ant-tree-node-content-wrapper.ant-tree-node-selected .ant-tree-title) {
+  color: hsl(var(--primary)) !important;
+}
+
+.platform-tree :deep(.ant-tree-node-content-wrapper.ant-tree-node-selected .ant-tree-title),
+.platform-tree :deep(.ant-tree-node-content-wrapper:hover .ant-tree-title) {
+  color: inherit;
 }
 
 .platform-tree__switcher.is-expanded {
-  transform: rotate(90deg);
+  transform: translate(1px, 1px) rotate(90deg);
 }
 </style>

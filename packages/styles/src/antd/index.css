@@ -404,10 +404,6 @@ body {
   background: var(--st-color-table-row-hover-bg-solid);
 }
 
-.ant-table-wrapper .ant-table-tbody > tr.ant-table-row-selected > td {
-  background: hsl(var(--st-color-fill-selected));
-}
-
 .ant-table-wrapper .ant-table-pagination.ant-pagination {
   margin: 24px 0 0;
 }

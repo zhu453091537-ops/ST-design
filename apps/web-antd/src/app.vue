@@ -18,6 +18,11 @@ defineOptions({ name: 'App' });
 const { isDark } = usePreferences();
 const { tokens } = useAntdDesignTokens();
 
+const getCssVariableValue = (variable: string) => {
+  const value = getComputedStyle(document.documentElement).getPropertyValue(variable);
+  return `hsl(${value})`;
+};
+
 const tokenTheme = computed(() => {
   const algorithm = isDark.value
     ? [theme.darkAlgorithm]
@@ -30,6 +35,12 @@ const tokenTheme = computed(() => {
 
   return {
     algorithm,
+    components: {
+      Table: {
+        rowSelectedBg: getCssVariableValue('--st-color-table-row-selected-bg'),
+        rowSelectedHoverBg: getCssVariableValue('--st-color-table-row-selected-bg'),
+      },
+    },
     token: tokens,
   };
 });

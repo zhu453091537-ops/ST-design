@@ -16,7 +16,11 @@ withDefaults(
 </script>
 
 <template>
-  <Form v-bind="$attrs" :class="['platform-form', `platform-form--${variant}`]">
+  <Form
+    v-bind="$attrs"
+    class="platform-form"
+    :class="`platform-form--${variant}`"
+  >
     <template v-for="(_, name) in $slots" #[name]="slotProps">
       <slot :name="name" v-bind="slotProps || {}"></slot>
     </template>
