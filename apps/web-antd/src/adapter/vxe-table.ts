@@ -1,11 +1,7 @@
-import type {
-  UseVbenVxeGrid,
-  VxeGridPropTypes,
-} from '@st/platform-adapter/vxe-table';
-
 import { h } from 'vue';
 
 import {
+  createPlatformVxeGrid,
   setupVbenVxeTable,
   useVbenVxeGrid as useBaseVbenVxeGrid,
 } from '@st/platform-adapter/vxe-table';
@@ -114,110 +110,7 @@ setupVbenVxeTable({
   useVbenForm,
 });
 
-type VbenVxeGridOptions = Parameters<UseVbenVxeGrid>[0];
-type PlatformVxeGridOptions = VbenVxeGridOptions & {
-  platformIndex?: boolean;
-};
+export const useVbenVxeGrid = createPlatformVxeGrid(useBaseVbenVxeGrid);
 
-function withPlatformIndexColumn(
-  columns: NonNullable<VbenVxeGridOptions['gridOptions']>['columns'],
-) {
-  const indexColumn = {
-    align: 'center' as const,
-    field: '__platform_index',
-    title: '序号',
-    type: 'seq' as const,
-    width: 88,
-  };
-
-  if (columns?.[0]?.type !== 'checkbox') {
-    return [indexColumn, ...(columns ?? [])];
-  }
-
-  const [firstColumn, ...restColumns] = columns;
-  return [firstColumn, indexColumn, ...restColumns];
-}
-
-function withPlatformVxeGridOptions(
-  options: PlatformVxeGridOptions,
-): VbenVxeGridOptions {
-  const toolbarConfig = options.gridOptions?.toolbarConfig ?? {};
-  const headerCellConfig = options.gridOptions?.headerCellConfig ?? {};
-  const cellConfig = options.gridOptions?.cellConfig ?? {};
-  const columns = options.gridOptions?.columns ?? [];
-  const shouldShowIndex = options.platformIndex !== false;
-  const hasIndexColumn = columns.some(
-    (column) => column.type === 'seq' || column.field === '__platform_index',
-  );
-  const mergedColumns =
-    shouldShowIndex && columns.length > 0 && !hasIndexColumn
-      ? withPlatformIndexColumn(columns)
-      : columns;
-
-  return {
-    ...options,
-    gridOptions: {
-      ...options.gridOptions,
-      columns: mergedColumns,
-      headerCellConfig: {
-        height: 44,
-        ...headerCellConfig,
-      },
-      cellConfig: {
-        height: 44,
-        ...cellConfig,
-      },
-      toolbarConfig: {
-        custom: true,
-        refresh: true,
-        search: true,
-        zoom: true,
-        ...toolbarConfig,
-        customOptions: {
-          icon: 'vxe-icon-setting',
-          ...toolbarConfig.customOptions,
-        },
-        refreshOptions: {
-          code: 'query',
-          ...toolbarConfig.refreshOptions,
-        },
-      },
-    },
-  };
-}
-
-export const useVbenVxeGrid = ((options: any) =>
-  useBaseVbenVxeGrid(withPlatformVxeGridOptions(options))) as UseVbenVxeGrid;
-
+export { addSortParams, vxeCheckboxChecked } from '@st/platform-adapter/vxe-table';
 export type * from '@st/platform-adapter/vxe-table';
-
-/**
- * 判断vxe-table的复选框是否选中
- * @param tableApi api
- * @returns boolean
- */
-export function vxeCheckboxChecked(
-  tableApi: ReturnType<typeof useVbenVxeGrid>[1],
-) {
-  return tableApi?.grid?.getCheckboxRecords?.()?.length > 0;
-}
-
-/**
- * 通用的 排序参数添加到请求参数中
- * @param params 请求参数
- * @param sortList vxe-table的排序参数
- */
-export function addSortParams(
-  params: Record<string, any>,
-  sortList: VxeGridPropTypes.ProxyAjaxQuerySortCheckedParams[],
-) {
-  // 这里是排序取消 length为0 就不添加参数了
-  if (sortList.length === 0) {
-    return;
-  }
-  // 支持单/多字段排序
-  const orderByColumn = sortList.map((item) => item.field).join(',');
-  const isAsc = sortList.map((item) => item.order).join(',');
-  params.orderByColumn = orderByColumn;
-  params.isAsc = isAsc;
-}

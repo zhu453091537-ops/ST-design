@@ -6435,3 +6435,162 @@ Figma 截图驱动顶部导航栏源组件样式改造
 5. 后续新页面禁止继续复制哪些实现：不要再在业务页用 scoped CSS 单独覆盖筛选标签冒号。
 6. 哪些样式应进入主题变量或统一样式入口：查询标签标点规范继续优先放在平台查询面板统一维护，不下放到业务页。
 7. 当前仍存在的页面级样式债务：其它未迁移到 `PlatformQueryPanel` 的历史筛选区，如仍存在冒号，需要后续按页面接入进度继续回收。
+
+### 任务名称
+
+平台 Vxe 适配层规则下沉一期
+
+### 完成内容
+
+1. 将 `apps/web-antd/src/adapter/vxe-table.ts` 中稳定的平台 Vxe 规则下沉到 `@st/platform-adapter/vxe-table`。
+2. 平台适配包新增 `withPlatformVxeGridOptions`、`createPlatformVxeGrid`、`vxeCheckboxChecked`、`addSortParams`，统一承载默认序号列、工具栏默认项、表头/正文行高、刷新方式、复选状态和排序参数转换。
+3. `apps/web-antd/src/adapter/vxe-table.ts` 改为调用 `createPlatformVxeGrid(useBaseVbenVxeGrid)`，继续保留应用侧 `useVbenForm` 注入和 `CellImage` / `CellLink` 渲染器注册。
+4. 更新 `packages/platform-adapter/README.md` 和 `docs/platform-package-governance.md`，明确 `platform-adapter` 不再只是代理入口，已开始承载稳定平台适配规则。
+
+### 修改了哪些文件
+
+1. `packages/platform-adapter/src/vxe-table/index.ts`
+2. `apps/web-antd/src/adapter/vxe-table.ts`
+3. `apps/web-antd/tsconfig.json`
+4. `apps/web-antd/vite.config.ts`
+5. `packages/platform-styles/src/antd/index.css`
+6. `packages/platform-adapter/README.md`
+7. `packages/platform-styles/README.md`
+8. `docs/platform-package-governance.md`
+9. `docs/project-log.md`
+10. `docs/todo-next.md`
+
+### 涉及哪些页面或组件
+
+1. 平台适配层：`@st/platform-adapter/vxe-table`
+2. 应用适配入口：`apps/web-antd/src/adapter/vxe-table.ts`
+3. 受影响页面：所有通过 `#/adapter/vxe-table` 使用 Vxe Grid 的历史业务页
+
+### 验证结果
+
+1. 已执行目标 ESLint，覆盖 `packages/platform-adapter/src/vxe-table/index.ts`、`apps/web-antd/src/adapter/vxe-table.ts`、`apps/web-antd/tsconfig.json` 和 `apps/web-antd/vite.config.ts`，通过。
+2. 已执行 `git diff --check`，通过。
+3. 已执行 `./node_modules/.bin/vue-tsc --noEmit -p apps/web-antd/tsconfig.json 2>&1 | rg "platform-adapter|adapter/vxe-table|vxe-table/index|@st/platform|@vben/plugins|antdv-next|@vben/icons"`；本轮新增的 `@st/*`、`@vben/plugins`、`@vben/icons` 和 `antdv-next` 主入口解析已打通，当前仅剩历史组件 `apps/web-antd/src/components/tree/src/tree-select-panel.vue` 引用 `antdv-next/es/checkbox/interface` 的既有深路径类型问题。
+4. 已执行 `../../node_modules/.bin/vite build --mode development --outDir /private/tmp/st-design-vxe-adapter-check`，构建通过；过程中仍出现既有 lightningcss 对 `@reference` / `@apply` 的告警，不阻断产物生成。
+5. 本阶段尚未做隔离浏览器视觉验证，未操作用户系统 Chrome。
+
+### 遗留问题
+
+1. Vxe 样式变量仍在 Vben plugins 原样式文件中，尚未迁入 `@st/platform-styles`。
+2. ECharts、Upload 适配尚未进入 `@st/platform-adapter`。
+3. 应用侧 `CellImage` / `CellLink` 是否应平台化仍需结合真实页面复用范围再判断，本轮不搬。
+4. `@st/*` workspace 包在当前 `node_modules` 中未生成软链，本轮已通过 `tsconfig` 和 Vite alias 补齐本地解析；后续运行 `pnpm install` 后仍应保持兼容。
+
+### 平台治理影响
+
+1. 本轮发现的 ant-design-vue 原生组件问题：无，本轮聚焦 Vxe 适配层职责边界。
+2. 已通过平台层解决的问题：默认序号列、工具栏默认项、刷新方式、复选状态和排序参数转换不再留在业务 app 入口中，已进入 `platform-adapter`。
+3. 哪些仍是页面临时实现：应用侧 Vxe 渲染器注册仍留在 `apps/web-antd/src/adapter/vxe-table.ts`，避免未验证前把当前 app 的渲染约定搬成平台公共 API。
+4. 哪些页面子组件未来必须回收为平台组件：如果多个页面稳定复用 `CellImage` / `CellLink` 语义，再评估沉淀为平台 Vxe renderer。
+5. 后续新页面禁止继续复制哪些实现：不要在单个 Vxe 页面里手写默认序号列、工具栏默认项或排序参数转换。
+6. 哪些样式应进入主题变量或统一样式入口：Vxe 表格行高、hover、选中态、分页和工具按钮样式后续应进入 `@st/platform-styles` 的 Vxe 样式入口。
+7. 当前仍存在的页面级样式债务：本轮未处理业务页 Vxe 页面局部样式，只先收口适配函数。
+
+### 任务名称
+
+平台 Vxe 样式入口迁移一期
+
+### 完成内容
+
+1. 新增 `@st/platform-styles/vxe-table` 样式入口，承载稳定 Vxe 表格变量和全局覆盖。
+2. 将 `packages/effects/plugins/src/vxe-table/style.css` 改为只桥接导入平台样式入口，不再直接维护大段 Vxe 平台样式。
+3. 将原散落在 `packages/styles/src/antd/index.css` 的 Vxe toolbar 间距、默认圆角、loading 遮罩覆盖回收到 `@st/platform-styles/vxe-table`。
+4. 为 `@st/platform-styles/vxe-table` 补充 package exports 和当前 `apps/web-antd` Vite alias，兼容当前 `node_modules` 未生成 `@st/*` workspace 软链的状态。
+
+### 修改了哪些文件
+
+1. `packages/platform-styles/src/vxe-table/index.css`
+2. `packages/effects/plugins/src/vxe-table/style.css`
+3. `packages/styles/src/antd/index.css`
+4. `packages/platform-styles/package.json`
+5. `apps/web-antd/vite.config.ts`
+6. `packages/platform-styles/README.md`
+7. `docs/platform-package-governance.md`
+8. `docs/project-log.md`
+9. `docs/todo-next.md`
+
+### 涉及哪些页面或组件
+
+1. 平台样式入口：`@st/platform-styles/vxe-table`
+2. Vxe 插件桥接：`packages/effects/plugins/src/vxe-table/style.css`
+3. 受影响页面：所有通过 `#/adapter/vxe-table` 使用 Vxe Grid 的历史业务页
+
+### 验证结果
+
+1. 已执行目标 ESLint，覆盖本轮相关 TS 配置和 Vxe 适配入口，通过。
+2. 已执行 `git diff --check`，通过。
+3. 已执行 `./node_modules/.bin/vue-tsc --noEmit -p apps/web-antd/tsconfig.json 2>&1 | rg "platform-styles|vxe-table/style|@st/platform-styles|platform-adapter|adapter/vxe-table|vxe-table/index|@st/platform|@vben/plugins|antdv-next/es/checkbox/interface"`；未出现本轮 `platform-styles` / Vxe 样式入口相关错误，仍只命中历史组件 `tree-select-panel.vue` 的 `antdv-next/es/checkbox/interface` 深路径声明问题。
+4. 已执行 `../../node_modules/.bin/vite build --mode development --outDir /private/tmp/st-design-vxe-style-check`，构建通过；仍存在既有 lightningcss 对 `@reference` / `@apply` 的告警，不阻断产物生成。
+5. 本轮尚未做隔离浏览器视觉验证，未操作用户系统 Chrome。
+
+### 遗留问题
+
+1. `@st/platform-styles/antd` 仍通过本地相对路径代理 `packages/styles/src/antd/index.css`，后续 Antdv 覆盖和 token 仍需继续拆分。
+2. ECharts、Upload 适配尚未进入 `@st/platform-adapter`。
+3. Vxe 真实业务页的视觉效果仍需在本地服务可稳定访问后做隔离浏览器抽查。
+
+### 平台治理影响
+
+1. 本轮发现的 ant-design-vue 原生组件问题：无，本轮聚焦 Vxe 全局样式职责边界。
+2. 已通过平台层解决的问题：Vxe 表格变量、toolbar、分页、loading、弹层 z-index 等稳定覆盖已集中到 `platform-styles`。
+3. 哪些仍是页面临时实现：历史业务页内个别 `.vxe-*` scoped 覆盖仍未逐页清理，本轮不做批量业务页改动。
+4. 哪些页面子组件未来必须回收为平台组件：无新增页面子组件。
+5. 后续新页面禁止继续复制哪些实现：不要在 `packages/styles/src/antd/index.css` 或业务页继续追加 Vxe 专属全局覆盖。
+6. 哪些样式应进入主题变量或统一样式入口：Vxe 表格行高、hover、选中态、分页、工具按钮、弹层层级统一进入 `@st/platform-styles/vxe-table`。
+7. 当前仍存在的页面级样式债务：`workflow/components/user-select-modal.vue`、`system/dict/type` 等页面仍有局部 Vxe 样式，后续需按页面验证再判断是否可回收。
+
+### 任务名称
+
+平台 Antdv 全局覆盖入口迁移一期
+
+### 完成内容
+
+1. 将当前 Ant Design Vue 全局覆盖和平台 CSS 主体从 `packages/styles/src/antd/index.css` 迁入 `packages/platform-styles/src/antd/index.css`。
+2. 将 `packages/styles/src/antd/index.css` 改为兼容桥接，只通过相对路径导入 `packages/platform-styles/src/antd/index.css`。
+3. 移除 `@st/platform-styles` 对 `@vben/styles` 的过渡依赖，避免样式入口倒置后形成包职责循环。
+4. 更新 `packages/platform-styles/README.md`、`docs/platform-package-governance.md`、`docs/handoff-frontend.md` 和 `docs/todo-next.md`，明确当前全局样式源码入口已转为 `platform-styles`。
+
+### 修改了哪些文件
+
+1. `packages/platform-styles/src/antd/index.css`
+2. `packages/styles/src/antd/index.css`
+3. `packages/platform-styles/package.json`
+4. `packages/platform-styles/README.md`
+5. `docs/platform-package-governance.md`
+6. `docs/handoff-frontend.md`
+7. `docs/project-log.md`
+8. `docs/todo-next.md`
+
+### 涉及哪些页面或组件
+
+1. 平台样式入口：`@st/platform-styles/antd`
+2. 兼容桥接入口：`@vben/styles/antd`
+3. 受影响范围：所有通过应用启动入口加载 Antdv 全局覆盖的页面
+
+### 验证结果
+
+1. 待执行目标 ESLint。
+2. 待执行 `git diff --check`。
+3. 待执行 `vite build --mode development`。
+4. 本阶段尚未做隔离浏览器视觉验证，未操作用户系统 Chrome。
+
+### 遗留问题
+
+1. 当前只是入口迁移，尚未将 Antdv 覆盖进一步拆成 Button、Form、Table、Modal、Layout 等分文件。
+2. ECharts、Upload 适配尚未进入 `@st/platform-adapter`。
+3. 旧历史文档中仍会保留当时修改 `packages/styles/src/antd/index.css` 的记录，不逐条回写历史。
+
+### 平台治理影响
+
+1. 本轮发现的 ant-design-vue 原生组件问题：无，本轮聚焦 Antdv 覆盖入口职责边界。
+2. 已通过平台层解决的问题：Antdv 全局覆盖不再以 `@vben/styles/antd` 作为真实源码入口，已转入 `@st/platform-styles/antd`。
+3. 哪些仍是页面临时实现：业务页内历史 scoped 覆盖未在本轮清理。
+4. 哪些页面子组件未来必须回收为平台组件：无新增页面子组件。
+5. 后续新页面禁止继续复制哪些实现：不要再把 Antdv 通用覆盖追加到 `packages/styles/src/antd/index.css`；该文件只作兼容桥接。
+6. 哪些样式应进入主题变量或统一样式入口：Antdv Button、Input、Select、DatePicker、Tree、Table、Pagination、Modal、Drawer、Tag 等全局覆盖统一进入 `@st/platform-styles/antd`。
+7. 当前仍存在的页面级样式债务：业务页内针对 Antdv 的 scoped 覆盖仍需后续按页面审计，不在本轮批量迁移。
