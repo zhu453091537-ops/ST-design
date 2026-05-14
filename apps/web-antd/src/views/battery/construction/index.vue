@@ -1,17 +1,15 @@
 <script setup lang="ts">
+import type { PlatformTableColumn } from '@st/platform-ui';
+
 import type {
   ConstructionDetail,
   ConstructionQuery,
   ConstructionRecord,
 } from './construction-source';
 
-import type { PlatformTableColumn } from '#/components/platform';
-
 import { computed, onBeforeUnmount, onMounted, reactive, ref } from 'vue';
 
 import { Page } from '@vben/common-ui';
-
-import { Space } from 'antdv-next';
 
 import {
   PlatformApprovalProgress,
@@ -26,7 +24,8 @@ import {
   PlatformTable,
   PlatformTableToolbar,
   PlatformViewToolbar,
-} from '#/components/platform';
+} from '@st/platform-ui';
+import { Space } from 'antdv-next';
 
 import {
   constructionBusinessTypeOptions,

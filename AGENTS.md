@@ -104,6 +104,10 @@
 
 当需求涉及 Button、Table、Tree、Form、Input、Select、DatePicker、Pagination、Modal、Drawer、Tabs、SearchForm、工具栏、操作列、状态标签、导航、面包屑等通用能力时，默认按平台级问题处理，而不是只改当前页面。
 
+平台组件长期目标是 workspace 包化复用：以 `packages/platform-ui` 作为平台 Vue 组件唯一源码，以 `packages/platform-styles` 承载 token、主题变量和全局样式，以 `packages/platform-adapter` 承载 Vben/Vxe/ECharts/Upload 等适配层。复用方式必须通过 `pnpm workspace` 和 `workspace:*` 依赖完成，由包管理器自动生成软连接；不得把手工 `ln -s` 或多份组件拷贝作为正式方案。
+
+包化迁移期间，`apps/web-antd/src/components/platform` 只能作为兼容出口或尚未迁移完成的临时源头。迁移完成后，新页面和新平台能力默认从 `@st/platform-ui` 引用；已有页面可分批切换，不为了导入路径整洁做一次性大批量改动。平台组件源码不得反向依赖 `apps/web-antd` 的业务路由、业务 Mock、业务接口或页面状态。
+
 ### 4.1 硬性禁止
 
 1. 不修改 `node_modules`。
@@ -118,10 +122,10 @@
 
 通用组件样式和交互优先落到：
 
-1. 平台组件：`apps/web-antd/src/components/platform`
-2. 平台组件出口：`apps/web-antd/src/components/platform/index.ts`
-3. Vben/Vxe 适配层：如 `#/adapter/vxe-table`
-4. 项目全局样式和 token：如 `packages/styles`、设计 token
+1. 平台组件包：`packages/platform-ui`
+2. 迁移过渡兼容出口：`apps/web-antd/src/components/platform/index.ts`
+3. Vben/Vxe 适配层：如 `packages/platform-adapter` 或现有 `#/adapter/vxe-table`
+4. 项目全局样式和 token：如 `packages/platform-styles`、`packages/styles`、设计 token
 5. 组件验证页：`apps/web-antd/src/views/platform/typical-page/index.vue`
 
 `/platform/typical-page` 只作为组合验证场，不作为通用视觉样式最终落点。页面 scoped CSS 只允许处理页面布局，如分栏、间距、高度、滚动区域。

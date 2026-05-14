@@ -14,7 +14,7 @@ import {
   PlatformModal,
   PlatformSelect,
   PlatformViewToolbar,
-} from '#/components/platform';
+} from '@st/platform-ui';
 
 import PersonnelArchiveCard from './components/personnel-archive-card.vue';
 import PersonnelArchiveDetailDrawer from './components/personnel-archive-detail-drawer.vue';

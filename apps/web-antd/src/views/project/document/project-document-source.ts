@@ -1,7 +1,7 @@
 import type {
   PlatformFileListItem,
   PlatformFileType,
-} from '#/components/platform';
+} from '@st/platform-ui';
 
 export type ProjectDocumentCategory =
   | 'contract'

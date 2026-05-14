@@ -5,7 +5,7 @@ import { computed } from 'vue';
 
 import { VbenIcon } from '@vben/icons';
 
-import { PlatformDrawer, PlatformStatusTag } from '#/components/platform';
+import { PlatformDrawer, PlatformStatusTag } from '@st/platform-ui';
 
 import {
   getPersonnelArchiveBlacklistMeta,

@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { Page } from '@vben/common-ui';
 
+import { PlatformPageBreadcrumb, PlatformSectionTitle } from '@st/platform-ui';
+
 import ditieIcon from '#/assets/images/ditie.png';
-import { PlatformPageBreadcrumb, PlatformSectionTitle } from '#/components/platform';
 
 const breadcrumbItems = [
   {

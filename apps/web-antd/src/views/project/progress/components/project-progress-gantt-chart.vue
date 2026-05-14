@@ -7,7 +7,7 @@ import { computed, onMounted, ref, watch } from 'vue';
 
 import { EchartsUI, useEcharts } from '@vben/plugins/echarts';
 
-import { PlatformSectionTitle } from '#/components/platform';
+import { PlatformSectionTitle } from '@st/platform-ui';
 
 const props = withDefaults(
   defineProps<{

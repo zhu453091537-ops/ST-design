@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { PersonnelArchiveRecord } from '../user-demo-source';
 
-import { PlatformStatusTag } from '#/components/platform';
+import { PlatformStatusTag } from '@st/platform-ui';
 
 import {
   getPersonnelArchiveEmploymentMeta,

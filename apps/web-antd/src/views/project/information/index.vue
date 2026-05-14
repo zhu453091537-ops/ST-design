@@ -11,8 +11,6 @@ import { computed, onMounted, reactive, ref } from 'vue';
 import { Page } from '@vben/common-ui';
 import { VbenIcon } from '@vben/icons';
 
-import { Popconfirm, Space } from 'antdv-next';
-
 import {
   PlatformButton,
   PlatformDatePicker,
@@ -27,7 +25,8 @@ import {
   PlatformTable,
   PlatformTableToolbar,
   PlatformViewToolbar,
-} from '#/components/platform';
+} from '@st/platform-ui';
+import { Popconfirm, Space } from 'antdv-next';
 
 import {
   archiveProjectInformationProject,

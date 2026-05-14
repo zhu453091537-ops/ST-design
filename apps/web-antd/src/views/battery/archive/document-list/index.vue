@@ -15,7 +15,7 @@ import {
   PlatformSectionTitle,
   PlatformTable,
   PlatformTreePanel,
-} from '#/components/platform';
+} from '@st/platform-ui';
 
 import {
   collectTreeDescendantKeys,

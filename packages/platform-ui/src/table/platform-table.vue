@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/one-component-per-file -- Keep render-only filter dropdowns colocated during package migration. -->
 <script setup lang="ts">
 import type {
   TableEmits,

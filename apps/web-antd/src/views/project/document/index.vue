@@ -1,10 +1,10 @@
 <script setup lang="ts">
+import type { PlatformFileListItem } from '@st/platform-ui';
+
 import type {
   ProjectDocumentRecord,
   ProjectDocumentStatCard,
 } from './project-document-source';
-
-import type { PlatformFileListItem } from '#/components/platform';
 
 import { computed, onMounted, ref } from 'vue';
 
@@ -15,7 +15,7 @@ import {
   PlatformSectionTitle,
   PlatformStatCard,
   PlatformViewToolbar,
-} from '#/components/platform';
+} from '@st/platform-ui';
 
 import {
   downloadProjectDocument,

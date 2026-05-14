@@ -654,6 +654,9 @@ importers:
       '@antdv-next/icons':
         specifier: 'catalog:'
         version: 1.0.5(vue@3.5.33(typescript@5.9.3))
+      '@st/platform-ui':
+        specifier: workspace:*
+        version: link:../../packages/platform-ui
       '@tinymce/tinymce-vue':
         specifier: 'catalog:'
         version: 6.3.0(tinymce@7.9.1)(vue@3.5.33(typescript@5.9.3))
@@ -1644,6 +1647,27 @@ importers:
       vue-i18n:
         specifier: 'catalog:'
         version: 11.4.0(vue@3.5.33(typescript@5.9.3))
+
+  packages/platform-ui:
+    dependencies:
+      '@vben/icons':
+        specifier: workspace:*
+        version: link:../icons
+      '@vben/plugins':
+        specifier: workspace:*
+        version: link:../effects/plugins
+      antdv-next:
+        specifier: 'catalog:'
+        version: 1.2.2(vue@3.5.33(typescript@5.9.3))
+      echarts:
+        specifier: 'catalog:'
+        version: 6.0.0
+      vue:
+        specifier: ^3.5.30
+        version: 3.5.33(typescript@5.9.3)
+      vue-router:
+        specifier: 'catalog:'
+        version: 5.0.6(@vue/compiler-sfc@3.5.33)(pinia@3.0.4(typescript@5.9.3)(vue@3.5.33(typescript@5.9.3)))(vue@3.5.33(typescript@5.9.3))
 
   packages/preferences:
     dependencies:
@@ -6941,6 +6965,7 @@ packages:
   glob@11.1.0:
     resolution: {integrity: sha512-vuNwKSaKiqm7g0THUBu2x7ckSs3XJLXE+2ssL7/MfTGPLLcrJQ/4Uq1CjPTtO5cCIiRxqvN6Twy1qOwhL0Xjcw==}
     engines: {node: 20 || >=22}
+    deprecated: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
     hasBin: true
 
   glob@13.0.6:

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { PlatformApprovalProgressItem } from './types';
 
-import { computed } from 'vue';
+import { computed, h } from 'vue';
 
 import { VbenIcon } from '@vben/icons';
 
@@ -42,6 +42,16 @@ function getDotIcon(item: PlatformApprovalProgressItem) {
   }
 }
 
+function renderDot(item: PlatformApprovalProgressItem) {
+  return h(
+    'div',
+    {
+      class: ['platform-approval-progress__dot', getDotClass(item.status)],
+    },
+    [h(VbenIcon, { icon: getDotIcon(item) })],
+  );
+}
+
 </script>
 
 <template>
@@ -56,16 +66,8 @@ function getDotIcon(item: PlatformApprovalProgressItem) {
           v-for="item in items"
           :key="item.id"
           class="platform-approval-progress__item"
+          :dot="renderDot(item)"
         >
-          <template #dot>
-            <div
-              class="platform-approval-progress__dot"
-              :class="getDotClass(item.status)"
-            >
-              <VbenIcon :icon="getDotIcon(item)" />
-            </div>
-          </template>
-
           <article class="platform-approval-progress__card">
             <div class="platform-approval-progress__card-head">
               <span class="platform-approval-progress__title">

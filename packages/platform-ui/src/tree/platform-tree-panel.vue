@@ -16,8 +16,8 @@ import PlatformTree from './platform-tree.vue';
 type TreeKey = number | string;
 
 interface TreeNode {
-  children?: TreeNode[];
   [key: string]: any;
+  children?: TreeNode[];
 }
 
 const props = withDefaults(

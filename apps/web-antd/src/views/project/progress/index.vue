@@ -8,13 +8,12 @@ import { onMounted, ref } from 'vue';
 
 import { Page } from '@vben/common-ui';
 
-import { Empty } from 'antdv-next';
-
 import {
   PlatformSectionTitle,
   type PlatformViewOption,
   PlatformViewToolbar,
-} from '#/components/platform';
+} from '@st/platform-ui';
+import { Empty } from 'antdv-next';
 
 import ProjectProgressBoard from './components/project-progress-board.vue';
 import ProjectProgressGanttChart from './components/project-progress-gantt-chart.vue';

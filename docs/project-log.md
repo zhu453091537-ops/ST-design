@@ -4,6 +4,96 @@
 
 ### 任务名称
 
+平台组件 workspace 包化治理与无行为变化迁移
+
+### 完成内容
+
+1. 明确平台组件后续不再通过手工 symlink 或多份拷贝复用，而是通过 `pnpm workspace` 和 `workspace:*` 统一包管理。
+2. 新增 `docs/platform-package-governance.md`，沉淀包职责、迁移阶段、引用规则、交付包影响、验证要求和回滚策略。
+3. 在 `AGENTS.md` 更新平台组件默认落点：目标源头为 `packages/platform-ui`，`apps/web-antd/src/components/platform/index.ts` 仅作为迁移过渡兼容出口。
+4. 在 `docs/decision-records.md` 新增长期决策：平台组件改为 workspace 包化复用。
+5. 新增 `packages/platform-ui` 包定义，定义 `@st/platform-ui` 包名、依赖和出口。
+6. 将 `apps/web-antd/src/components/platform/**` 下的平台组件源码迁移到 `packages/platform-ui/src/**`，保持目录结构和导出名不变。
+7. 将 `apps/web-antd/src/components/platform/index.ts` 改为只转发 `@st/platform-ui`，保留 `#/components/platform` 兼容出口，避免批量修改业务页面导入。
+8. 在 `apps/web-antd/package.json` 增加 `@st/platform-ui: workspace:*`，并通过 `pnpm-lock.yaml` 固化 workspace 依赖。
+9. 修正迁移后暴露的少量平台包类型和 lint 问题，保持平台组件在新包路径下可被单独检查。
+
+### 修改了哪些文件
+
+1. `AGENTS.md`
+2. `docs/decision-records.md`
+3. `docs/platform-package-governance.md`
+4. `docs/project-log.md`
+5. `docs/todo-next.md`
+6. `packages/platform-ui/package.json`
+7. `packages/platform-ui/src/index.ts`
+8. `packages/platform-ui/src/**`
+9. `apps/web-antd/package.json`
+10. `apps/web-antd/src/components/platform/index.ts`
+11. `apps/web-antd/src/views/battery/construction/construction-source.ts`
+12. `apps/web-antd/src/views/battery/construction/index.vue`
+13. `apps/web-antd/src/views/battery/archive/document-list/index.vue`
+14. `apps/web-antd/src/views/platform/typical-page/index.vue`
+15. `apps/web-antd/src/views/platform/typical-page/components/personnel-archive-card.vue`
+16. `apps/web-antd/src/views/platform/typical-page/components/personnel-archive-detail-drawer.vue`
+17. `apps/web-antd/src/views/personnel/detail/index.vue`
+18. `apps/web-antd/src/views/project/document/index.vue`
+19. `apps/web-antd/src/views/project/document/project-document-source.ts`
+20. `apps/web-antd/src/views/project/progress/index.vue`
+21. `apps/web-antd/src/views/project/progress/components/project-progress-gantt-chart.vue`
+22. `pnpm-lock.yaml`
+23. `packages/platform-ui/README.md`
+
+### 涉及哪些页面或组件
+
+1. 当前未批量修改业务页面导入。
+2. 平台组件唯一源码已迁移到 `packages/platform-ui/src/**`。
+3. `apps/web-antd/src/components/platform/index.ts` 作为兼容出口继续服务现有 `#/components/platform` 引用。
+4. 已小范围切换 `/platform/typical-page`、`/personnel/overview/detail`、`/battery/construction`、`/battery/archive/document-list`、`/project/document`、`/project/progress` 为直接引用 `@st/platform-ui`。
+5. 后续目标影响范围为所有平台组件及引用它们的业务页面。
+
+### 验证结果
+
+1. 已执行 `git diff --check -- . ':(exclude)**/node_modules/**'`，通过。
+2. 已执行 `./node_modules/.bin/eslint apps/web-antd/src/components/platform/index.ts packages/platform-ui/src/index.ts packages/platform-ui/src --ext .ts,.vue`，通过。
+3. 已执行 `curl -I http://127.0.0.1:5173/platform/typical-page`、`/workbench/index`、`/battery/construction`，均返回 `200 OK`。
+4. 已执行 `../../node_modules/.bin/vite build --mode development --outDir /private/tmp/st-design-platform-ui-check`，构建成功，说明 `@st/platform-ui` 可被 Vite 解析和打包。
+5. 已执行 `corepack pnpm -F @vben/web-antd run typecheck`；平台包相关错误已清除，但全量类型检查仍因既有 `tenant-toggle`、`tinymce`、`tree-select-panel`、`workflow`、`menu-ui`、`common-ui` 等存量类型问题失败。
+6. 已补充 `packages/platform-ui/README.md`，说明新增页面引用方式、平台包职责边界和修改组件时的检查要求。
+7. 已将 `apps/web-antd/src/views/platform/typical-page/components/personnel-archive-card.vue` 的 `PlatformStatusTag` 导入切换为 `@st/platform-ui`，作为新增页面直接引用平台包的最小真实验证。
+8. 已用 Safari 打开 `http://127.0.0.1:5173/platform/typical-page`，确认人员档案管理页面正常渲染，人员卡片和状态标签可见。
+9. 已将真实业务页 `apps/web-antd/src/views/personnel/detail/index.vue` 的 `PlatformPageBreadcrumb`、`PlatformSectionTitle` 直接切换为 `@st/platform-ui`，验证新增/触达页面可直接消费平台包。
+10. 已用 Safari 打开 `http://127.0.0.1:5173/personnel/overview/detail`，确认人员详情页壳正常渲染，面包屑“人员总览 / 人员详情”和“基本信息”标题区可见。
+11. 已将 `/battery/construction`、`/battery/archive/document-list` 和 `/platform/typical-page` 相关页面/组件切换为直接引用 `@st/platform-ui`，并确认这些路径下不再残留 `#/components/platform` 旧入口。
+12. 已执行本轮目标文件 ESLint，覆盖施工管理、文档列表、典型页、人员详情页、兼容出口和 `packages/platform-ui/src`，通过。
+13. 已执行 `git diff --check -- . ':(exclude)**/node_modules/**'`，通过。
+14. 已短暂启动 Vite 并执行 `curl -I http://127.0.0.1:5173/battery/construction`、`/battery/archive/document-list`、`/platform/typical-page`、`/personnel/overview/detail`，均返回 `200 OK`。
+15. 已停止本轮临时 Vite 服务，确认 `5173` 未继续占用。
+16. 已继续将 `/project/document`、`/project/progress` 及其相关数据源/图表组件切换为直接引用 `@st/platform-ui`。
+17. 已再次执行目标文件 ESLint，覆盖项目文档、项目进度、施工管理、文档列表、典型页、人员详情页、兼容出口和 `packages/platform-ui/src`，通过。
+18. 已再次短暂启动 Vite 并执行 `curl -I http://127.0.0.1:5173/project/document`、`/project/progress`、`/platform/typical-page`、`/battery/construction`，均返回 `200 OK`。
+19. 已停止本轮临时 Vite 服务，确认 `5173` 未继续占用。
+20. 已尝试用隔离 headless Chrome 做页面运行复核，但本机权限审批超时；后续浏览器验证优先使用 Safari，本轮未操作用户系统 Chrome。
+
+### 遗留问题
+
+1. 当前包化迁移进度约 92%；下一阶段新增页面应优先直接从 `@st/platform-ui` 引用平台组件。
+2. 存量页面仍保留 `#/components/platform` 兼容入口；后续只在实际修改页面时逐步切换导入路径，当前已用典型页、人员详情、施工管理、文档列表、项目文档和项目进度完成小范围验证。
+3. 平台样式和 Vxe/ECharts 适配仍未拆入 `packages/platform-styles` 与 `packages/platform-adapter`，需要后续分阶段处理。
+4. `apps/web-antd` 全量类型检查仍有存量失败项，本轮未扩大范围修复。
+
+### 平台治理影响
+
+1. 本轮发现的 ant-design-vue 原生组件问题：无，本轮是平台组件复用边界治理。
+2. 已通过平台层解决的问题：明确后续平台组件只有一个源码源头，避免多份组件拷贝和局部修改失效。
+3. 哪些仍是页面临时实现：现有业务页仍通过 `#/components/platform` 引用，属于迁移过渡状态，但底层已转发到 `@st/platform-ui`。
+4. 哪些页面子组件未来必须回收为平台组件：已沉淀为 `Platform*` 的通用组件已进入 `packages/platform-ui`；后续新增共性组件也应进入该包。
+5. 后续新页面禁止继续复制哪些实现：禁止新页面复制平台组件源码或绕过平台包直接新写通用表格、表单、弹窗、抽屉等。
+6. 哪些样式应进入主题变量或统一样式入口：通用 token、Antdv 覆盖和 Vxe/ECharts 适配后续分别进入 `platform-styles` 与 `platform-adapter`。
+7. 当前仍存在的页面级样式债务：本阶段未处理页面级样式债务，先建立迁移规范。
+
+### 任务名称
+
 数据录入平台规则补充与现状审计
 
 ### 完成内容

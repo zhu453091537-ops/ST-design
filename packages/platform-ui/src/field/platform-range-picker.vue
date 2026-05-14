@@ -3,14 +3,15 @@ import { DatePicker } from 'antdv-next';
 defineOptions({
   inheritAttrs: false,
 });
+const RangePicker = DatePicker.RangePicker;
 </script>
 
 <template>
-  <DatePicker v-bind="$attrs" class="platform-date-picker">
-    <template #suffixIcon="slotProps">
-      <slot name="suffixIcon" v-bind="slotProps || {}">
+  <RangePicker v-bind="$attrs" class="platform-range-picker">
+    <template #suffixIcon>
+      <slot name="suffixIcon">
         <i
-          class="platform-date-picker__suffix-icon iconfont icon-jiantouxia"
+          class="platform-range-picker__suffix-icon iconfont icon-jiantouxia"
           aria-hidden="true"
         ></i>
       </slot>
@@ -18,15 +19,15 @@ defineOptions({
     <template v-for="(_, name) in $slots" #[name]="slotProps">
       <slot :name="name" v-bind="slotProps || {}"></slot>
     </template>
-  </DatePicker>
+  </RangePicker>
 </template>
 
 <style scoped>
-.platform-date-picker {
+.platform-range-picker {
   width: 100%;
 }
 
-.platform-date-picker__suffix-icon {
+.platform-range-picker__suffix-icon {
   display: inline-flex;
   align-items: center;
   justify-content: center;

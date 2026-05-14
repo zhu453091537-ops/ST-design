@@ -3,11 +3,11 @@ import type { PlatformBreadcrumbItem } from './types';
 
 import { useRouter } from 'vue-router';
 
-import { Breadcrumb } from 'antdv-next';
+import { Breadcrumb, BreadcrumbItem } from 'antdv-next';
 
 import { PlatformIcon } from '../icon';
 
-const props = withDefaults(
+withDefaults(
   defineProps<{
     items?: PlatformBreadcrumbItem[];
   }>(),
@@ -28,7 +28,7 @@ function handleNavigate(path?: string) {
 
 <template>
   <Breadcrumb class="platform-page-breadcrumb" separator="/">
-    <Breadcrumb.Item
+    <BreadcrumbItem
       v-for="(item, index) in items"
       :key="`${item.title}-${index}`"
     >
@@ -56,7 +56,7 @@ function handleNavigate(path?: string) {
         />
         <span>{{ item.title }}</span>
       </span>
-    </Breadcrumb.Item>
+    </BreadcrumbItem>
   </Breadcrumb>
 </template>
 

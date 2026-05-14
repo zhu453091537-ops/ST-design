@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { ModalProps } from 'antdv-next';
+
 import { computed, useAttrs, useSlots, watch } from 'vue';
 
 import { Modal } from 'antdv-next';
@@ -55,6 +57,18 @@ function normalizeSemanticStyles(value: unknown) {
     return { ...(value as Record<string, unknown>) };
   }
   return {};
+}
+
+function normalizeModalWidth(value: unknown): ModalProps['width'] {
+  if (typeof value === 'number' || typeof value === 'string') {
+    return value;
+  }
+
+  if (value && typeof value === 'object' && !Array.isArray(value)) {
+    return value as ModalProps['width'];
+  }
+
+  return undefined;
 }
 
 const modalAttrs = computed(() => {
@@ -135,7 +149,7 @@ const modalAttrs = computed(() => {
     closable: false,
     style: mergedStyle,
     styles: mergedSemanticStyles,
-    width: isFullscreen.value ? '100vw' : width,
+    width: isFullscreen.value ? '100vw' : normalizeModalWidth(width),
     wrapClassName: mergedWrapClassName,
   };
 });

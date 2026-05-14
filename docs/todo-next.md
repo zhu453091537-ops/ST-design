@@ -6,6 +6,7 @@
 
 | 优先级 | 事项 | 状态 | 说明 |
 | --- | --- | --- | --- |
+| 高 | 平台组件 workspace 包化迁移 | 约 92%，已完成两批新增/触达页面直接引用验证 | 已明确不使用手工 symlink 和多份组件拷贝；已新增 `docs/platform-package-governance.md` 与 `@st/platform-ui` 包，平台组件源码已迁入 `packages/platform-ui/src/**`，`apps/web-antd/src/components/platform/index.ts` 保留兼容出口并转发平台包，`packages/platform-ui/README.md` 已补充使用规则。已将典型页、人员详情、施工管理、文档列表、项目文档、项目进度小范围直接切到 `@st/platform-ui`，并验证 `/platform/typical-page`、`/personnel/overview/detail`、`/battery/construction`、`/battery/archive/document-list`、`/project/document`、`/project/progress` 正常。下一步继续只在新增或实际触达页面中使用平台包，不批量替换存量页面。 |
 | 高 | 数据录入平台规则补充与现状审计 | 已完成 | 已在 `AGENTS.md` 与 `docs/decision-records.md` 固化“数据录入必须走平台表单组件体系”的长期规则；已审计当前交付范围，确认上下录入表单统一走 `PlatformEditForm layout=\"vertical\"`，左右录入表单统一走 `PlatformEditForm layout=\"horizontal\" + label-preset=\"inline-compact\"` 或 `PlatformQueryPanel`，当前未发现交付范围内再直接新写原生 `Form / FormItem` 做业务录入。 |
 | 高 | 项目信息管理新建项目弹窗与文档列表维护信息表单微调 | 已完成，待视觉确认 | 已收口 `/project/information` 新建项目弹窗里 `进场信息` 的动态行布局，并补齐“开标日期”所在列的控件满宽；同时已在 `PlatformForm` 新增 `label-preset=\"inline-compact\"` 横向录入预设，把 `施工管理` 那套左右 label 规则沉到平台层，再让 `/battery/archive/document-list` 直接复用。当前仍需在登录态下复核 `项目信息管理` 弹窗视觉，并由你刷新确认 `文档列表` 的标题到输入框间距是否已与 `施工管理` 一致。 |
 | 高 | 平台表格正文文字色与选择列控件可视性优化 | 已完成 | 已将表格正文文字统一提到主文本色，并在表格选择列内把单选框/复选框统一加固为 `20px * 20px`、未选中描边 `#E5E7EB`；本轮已修正到外层 `.ant-radio / .ant-checkbox` 源节点，避免继续改错到 `.inner` 层。 |
@@ -266,6 +267,7 @@
 21. `/project/evaluation` 后续建议补充评估详情、评估模板配置、验收附件和导出能力；当前发起评估只是前端模拟流程。
 22. 所有典型页面、截图页面、Figma 页面或业务右侧内容页收尾时，必须补“平台治理影响”章节，不得只写完成和验证。
 23. 等用户确认后，再开始下一步具体平台组件改造、方案设计或代码修改。
+24. 平台组件包化迁移下一步进入新增页面引用规范：新增页面优先从 `@st/platform-ui` 引用；存量页面继续保留 `#/components/platform` 兼容出口，避免为了路径统一做大批量无收益改动。
 
 | 2026-05-13 | 已完成 | 已完成施工管理筛选区标签去冒号统一：确认冒号来源于 `PlatformQueryPanel` 的 Antdv 默认标签表现，并在平台查询面板层统一关闭；`git diff --check` 通过，`/battery/construction` 返回 `200 OK`，仍待隔离浏览器肉眼确认其它查询页对齐表现。 |
 
@@ -308,3 +310,4 @@
 24. 如果后续静态页面 Mock 数据没有统一组织，新增、编辑、删除、详情、筛选等前端模拟交互容易分散在页面内部，后续联调迁移成本会上升。
 25. 如果一开始就批量迁移 `web-antd` 组件或业务页，可能打断当前业务开发；后续如有新增独立验证页，也必须先评估边界再接入。
 26. “打开浏览器”“打开页面”“打开本地预览”现已固化为固定口令：默认直开 `http://127.0.0.1:5173/`，服务未启动则先拉起 Vite，再直接执行打开，不再重复确认。
+27. 平台组件包化期间，如果只交付 `apps/web-antd` 源码而不带 `packages/platform-ui`、根 `package.json`、`pnpm-workspace.yaml` 和 `pnpm-lock.yaml`，前端联调环境会无法解析 workspace 平台包。

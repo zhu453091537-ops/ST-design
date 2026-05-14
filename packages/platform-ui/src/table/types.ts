@@ -9,6 +9,8 @@ export type PlatformTableDateRangeFilterConfig = {
 export type PlatformTableFilterConfig = PlatformTableDateRangeFilterConfig;
 
 export type PlatformTableColumn = NonNullable<TableProps['columns']>[number] & {
+  customCell?: (...args: any[]) => Record<string, any>;
+  customHeaderCell?: (...args: any[]) => Record<string, any>;
   platformFilter?: PlatformTableFilterConfig;
 };
 

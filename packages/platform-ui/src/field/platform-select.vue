@@ -76,8 +76,8 @@ function getOptionLabel(option: NonNullable<SelectProps['options']>[number]) {
     :popup-match-select-width="false"
     :style="selectStyle"
   >
-    <template #suffixIcon="slotProps">
-      <slot name="suffixIcon" v-bind="slotProps || {}">
+    <template #suffixIcon>
+      <slot name="suffixIcon">
         <i
           class="platform-select__suffix-icon iconfont icon-jiantouxia"
           aria-hidden="true"

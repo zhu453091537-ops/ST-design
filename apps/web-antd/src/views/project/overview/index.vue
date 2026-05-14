@@ -12,8 +12,6 @@ import { useRouter } from 'vue-router';
 
 import { Page } from '@vben/common-ui';
 
-import { Popconfirm, Progress } from 'antdv-next';
-
 import {
   PlatformButton,
   PlatformDescriptions,
@@ -29,7 +27,8 @@ import {
   PlatformTable,
   PlatformTableToolbar,
   PlatformViewToolbar,
-} from '#/components/platform';
+} from '@st/platform-ui';
+import { Popconfirm, Progress } from 'antdv-next';
 
 import {
   archiveProjectOverviewProject,

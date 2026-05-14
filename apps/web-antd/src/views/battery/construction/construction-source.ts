@@ -1,4 +1,4 @@
-import type { PlatformApprovalProgressItem } from '#/components/platform';
+import type { PlatformApprovalProgressItem } from '@st/platform-ui';
 
 export type ConstructionStatus = 'completed' | 'draft' | 'pending';
 
@@ -87,14 +87,7 @@ export const constructionStatusMap: Record<
 };
 
 function createApprovalItems(
-  items: Array<{
-    assignee: string;
-    department?: string;
-    id: string;
-    status: PlatformApprovalProgressItem['status'];
-    time?: string;
-    title: string;
-  }>,
+  items: PlatformApprovalProgressItem[],
 ): PlatformApprovalProgressItem[] {
   return items;
 }
