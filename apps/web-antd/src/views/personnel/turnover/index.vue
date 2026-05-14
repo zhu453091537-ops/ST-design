@@ -14,7 +14,7 @@ import {
   PlatformEchartsPanel,
   PlatformStatCard,
   PlatformViewToolbar,
-} from '#/components/platform';
+} from '@st/platform-ui';
 
 import {
   getContractorTurnoverRates,

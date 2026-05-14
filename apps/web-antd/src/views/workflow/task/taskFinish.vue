@@ -9,6 +9,7 @@ import { Page } from '@vben/common-ui';
 import { addFullName, getPopupContainer } from '@vben/utils';
 
 import { FilterOutlined, RedoOutlined } from '@antdv-next/icons';
+import { PlatformEditForm, PlatformFormItem, PlatformInput } from '@st/platform-ui';
 import {
   Empty,
   InputSearch,
@@ -21,7 +22,6 @@ import { cloneDeep, debounce } from 'lodash-es';
 
 import { categoryTree } from '#/api/workflow/category';
 import { pageByTaskFinish } from '#/api/workflow/task';
-import { PlatformEditForm, PlatformFormItem, PlatformInput } from '#/components/platform';
 
 import { ApprovalCard, ApprovalPanel, CopyComponent } from '../components';
 import { bottomOffset } from './constant';

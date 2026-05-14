@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type { AccessRuleItem } from './personnel-qualification-source';
+import type { PlatformNoticeListItem } from '@st/platform-ui';
 
-import type { PlatformNoticeListItem } from '#/components/platform';
+import type { AccessRuleItem } from './personnel-qualification-source';
 
 import { onMounted, ref } from 'vue';
 
@@ -13,7 +13,7 @@ import {
   PlatformSection,
   PlatformStatCard,
   PlatformViewToolbar,
-} from '#/components/platform';
+} from '@st/platform-ui';
 
 import {
   getAccessRuleList,

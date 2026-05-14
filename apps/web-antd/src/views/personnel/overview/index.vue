@@ -13,8 +13,6 @@ import { useRouter } from 'vue-router';
 
 import { Page } from '@vben/common-ui';
 
-import { Popconfirm, Space } from 'antdv-next';
-
 import {
   PlatformButton,
   PlatformDatePicker,
@@ -29,7 +27,8 @@ import {
   PlatformTable,
   PlatformTableToolbar,
   PlatformViewToolbar,
-} from '#/components/platform';
+} from '@st/platform-ui';
+import { Popconfirm, Space } from 'antdv-next';
 
 import {
   getPersonnelOverviewList,

@@ -7,8 +7,9 @@ import { computed, onMounted, ref } from 'vue';
 
 import { cloneDeep, listToTree, treeToList } from '@vben/utils';
 
+import { PlatformTreePanel } from '@st/platform-ui';
+
 import { getDeptTree } from '#/api/system/user';
-import { PlatformTreePanel } from '#/components/platform';
 
 defineOptions({ inheritAttrs: false });
 

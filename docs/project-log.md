@@ -41,16 +41,32 @@
 19. `apps/web-antd/src/views/project/document/project-document-source.ts`
 20. `apps/web-antd/src/views/project/progress/index.vue`
 21. `apps/web-antd/src/views/project/progress/components/project-progress-gantt-chart.vue`
-22. `pnpm-lock.yaml`
-23. `packages/platform-ui/README.md`
+22. `apps/web-antd/src/views/project/information/index.vue`
+23. `apps/web-antd/src/views/project/evaluation/index.vue`
+24. `apps/web-antd/src/views/project/contract/index.vue`
+25. `apps/web-antd/src/views/project/overview/index.vue`
+26. `apps/web-antd/src/views/personnel/overview/index.vue`
+27. `apps/web-antd/src/views/personnel/worktime/index.vue`
+28. `apps/web-antd/src/views/personnel/turnover/index.vue`
+29. `apps/web-antd/src/views/personnel/qualification/index.vue`
+30. `apps/web-antd/src/views/personnel/qualification/personnel-qualification-source.ts`
+31. `apps/web-antd/src/views/system/notice/notice-modal.vue`
+32. `apps/web-antd/src/views/system/user/dept-tree.vue`
+33. `apps/web-antd/src/views/workflow/task/taskWaiting.vue`
+34. `apps/web-antd/src/views/workflow/task/taskCopyList.vue`
+35. `apps/web-antd/src/views/workflow/task/allTaskWaiting.vue`
+36. `apps/web-antd/src/views/workflow/task/taskFinish.vue`
+37. `apps/web-antd/src/views/workflow/task/myDocument.vue`
+38. `pnpm-lock.yaml`
+39. `packages/platform-ui/README.md`
 
 ### 涉及哪些页面或组件
 
 1. 当前未批量修改业务页面导入。
 2. 平台组件唯一源码已迁移到 `packages/platform-ui/src/**`。
 3. `apps/web-antd/src/components/platform/index.ts` 作为兼容出口继续服务现有 `#/components/platform` 引用。
-4. 已小范围切换 `/platform/typical-page`、`/personnel/overview/detail`、`/battery/construction`、`/battery/archive/document-list`、`/project/document`、`/project/progress` 为直接引用 `@st/platform-ui`。
-5. 后续目标影响范围为所有平台组件及引用它们的业务页面。
+4. 已切换 `/platform/typical-page`、人员模块、项目模块、施工管理、文档列表、系统通知/用户树和 workflow 任务页中的平台组件导入，统一直接引用 `@st/platform-ui`。
+5. `apps/web-antd/src` 和 `packages` 源码中已无 `#/components/platform` 正式代码引用，仅 `packages/platform-ui/README.md` 保留兼容出口说明。
 
 ### 验证结果
 
@@ -73,13 +89,19 @@
 17. 已再次执行目标文件 ESLint，覆盖项目文档、项目进度、施工管理、文档列表、典型页、人员详情页、兼容出口和 `packages/platform-ui/src`，通过。
 18. 已再次短暂启动 Vite 并执行 `curl -I http://127.0.0.1:5173/project/document`、`/project/progress`、`/platform/typical-page`、`/battery/construction`，均返回 `200 OK`。
 19. 已停止本轮临时 Vite 服务，确认 `5173` 未继续占用。
-20. 已尝试用隔离 headless Chrome 做页面运行复核，但本机权限审批超时；后续浏览器验证优先使用 Safari，本轮未操作用户系统 Chrome。
+20. 已继续将 `/project/information`、`/project/evaluation`、`/project/contract`、`/project/overview`、人员模块、`system/notice`、`system/user` 和 workflow 任务页中的平台组件导入切换为 `@st/platform-ui`。
+21. 已执行 `rg -n "#/components/platform" apps/web-antd/src packages --glob '!**/node_modules/**'`；除 `packages/platform-ui/README.md` 兼容说明外，应用源码已无旧入口引用。
+22. 已执行相关目标文件 ESLint，覆盖项目、人员、系统、workflow、兼容出口和 `packages/platform-ui/src`，通过。
+23. 已执行 `git diff --check -- . ':(exclude)**/node_modules/**'`，通过。
+24. 已基于现有 `5173` 服务执行 `curl -I` 检查 `/personnel/overview`、`/personnel/qualification`、`/personnel/worktime`、`/personnel/turnover`、`/project/information`、`/project/evaluation`、`/project/contract`、`/project/overview`、`/system/notice`、`/system/user`、`/workflow/taskWaiting`，均返回 `200 OK`。
+25. 本轮临时启动的 `5175` Vite 服务已停止；`5173/5174` 为本轮开始前已有进程，未动。
+26. 已尝试用隔离 headless Chrome 做页面运行复核，但本机权限审批超时；后续浏览器验证优先使用 Safari，本轮未操作用户系统 Chrome。
 
 ### 遗留问题
 
-1. 当前包化迁移进度约 92%；下一阶段新增页面应优先直接从 `@st/platform-ui` 引用平台组件。
-2. 存量页面仍保留 `#/components/platform` 兼容入口；后续只在实际修改页面时逐步切换导入路径，当前已用典型页、人员详情、施工管理、文档列表、项目文档和项目进度完成小范围验证。
-3. 平台样式和 Vxe/ECharts 适配仍未拆入 `packages/platform-styles` 与 `packages/platform-adapter`，需要后续分阶段处理。
+1. 当前包化迁移进度约 96%；应用源码中的平台组件导入已切换为 `@st/platform-ui`。
+2. `apps/web-antd/src/components/platform/index.ts` 仍保留兼容出口，方便外部未检索到的旧引用或后续回滚，但当前应用源码已不再依赖它。
+3. 平台样式和 Vxe/ECharts 适配仍未拆入 `packages/platform-styles` 与 `packages/platform-adapter`，这是剩余主要工作，需要后续分阶段处理。
 4. `apps/web-antd` 全量类型检查仍有存量失败项，本轮未扩大范围修复。
 
 ### 平台治理影响

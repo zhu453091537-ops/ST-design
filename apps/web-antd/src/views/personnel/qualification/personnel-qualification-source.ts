@@ -1,4 +1,4 @@
-import type { PlatformNoticeListItem } from '#/components/platform';
+import type { PlatformNoticeListItem } from '@st/platform-ui';
 
 export interface AccessRuleItem {
   description: string;

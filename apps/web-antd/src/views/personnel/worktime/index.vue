@@ -12,7 +12,7 @@ import {
   PlatformStatCard,
   PlatformStatusTag,
   PlatformViewToolbar,
-} from '#/components/platform';
+} from '@st/platform-ui';
 
 import {
   getWorktimeAlerts,

@@ -9,6 +9,7 @@ import { useTabs } from '@vben/hooks';
 import { getPopupContainer } from '@vben/utils';
 
 import { FilterOutlined, RedoOutlined } from '@antdv-next/icons';
+import { PlatformEditForm, PlatformFormItem, PlatformInput } from '@st/platform-ui';
 import {
   Empty,
   InputSearch,
@@ -19,7 +20,6 @@ import {
 import { cloneDeep, debounce } from 'lodash-es';
 
 import { pageByCurrent } from '#/api/workflow/instance';
-import { PlatformEditForm, PlatformFormItem, PlatformInput } from '#/components/platform';
 
 import { ApprovalCard, ApprovalPanel } from '../components';
 import { bottomOffset } from './constant';

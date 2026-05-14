@@ -13,11 +13,11 @@ import { DictEnum } from '@vben/constants';
 import { $t } from '@vben/locales';
 import { cloneDeep } from '@vben/utils';
 
+import { PlatformEditForm, PlatformFormItem, PlatformInput } from '@st/platform-ui';
 import { RadioGroup } from 'antdv-next';
 import { pick } from 'lodash-es';
 
 import { noticeAdd, noticeInfo, noticeUpdate } from '#/api/system/notice';
-import { PlatformEditForm, PlatformFormItem, PlatformInput } from '#/components/platform';
 import { Tinymce } from '#/components/tinymce';
 import { contentWithOssIdTransform } from '#/components/tinymce/src/helper';
 import { getDictOptions } from '#/utils/dict';
