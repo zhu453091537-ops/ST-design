@@ -6594,3 +6594,161 @@ Figma 截图驱动顶部导航栏源组件样式改造
 5. 后续新页面禁止继续复制哪些实现：不要再把 Antdv 通用覆盖追加到 `packages/styles/src/antd/index.css`；该文件只作兼容桥接。
 6. 哪些样式应进入主题变量或统一样式入口：Antdv Button、Input、Select、DatePicker、Tree、Table、Pagination、Modal、Drawer、Tag 等全局覆盖统一进入 `@st/platform-styles/antd`。
 7. 当前仍存在的页面级样式债务：业务页内针对 Antdv 的 scoped 覆盖仍需后续按页面审计，不在本轮批量迁移。
+
+### 任务名称
+
+ECharts 平台适配入口迁移一期
+
+### 完成内容
+
+1. 新增 `@st/platform-adapter/echarts` 子入口，当前无行为变化转发现有 `@vben/plugins/echarts`。
+2. 将 `PlatformEchartsPanel` 从直接引用 Vben ECharts 插件改为通过 `@st/platform-adapter/echarts` 消费。
+3. 将当前应用内直接使用 ECharts 的项目进度、合同付款、监控缓存和 dashboard 图表组件切到 `@st/platform-adapter/echarts`。
+4. 将 `packages/platform-ui` 对 `@vben/plugins` 的直接依赖改为依赖 `@st/platform-adapter`，避免平台 UI 反向绕过适配层。
+5. 补齐 `apps/web-antd/tsconfig.json` 中 `echarts` 与 `vue-router` 的类型解析路径，避免应用级 typecheck 扫描平台包源码时误报第三方依赖缺失。
+6. 更新 `packages/platform-adapter/README.md`、`docs/platform-package-governance.md`、`docs/decision-records.md` 和 `docs/todo-next.md`，明确 ECharts 已进入平台适配边界，Upload 不直接整包搬迁。
+
+### 修改了哪些文件
+
+1. `packages/platform-adapter/package.json`
+2. `packages/platform-adapter/src/echarts/index.ts`
+3. `packages/platform-adapter/README.md`
+4. `packages/platform-ui/package.json`
+5. `packages/platform-ui/src/chart/platform-echarts-panel.vue`
+6. `apps/web-antd/src/views/project/progress/components/project-progress-gantt-chart.vue`
+7. `apps/web-antd/src/views/project/contract/components/contract-payment-mini-bar.vue`
+8. `apps/web-antd/src/views/monitor/cache/components/memory-chart.vue`
+9. `apps/web-antd/src/views/monitor/cache/components/command-chart.vue`
+10. `apps/web-antd/src/views/dashboard/analytics/analytics-*.vue`
+11. `apps/web-antd/tsconfig.json`
+12. `pnpm-lock.yaml`
+13. `docs/platform-package-governance.md`
+14. `docs/decision-records.md`
+15. `docs/project-log.md`
+16. `docs/todo-next.md`
+
+### 涉及哪些页面或组件
+
+1. 平台适配层：`@st/platform-adapter/echarts`
+2. 平台图表组件：`PlatformEchartsPanel`
+3. 页面图表：`/project/progress`、`/project/contract`、`/monitor/cache`、dashboard analytics 图表组件
+
+### 验证结果
+
+1. 已执行 `corepack pnpm install --lockfile-only --ignore-scripts`，成功刷新 workspace 锁文件；仅出现既有 peer/deprecated 警告。
+2. 已执行目标文件 ESLint，覆盖 ECharts 适配入口、平台图表组件和本轮切换的图表页面组件，通过。
+3. 已执行 `git diff --check -- . ':(exclude)**/node_modules/**'`，通过。
+4. 已执行 `../../node_modules/.bin/vite build --mode development --outDir /private/tmp/st-design-echarts-adapter-check`，构建通过；仍存在既有 lightningcss 对 `@reference` / `@apply` 的告警，不阻断产物生成。
+5. 已执行 `rg -n "@vben/plugins/echarts" apps/web-antd/src packages/platform-ui/src packages/platform-adapter/src --glob '!**/node_modules/**'`；除 `packages/platform-adapter/src/echarts/index.ts` 的桥接转发外，应用源码和平台 UI 源码不再直接引用 Vben ECharts 插件。
+6. 已执行 `./node_modules/.bin/vue-tsc --noEmit -p apps/web-antd/tsconfig.json 2>&1 | rg "platform-adapter|echarts|platform-ui|@st/platform|@vben/plugins|antdv-next/es/checkbox/interface|vue-router"`；本轮新增的 ECharts 适配入口、`platform-ui`、`echarts` 和 `vue-router` 解析已清除，当前仅剩历史组件 `apps/web-antd/src/components/tree/src/tree-select-panel.vue` 的 `antdv-next/es/checkbox/interface` 深路径声明问题。
+7. 本轮未做浏览器视觉验证，因为改动是无行为变化的导入边界收口，没有调整图表 option、样式或交互；未操作用户系统 Chrome。
+
+### 遗留问题
+
+1. `@st/platform-adapter/echarts` 目前只是无行为变化转发入口，尚未沉淀统一图表默认项、主题或 resize 策略。
+2. Upload 仍绑定 `#/api`、OSS 管理、头像裁剪和业务弹窗，不能直接整包搬进 `platform-adapter`，下一步应先做依赖拆分审计。
+3. 全量类型检查仍剩历史组件 `tree-select-panel.vue` 的 `antdv-next/es/checkbox/interface` 深路径声明问题，本轮未扩大范围修复。
+
+### 平台治理影响
+
+1. 本轮发现的 ant-design-vue 原生组件问题：无，本轮聚焦 ECharts 适配边界。
+2. 已通过平台层解决的问题：平台 UI 和应用图表消费者不再直接新增 `@vben/plugins/echarts` 引用，而是先经过 `@st/platform-adapter/echarts`。
+3. 哪些仍是页面临时实现：项目进度甘特图、合同付款 mini bar、缓存监控图和 dashboard 图表的 option 仍保留在页面组件内。
+4. 哪些页面子组件未来必须回收为平台组件：如果付款节点、进度节点、排行图等图表表达在多页面复用，再评估抽为平台图表组件或图表 option 工厂。
+5. 后续新页面禁止继续复制哪些实现：不要在业务页面直接新增 `@vben/plugins/echarts` 引用；新增图表先从 `@st/platform-adapter/echarts` 或 `@st/platform-ui` 的图表组件消费。
+6. 哪些样式应进入主题变量或统一样式入口：后续 ECharts 主题色、tooltip、坐标轴、grid 默认值可评估进入平台图表适配或 token。
+7. 当前仍存在的页面级样式债务：本轮未处理图表视觉债务，只先完成适配入口收口。
+
+### 任务名称
+
+Upload 平台适配入口迁移一期
+
+### 完成内容
+
+1. 新增 `@st/platform-adapter/upload` 子入口，先承载与业务无关的上传纯类型、默认图片/文件 accept 列表和默认文件预览函数。
+2. 将 `apps/web-antd/src/components/upload/src/props.d.ts` 改为从 `@st/platform-adapter/upload` 复用 `BaseUploadProps`、`UploadApi`、`UploadResult`、`UploadEmits` 等类型。
+3. 将 `apps/web-antd/src/components/upload/src/helper.ts` 改为转发平台适配层的默认 accept 与预览 helper。
+4. 将 `apps/web-antd/src/components/upload/src/hook.ts` 中可平台化的 `OssFile`、`UploadResult` 类型引用切换到 `@st/platform-adapter/upload`。
+5. 保留 `FileUpload` / `ImageUpload`、`uploadApi`、`ossInfo`、头像裁剪和业务弹窗在 `apps/web-antd`，避免在业务 API、OSS 模型和应用状态未拆清前把上传组件整包搬入平台包。
+6. 更新 `packages/platform-adapter/README.md`、`docs/platform-package-governance.md`、`docs/decision-records.md` 和 `docs/todo-next.md`，明确 Upload 当前只完成纯类型与默认值收口。
+
+### 修改了哪些文件
+
+1. `packages/platform-adapter/package.json`
+2. `packages/platform-adapter/src/upload/index.ts`
+3. `packages/platform-adapter/README.md`
+4. `apps/web-antd/src/components/upload/src/props.d.ts`
+5. `apps/web-antd/src/components/upload/src/helper.ts`
+6. `apps/web-antd/src/components/upload/src/hook.ts`
+7. `pnpm-lock.yaml`
+8. `docs/platform-package-governance.md`
+9. `docs/decision-records.md`
+10. `docs/project-log.md`
+11. `docs/todo-next.md`
+
+### 涉及哪些页面或组件
+
+1. 平台适配层：`@st/platform-adapter/upload`
+2. 应用上传组件：`FileUpload`、`ImageUpload`
+3. 当前受影响范围：上传组件的类型定义、默认 accept 列表和默认文件预览逻辑；上传请求、OSS 信息查询和业务弹窗行为未迁移。
+
+### 验证结果
+
+1. 已执行 `corepack pnpm install --lockfile-only --ignore-scripts`，成功刷新 workspace 锁文件；仅出现既有 peer/deprecated 警告。
+2. 已执行目标文件 ESLint，覆盖 Upload 适配入口、上传类型/辅助方法/hook 和 `FileUpload` / `ImageUpload`，通过。
+3. 已执行 `git diff --check -- . ':(exclude)**/node_modules/**'`，通过。
+4. 已执行 `./node_modules/.bin/vue-tsc --noEmit -p apps/web-antd/tsconfig.json 2>&1 | rg "platform-adapter|upload|components/upload|antdv-next/es/checkbox/interface"`；Upload 适配入口和上传组件未再出现本轮新增类型错误，仍只命中历史组件 `apps/web-antd/src/components/tree/src/tree-select-panel.vue` 的 `antdv-next/es/checkbox/interface` 深路径声明问题。
+5. 已执行 `../../node_modules/.bin/vite build --mode development --outDir /private/tmp/st-design-upload-adapter-check`，构建通过；仍存在既有 lightningcss 对 `@reference` / `@apply` 的告警，不阻断产物生成。
+6. 本轮未做浏览器视觉验证，因为改动是上传类型、默认值和适配边界收口，没有调整上传组件 DOM、样式或交互；未操作用户系统 Chrome。
+
+### 遗留问题
+
+1. `@st/platform-adapter/upload` 当前不是完整上传实现，只是纯类型与默认 helper 入口。
+2. `FileUpload` / `ImageUpload` 仍依赖 `#/api/system/oss`、i18n、`window.message` / `window.modal`、OSS 业务模型、头像裁剪和系统 OSS 页面，不具备直接迁入平台包的条件。
+3. 若后续要继续迁移 Upload，需要先把上传请求协议、OSS 元信息查询、业务弹窗提示和裁剪/预览交互拆成清晰的应用层注入点。
+4. 全量类型检查仍剩历史组件 `tree-select-panel.vue` 的 `antdv-next/es/checkbox/interface` 深路径声明问题，本轮未扩大范围修复。
+
+### 平台治理影响
+
+1. 本轮发现的 ant-design-vue 原生组件问题：无，本轮聚焦 Upload 适配边界。
+2. 已通过平台层解决的问题：上传相关稳定类型和默认 accept / preview 定义不再只散落在应用上传组件目录中，已进入 `@st/platform-adapter/upload`。
+3. 哪些仍是页面临时实现：上传组件本体、上传 API、OSS 查询、头像裁剪、提示弹窗和业务错误处理仍留在应用侧。
+4. 哪些页面子组件未来必须回收为平台组件：如果多业务页需要统一上传交互，再评估把无业务依赖的上传 UI 壳或 request 注入协议沉淀为平台能力。
+5. 后续新页面禁止继续复制哪些实现：不要复制上传类型、默认 accept 列表或默认文件预览逻辑；新增上传能力优先复用 `@st/platform-adapter/upload` 的稳定定义。
+6. 哪些样式应进入主题变量或统一样式入口：上传列表、拖拽区、图片预览和按钮状态若后续统一，应进入平台组件或 token；本轮未迁移视觉样式。
+7. 当前仍存在的页面级样式债务：上传 UI 与 OSS 业务弹窗尚未完成平台化拆分，需等业务依赖解耦后再治理。
+
+### 任务名称
+
+今天结束收尾
+
+### 完成内容
+
+1. 复核本轮平台组件 workspace 包化迁移状态，确认 ECharts 入口与 Upload 纯类型入口已完成当前安全阶段收口。
+2. 确认 `docs/decision-records.md` 已记录 ECharts 与 Upload 的长期边界决策，本轮无需继续修改 `AGENTS.md`。
+3. 更新 `docs/project-log.md` 与 `docs/todo-next.md`，补齐今天结束后的接续说明、未完成事项和下一轮建议。
+
+### 修改了哪些文件
+
+1. `docs/project-log.md`
+2. `docs/todo-next.md`
+
+### 验证结果
+
+1. 已执行 Upload 目标文件 ESLint，通过。
+2. 已执行 `git diff --check -- . ':(exclude)**/node_modules/**'`，通过。
+3. 已执行过滤 typecheck，Upload 与 `platform-adapter` 未出现本轮新增错误，仍只剩历史组件 `tree-select-panel.vue` 的 `antdv-next/es/checkbox/interface` 深路径声明问题。
+4. 已执行 Vite build，通过；仍存在既有 lightningcss `@reference` / `@apply` warning，不阻断构建。
+5. 本轮未做浏览器视觉验证，因为收尾阶段只更新文档和适配边界，没有新增视觉或交互变更。
+
+### 遗留问题
+
+1. Upload 组件本体、上传 API、OSS 查询、头像裁剪和业务弹窗仍留在应用侧，后续需先做业务依赖拆分方案。
+2. `@st/platform-adapter/echarts` 当前仍是无行为变化桥接入口，尚未沉淀统一主题、默认 option 或 resize 策略。
+3. 应用级类型检查仍有历史 `tree-select-panel.vue` 深路径声明问题，本轮未扩大范围处理。
+
+### 下一步建议
+
+1. 下一轮优先处理 Upload 业务依赖拆分方案，或先修复 `tree-select-panel.vue` 的历史类型错误。
+2. 如继续做 Upload 平台化，不要直接把 `FileUpload` / `ImageUpload` 整包搬进 `platform-adapter`。
+3. 如进入视觉确认，再启动隔离浏览器验证 `/platform/typical-page` 和至少一个真实业务页。

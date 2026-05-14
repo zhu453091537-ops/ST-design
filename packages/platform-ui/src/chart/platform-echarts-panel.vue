@@ -1,11 +1,10 @@
 <script setup lang="ts">
+import type { EchartsUIType } from '@st/platform-adapter/echarts';
 import type { EChartsOption } from 'echarts';
-
-import type { EchartsUIType } from '@vben/plugins/echarts';
 
 import { onMounted, ref, watch } from 'vue';
 
-import { EchartsUI, useEcharts } from '@vben/plugins/echarts';
+import { EchartsUI, useEcharts } from '@st/platform-adapter/echarts';
 
 import { PlatformSection } from '../view';
 

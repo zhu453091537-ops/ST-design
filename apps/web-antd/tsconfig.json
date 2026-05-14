@@ -13,6 +13,8 @@
       "antdv-next": ["./node_modules/antdv-next/dist/index.d.ts"],
       "antdv-next/es/*": ["./node_modules/antdv-next/dist/*"],
       "antdv-next/locale/*": ["./node_modules/antdv-next/dist/locale/*"],
+      "echarts": ["./node_modules/echarts/index.d.ts"],
+      "vue-router": ["./node_modules/vue-router/dist/vue-router.d.ts"],
       "@vben/plugins": ["../../packages/effects/plugins/src/index.ts"],
       "@vben/plugins/*": ["../../packages/effects/plugins/src/*"],
       "#/*": ["./src/*"]

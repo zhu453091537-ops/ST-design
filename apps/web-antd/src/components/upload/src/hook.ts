@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
+import type { OssFile, UploadResult } from '@st/platform-adapter/upload';
 import type { UploadChangeParam, UploadFile, UploadProps } from 'antdv-next';
 
 import type { ModelRef } from 'vue';
@@ -9,9 +9,6 @@ import type {
   UploadEmits,
   UploadType,
 } from './props';
-
-import type { UploadResult } from '#/api';
-import type { OssFile } from '#/api/system/oss/model';
 
 import { computed, onUnmounted, ref, watch } from 'vue';
 
@@ -301,7 +298,7 @@ export function useUpload(
       if (props.showSuccessMsg) {
         window.message.success($t('component.upload.uploadSuccess'));
       }
-      emit('success', info.file, res);
+      emit('success', info.file as File, res);
     } catch (error: any) {
       console.error(error);
       info.onError!(error);

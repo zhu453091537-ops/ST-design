@@ -1659,23 +1659,22 @@ importers:
       '@vben/plugins':
         specifier: workspace:*
         version: link:../effects/plugins
+      antdv-next:
+        specifier: 'catalog:'
+        version: 1.2.2(vue@3.5.33(typescript@5.9.3))
 
-  packages/platform-styles:
-    dependencies:
-      '@vben/styles':
-        specifier: workspace:*
-        version: link:../styles
+  packages/platform-styles: {}
 
   packages/platform-types: {}
 
   packages/platform-ui:
     dependencies:
+      '@st/platform-adapter':
+        specifier: workspace:*
+        version: link:../platform-adapter
       '@vben/icons':
         specifier: workspace:*
         version: link:../icons
-      '@vben/plugins':
-        specifier: workspace:*
-        version: link:../effects/plugins
       antdv-next:
         specifier: 'catalog:'
         version: 1.2.2(vue@3.5.33(typescript@5.9.3))
