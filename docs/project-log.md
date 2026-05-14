@@ -4,6 +4,144 @@
 
 ### 任务名称
 
+数据录入平台规则补充与现状审计
+
+### 完成内容
+
+1. 在 `AGENTS.md` 明确补充“数据录入必须走平台表单组件体系”的长期规则，禁止业务页继续新写原生 `Form / FormItem` 录入结构。
+2. 在 `docs/decision-records.md` 新增长期决策：数据录入只保留两种平台化布局，分别是 `PlatformEditForm layout="vertical"` 和 `PlatformEditForm layout="horizontal" + label-preset="inline-compact"`。
+3. 审计当前交付范围内的数据录入页面，确认上下布局页面已统一复用 `PlatformEditForm + PlatformFormItem + 平台字段组件`。
+4. 审计当前交付范围内的左右布局页面，确认 `文档列表` 维护信息已切回平台预设，`施工管理` 查询区继续复用 `PlatformQueryPanel` 平台体系。
+
+### 修改了哪些文件
+
+1. `AGENTS.md`
+2. `docs/decision-records.md`
+3. `docs/project-log.md`
+4. `docs/todo-next.md`
+
+### 涉及哪些页面或组件
+
+1. 平台表单组件：`PlatformForm` / `PlatformEditForm` / `PlatformFormItem`
+2. 平台查询组件：`PlatformQueryPanel`
+3. 审计页面：`/project/information`、`/project/overview`、`/project/evaluation`、`/personnel/overview`、`/battery/archive/document-list`、`/battery/construction`、`/platform/typical-page`
+
+### 验证结果
+
+1. 已用代码检索确认当前交付范围内未发现原生 `Form / FormItem` 直接承担业务录入表单的实现。
+2. 已确认上下布局页面均使用 `PlatformEditForm layout="vertical"`。
+3. 已确认左右布局页面中，`文档列表` 已使用 `PlatformEditForm layout="horizontal" + label-preset="inline-compact"`，`施工管理` 查询区使用 `PlatformQueryPanel`。
+4. 已确认当前交付范围内未再出现页面级 `.ant-form-item-label` / `label::after` 手写覆盖。
+
+### 遗留问题
+
+1. 当前“统一”主要覆盖录入控件和 label 规则；部分页面仍保留页面级 grid/分段布局壳，例如 `项目信息管理` 三段式弹窗和动态行配置。
+2. 仓库里非当前交付范围的 `workflow/*`、`system/notice/*` 等历史页面仍存在原生 `Form`，本轮未纳入整改。
+
+### 平台治理影响
+
+1. 本轮发现的 ant-design-vue 原生组件问题：录入表单最容易分叉的不是控件本身，而是横向 label 容器、伪元素占位和页面级间距规则。
+2. 已通过平台层解决的问题：数据录入两种布局已被明确收口到平台表单预设，不再允许页面各写一套。
+3. 哪些仍是页面临时实现：`项目信息管理`、`项目总览`、`人员总览` 等页面仍有页面级 grid/分段壳，用来承载列布局与业务分区。
+4. 哪些页面子组件未来必须回收为平台组件：若后续出现更多多段式录入页，可继续评估把“分段+双列 grid+动态子行”抽成平台录入壳。
+5. 后续新页面禁止继续复制哪些实现：禁止新写原生 `Form / FormItem` 做业务录入；禁止页面单独覆盖 `.ant-form-item-label`、`label::after`、固定标签列宽与录入前间距。
+6. 哪些样式应进入主题变量或统一样式入口：横向录入 label 宽度、右侧间距和 `::after` 关闭规则应继续由平台表单统一维护。
+7. 当前仍存在的页面级样式债务：页面级 grid/分段壳还未完全平台化，但录入控件与 label 规则已统一。
+
+### 任务名称
+
+项目信息管理新建项目弹窗与文档列表维护信息表单微调
+
+### 完成内容
+
+1. 调整 `/project/information` 新建项目弹窗内 `进场信息` 的动态输入行布局，让“人员配置 / 设备清单”更贴近前两个 tab 的双列表单节奏。
+2. 为 `/project/information` 弹窗表单列内的日期、下拉与输入控件补齐 `width: 100%`，修正“开标日期”字段宽度没有吃满当前列的问题。
+3. 在 `PlatformForm` 新增可复用的 `labelPreset=\"inline-compact\"` 横向录入标签预设，直接复用 `施工管理` 查询区那套左右排布逻辑：`96px` 标签列、右侧 `12px` 间距、标签内容右对齐，并显式关闭 `label.ant-form-item-no-colon::after` 伪元素占位。
+4. 将 `/battery/archive/document-list` 维护信息表单切换为直接使用 `PlatformEditForm` 的 `inline-compact` 预设，删除页面内手写的横向 label 样式，避免再与平台录入表单分叉。
+
+### 修改了哪些文件
+
+1. `apps/web-antd/src/views/project/information/index.vue`
+2. `apps/web-antd/src/components/platform/form/platform-form.vue`
+3. `apps/web-antd/src/views/battery/archive/document-list/index.vue`
+
+### 涉及哪些页面或组件
+
+1. 页面：`/project/information`
+2. 页面：`/battery/archive/document-list`
+3. 平台表单组件：`PlatformForm` / `PlatformEditForm` / `PlatformFormItem`
+4. 平台组件组合：`PlatformModal`、`PlatformDatePicker`、`PlatformInput`
+
+### 验证结果
+
+1. 已执行 `git diff --check -- apps/web-antd/src/views/project/information/index.vue apps/web-antd/src/views/battery/archive/document-list/index.vue`，通过。
+2. 已执行 `./node_modules/.bin/eslint apps/web-antd/src/views/project/information/index.vue apps/web-antd/src/views/battery/archive/document-list/index.vue`，未新增报错。
+3. 已确认 `http://127.0.0.1:5173/project/information` 与 `http://127.0.0.1:5173/battery/archive/document-list` 服务可访问。
+4. 已执行 `./node_modules/.bin/eslint apps/web-antd/src/components/platform/form/platform-form.vue apps/web-antd/src/views/battery/archive/document-list/index.vue`，未新增报错。
+5. 已在 Safari 隔离浏览器确认 `文档列表` 页面仍能正常打开。
+6. `项目信息管理` 的 Safari 标签当前停在未进入系统的空壳页，本轮未完成登录后弹窗视觉复核。
+
+### 遗留问题
+
+1. `项目信息管理` 新建项目弹窗仍需在登录态下复核 `进场信息` 的对齐效果，以及 `招采信息` 中“开标日期”字段宽度是否完全符合预期。
+2. `文档列表` 维护信息已切回平台横向录入预设，仍建议你刷新后确认标题到输入框的距离是否已恢复为和 `施工管理` 一致。
+
+### 平台治理影响
+
+1. 本轮发现的 ant-design-vue 原生组件问题：真正造成大间距的是 `label.ant-form-item-no-colon::after` 伪元素占位以及页面手写的横向 label 规则，而不是平台表单组件本身失效。
+2. 已通过平台层解决的问题：已把 `施工管理` 同款的横向录入标签规则沉到 `PlatformForm` 预设，后续同类左右录入表单可以直接复用。
+3. 哪些仍是页面临时实现：`项目信息管理` 的动态行比例仍是页面级布局规则，暂未上升为平台组件能力。
+4. 哪些页面子组件未来必须回收为平台组件：后续若还有“维护信息 / 基础信息”这类两列横向录入表单，优先直接使用 `PlatformEditForm label-preset=\"inline-compact\"`。
+5. 后续新页面禁止继续复制哪些实现：不要在业务页再单独写固定标签列宽，也不要遗漏 `label::after` 的关闭规则后再手工补间距。
+6. 哪些样式应进入主题变量或统一样式入口：横向录入表单的标签列宽、右侧间距和 `::after` 关闭规则已进入平台表单统一样式入口。
+7. 当前仍存在的页面级样式债务：`项目信息管理` 动态录入行仍是页面 scoped CSS；`文档列表` 的横向 label 债务本轮已回收到平台层。
+
+### 任务名称
+
+平台表格正文文字色与选择列控件可视性优化
+
+### 完成内容
+
+1. 将 Ant Table 正文单元格文字颜色从次级文本色调整为主文本色，使列表正文回到更清晰的 `#1E2024` 视觉层级。
+2. 将 Vxe 表格正文单元格文字颜色同步调整为主文本色，避免两套平台表格实现出现正文色分叉。
+3. 在表格选择列样式层统一加固单选框/复选框尺寸为 `20px * 20px`，并将未选中描边统一为 `#E5E7EB`。
+4. 为表格选择列单选框补充内部圆点尺寸和选中态描边颜色，后续又修正到外层 `.ant-radio / .ant-checkbox` 生效节点，避免继续误改 `.inner` 层。
+
+### 修改了哪些文件
+
+1. `packages/styles/src/antd/index.css`
+2. `packages/effects/plugins/src/vxe-table/style.css`
+
+### 涉及哪些页面或组件
+
+1. 平台表格样式层：Ant Table
+2. 平台表格适配层：Vxe Table
+3. 选择列控件：表格内 `Radio` / `Checkbox`
+
+### 验证结果
+
+1. 已执行 `git diff --check -- packages/styles/src/antd/index.css packages/effects/plugins/src/vxe-table/style.css`，通过。
+2. 已执行 `./node_modules/.bin/eslint packages/styles/src/antd/index.css packages/effects/plugins/src/vxe-table/style.css`。
+3. 其中两个 CSS 文件均被当前 ESLint 配置忽略，未出现新的错误。
+4. 已在 Safari 隔离浏览器实测 `/project/information`，正文文字颜色肉眼明显加深。
+5. 已在 Safari 隔离浏览器实测 `/battery/archive/document-list`，选择列圆框尺寸和描边清晰可见；后续又根据反馈继续把未选中描边回调到 `#E5E7EB`。
+
+### 遗留问题
+
+1. 当前只对表格选择列内的单选/复选框做了尺寸与描边加固，不影响表单区的单选/复选框；后续如果表单区也要统一，再单独评估。
+
+### 平台治理影响
+
+1. 本轮发现的 ant-design-vue 原生组件问题：表格正文默认走次级文本色时，对业务数据可读性偏弱；选择列的单选框/复选框默认描边在浅背景下不够清晰。
+2. 已通过平台层解决的问题：正文文字色和选择列控件可视性都已在平台表格样式源头收口；单选框描边最终命中的是外层 `.ant-radio / .ant-checkbox`，不是 `.ant-radio-inner / .ant-checkbox-inner`。
+3. 哪些仍是页面临时实现：无。
+4. 哪些页面子组件未来必须回收为平台组件：无新增，当前已在平台样式层完成。
+5. 后续新页面禁止继续复制哪些实现：不要再在业务页局部放大选择列单选框/复选框，也不要单页覆盖表格正文文字色。
+6. 哪些样式应进入主题变量或统一样式入口：表格正文色和选择列控件尺寸/描边继续由平台表格样式入口统一维护。
+7. 当前仍存在的页面级样式债务：无新增。
+
+### 任务名称
+
 平台组件修改流程优化：先源码再改动
 
 ### 完成内容
@@ -6119,3 +6257,44 @@ Figma 截图驱动顶部导航栏源组件样式改造
 5. 后续新页面禁止继续复制哪些实现：不要在业务页为了回到页面整体滚动而局部覆盖 `scroll.y` 或硬写容器高度。
 6. 哪些样式应进入主题变量或统一样式入口：本轮属于默认交互策略调整，无新增 token 诉求。
 7. 当前仍存在的页面级样式债务：无新增页面级样式债务。
+
+### 任务名称
+
+施工管理筛选区标签去冒号统一
+
+### 完成内容
+
+1. 确认 `/battery/construction` 的筛选字段没有在页面里手写冒号，实际冒号来自 `PlatformQueryPanel` 继承的 ant-design-vue 默认标签样式。
+2. 在 `PlatformQueryPanel` 内统一隐藏查询字段标签尾部的默认冒号，避免施工管理页继续出现“项目年度：”“状态：”这类不一致写法。
+3. 本轮未在施工管理页单独打补丁，改动直接收口到平台查询面板层。
+
+### 修改了哪些文件
+
+1. `apps/web-antd/src/components/platform/form/platform-query-panel.vue`
+2. `docs/project-log.md`
+3. `docs/todo-next.md`
+
+### 涉及哪些页面或组件
+
+1. 平台组件：`PlatformQueryPanel`
+2. 受影响页面：所有复用 `PlatformQueryPanel` 的标准查询列表页
+
+### 验证结果
+
+1. 已执行 `git diff --check -- apps/web-antd/src/components/platform/form/platform-query-panel.vue`，结果通过。
+2. 已在 `apps/web-antd` 拉起本地 Vite，`curl -I http://127.0.0.1:5173/battery/construction` 返回 `200 OK`。
+3. 本轮未做隔离浏览器截图级验证，未操作用户系统 Chrome。
+
+### 遗留问题
+
+1. 仍需在隔离浏览器里肉眼确认：施工管理页以及其它复用 `PlatformQueryPanel` 的查询页，标签尾部都已去掉冒号且对齐未受影响。
+
+### 平台治理影响
+
+1. 本轮发现的 ant-design-vue 原生组件问题：查询表单标签默认继承了 Antdv 冒号表现，与当前系统筛选区视觉规范不一致。
+2. 已通过平台层解决的问题：标准查询区标签尾部的默认冒号已统一在 `PlatformQueryPanel` 层关闭。
+3. 仍是页面临时实现的问题：无，本轮未在施工管理页追加页面级样式覆盖。
+4. 哪些页面子组件未来必须回收为平台组件：无新增页面子组件，本轮直接收口到现有查询面板组件。
+5. 后续新页面禁止继续复制哪些实现：不要再在业务页用 scoped CSS 单独覆盖筛选标签冒号。
+6. 哪些样式应进入主题变量或统一样式入口：查询标签标点规范继续优先放在平台查询面板统一维护，不下放到业务页。
+7. 当前仍存在的页面级样式债务：其它未迁移到 `PlatformQueryPanel` 的历史筛选区，如仍存在冒号，需要后续按页面接入进度继续回收。

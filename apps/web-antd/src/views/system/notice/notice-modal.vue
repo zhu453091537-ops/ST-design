@@ -13,10 +13,11 @@ import { DictEnum } from '@vben/constants';
 import { $t } from '@vben/locales';
 import { cloneDeep } from '@vben/utils';
 
-import { Form, FormItem, Input, RadioGroup } from 'antdv-next';
+import { RadioGroup } from 'antdv-next';
 import { pick } from 'lodash-es';
 
 import { noticeAdd, noticeInfo, noticeUpdate } from '#/api/system/notice';
+import { PlatformEditForm, PlatformFormItem, PlatformInput } from '#/components/platform';
 import { Tinymce } from '#/components/tinymce';
 import { contentWithOssIdTransform } from '#/components/tinymce/src/helper';
 import { getDictOptions } from '#/utils/dict';
@@ -121,7 +122,7 @@ async function handleConfirm() {
     modalApi.lock(true);
     await formInstance.value?.validate();
     // 可能会做数据处理 使用cloneDeep深拷贝
-    const data = cloneDeep(formData.value);
+  const data = cloneDeep(formData.value);
     await (isUpdate.value ? noticeUpdate(data) : noticeAdd(data));
     resetInitialized();
     emit('reload');
@@ -142,27 +143,27 @@ async function handleClosed() {
 
 <template>
   <BasicModal :title="title">
-    <Form layout="vertical" ref="formInstance" :model="formData">
-      <FormItem
+    <PlatformEditForm layout="vertical" ref="formInstance" :model="formData">
+      <PlatformFormItem
         label="公告标题"
         name="noticeTitle"
         :rules="formRules.noticeTitle"
       >
-        <Input
+        <PlatformInput
           :placeholder="$t('ui.formRules.required')"
           v-model:value="formData.noticeTitle"
         />
-      </FormItem>
+      </PlatformFormItem>
       <div class="grid sm:grid-cols-1 lg:grid-cols-2">
-        <FormItem label="公告状态" name="status" :rules="formRules.status">
+        <PlatformFormItem label="公告状态" name="status" :rules="formRules.status">
           <RadioGroup
             button-style="solid"
             option-type="button"
             v-model:value="formData.status"
             :options="getDictOptions(DictEnum.SYS_NOTICE_STATUS)"
           />
-        </FormItem>
-        <FormItem
+        </PlatformFormItem>
+        <PlatformFormItem
           label="公告类型"
           name="noticeType"
           :rules="formRules.noticeType"
@@ -173,15 +174,15 @@ async function handleClosed() {
             v-model:value="formData.noticeType"
             :options="getDictOptions(DictEnum.SYS_NOTICE_TYPE)"
           />
-        </FormItem>
+        </PlatformFormItem>
       </div>
-      <FormItem
+      <PlatformFormItem
         label="公告内容"
         name="noticeContent"
         :rules="formRules.noticeContent"
       >
         <Tinymce v-model="formData.noticeContent" />
-      </FormItem>
-    </Form>
+      </PlatformFormItem>
+    </PlatformEditForm>
   </BasicModal>
 </template>

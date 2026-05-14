@@ -170,7 +170,7 @@ html[data-vxe-ui-theme='dark'] .vxe-grid {
 
 .vxe-grid .vxe-body--column {
   height: var(--st-table-row-height);
-  color: hsl(var(--st-color-text-secondary));
+  color: hsl(var(--st-color-text-primary));
 }
 
 .vxe-grid .vxe-button.type--button,

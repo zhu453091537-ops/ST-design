@@ -6,6 +6,9 @@
 
 | 优先级 | 事项 | 状态 | 说明 |
 | --- | --- | --- | --- |
+| 高 | 数据录入平台规则补充与现状审计 | 已完成 | 已在 `AGENTS.md` 与 `docs/decision-records.md` 固化“数据录入必须走平台表单组件体系”的长期规则；已审计当前交付范围，确认上下录入表单统一走 `PlatformEditForm layout=\"vertical\"`，左右录入表单统一走 `PlatformEditForm layout=\"horizontal\" + label-preset=\"inline-compact\"` 或 `PlatformQueryPanel`，当前未发现交付范围内再直接新写原生 `Form / FormItem` 做业务录入。 |
+| 高 | 项目信息管理新建项目弹窗与文档列表维护信息表单微调 | 已完成，待视觉确认 | 已收口 `/project/information` 新建项目弹窗里 `进场信息` 的动态行布局，并补齐“开标日期”所在列的控件满宽；同时已在 `PlatformForm` 新增 `label-preset=\"inline-compact\"` 横向录入预设，把 `施工管理` 那套左右 label 规则沉到平台层，再让 `/battery/archive/document-list` 直接复用。当前仍需在登录态下复核 `项目信息管理` 弹窗视觉，并由你刷新确认 `文档列表` 的标题到输入框间距是否已与 `施工管理` 一致。 |
+| 高 | 平台表格正文文字色与选择列控件可视性优化 | 已完成 | 已将表格正文文字统一提到主文本色，并在表格选择列内把单选框/复选框统一加固为 `20px * 20px`、未选中描边 `#E5E7EB`；本轮已修正到外层 `.ant-radio / .ant-checkbox` 源节点，避免继续改错到 `.inner` 层。 |
 | 高 | 平台组件修改流程优化：先源码再改动 | 已完成 | 已把“先读源码和生效链路，再决定修改点”的流程写入 `AGENTS.md` 和 `docs/decision-records.md`；后续所有 Table、Modal、Drawer、Menu、Tree、Form、Select 等通用组件问题都默认按这条顺序排查。 |
 | 高 | 平台表格选中行背景色改为 `#E5F5EC` | 已完成 | 已在 token、Ant Table 主题注入、`PlatformTable` 固定列样式和 `#/adapter/vxe-table` 选中态变量统一收口；已在 Safari 的 `/battery/archive/document-list` 实测选中行浅绿色背景生效，后续只需正常沿用。 |
 | 高 | 智能考勤管理 - 档案管理 - 文档列表右侧内容页 | 已完成，待你视觉确认 | 已完成左侧搜索树、右侧标题区、文档列表表格、维护信息和底部固定按钮接入；空白根因已确认并修复为父级菜单 `档案管理` 缺少 `ParentView` 路由承载。下一步只需你确认页面结构和视觉是否符合预期，如需再微调间距或字段展示再继续。 |
@@ -263,6 +266,8 @@
 21. `/project/evaluation` 后续建议补充评估详情、评估模板配置、验收附件和导出能力；当前发起评估只是前端模拟流程。
 22. 所有典型页面、截图页面、Figma 页面或业务右侧内容页收尾时，必须补“平台治理影响”章节，不得只写完成和验证。
 23. 等用户确认后，再开始下一步具体平台组件改造、方案设计或代码修改。
+
+| 2026-05-13 | 已完成 | 已完成施工管理筛选区标签去冒号统一：确认冒号来源于 `PlatformQueryPanel` 的 Antdv 默认标签表现，并在平台查询面板层统一关闭；`git diff --check` 通过，`/battery/construction` 返回 `200 OK`，仍待隔离浏览器肉眼确认其它查询页对齐表现。 |
 
 ## 暂时不处理的问题
 

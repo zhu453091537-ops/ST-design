@@ -11,9 +11,6 @@ import { addFullName, getPopupContainer } from '@vben/utils';
 import { FilterOutlined, RedoOutlined } from '@antdv-next/icons';
 import {
   Empty,
-  Form,
-  FormItem,
-  Input,
   InputSearch,
   Popover,
   Spin,
@@ -24,6 +21,7 @@ import { cloneDeep, debounce } from 'lodash-es';
 
 import { categoryTree } from '#/api/workflow/category';
 import { pageByTaskCopy } from '#/api/workflow/task';
+import { PlatformEditForm, PlatformFormItem, PlatformInput } from '#/components/platform';
 
 import { ApprovalCard, ApprovalPanel, CopyComponent } from '../components';
 import { bottomOffset } from './constant';
@@ -183,23 +181,24 @@ onMounted(async () => {
                 <div class="w-full border-b pb-[12px] text-[16px]">搜索</div>
               </template>
               <template #content>
-                <Form
+                <PlatformEditForm
                   :colon="false"
-                  :label-col="{ span: 6 }"
+                  label-preset="inline-compact"
                   :model="formData"
                   autocomplete="off"
                   class="w-[300px]"
+                  layout="horizontal"
                   @finish="() => reload(false)"
                 >
-                  <FormItem label="申请人">
+                  <PlatformFormItem label="申请人">
                     <!-- 弹窗关闭后仍然显示表单浮层 -->
                     <CopyComponent
                       v-model:user-list="selectedUserList"
                       @cancel="() => (popoverOpen = true)"
                       @finish="handleFinish"
                     />
-                  </FormItem>
-                  <FormItem label="流程分类">
+                  </PlatformFormItem>
+                  <PlatformFormItem label="流程分类">
                     <TreeSelect
                       v-model:value="formData.category"
                       :allow-clear="true"
@@ -212,20 +211,20 @@ onMounted(async () => {
                       tree-node-filter-prop="label"
                       tree-node-label-prop="fullName"
                     />
-                  </FormItem>
-                  <FormItem label="任务名称">
-                    <Input
+                  </PlatformFormItem>
+                  <PlatformFormItem label="任务名称">
+                    <PlatformInput
                       v-model:value="formData.nodeName"
                       placeholder="请输入"
                     />
-                  </FormItem>
-                  <FormItem label="流程编码">
-                    <Input
+                  </PlatformFormItem>
+                  <PlatformFormItem label="流程编码">
+                    <PlatformInput
                       v-model:value="formData.flowCode"
                       placeholder="请输入"
                     />
-                  </FormItem>
-                  <FormItem>
+                  </PlatformFormItem>
+                  <PlatformFormItem>
                     <div class="flex">
                       <a-button block html-type="submit" type="primary">
                         搜索
@@ -234,8 +233,8 @@ onMounted(async () => {
                         重置
                       </a-button>
                     </div>
-                  </FormItem>
-                </Form>
+                  </PlatformFormItem>
+                </PlatformEditForm>
               </template>
               <a-button>
                 <FilterOutlined />

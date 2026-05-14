@@ -180,7 +180,7 @@ function handleUploadChange(event: Event) {
           v-model:selected-keys="selectedTreeKeys"
           :default-expand-all="true"
           :loading="false"
-          search-placeholder="请输入"
+          search-placeholder="请输入文档类型/名称"
           :show-refresh="false"
           :tree-data="treeData"
           :virtual="false"
@@ -237,8 +237,8 @@ function handleUploadChange(event: Event) {
 
           <PlatformEditForm
             :colon="false"
-            :label-col="{ style: { width: '104px' } }"
             class="document-list-page__form"
+            label-preset="inline-compact"
             layout="horizontal"
           >
             <div class="document-list-page__form-grid">
@@ -358,40 +358,6 @@ function handleUploadChange(event: Event) {
 
 :deep(.document-list-page__form .ant-form-item) {
   margin-bottom: 14px;
-}
-
-:deep(.document-list-page__form .ant-form-item-row) {
-  display: flex;
-  align-items: center;
-}
-
-:deep(.document-list-page__form .ant-form-item-label) {
-  flex: 0 0 104px;
-  max-width: 104px;
-  padding: 0 12px 0 0;
-  text-align: right;
-  white-space: nowrap;
-}
-
-:deep(.document-list-page__form .ant-form-item-label > label) {
-  display: inline-flex;
-  width: 100%;
-  min-height: var(--st-control-height);
-  align-items: center;
-  justify-content: flex-end;
-}
-
-:deep(.document-list-page__form .ant-form-item-control) {
-  flex: 1;
-  min-width: 0;
-}
-
-:deep(.document-list-page__form .ant-form-item-control-input) {
-  min-height: var(--st-control-height);
-}
-
-:deep(.document-list-page__form .ant-form-item-control-input-content) {
-  width: 100%;
 }
 
 :deep(.document-list-page__tree .platform-tree-panel__surface) {

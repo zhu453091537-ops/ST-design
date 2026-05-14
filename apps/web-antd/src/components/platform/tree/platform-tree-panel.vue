@@ -193,13 +193,34 @@ function handleSearch() {
   gap: 8px;
 }
 
-.platform-tree-panel__toolbar :deep(.platform-input .ant-input) {
+.platform-tree-panel__toolbar :deep(.platform-input .ant-input-affix-wrapper) {
   min-height: 36px;
-  padding-inline: 12px;
+  padding-inline: 8px;
+}
+
+.platform-tree-panel__toolbar :deep(.platform-input .ant-input-affix-wrapper .ant-input) {
+  padding-inline: 0;
 }
 
 .platform-tree-panel__toolbar :deep(.platform-input .ant-input::placeholder) {
   color: hsl(var(--foreground) / 40%);
+}
+
+.platform-tree-panel__toolbar :deep(.platform-input .ant-input-suffix) {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.platform-tree-panel__toolbar :deep(.platform-input .ant-input-clear-icon) {
+  display: inline-flex;
+  width: 20px;
+  height: 20px;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  font-size: 20px;
+  line-height: 1;
 }
 
 .platform-tree-panel__content {

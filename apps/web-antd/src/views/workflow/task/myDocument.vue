@@ -11,9 +11,6 @@ import { getPopupContainer } from '@vben/utils';
 import { FilterOutlined, RedoOutlined } from '@antdv-next/icons';
 import {
   Empty,
-  Form,
-  FormItem,
-  Input,
   InputSearch,
   Popover,
   Spin,
@@ -22,6 +19,7 @@ import {
 import { cloneDeep, debounce } from 'lodash-es';
 
 import { pageByCurrent } from '#/api/workflow/instance';
+import { PlatformEditForm, PlatformFormItem, PlatformInput } from '#/components/platform';
 
 import { ApprovalCard, ApprovalPanel } from '../components';
 import { bottomOffset } from './constant';
@@ -163,27 +161,28 @@ const { refreshTab } = useTabs();
                 <div class="w-full border-b pb-[12px] text-[16px]">搜索</div>
               </template>
               <template #content>
-                <Form
+                <PlatformEditForm
                   :colon="false"
-                  :label-col="{ span: 6 }"
+                  label-preset="inline-compact"
                   :model="formData"
                   autocomplete="off"
                   class="w-[300px]"
+                  layout="horizontal"
                   @finish="() => reload(false)"
                 >
-                  <FormItem label="任务名称">
-                    <Input
+                  <PlatformFormItem label="任务名称">
+                    <PlatformInput
                       v-model:value="formData.nodeName"
                       placeholder="请输入"
                     />
-                  </FormItem>
-                  <FormItem label="流程编码">
-                    <Input
+                  </PlatformFormItem>
+                  <PlatformFormItem label="流程编码">
+                    <PlatformInput
                       v-model:value="formData.flowCode"
                       placeholder="请输入"
                     />
-                  </FormItem>
-                  <FormItem>
+                  </PlatformFormItem>
+                  <PlatformFormItem>
                     <div class="flex">
                       <a-button block html-type="submit" type="primary">
                         搜索
@@ -192,8 +191,8 @@ const { refreshTab } = useTabs();
                         重置
                       </a-button>
                     </div>
-                  </FormItem>
-                </Form>
+                  </PlatformFormItem>
+                </PlatformEditForm>
               </template>
               <a-button>
                 <FilterOutlined />

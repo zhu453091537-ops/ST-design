@@ -80,7 +80,11 @@ function isExpanded(slotProps: any) {
   align-self: center;
   border-radius: 6px;
   flex: 0 0 28px;
-  transition: background-color 0.16s ease;
+  background: transparent !important;
+}
+
+.platform-tree :deep(.ant-tree-switcher::before) {
+  transform: translate(1px, 1px);
 }
 
 .platform-tree__switcher {
@@ -92,14 +96,13 @@ function isExpanded(slotProps: any) {
   color: hsl(var(--st-color-tree-switcher));
   font-size: 18px;
   line-height: 1;
-  transform: translate(1px, 1px);
-  transition:
-    color 0.16s ease,
-    transform 0.16s ease;
+  transition: color 0.16s ease;
 }
 
-.platform-tree :deep(.ant-tree-switcher:hover) {
-  background: transparent;
+.platform-tree__switcher::before {
+  display: inline-block;
+  transform: rotate(0deg);
+  transition: transform 0.16s ease;
 }
 
 .platform-tree :deep(.ant-tree-node-content-wrapper:hover) {
@@ -124,7 +127,7 @@ function isExpanded(slotProps: any) {
   color: inherit;
 }
 
-.platform-tree__switcher.is-expanded {
-  transform: translate(1px, 1px) rotate(90deg);
+.platform-tree__switcher.is-expanded::before {
+  transform: rotate(90deg);
 }
 </style>

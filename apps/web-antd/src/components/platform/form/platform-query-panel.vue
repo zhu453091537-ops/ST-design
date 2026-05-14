@@ -271,6 +271,11 @@ function flattenNodes(nodes: VNode[]): VNode[] {
   color: hsl(var(--foreground));
 }
 
+.platform-query-panel__field :deep(.ant-form-item-label > label::after) {
+  display: none;
+  content: none;
+}
+
 .platform-query-panel__field :deep(.ant-form-item-control) {
   flex: 1;
   min-width: 0;
