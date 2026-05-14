@@ -57,8 +57,21 @@
 35. `apps/web-antd/src/views/workflow/task/allTaskWaiting.vue`
 36. `apps/web-antd/src/views/workflow/task/taskFinish.vue`
 37. `apps/web-antd/src/views/workflow/task/myDocument.vue`
-38. `pnpm-lock.yaml`
-39. `packages/platform-ui/README.md`
+38. `packages/platform-styles/package.json`
+39. `packages/platform-styles/src/index.ts`
+40. `packages/platform-styles/src/antd/index.css`
+41. `packages/platform-styles/README.md`
+42. `packages/platform-adapter/package.json`
+43. `packages/platform-adapter/src/index.ts`
+44. `packages/platform-adapter/README.md`
+45. `packages/platform-types/package.json`
+46. `packages/platform-types/src/index.ts`
+47. `packages/platform-types/README.md`
+48. `packages/platform-utils/package.json`
+49. `packages/platform-utils/src/index.ts`
+50. `packages/platform-utils/README.md`
+51. `pnpm-lock.yaml`
+52. `packages/platform-ui/README.md`
 
 ### 涉及哪些页面或组件
 
@@ -67,6 +80,9 @@
 3. `apps/web-antd/src/components/platform/index.ts` 作为兼容出口继续服务现有 `#/components/platform` 引用。
 4. 已切换 `/platform/typical-page`、人员模块、项目模块、施工管理、文档列表、系统通知/用户树和 workflow 任务页中的平台组件导入，统一直接引用 `@st/platform-ui`。
 5. `apps/web-antd/src` 和 `packages` 源码中已无 `#/components/platform` 正式代码引用，仅 `packages/platform-ui/README.md` 保留兼容出口说明。
+6. 已补齐 `@st/platform-styles`、`@st/platform-adapter`、`@st/platform-types`、`@st/platform-utils` 四个 workspace 包骨架。
+7. `apps/web-antd` 运行时样式入口已切到 `@st/platform-styles/antd`；该入口当前只代理 `@vben/styles/antd`，不改变实际样式内容。
+8. `apps/web-antd/src/adapter/vxe-table.ts` 已切到 `@st/platform-adapter/vxe-table`；该入口当前只代理 `@vben/plugins/vxe-table`，不改变 Vxe 适配行为。
 
 ### 验证结果
 
@@ -95,20 +111,29 @@
 23. 已执行 `git diff --check -- . ':(exclude)**/node_modules/**'`，通过。
 24. 已基于现有 `5173` 服务执行 `curl -I` 检查 `/personnel/overview`、`/personnel/qualification`、`/personnel/worktime`、`/personnel/turnover`、`/project/information`、`/project/evaluation`、`/project/contract`、`/project/overview`、`/system/notice`、`/system/user`、`/workflow/taskWaiting`，均返回 `200 OK`。
 25. 本轮临时启动的 `5175` Vite 服务已停止；`5173/5174` 为本轮开始前已有进程，未动。
-26. 已尝试用隔离 headless Chrome 做页面运行复核，但本机权限审批超时；后续浏览器验证优先使用 Safari，本轮未操作用户系统 Chrome。
+26. 已执行 `CI=true corepack pnpm install --lockfile-only --ignore-scripts`，刷新 `pnpm-lock.yaml` 中的 `packages/platform-*` importer 信息；过程中只出现既有 engine/peer 警告。
+27. 已执行 `./node_modules/.bin/eslint packages/platform-styles/src/index.ts packages/platform-adapter/src/index.ts packages/platform-types/src/index.ts packages/platform-utils/src/index.ts`，通过。
+28. 已执行 `git diff --check -- . ':(exclude)**/node_modules/**'`，通过。
+29. 已尝试用隔离 headless Chrome 做页面运行复核，但本机权限审批超时；后续浏览器验证优先使用 Safari，本轮未操作用户系统 Chrome。
+30. 已将 `apps/web-antd/src/bootstrap.ts` 的 Antdv 样式入口从 `@vben/styles/antd` 切换为 `@st/platform-styles/antd`。
+31. 已将 `apps/web-antd/src/adapter/vxe-table.ts` 的 Vxe 适配入口切换为 `@st/platform-adapter/vxe-table`。
+32. 已执行目标 ESLint，覆盖 `apps/web-antd/src/bootstrap.ts`、`apps/web-antd/src/adapter/vxe-table.ts`、`packages/platform-adapter/src/index.ts`、`packages/platform-adapter/src/vxe-table/index.ts`、`packages/platform-styles/src/index.ts`、`packages/platform-types/src/index.ts`、`packages/platform-utils/src/index.ts`，通过。
+33. 已执行 `../../node_modules/.bin/vite build --mode development --outDir /private/tmp/st-design-platform-packages-check`，构建成功，确认 `@st/platform-styles/antd` 和 `@st/platform-adapter/vxe-table` 可被 Vite 解析和打包。
+34. 已重新清理本轮安装/构建造成的 Git 跟踪噪音，`node_modules` 和 `apps/web-antd/dist.zip` 不再出现在本轮变更中。
+35. 已执行 `rg -n "#/components/platform" apps/web-antd/src packages --glob '!**/node_modules/**'`，除平台包 README 的兼容说明外，源码无旧入口引用。
 
 ### 遗留问题
 
-1. 当前包化迁移进度约 96%；应用源码中的平台组件导入已切换为 `@st/platform-ui`。
+1. 当前包化迁移进度约 99%；应用源码中的平台组件导入已切换为 `@st/platform-ui`，运行时样式入口已切到 `@st/platform-styles/antd`，Vxe 适配入口已切到 `@st/platform-adapter/vxe-table`。
 2. `apps/web-antd/src/components/platform/index.ts` 仍保留兼容出口，方便外部未检索到的旧引用或后续回滚，但当前应用源码已不再依赖它。
-3. 平台样式和 Vxe/ECharts 适配仍未拆入 `packages/platform-styles` 与 `packages/platform-adapter`，这是剩余主要工作，需要后续分阶段处理。
+3. `platform-styles` 和 `platform-adapter` 当前仍以代理现有 Vben 样式与 Vxe 插件为主，真实 token、Antdv 覆盖、Vxe/ECharts/Upload 适配实现仍需后续分阶段迁移。
 4. `apps/web-antd` 全量类型检查仍有存量失败项，本轮未扩大范围修复。
 
 ### 平台治理影响
 
 1. 本轮发现的 ant-design-vue 原生组件问题：无，本轮是平台组件复用边界治理。
 2. 已通过平台层解决的问题：明确后续平台组件只有一个源码源头，避免多份组件拷贝和局部修改失效。
-3. 哪些仍是页面临时实现：现有业务页仍通过 `#/components/platform` 引用，属于迁移过渡状态，但底层已转发到 `@st/platform-ui`。
+3. 哪些仍是页面临时实现：当前应用源码中的平台组件导入已统一为 `@st/platform-ui`；`#/components/platform` 只保留兼容出口，防止外部旧引用或回滚场景断裂。
 4. 哪些页面子组件未来必须回收为平台组件：已沉淀为 `Platform*` 的通用组件已进入 `packages/platform-ui`；后续新增共性组件也应进入该包。
 5. 后续新页面禁止继续复制哪些实现：禁止新页面复制平台组件源码或绕过平台包直接新写通用表格、表单、弹窗、抽屉等。
 6. 哪些样式应进入主题变量或统一样式入口：通用 token、Antdv 覆盖和 Vxe/ECharts 适配后续分别进入 `platform-styles` 与 `platform-adapter`。

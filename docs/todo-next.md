@@ -6,7 +6,7 @@
 
 | 优先级 | 事项 | 状态 | 说明 |
 | --- | --- | --- | --- |
-| 高 | 平台组件 workspace 包化迁移 | 约 92%，已完成两批新增/触达页面直接引用验证 | 已明确不使用手工 symlink 和多份组件拷贝；已新增 `docs/platform-package-governance.md` 与 `@st/platform-ui` 包，平台组件源码已迁入 `packages/platform-ui/src/**`，`apps/web-antd/src/components/platform/index.ts` 保留兼容出口并转发平台包，`packages/platform-ui/README.md` 已补充使用规则。已将典型页、人员详情、施工管理、文档列表、项目文档、项目进度小范围直接切到 `@st/platform-ui`，并验证 `/platform/typical-page`、`/personnel/overview/detail`、`/battery/construction`、`/battery/archive/document-list`、`/project/document`、`/project/progress` 正常。下一步继续只在新增或实际触达页面中使用平台包，不批量替换存量页面。 |
+| 高 | 平台组件 workspace 包化迁移 | 约 99%，应用引用、样式入口和 Vxe 适配入口已收口 | 已明确不使用手工 symlink 和多份组件拷贝；平台组件源码已迁入 `packages/platform-ui/src/**`，应用源码中的平台组件导入已统一为 `@st/platform-ui`，`apps/web-antd/src/components/platform/index.ts` 仅保留兼容出口。`@st/platform-styles`、`@st/platform-adapter`、`@st/platform-types`、`@st/platform-utils` 四个包骨架已补齐，`apps/web-antd` 运行时样式入口已切到 `@st/platform-styles/antd`，Vxe 适配入口已切到 `@st/platform-adapter/vxe-table`。当前两者仍是代理入口，下一步只做真实 token / Antdv 覆盖 / Vxe-ECharts-Upload 适配实现的分阶段迁移。 |
 | 高 | 数据录入平台规则补充与现状审计 | 已完成 | 已在 `AGENTS.md` 与 `docs/decision-records.md` 固化“数据录入必须走平台表单组件体系”的长期规则；已审计当前交付范围，确认上下录入表单统一走 `PlatformEditForm layout=\"vertical\"`，左右录入表单统一走 `PlatformEditForm layout=\"horizontal\" + label-preset=\"inline-compact\"` 或 `PlatformQueryPanel`，当前未发现交付范围内再直接新写原生 `Form / FormItem` 做业务录入。 |
 | 高 | 项目信息管理新建项目弹窗与文档列表维护信息表单微调 | 已完成，待视觉确认 | 已收口 `/project/information` 新建项目弹窗里 `进场信息` 的动态行布局，并补齐“开标日期”所在列的控件满宽；同时已在 `PlatformForm` 新增 `label-preset=\"inline-compact\"` 横向录入预设，把 `施工管理` 那套左右 label 规则沉到平台层，再让 `/battery/archive/document-list` 直接复用。当前仍需在登录态下复核 `项目信息管理` 弹窗视觉，并由你刷新确认 `文档列表` 的标题到输入框间距是否已与 `施工管理` 一致。 |
 | 高 | 平台表格正文文字色与选择列控件可视性优化 | 已完成 | 已将表格正文文字统一提到主文本色，并在表格选择列内把单选框/复选框统一加固为 `20px * 20px`、未选中描边 `#E5E7EB`；本轮已修正到外层 `.ant-radio / .ant-checkbox` 源节点，避免继续改错到 `.inner` 层。 |
@@ -164,6 +164,7 @@
 
 | 日期 | 状态 | 说明 |
 | --- | --- | --- |
+| 2026-05-14 | 已收尾，进度约 99% | 平台组件 workspace 包化迁移已完成当前安全阶段：应用源码平台组件导入统一为 `@st/platform-ui`，运行时样式入口切到 `@st/platform-styles/antd`，Vxe 适配入口切到 `@st/platform-adapter/vxe-table`；`node_modules` 与 `apps/web-antd/dist.zip` 生成噪音已从工作区变更中清理，目标 ESLint、`git diff --check` 和构建验证通过。剩余只做真实 token / Antdv 覆盖 / Vxe-ECharts-Upload 适配实现的分阶段迁移。 |
 | 2026-05-08 | 已完成，待视觉复核 | 已按用户截图批注微调 `/personnel/worktime` 的 `超工时人员预警` 区块：标题区仅保留下方 24px padding，预警卡片网格仅保留上方 24px padding；本轮只改页面布局类，不改平台组件、token 或全局样式。 |
 | 2026-05-08 | 已完成，待视觉复核 | 已完成 `人员全生命周期 - 变动与流失率统计` 第一版：新增 `/personnel/turnover` 与页面专用数据源；菜单位于 `资质与准入管控` 下方、`工时与兼职管控` 上方；统计卡复用 `PlatformStatCard`，承包商流失率复用 `PlatformEchartsPanel` + ECharts；未改动人员总览、人员档案、资质与工时页面主体；目标 ESLint 与相关路由 HTTP 检查通过，全量 `vue-tsc` 仍因既有错误失败但不包含本轮文件。 |
 | 2026-05-08 | 已完成，待视觉复核 | 已完成平台源组件统一：顶部系统名左侧使用本地 `/LOGO.svg`；`PlatformTable` 和 Vxe 适配层默认提供序号列；新增 `PlatformSectionTitle` 并接入指定标题；删除超工时说明文案；统计卡、超工时卡和待评估卡 hover 仅上移；目标 ESLint、`git diff --check` 和相关路由 HTTP 检查通过，应用级 `vue-tsc` 仍有既有存量错误。 |
@@ -246,7 +247,7 @@
 
 1. 用户输入“开工继续”或提出下一个开发需求后，先读取 `AGENTS.md`、`docs/project-log.md`、`docs/decision-records.md`、`docs/todo-next.md`。
 2. 输出项目接续摘要，明确当前项目目标、技术栈、最近完成内容、未完成事项、关键规则和建议执行顺序。
-3. 下一轮第一优先级：继续按已完成业务页的收尾与复核推进，不再展开新的平台规划方向。
+3. 下一轮第一优先级：在不扩大范围的前提下继续平台包化收尾，只做 `platform-styles` / `platform-adapter` 内真实 token、Antdv 覆盖、Vxe/ECharts/Upload 适配实现的分阶段迁移。
 4. 优先在 `/project/information` 与 `/personnel/overview` 做一次视觉复核，确认顶部筛选区移除后页面节奏正常，且表头筛选仍满足当前演示目的。
 5. 如需新增独立验证页，只能在不影响 `apps/web-antd` 当前开发的前提下单独评估，不批量迁移现有组件或业务页面。
 6. 如继续处理 `/project/evaluation`，优先判断右侧评估记录表格在更窄浏览器宽度下是否还需要进一步微调列宽或响应式策略。
@@ -267,7 +268,7 @@
 21. `/project/evaluation` 后续建议补充评估详情、评估模板配置、验收附件和导出能力；当前发起评估只是前端模拟流程。
 22. 所有典型页面、截图页面、Figma 页面或业务右侧内容页收尾时，必须补“平台治理影响”章节，不得只写完成和验证。
 23. 等用户确认后，再开始下一步具体平台组件改造、方案设计或代码修改。
-24. 平台组件包化迁移下一步进入新增页面引用规范：新增页面优先从 `@st/platform-ui` 引用；存量页面继续保留 `#/components/platform` 兼容出口，避免为了路径统一做大批量无收益改动。
+24. 平台组件包化迁移下一步进入适配实现迁移：新增页面继续优先从 `@st/platform-ui` 引用；`#/components/platform` 只作为兼容出口保留，不再作为应用源码的默认引用入口。
 
 | 2026-05-13 | 已完成 | 已完成施工管理筛选区标签去冒号统一：确认冒号来源于 `PlatformQueryPanel` 的 Antdv 默认标签表现，并在平台查询面板层统一关闭；`git diff --check` 通过，`/battery/construction` 返回 `200 OK`，仍待隔离浏览器肉眼确认其它查询页对齐表现。 |
 
@@ -294,7 +295,7 @@
 8. 如果把分页、操作列、表格状态切换等场景直接写入 Antdv 全局样式，可能误伤全项目其他原生 Antdv 场景；应优先沉淀到平台组件边界。
 9. 当前 `/system/user` 真实接口不可用；如果未恢复后端就继续开发，容易被迫引入假数据，违背“典型页面不是假数据页面”的规则。
 10. 当前 `PlatformTable` 基于 ant-design-vue `Table`，但真实业务页大量使用 `useVbenVxeGrid`；如果不先治理 Vxe 适配层，后续可能出现两套表格平台能力并行维护的问题。
-11. 当前 `#/components/platform` 只在典型验证页接入，真实业务页继续直接引用 `antdv-next` 属于存量事实；后续迁移需要分批推进，避免一次性影响权限、接口、弹窗和表格行为。
+11. 当前平台组件源码已迁入 `packages/platform-ui`，应用源码平台组件导入已统一为 `@st/platform-ui`；但仍有真实业务页会直接使用 `antdv-next` 或 `useVbenVxeGrid`，后续治理应分批推进，避免一次性影响权限、接口、弹窗和表格行为。
 12. 顶部一级菜单默认子路由跳转已覆盖当前 Mock 菜单；如果后续真实后端菜单存在隐藏、禁用、外链和多层空父级混合场景，需要继续做一次真实菜单抽查。
 13. 本轮验证端口曾使用 `http://127.0.0.1:5672/` 和 `http://127.0.0.1:5673/`；`5673` 已在合同付款 mini bar 验证后停止，下次接续时必须以实际 `lsof` 或新启动结果为准，不要直接沿用当前浏览器端口状态。
 14. 当前预览已删除可见的 Vben 示例模块入口；如后续需要业务模块，应按真实业务范围重新接入，避免直接恢复示例模块造成平台范围混乱。

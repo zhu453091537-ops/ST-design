@@ -6,7 +6,6 @@ import { registerLoadingDirective } from '@vben/common-ui/es/loading';
 import { preferences } from '@vben/preferences';
 import { initStores } from '@vben/stores';
 import '@vben/styles';
-import '@vben/styles/antd';
 
 import { useTitle } from '@vueuse/core';
 
@@ -18,6 +17,8 @@ import { initSetupVbenForm } from './adapter/form';
 import App from './app.vue';
 import { router } from './router';
 import { initPopupContext } from './utils/context';
+
+import '@st/platform-styles/antd';
 
 import './assets/fonts/index.css';
 import './assets/iconfont/iconfont.css';

@@ -113,6 +113,13 @@ import { PlatformTable } from '#/components/platform';
 1. 平台 UI、样式和适配职责清晰。
 2. `apps/web-antd` 只消费平台能力，不维护第二份平台源码。
 
+当前状态：
+
+1. `@st/platform-styles`、`@st/platform-adapter`、`@st/platform-types`、`@st/platform-utils` 的 workspace 包骨架已创建。
+2. `apps/web-antd` 运行时样式入口已切到 `@st/platform-styles/antd`；该入口当前只代理 `@vben/styles/antd`，用于先收口引用边界，不改变实际样式内容。
+3. `apps/web-antd/src/adapter/vxe-table.ts` 已切到 `@st/platform-adapter/vxe-table`；该入口当前只代理 `@vben/plugins/vxe-table`，用于先收口适配层引用边界。
+4. 真实 token、Antdv 覆盖、Vxe、ECharts、Upload 等实现仍需后续按页面和验证范围分批迁移，不在本阶段一次性搬空。
+
 ## 交付包影响
 
 ### 预览包

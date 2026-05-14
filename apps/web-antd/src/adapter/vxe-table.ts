@@ -1,15 +1,14 @@
 import type {
   UseVbenVxeGrid,
   VxeGridPropTypes,
-} from '@vben/plugins/vxe-table';
+} from '@st/platform-adapter/vxe-table';
 
 import { h } from 'vue';
 
 import {
   setupVbenVxeTable,
   useVbenVxeGrid as useBaseVbenVxeGrid,
-} from '@vben/plugins/vxe-table';
-
+} from '@st/platform-adapter/vxe-table';
 import { Button, Image } from 'antdv-next';
 
 import { useVbenForm } from './form';
@@ -190,7 +189,7 @@ function withPlatformVxeGridOptions(
 export const useVbenVxeGrid = ((options: any) =>
   useBaseVbenVxeGrid(withPlatformVxeGridOptions(options))) as UseVbenVxeGrid;
 
-export type * from '@vben/plugins/vxe-table';
+export type * from '@st/platform-adapter/vxe-table';
 
 /**
  * 判断vxe-table的复选框是否选中
