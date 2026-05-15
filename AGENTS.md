@@ -125,7 +125,7 @@
 1. 平台组件包：`packages/platform-ui`
 2. 迁移过渡兼容出口：`apps/web-antd/src/components/platform/index.ts`
 3. Vben/Vxe 适配层：`packages/platform-adapter`；`apps/web-antd/src/adapter/vxe-table.ts` 只保留业务侧表单注入和兼容导出
-4. 项目全局样式和 token：如 `packages/platform-styles`、`packages/styles`、设计 token
+4. 项目全局样式和 token：`packages/platform-styles`，其中 `@st/platform-styles/tokens` 承载平台 CSS 变量，`@st/platform-styles/antd` 承载 Ant Design Vue 全局覆盖，`@st/platform-styles/vxe-table` 承载 Vxe 专属覆盖
 5. 组件验证页：`apps/web-antd/src/views/platform/typical-page/index.vue`
 
 `/platform/typical-page` 只作为组合验证场，不作为通用视觉样式最终落点。页面 scoped CSS 只允许处理页面布局，如分栏、间距、高度、滚动区域。

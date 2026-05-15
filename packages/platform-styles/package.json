@@ -15,6 +15,9 @@
     "./antd": {
       "default": "./src/antd/index.css"
     },
+    "./tokens": {
+      "default": "./src/tokens/index.css"
+    },
     "./vxe-table": {
       "default": "./src/vxe-table/index.css"
     }

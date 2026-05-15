@@ -20,6 +20,9 @@
 10. 将 ST-design Vxe 默认配置、默认序号列包装、工具栏默认项、`CellImage` / `CellLink` 渲染器、排序参数辅助方法和复选框选中判断迁移到 `packages/platform-adapter/src/vxe-table/index.ts`。
 11. 将 `apps/web-antd/src/adapter/vxe-table.ts` 收窄为业务侧 `useVbenForm` 注入与兼容导出，后续业务页面继续通过原入口使用 Vxe 表格，不需要感知平台包内部迁移。
 12. 为 `@st/platform-adapter` 补齐 `vue` 与 `antdv-next` 依赖，并通过 `pnpm-lock.yaml` 固化 workspace 解析结果。
+13. 新增 `@st/platform-styles/tokens`，将 ST-design 平台 CSS 变量从 Vben core design token 文件中迁入 `packages/platform-styles/src/tokens/index.css`。
+14. `@st/platform-styles/antd` 和 `@st/platform-styles/vxe-table` 均先导入平台 token 入口，形成“tokens -> Antdv 覆盖 / Vxe 覆盖”的清晰边界。
+15. Vben core design token 文件继续保留通用主题变量，并通过 `var(--st-*)` 消费平台 token，不再直接维护平台变量源值。
 
 ### 修改了哪些文件
 
@@ -77,6 +80,9 @@
 52. `packages/platform-ui/README.md`
 53. `apps/web-antd/src/adapter/vxe-table.ts`
 54. `packages/platform-adapter/src/vxe-table/index.ts`
+55. `packages/platform-styles/src/tokens/index.css`
+56. `packages/@core/base/design/src/design-tokens/default.css`
+57. `packages/@core/base/design/src/design-tokens/dark.css`
 
 ### 涉及哪些页面或组件
 
@@ -88,6 +94,7 @@
 6. 已补齐 `@st/platform-styles`、`@st/platform-adapter`、`@st/platform-types`、`@st/platform-utils` 四个 workspace 包骨架。
 7. `apps/web-antd` 运行时样式入口已切到 `@st/platform-styles/antd`；该入口当前只代理 `@vben/styles/antd`，不改变实际样式内容。
 8. `@st/platform-adapter/vxe-table` 已承载 ST-design 默认 Vxe 适配逻辑；`apps/web-antd/src/adapter/vxe-table.ts` 只保留业务侧 `useVbenForm` 注入和兼容导出。
+9. `@st/platform-styles/tokens` 已承载 ST-design 平台 CSS 变量；`@st/platform-styles/antd` 和 `@st/platform-styles/vxe-table` 均从该入口读取平台 token。
 
 ### 验证结果
 
@@ -131,12 +138,19 @@
 38. 已执行 `git diff --check -- . ':(exclude)**/node_modules/**'`，通过。
 39. 已执行 `../../node_modules/.bin/vite build --mode development --outDir /private/tmp/st-design-platform-adapter-check`，构建成功，确认平台 Vxe 适配包可被 `apps/web-antd` 解析和打包；构建过程中只出现既有 lightningcss `@reference` / `@apply` 警告。
 40. 已重新清理本轮安装/构建造成的 Git 跟踪噪音，`node_modules` 和 `apps/web-antd/dist.zip` 不再出现在本轮变更中。
+41. 已执行 `git diff --check -- . ':(exclude)**/node_modules/**'`，通过。
+42. 已执行 `./node_modules/.bin/eslint packages/platform-styles/src/index.ts`，通过。
+43. 已执行 `rg -n -g '*.css' --glob '!**/node_modules/**' -- '--st-color-brand:|--st-control-height:|--st-layout-section-gap:|--st-color-table-row-selected-bg:' packages/@core/base/design/src/design-tokens packages/platform-styles/src`，确认平台 token 源值已集中到 `packages/platform-styles/src/tokens/index.css`。
+44. 已执行 `../../node_modules/.bin/vite build --mode development --outDir /private/tmp/st-design-platform-styles-check`，构建成功，确认 `@st/platform-styles/tokens`、`@st/platform-styles/antd`、`@st/platform-styles/vxe-table` 可被 Vite 解析和打包；构建过程中只出现既有 lightningcss `@reference` / `@apply` 警告。
+45. 已基于新启动的临时 Vite 服务 `http://127.0.0.1:5175/` 执行 `curl -I` 检查 `/platform/typical-page`、`/workbench/index`、`/project/information`，均返回 `200 OK`。
+46. 已用 Safari 打开 `http://127.0.0.1:5175/platform/typical-page`，确认新服务未再出现 `@st/platform-adapter/echarts` 的 Vite overlay；旧 `5173` 服务仍停在旧解析状态，本轮未强杀用户已有服务。
+47. 已重新清理构建造成的 `apps/web-antd/dist.zip` 跟踪噪音。
 
 ### 遗留问题
 
 1. 当前包化迁移进度约 99%；应用源码中的平台组件导入已切换为 `@st/platform-ui`，运行时样式入口已切到 `@st/platform-styles/antd`，Vxe 适配入口已切到 `@st/platform-adapter/vxe-table`。
 2. `apps/web-antd/src/components/platform/index.ts` 仍保留兼容出口，方便外部未检索到的旧引用或后续回滚，但当前应用源码已不再依赖它。
-3. `platform-styles` 当前仍以代理现有 Vben 样式为主；`platform-adapter/vxe-table` 已承载 ST-design 默认 Vxe 包装逻辑，ECharts、Upload 适配实现仍需后续分阶段迁移。
+3. `platform-styles` 已形成 `tokens`、`antd`、`vxe-table` 三个入口；Antdv 覆盖尚未继续拆成 Button、Form、Table、Modal 等分文件，后续可按风险分阶段拆分。
 4. `apps/web-antd` 全量类型检查仍有存量失败项，本轮未扩大范围修复。
 
 ### 平台治理影响
@@ -146,7 +160,7 @@
 3. 哪些仍是页面临时实现：当前应用源码中的平台组件导入已统一为 `@st/platform-ui`；`#/components/platform` 只保留兼容出口，防止外部旧引用或回滚场景断裂。
 4. 哪些页面子组件未来必须回收为平台组件：已沉淀为 `Platform*` 的通用组件已进入 `packages/platform-ui`；后续新增共性组件也应进入该包。
 5. 后续新页面禁止继续复制哪些实现：禁止新页面复制平台组件源码或绕过平台包直接新写通用表格、表单、弹窗、抽屉等。
-6. 哪些样式应进入主题变量或统一样式入口：通用 token、Antdv 覆盖后续进入 `platform-styles`；ECharts / Upload 等适配后续进入 `platform-adapter`。
+6. 哪些样式应进入主题变量或统一样式入口：平台 CSS 变量进入 `@st/platform-styles/tokens`；Antdv 通用覆盖进入 `@st/platform-styles/antd`；Vxe 专属覆盖进入 `@st/platform-styles/vxe-table`；ECharts / Upload 等适配后续进入 `platform-adapter`。
 7. 当前仍存在的页面级样式债务：本阶段未处理页面级样式债务，先建立迁移规范。
 
 ### 任务名称

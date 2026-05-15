@@ -5,14 +5,15 @@
 Current status:
 
 1. Package boundary is reserved.
-2. `@st/platform-styles/antd` owns the current Ant Design Vue global overrides and platform CSS entry.
-3. `@vben/styles/antd` now only bridges to `packages/platform-styles/src/antd/index.css` for compatibility.
-4. `@st/platform-styles/vxe-table` owns stable Vxe table variables and global overrides; the Vben Vxe plugin style file only imports this platform entry.
-5. `apps/web-antd` already imports `@st/platform-styles/antd`; continue moving stable platform tokens and overrides into this package in small verified steps.
+2. `@st/platform-styles/tokens` owns ST-design platform CSS variables such as brand colors, spacing, radius, table dimensions, and component sizing.
+3. `@st/platform-styles/antd` owns the current Ant Design Vue global overrides and platform CSS entry, and imports the token entry first.
+4. `@vben/styles/antd` now only bridges to `packages/platform-styles/src/antd/index.css` for compatibility.
+5. `@st/platform-styles/vxe-table` owns stable Vxe table variables and global overrides, and imports the token entry first; the Vben Vxe plugin style file only imports this platform entry.
+6. `apps/web-antd` already imports `@st/platform-styles/antd`; continue moving stable platform tokens and overrides into this package in small verified steps.
 
 Migration order:
 
-1. Move stable platform tokens first.
+1. Keep stable platform tokens in `src/tokens/index.css`.
 2. Keep Ant Design Vue global overrides in `src/antd/index.css`.
 3. Keep Vxe table variables and Vxe-only global overrides in `src/vxe-table/index.css`.
 4. Keep app-specific layout CSS in `apps/web-antd`.
