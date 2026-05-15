@@ -1,0 +1,1 @@
+import{Lr as e,ur as t,vr as n}from"./antdv-next-Cj2QJkvO.js";import{t as r}from"./oss-config-hkR-W71r.js";var i=n({__name:`config`,setup(n){return(n,i)=>(e(),t(r))}});export{i as default};

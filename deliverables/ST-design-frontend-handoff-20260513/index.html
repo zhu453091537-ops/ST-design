@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ST-design 交付预览入口</title>
+    <style>
+      :root {
+        --brand: #00a870;
+        --bg: #f4f7fb;
+        --card: #ffffff;
+        --line: #dbe3ee;
+        --text: #1f2937;
+        --muted: #667085;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        display: grid;
+        min-height: 100vh;
+        margin: 0;
+        padding: 24px;
+        place-items: center;
+        color: var(--text);
+        font-family: "Microsoft YaHei", "PingFang SC", Arial, sans-serif;
+        background:
+          radial-gradient(circle at top left, rgba(0, 168, 112, 0.14), transparent 28%),
+          linear-gradient(180deg, #f9fbff 0%, var(--bg) 100%);
+      }
+
+      main {
+        width: min(680px, 100%);
+        padding: 32px;
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 22px;
+        box-shadow: 0 24px 64px rgba(15, 23, 42, 0.12);
+      }
+
+      .badge {
+        display: inline-flex;
+        padding: 7px 12px;
+        color: #087f5b;
+        font-size: 13px;
+        font-weight: 700;
+        background: rgba(0, 168, 112, 0.1);
+        border-radius: 999px;
+      }
+
+      h1 {
+        margin: 18px 0 12px;
+        font-size: 30px;
+        line-height: 1.25;
+      }
+
+      p {
+        margin: 0 0 12px;
+        color: var(--muted);
+        font-size: 15px;
+        line-height: 1.8;
+      }
+
+      code {
+        padding: 2px 6px;
+        color: #087f5b;
+        font-family: Consolas, "SFMono-Regular", Menlo, monospace;
+        background: rgba(0, 168, 112, 0.08);
+        border-radius: 6px;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <span class="badge">ST-design Frontend Handoff</span>
+      <h1>请双击预览启动器进入系统</h1>
+      <p>Windows 项目经理演示：双击 <code>Start-Preview-Windows.vbs</code>，会自动打开浏览器并进入登录页。</p>
+      <p>Mac 备用演示：双击 <code>Start-Preview-Mac.command</code>。</p>
+      <p>如果本页是通过启动器打开的 HTTP 地址访问，将自动进入登录页。</p>
+    </main>
+    <script>
+      if (location.protocol !== 'file:') {
+        location.replace('./preview/index.html#/auth/login');
+      }
+    </script>
+  </body>
+</html>

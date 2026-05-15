@@ -1,0 +1,1 @@
+import{i as e,r as t}from"./isFunction-DAIfHFfY.js";var n=`[object Symbol]`;function r(r){return typeof r==`symbol`||t(r)&&e(r)==n}export{r as t};

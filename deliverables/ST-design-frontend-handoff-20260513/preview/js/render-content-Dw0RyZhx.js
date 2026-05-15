@@ -1,0 +1,2 @@
+import{Ci as e,Si as t,Wn as n,vr as r,xi as i,xr as a}from"./antdv-next-Cj2QJkvO.js";var o=r({name:`RenderContent`,props:{content:{default:void 0,type:[Object,String,Function]},renderBr:{default:!1,type:Boolean}},setup(r,{attrs:o,slots:s}){return()=>{if(!r.content)return null;if(!((t(r.content)||i(r.content))&&r.content!==null))if(r.renderBr&&e(r.content)){let e=r.content.split(`
+`),t=[];for(let[n,r]of e.entries())t.push(a(`p`,{key:n},r));return t}else return r.content;return a(r.content,n(n({},o),{},{props:n(n({},r),o)}),s)}}});export{o as t};

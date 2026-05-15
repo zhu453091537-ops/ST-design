@@ -1,0 +1,1 @@
+import{Lr as e,fr as t}from"./antdv-next-Cj2QJkvO.js";import{t as n}from"./_plugin-vue_export-helper-DVsqMgR4.js";var r={},i={class:`size-full`,src:`http://localhost:8800/snail-job`};function a(n,r){return e(),t(`iframe`,i)}var o=n(r,[[`render`,a]]);export{o as default};

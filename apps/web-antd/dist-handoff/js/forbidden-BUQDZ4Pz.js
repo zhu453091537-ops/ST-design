@@ -1,0 +1,1 @@
+import{Lr as e,Wn as t,ur as n,vi as r,vr as i}from"./antdv-next-Cj2QJkvO.js";import{t as a}from"./fallback-DImvPmaa.js";var o=i(t(t({},{name:`Fallback403Demo`}),{},{__name:`forbidden`,setup(t){return(t,i)=>(e(),n(r(a),{status:`403`}))}}));export{o as default};

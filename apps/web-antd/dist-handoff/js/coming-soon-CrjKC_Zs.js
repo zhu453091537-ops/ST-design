@@ -1,0 +1,1 @@
+import{Lr as e,ur as t,vi as n,vr as r}from"./antdv-next-Cj2QJkvO.js";import{t as i}from"./fallback-DImvPmaa.js";var a=r({__name:`coming-soon`,setup(r){return(r,a)=>(e(),t(n(i),{status:`coming-soon`}))}});export{a as default};
