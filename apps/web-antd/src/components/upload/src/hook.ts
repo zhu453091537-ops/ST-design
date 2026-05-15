@@ -12,12 +12,8 @@ import type {
 
 import { computed, onUnmounted, ref, watch } from 'vue';
 
-import { $t } from '@vben/locales';
-
 import { Upload } from 'antdv-next';
 import { isFunction, isString } from 'lodash-es';
-
-import { ossInfo } from '#/api/system/oss';
 
 /**
  * 图片预览hook
@@ -217,7 +213,7 @@ export function useUpload(
   }
 
   function handleRemove(currentFile: UploadFile) {
-    function remove() {
+    const remove = () => {
       // fileList会自行处理删除 这里只需要处理ossId
       if (props.maxCount === 1) {
         bindValue.value = '';
@@ -231,28 +227,25 @@ export function useUpload(
       }
       // 触发remove事件
       emit('remove', currentFile);
-    }
+    };
 
     if (!props.removeConfirm) {
       remove();
       return true;
     }
 
-    return new Promise<boolean>((resolve) => {
-      window.modal.confirm({
-        title: $t('pages.common.tip'),
-        content: $t('component.upload.confirmDelete', [currentFile.name]),
-        okButtonProps: { danger: true },
-        centered: true,
-        onOk() {
-          resolve(true);
+    if (!isFunction(props.feedback?.confirmRemove)) {
+      return false;
+    }
+
+    return Promise.resolve(props.feedback.confirmRemove(currentFile)).then(
+      (confirmed) => {
+        if (confirmed) {
           remove();
-        },
-        onCancel() {
-          resolve(false);
-        },
-      });
-    });
+        }
+        return confirmed;
+      },
+    );
   }
 
   /**
@@ -264,7 +257,7 @@ export function useUpload(
   const beforeUpload: UploadProps['beforeUpload'] = (file) => {
     const isLtMax = file.size / 1024 / 1024 < props.maxSize!;
     if (!isLtMax) {
-      window.message.error($t('component.upload.maxSize', [props.maxSize]));
+      props.feedback?.showMaxSizeError?.(props.maxSize!);
       // 防止被加入文件列表 可以通过返回 Upload.LIST_IGNORE 实现。
       return Upload.LIST_IGNORE;
     }
@@ -296,7 +289,7 @@ export function useUpload(
       const res = await apiInstance;
       info.onSuccess!(res);
       if (props.showSuccessMsg) {
-        window.message.success($t('component.upload.uploadSuccess'));
+        props.feedback?.showUploadSuccess?.();
       }
       emit('success', info.file as File, res);
     } catch (error: any) {
@@ -331,7 +324,7 @@ export function useUpload(
       }
 
       const ids = value.split(',');
-      const resp = await ossInfo(ids);
+      const resp = isFunction(props.infoApi) ? await props.infoApi(ids) : [];
       function transformFile(info: OssFile) {
         const cb = { type: 'info', response: info } as const;
 

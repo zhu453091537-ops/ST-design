@@ -71,11 +71,20 @@ function normalizeModalWidth(value: unknown): ModalProps['width'] {
   return undefined;
 }
 
+function normalizeBoolean(value: unknown) {
+  if (typeof value === 'boolean') {
+    return value;
+  }
+  return undefined;
+}
+
 const modalAttrs = computed(() => {
   const {
     bodyStyle,
     class: modalClass,
     closable: _closable,
+    destroyOnClose,
+    destroyOnHidden,
     style,
     styles,
     title: _title,
@@ -101,6 +110,7 @@ const modalAttrs = computed(() => {
   const mergedSemanticStyles = normalizeSemanticStyles(styles);
 
   mergedSemanticStyles.body = {
+    ...mergedBodyStyle,
     ...normalizeStyle(mergedSemanticStyles.body),
     padding: '24px 40px 0',
   };
@@ -144,9 +154,9 @@ const modalAttrs = computed(() => {
 
   return {
     ...rest,
-    bodyStyle: mergedBodyStyle,
     class: mergedClassName,
     closable: false,
+    destroyOnHidden: normalizeBoolean(destroyOnHidden ?? destroyOnClose),
     style: mergedStyle,
     styles: mergedSemanticStyles,
     width: isFullscreen.value ? '100vw' : normalizeModalWidth(width),

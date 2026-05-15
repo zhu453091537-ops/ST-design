@@ -20,6 +20,11 @@ export interface UploadProgressEvent {
   total?: number;
 }
 
+export interface UploadApiOptions {
+  onUploadProgress?: (event: UploadProgressEvent) => void;
+  otherData?: Record<string, any>;
+}
+
 export type UploadRequest<T = UploadResult> = Promise<T> & {
   abort: () => void;
   onUpload: (handler: (event: UploadProgressEvent) => void) => void;
@@ -27,10 +32,30 @@ export type UploadRequest<T = UploadResult> = Promise<T> & {
 
 export type UploadApi<T = UploadResult> = (
   file: Blob | File,
-  options?: {
-    otherData?: Record<string, any>;
-  },
+  options?: UploadApiOptions,
 ) => UploadRequest<T>;
+
+export type UploadInfoApi<T = OssFile> = (ossIds: string[]) => Promise<T[]>;
+
+export interface UploadFeedbackAdapter {
+  confirmRemove?: (file: UploadFile) => boolean | Promise<boolean>;
+  showMaxSizeError?: (maxSize: number) => void;
+  showUploadSuccess?: () => void;
+}
+
+export interface CropperUploadParams {
+  file: Blob;
+  filename: string;
+  name: string;
+}
+
+export interface CropperUploadResult {
+  url: string;
+}
+
+export type CropperUploadApi<T = CropperUploadResult> = (
+  params: CropperUploadParams,
+) => Promise<T>;
 
 /**
  * 自定义返回文件名/缩略图使用 泛型控制返回是否必填
@@ -89,10 +114,20 @@ export interface BaseUploadProps {
    */
   enableDragUpload?: boolean;
   /**
+   * 上传提示、删除确认等反馈能力。
+   * 应用侧默认注入全局 message/modal，平台层只依赖该抽象能力。
+   */
+  feedback?: UploadFeedbackAdapter;
+  /**
    * 是否显示文案 请上传不超过...
    * @default true
    */
   helpMessage?: boolean;
+  /**
+   * 通过已绑定的 ossId 查询文件信息。
+   * 应用侧默认注入业务接口，平台层只依赖该抽象能力。
+   */
+  infoApi?: UploadInfoApi;
   /**
    * 当ossId查询不到文件信息时  比如被删除了
    * 是否保留列表对应的ossId 默认不保留

@@ -165,7 +165,6 @@ const initOptions = computed((): InitOptions => {
           })
           .catch((error) => {
             console.error('tinymce上传图片失败:', error);
-            // eslint-disable-next-line prefer-promise-reject-errors
             reject({ message: error.message, remove: true });
           });
       });

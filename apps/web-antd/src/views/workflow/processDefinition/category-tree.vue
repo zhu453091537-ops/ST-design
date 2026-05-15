@@ -5,10 +5,10 @@ import type { PropType } from 'vue';
 
 import type { CategoryTree } from '#/api/workflow/category/model';
 
-import { onMounted, ref } from 'vue';
+import { h, onMounted, ref } from 'vue';
 
 import { SyncOutlined } from '@antdv-next/icons';
-import { InputSearch, Skeleton, Tree } from 'antdv-next';
+import { Button, InputSearch, Skeleton, Tree } from 'antdv-next';
 
 import { categoryTree } from '#/api/workflow/category';
 
@@ -60,6 +60,34 @@ onMounted(loadTree);
 function handleSelect(keys: Key[]) {
   emit('select', keys as string[]);
 }
+
+function renderReloadButton() {
+  return h(
+    Button,
+    {
+      onClick: handleReload,
+    },
+    {
+      default: () => h(SyncOutlined, { class: 'text-primary' }),
+    },
+  );
+}
+
+function renderTitle(node: any) {
+  const label = String(node.label ?? '');
+  const keyword = searchValue.value;
+
+  if (!keyword || !label.includes(keyword)) {
+    return label;
+  }
+
+  const index = label.indexOf(keyword);
+  return h('span', [
+    label.slice(0, index),
+    h('span', { class: 'text-primary' }, keyword),
+    label.slice(index + keyword.length),
+  ]);
+}
 </script>
 
 <template>
@@ -77,16 +105,11 @@ function handleSelect(keys: Key[]) {
         <div class="bg-background z-100 sticky left-0 top-0 p-[8px]">
           <InputSearch
             v-model:value="searchValue"
+            :enter-button="renderReloadButton()"
             :placeholder="$t('pages.common.search')"
             size="small"
             allow-clear
-          >
-            <template #enterButton>
-              <a-button @click="handleReload">
-                <SyncOutlined class="text-primary" />
-              </a-button>
-            </template>
-          </InputSearch>
+          />
         </div>
         <div class="h-full overflow-x-hidden px-[8px]">
           <!-- TODO: 适配antdv-next -->
@@ -97,6 +120,7 @@ function handleSelect(keys: Key[]) {
             :class="$attrs.class"
             :field-names="{ title: 'label', key: 'id' }"
             :show-line="{ showLeafIcon: false }"
+            :title-render="renderTitle"
             :tree-data="categoryTreeArray"
             :virtual="false"
             default-expand-all
@@ -107,20 +131,7 @@ function handleSelect(keys: Key[]) {
                   'var(--ant-color-primary-bg-hover)',
               },
             }"
-          >
-            <template #title="{ label }">
-              <span v-if="label.includes(searchValue)">
-                {{ label.substring(0, label.indexOf(searchValue)) }}
-                <span class="text-primary">{{ searchValue }}</span>
-                {{
-                  label.substring(
-                    label.indexOf(searchValue) + searchValue.length,
-                  )
-                }}
-              </span>
-              <span v-else>{{ label }}</span>
-            </template>
-          </Tree>
+          />
         </div>
       </div>
     </Skeleton>

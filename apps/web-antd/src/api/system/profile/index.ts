@@ -1,3 +1,5 @@
+import type { CropperUploadResult } from '@st/platform-adapter/upload';
+
 import type { FileCallBack, UpdatePasswordParam, UserProfile } from './model';
 
 import { buildUUID } from '@vben/utils';
@@ -55,7 +57,7 @@ export function userUpdateAvatar(fileCallback: FileCallBack) {
   file = filename
     ? new File([file], filename)
     : new File([file], `${buildUUID()}.png`);
-  return alovaInstance.post(
+  return alovaInstance.post<CropperUploadResult>(
     Api.updateAvatar,
     {
       avatarfile: file,

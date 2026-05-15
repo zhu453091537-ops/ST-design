@@ -328,7 +328,7 @@ function handleCategorySelect(keys: string[]) {
             :value="row.activityStatus === activeStatus.Enable"
             checked-children="激活"
             un-checked-children="挂起"
-            :api="(checked) => handleActive(row, checked)"
+            :api="(checked) => handleActive(row, checked === true)"
             @reload="() => tableApi.query()"
           />
         </template>

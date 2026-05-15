@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { DrawerProps } from 'antdv-next';
+
 import { computed, useAttrs, useSlots } from 'vue';
 
 import { Drawer } from 'antdv-next';
@@ -51,16 +53,55 @@ function normalizeSemanticStyles(value: unknown) {
   return {};
 }
 
+function normalizeDrawerSize(value: unknown): DrawerProps['size'] {
+  if (typeof value === 'number' || typeof value === 'string') {
+    return value;
+  }
+  return undefined;
+}
+
+function normalizeDrawerPlacement(value: unknown): DrawerProps['placement'] {
+  if (
+    value === 'bottom' ||
+    value === 'left' ||
+    value === 'right' ||
+    value === 'top'
+  ) {
+    return value;
+  }
+  return undefined;
+}
+
+function normalizeBoolean(value: unknown) {
+  if (typeof value === 'boolean') {
+    return value;
+  }
+  return undefined;
+}
+
 const drawerAttrs = computed(() => {
   const {
+    bodyStyle,
     class: drawerClass,
     closable: _closable,
+    destroyOnClose,
+    destroyOnHidden,
+    height,
+    placement,
+    size,
     styles,
     title: _title,
+    width,
     ...rest
   } = attrs;
 
   const mergedSemanticStyles = normalizeSemanticStyles(styles);
+  const mergedBodyStyle = normalizeStyle(bodyStyle);
+  const normalizedPlacement = normalizeDrawerPlacement(placement);
+  const compatSize =
+    normalizedPlacement === 'top' || normalizedPlacement === 'bottom'
+      ? normalizeDrawerSize(height)
+      : normalizeDrawerSize(width);
 
   mergedSemanticStyles.header = {
     ...normalizeStyle(mergedSemanticStyles.header),
@@ -70,6 +111,7 @@ const drawerAttrs = computed(() => {
   };
 
   mergedSemanticStyles.body = {
+    ...mergedBodyStyle,
     ...normalizeStyle(mergedSemanticStyles.body),
     padding: '24px 40px 24px 40px',
   };
@@ -78,6 +120,9 @@ const drawerAttrs = computed(() => {
     ...rest,
     class: mergeClassNames('platform-drawer', drawerClass),
     closable: false,
+    destroyOnHidden: normalizeBoolean(destroyOnHidden ?? destroyOnClose),
+    placement: normalizedPlacement,
+    size: normalizeDrawerSize(size) ?? compatSize,
     styles: mergedSemanticStyles,
   };
 });

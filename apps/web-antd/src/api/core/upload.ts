@@ -27,6 +27,7 @@ export interface UploadResult {
 export function uploadApi(
   file: Blob | File,
   options?: {
+    onUploadProgress?: AxiosProgressEvent;
     otherData?: Record<string, any>;
   },
 ) {

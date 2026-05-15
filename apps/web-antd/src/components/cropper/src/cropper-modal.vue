@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+import type { CropperUploadApi } from '@st/platform-adapter/upload';
+
 import type { PropType } from 'vue';
 
 import type { CropendResult, Cropper } from './typing';
@@ -15,8 +17,6 @@ import { dataURLtoBlob } from '#/utils/file/base64Conver';
 
 import CropperImage from './cropper.vue';
 
-type apiFunParams = { file: Blob; filename: string; name: string };
-
 defineOptions({ name: 'CropperModal' });
 
 const props = defineProps({
@@ -25,7 +25,7 @@ const props = defineProps({
   src: { default: '', type: String },
   uploadApi: {
     required: true,
-    type: Function as PropType<(params: apiFunParams) => Promise<any>>,
+    type: Function as PropType<CropperUploadApi>,
   },
 });
 

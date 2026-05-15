@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import type { CropperUploadApi } from '@st/platform-adapter/upload';
 import type { ButtonProps } from 'antdv-next';
 
 import type { CSSProperties, PropType } from 'vue';
@@ -19,17 +20,7 @@ const props = defineProps({
   size: { default: 5, type: Number },
   uploadApi: {
     required: true,
-    type: Function as PropType<
-      ({
-        file,
-        filename,
-        name,
-      }: {
-        file: Blob;
-        filename: string;
-        name: string;
-      }) => Promise<any>
-    >,
+    type: Function as PropType<CropperUploadApi>,
   },
   value: { default: '', type: String },
 

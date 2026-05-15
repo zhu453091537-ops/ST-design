@@ -1,5 +1,5 @@
 <script setup lang="tsx">
-import type { TimelineItemProps, TimelineProps } from 'antdv-next';
+import type { TimelineItemType, TimelineProps } from 'antdv-next';
 
 import type { Flow } from '#/api/workflow/instance/model';
 
@@ -24,8 +24,7 @@ const items = computed<TimelineProps['items']>(() => {
   return list.map((item) => {
     const isMultiplePerson = item.approver?.split(',').length > 1;
 
-    const result: TimelineItemProps = {
-      key: item.id,
+    const result: TimelineItemType = {
       dot: (
         <div class="relative rounded-full border">
           {isMultiplePerson && (

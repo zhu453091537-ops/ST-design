@@ -14,7 +14,7 @@ const props = withDefaults(
     /**
      * 语言
      */
-    language: LanguageSupport;
+    language?: LanguageSupport;
     /**
      * 只读
      */
@@ -26,12 +26,13 @@ const props = withDefaults(
   },
 );
 
-const codeMirrorRef =
-  useTemplateRef<InstanceType<typeof CodeMirror>>('codeMirrorRef');
-
 const { isDark } = usePreferences();
 
 const modelValue = defineModel({ default: '', type: String });
+const codeMirrorRef =
+  useTemplateRef<InstanceType<typeof CodeMirror>>('codeMirrorRef');
+
+defineExpose({ codeMirrorRef });
 
 const lang = computed(() => languageSupportMap[props.language] ?? javascript());
 

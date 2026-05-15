@@ -14,7 +14,9 @@ import { Image, Upload } from 'antdv-next';
 import { isFunction } from 'lodash-es';
 
 import { uploadApi } from '#/api';
+import { ossInfo } from '#/api/system/oss';
 
+import { createUploadFeedback } from './feedback';
 import { defaultImageAcceptExts } from './helper';
 import { useImagePreview, useUpload } from './hook';
 
@@ -34,6 +36,8 @@ interface ImageUploadProps extends BaseUploadProps {
 
 const props = withDefaults(defineProps<ImageUploadProps>(), {
   api: () => uploadApi,
+  feedback: () => createUploadFeedback(),
+  infoApi: () => ossInfo,
   removeOnError: true,
   showSuccessMsg: true,
   removeConfirm: false,

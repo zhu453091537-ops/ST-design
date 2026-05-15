@@ -23,6 +23,10 @@
 13. 新增 `@st/platform-styles/tokens`，将 ST-design 平台 CSS 变量从 Vben core design token 文件中迁入 `packages/platform-styles/src/tokens/index.css`。
 14. `@st/platform-styles/antd` 和 `@st/platform-styles/vxe-table` 均先导入平台 token 入口，形成“tokens -> Antdv 覆盖 / Vxe 覆盖”的清晰边界。
 15. Vben core design token 文件继续保留通用主题变量，并通过 `var(--st-*)` 消费平台 token，不再直接维护平台变量源值。
+16. 将 `@st/platform-styles/antd` 内部按真实覆盖对象拆分为 `base / button / field / form / tree / table / pagination / overlay / tag / platform-common / feedback / validation / utilities` 等分文件，`index.css` 只负责组织导入顺序。
+17. 为 `@st/platform-adapter/upload` 补充 `UploadInfoApi` 查询抽象和 `UploadFeedbackAdapter` 反馈抽象，并让 `apps/web-antd` 上传组件默认注入现有 `ossInfo` 与全局消息/确认框反馈实现，使上传 hook 不再直接依赖业务 OSS API 或 `window.message/window.modal`。
+18. 为 `@st/platform-adapter/upload` 补充裁剪上传参数、返回结果和 API 契约类型，并让 `CropperModal`、`CropperAvatar` 与头像更新 API 复用该平台类型；裁剪 UI、头像业务接口和成功提示仍保留在应用侧。
+19. 将 `tree-select-panel.vue` 从 `antdv-next/es/checkbox/interface` 和 `antdv-next/es/tree` 深路径类型引用切换为 `antdv-next` 主入口类型推导，清除平台包化验证中暴露的历史深路径类型问题。
 
 ### 修改了哪些文件
 
@@ -83,6 +87,18 @@
 55. `packages/platform-styles/src/tokens/index.css`
 56. `packages/@core/base/design/src/design-tokens/default.css`
 57. `packages/@core/base/design/src/design-tokens/dark.css`
+58. `packages/platform-styles/src/antd/*.css`
+59. `packages/platform-adapter/src/upload/index.ts`
+60. `apps/web-antd/src/components/upload/src/props.d.ts`
+61. `apps/web-antd/src/components/upload/src/hook.ts`
+62. `apps/web-antd/src/components/upload/src/file-upload.vue`
+63. `apps/web-antd/src/components/upload/src/image-upload.vue`
+64. `apps/web-antd/src/components/upload/src/feedback.ts`
+65. `apps/web-antd/src/components/cropper/src/cropper-modal.vue`
+66. `apps/web-antd/src/components/cropper/src/cropper-avatar.vue`
+67. `apps/web-antd/src/api/system/profile/index.ts`
+68. `apps/web-antd/src/api/system/profile/model.d.ts`
+69. `apps/web-antd/src/components/tree/src/tree-select-panel.vue`
 
 ### 涉及哪些页面或组件
 
@@ -95,6 +111,9 @@
 7. `apps/web-antd` 运行时样式入口已切到 `@st/platform-styles/antd`；该入口当前只代理 `@vben/styles/antd`，不改变实际样式内容。
 8. `@st/platform-adapter/vxe-table` 已承载 ST-design 默认 Vxe 适配逻辑；`apps/web-antd/src/adapter/vxe-table.ts` 只保留业务侧 `useVbenForm` 注入和兼容导出。
 9. `@st/platform-styles/tokens` 已承载 ST-design 平台 CSS 变量；`@st/platform-styles/antd` 和 `@st/platform-styles/vxe-table` 均从该入口读取平台 token。
+10. `@st/platform-styles/antd` 已从单一大文件拆分为覆盖对象分文件，后续 Antdv Button、表单字段、表格、弹窗抽屉等覆盖可直接落到对应文件。
+11. `@st/platform-adapter/upload` 已新增已绑定文件信息查询抽象和上传反馈抽象；`apps/web-antd` 上传组件仍保留业务默认 API 与反馈实现注入，行为不变。
+12. `@st/platform-adapter/upload` 已新增裁剪上传契约类型；`CropperAvatar` / `CropperModal` 和个人头像上传 API 只复用契约，不迁入平台适配层。
 
 ### 验证结果
 
@@ -145,13 +164,27 @@
 45. 已基于新启动的临时 Vite 服务 `http://127.0.0.1:5175/` 执行 `curl -I` 检查 `/platform/typical-page`、`/workbench/index`、`/project/information`，均返回 `200 OK`。
 46. 已用 Safari 打开 `http://127.0.0.1:5175/platform/typical-page`，确认新服务未再出现 `@st/platform-adapter/echarts` 的 Vite overlay；旧 `5173` 服务仍停在旧解析状态，本轮未强杀用户已有服务。
 47. 已重新清理构建造成的 `apps/web-antd/dist.zip` 跟踪噪音。
+48. 已执行 Antdv 覆盖拆分内容等价校验，确认新分文件按导入顺序拼回后与原 `index.css` 主体一致。
+49. 已执行上传目标文件 ESLint，覆盖 `FileUpload`、`ImageUpload`、`useUpload`、上传 feedback/helper、上传 props 类型和 `@st/platform-adapter/upload`，通过。
+50. 已执行 `git diff --check -- . ':(exclude)**/node_modules/**'`，通过。
+51. 已执行 `../../node_modules/.bin/vite build --mode development --outDir /private/tmp/st-design-platform-upload-boundary-check`，构建成功，确认拆分后的 Antdv 多文件 CSS 入口和 Upload 查询抽象可被 Vite 解析和打包；构建过程中只出现既有 lightningcss `@reference` / `@apply` 警告。
+52. 已执行裁剪上传目标文件 ESLint，覆盖 `CropperModal`、`CropperAvatar`、头像上传 API、头像模型类型和 `@st/platform-adapter/upload`，通过。
+53. 已执行 `git diff --check -- . ':(exclude)**/node_modules/**'`，通过。
+54. 已执行 `../../node_modules/.bin/vite build --mode development --outDir /private/tmp/st-design-platform-cropper-upload-check`，构建成功，确认裁剪上传契约类型可被 `apps/web-antd` 解析和打包；构建过程中只出现既有 lightningcss `@reference` / `@apply` 警告，构建生成的 `apps/web-antd/dist.zip` 已恢复。
+55. 已执行 `./node_modules/.bin/eslint apps/web-antd/src/components/tree/src/tree-select-panel.vue`，通过。
+56. 已执行 `./node_modules/.bin/vue-tsc --noEmit -p apps/web-antd/tsconfig.json`；`tree-select-panel.vue` 的 `antdv-next/es/checkbox/interface` 深路径错误已清除，全量类型检查仍因其它历史文件失败。
+57. 当前剩余全量类型错误集中在 `tenant-toggle`、`tinymce`、`utils/http`、`personnel/turnover`、workflow 组件、`menu-ui` 和 `code-mirror` 等存量问题，本轮未扩大范围修复。
+58. 已继续治理上述历史类型错误：租户切换 Select 事件、Tinymce 上传参数、HTTP content-type 判断、人员流失率 tooltip 坐标、workflow Timeline / iframe / 分类树 / ApiSwitch 类型、`menu-ui` 图标类型和 `code-mirror` ref 暴露均已做最小类型修正。
+59. 已执行目标 ESLint，覆盖上述历史类型错误相关文件和 Upload 类型入口，0 error / 0 warning。
+60. 已执行 `./node_modules/.bin/vue-tsc --noEmit -p apps/web-antd/tsconfig.json`，通过。
 
 ### 遗留问题
 
-1. 当前包化迁移进度约 99%；应用源码中的平台组件导入已切换为 `@st/platform-ui`，运行时样式入口已切到 `@st/platform-styles/antd`，Vxe 适配入口已切到 `@st/platform-adapter/vxe-table`。
+1. 当前平台组件 workspace 包化安全阶段已完成；应用源码中的平台组件导入已切换为 `@st/platform-ui`，运行时样式入口已切到 `@st/platform-styles/antd`，Vxe 适配入口已切到 `@st/platform-adapter/vxe-table`。
 2. `apps/web-antd/src/components/platform/index.ts` 仍保留兼容出口，方便外部未检索到的旧引用或后续回滚，但当前应用源码已不再依赖它。
-3. `platform-styles` 已形成 `tokens`、`antd`、`vxe-table` 三个入口；Antdv 覆盖尚未继续拆成 Button、Form、Table、Modal 等分文件，后续可按风险分阶段拆分。
-4. `apps/web-antd` 全量类型检查仍有存量失败项，本轮未扩大范围修复。
+3. `platform-styles` 已形成 `tokens`、`antd`、`vxe-table` 三个入口；Antdv 覆盖已按覆盖对象拆成分文件，后续是逐类治理具体样式，而不是继续拆入口。
+4. Upload 已完成已绑定文件信息查询、全局提示、删除确认和裁剪上传契约类型收口；`FileUpload` / `ImageUpload` 组件、默认 `uploadApi`、默认 `ossInfo`、默认反馈实现、裁剪 UI 和头像业务 API 仍保留在应用侧。
+5. `apps/web-antd` 全量类型检查已通过；本阶段已无已知历史 `vue-tsc` 阻断项。
 
 ### 平台治理影响
 
@@ -160,7 +193,7 @@
 3. 哪些仍是页面临时实现：当前应用源码中的平台组件导入已统一为 `@st/platform-ui`；`#/components/platform` 只保留兼容出口，防止外部旧引用或回滚场景断裂。
 4. 哪些页面子组件未来必须回收为平台组件：已沉淀为 `Platform*` 的通用组件已进入 `packages/platform-ui`；后续新增共性组件也应进入该包。
 5. 后续新页面禁止继续复制哪些实现：禁止新页面复制平台组件源码或绕过平台包直接新写通用表格、表单、弹窗、抽屉等。
-6. 哪些样式应进入主题变量或统一样式入口：平台 CSS 变量进入 `@st/platform-styles/tokens`；Antdv 通用覆盖进入 `@st/platform-styles/antd`；Vxe 专属覆盖进入 `@st/platform-styles/vxe-table`；ECharts / Upload 等适配后续进入 `platform-adapter`。
+6. 哪些样式应进入主题变量或统一样式入口：平台 CSS 变量进入 `@st/platform-styles/tokens`；Antdv 通用覆盖进入 `@st/platform-styles/antd`；Vxe 专属覆盖进入 `@st/platform-styles/vxe-table`；ECharts / Upload 等稳定适配契约进入 `platform-adapter`。
 7. 当前仍存在的页面级样式债务：本阶段未处理页面级样式债务，先建立迁移规范。
 
 ### 任务名称

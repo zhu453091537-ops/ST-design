@@ -73,7 +73,7 @@ const loading = ref(false);
  * @param tenantId tenantId
  * @param option 当前option
  */
-const handleSelect: SelectEmits['onSelect'] = async (
+const handleSelect: SelectEmits['select'] = async (
   tenantId: string,
   option: any,
 ) => {

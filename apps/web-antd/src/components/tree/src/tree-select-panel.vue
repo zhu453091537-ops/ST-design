@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import type { CheckboxChangeEvent } from 'antdv-next/es/checkbox/interface';
-import type { DataNode } from 'antdv-next/es/tree';
+import type { CheckboxProps, TreeDataNode } from 'antdv-next';
 
 import { computed, nextTick, onMounted, ref } from 'vue';
 
@@ -34,8 +33,10 @@ interface Props {
   /**
    * 树结构数据
    */
-  treeData?: DataNode[];
+  treeData?: TreeDataNode[];
 }
+
+type CheckboxChangeEvent = Parameters<NonNullable<CheckboxProps['onChange']>>[0];
 
 /**
  * 展开的状态

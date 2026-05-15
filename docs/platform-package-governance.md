@@ -117,13 +117,13 @@ import { PlatformTable } from '#/components/platform';
 
 1. `@st/platform-styles`、`@st/platform-adapter`、`@st/platform-types`、`@st/platform-utils` 的 workspace 包骨架已创建。
 2. `@st/platform-styles/tokens` 已承载 ST-design 平台 CSS 变量，包括品牌色、文字色、边框、控件高度、表格尺寸、模块间距、字号、圆角和阴影；Vben core design token 文件只保留通用主题变量，并通过 `var(--st-*)` 消费平台 token。
-3. `apps/web-antd` 运行时样式入口已切到 `@st/platform-styles/antd`；该入口当前已承载 Ant Design Vue 全局覆盖和平台 CSS，并先导入 `@st/platform-styles/tokens`，`packages/styles/src/antd/index.css` 仅保留兼容桥接。
+3. `apps/web-antd` 运行时样式入口已切到 `@st/platform-styles/antd`；该入口当前已承载 Ant Design Vue 全局覆盖和平台 CSS，并先导入 `@st/platform-styles/tokens`，`packages/styles/src/antd/index.css` 仅保留兼容桥接。Antdv 覆盖内部已按覆盖对象拆分为 `base / button / field / form / tree / table / pagination / overlay / tag / platform-common / feedback / validation / utilities` 等分文件，`index.css` 只负责组织导入顺序。
 4. `@st/platform-styles/vxe-table` 已开始承载稳定 Vxe 表格变量和全局覆盖，并先导入 `@st/platform-styles/tokens`；`packages/effects/plugins/src/vxe-table/style.css` 仅保留对平台样式入口的桥接导入。
 5. `apps/web-antd/src/adapter/vxe-table.ts` 已切到 `@st/platform-adapter/vxe-table`；该平台入口已开始承载稳定 Vxe 规则，包括默认序号列、工具栏默认项、行高、刷新方式、复选状态判断和排序参数转换。
 6. `@st/platform-adapter/echarts` 已作为无行为变化入口接入，当前转发现有 Vben ECharts 插件，平台组件和应用图表消费者已开始通过该入口消费 ECharts 能力。
-7. `@st/platform-adapter/upload` 已承载上传纯类型、默认图片/文件 accept 列表和默认文件预览函数，应用侧上传组件通过该入口复用这些稳定定义。
+7. `@st/platform-adapter/upload` 已承载上传纯类型、默认图片/文件 accept 列表、默认文件预览函数、`UploadInfoApi` 查询抽象、`UploadFeedbackAdapter` 反馈抽象，以及裁剪上传参数 / 返回 / API 契约类型；应用侧上传组件通过该入口复用这些稳定定义，并继续在 `apps/web-antd` 注入默认 `uploadApi`、`ossInfo`、全局消息/确认框反馈和头像裁剪 UI。
 8. `apps/web-antd/src/adapter/vxe-table.ts` 仍保留应用侧初始化职责，包括 `useVbenForm` 注入和 `CellImage` / `CellLink` 等当前应用渲染器注册。
-9. Upload 的 `FileUpload` / `ImageUpload`、`uploadApi`、`ossInfo`、头像裁剪和业务弹窗仍绑定业务 API 与应用状态，未拆清前不进入 `@st/platform-adapter`。
+9. Upload 的 `FileUpload` / `ImageUpload`、`uploadApi`、`ossInfo`、头像裁剪 UI 和业务弹窗仍绑定业务 API 与应用状态，未拆清前不进入 `@st/platform-adapter`。
 
 ## 交付包影响
 

@@ -32,7 +32,7 @@ function menuIcon(menu: MenuRecordRaw) {
     : menu.icon;
 }
 
-function isIconfont(icon: NormalMenuProps['menus'][number]['icon']) {
+function isIconfont(icon: MenuRecordRaw['icon']) {
   return typeof icon === 'string' && icon.startsWith('icon-');
 }
 </script>

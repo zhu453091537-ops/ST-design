@@ -137,7 +137,7 @@ const turnoverChartOption = computed<EChartsOption>(() => {
         ].join('<br/>');
       },
       position(pos, _params, _dom, _rect, size) {
-        const [x, y] = pos as number[];
+        const [x = 0, y = 0] = pos as number[];
         const { contentSize, viewSize } = size;
 
         return [

@@ -1,3 +1,5 @@
+import type { CropperUploadParams } from '@st/platform-adapter/upload';
+
 export interface Dept {
   deptId: number;
   parentId: number;
@@ -68,8 +70,4 @@ export interface UpdatePasswordParam {
   newPassword: string;
 }
 
-interface FileCallBack {
-  name: string;
-  file: Blob;
-  filename: string;
-}
+export type FileCallBack = CropperUploadParams;

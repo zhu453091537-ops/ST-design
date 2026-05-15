@@ -15,7 +15,9 @@ import { InboxOutlined, UploadOutlined } from '@antdv-next/icons';
 import { Upload } from 'antdv-next';
 
 import { uploadApi } from '#/api';
+import { ossInfo } from '#/api/system/oss';
 
+import { createUploadFeedback } from './feedback';
 import { defaultFileAcceptExts, defaultFilePreview } from './helper';
 import { useUpload } from './hook';
 
@@ -30,6 +32,8 @@ interface FileUploadProps extends BaseUploadProps {
 
 const props = withDefaults(defineProps<FileUploadProps>(), {
   api: () => uploadApi,
+  feedback: () => createUploadFeedback(),
+  infoApi: () => ossInfo,
   removeOnError: true,
   showSuccessMsg: true,
   removeConfirm: false,
