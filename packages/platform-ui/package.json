@@ -15,8 +15,8 @@
     }
   },
   "dependencies": {
+    "@st/platform-adapter": "workspace:*",
     "@vben/icons": "workspace:*",
-    "@vben/plugins": "workspace:*",
     "antdv-next": "catalog:",
     "echarts": "catalog:",
     "vue": "catalog:",

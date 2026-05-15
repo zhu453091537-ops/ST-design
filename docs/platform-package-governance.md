@@ -116,9 +116,13 @@ import { PlatformTable } from '#/components/platform';
 当前状态：
 
 1. `@st/platform-styles`、`@st/platform-adapter`、`@st/platform-types`、`@st/platform-utils` 的 workspace 包骨架已创建。
-2. `apps/web-antd` 运行时样式入口已切到 `@st/platform-styles/antd`；该入口当前只代理 `@vben/styles/antd`，用于先收口引用边界，不改变实际样式内容。
-3. `@st/platform-adapter/vxe-table` 已承载 ST-design 默认 Vxe 配置、序号列包装、工具栏默认项、`CellImage` / `CellLink` 渲染器、排序参数辅助方法和复选框选中判断；`apps/web-antd/src/adapter/vxe-table.ts` 只保留业务侧 `useVbenForm` 注入和兼容导出。
-4. 真实 token、Antdv 覆盖、ECharts、Upload 等实现仍需后续按页面和验证范围分批迁移，不在本阶段一次性搬空。
+2. `apps/web-antd` 运行时样式入口已切到 `@st/platform-styles/antd`；该入口当前已承载 Ant Design Vue 全局覆盖和平台 CSS，`packages/styles/src/antd/index.css` 仅保留兼容桥接。
+3. `@st/platform-styles/vxe-table` 已开始承载稳定 Vxe 表格变量和全局覆盖；`packages/effects/plugins/src/vxe-table/style.css` 仅保留对平台样式入口的桥接导入。
+4. `apps/web-antd/src/adapter/vxe-table.ts` 已切到 `@st/platform-adapter/vxe-table`；该平台入口已开始承载稳定 Vxe 规则，包括默认序号列、工具栏默认项、行高、刷新方式、复选状态判断和排序参数转换。
+5. `@st/platform-adapter/echarts` 已作为无行为变化入口接入，当前转发现有 Vben ECharts 插件，平台组件和应用图表消费者已开始通过该入口消费 ECharts 能力。
+6. `@st/platform-adapter/upload` 已承载上传纯类型、默认图片/文件 accept 列表和默认文件预览函数，应用侧上传组件通过该入口复用这些稳定定义。
+7. `apps/web-antd/src/adapter/vxe-table.ts` 仍保留应用侧初始化职责，包括 `useVbenForm` 注入和 `CellImage` / `CellLink` 等当前应用渲染器注册。
+8. Upload 的 `FileUpload` / `ImageUpload`、`uploadApi`、`ossInfo`、头像裁剪和业务弹窗仍绑定业务 API 与应用状态，未拆清前不进入 `@st/platform-adapter`。
 
 ## 交付包影响
 

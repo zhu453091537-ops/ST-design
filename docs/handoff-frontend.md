@@ -39,7 +39,7 @@
 | 包管理 | `pnpm workspace` |
 | 平台组件入口 | `apps/web-antd/src/components/platform` |
 | Vxe 适配层 | `apps/web-antd/src/adapter/vxe-table.ts` |
-| 全局样式入口 | `packages/styles/src/antd/index.css` |
+| 全局样式入口 | `packages/platform-styles/src/antd/index.css` |
 
 注意：
 

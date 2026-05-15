@@ -1,3 +1,5 @@
+import { fileURLToPath, URL } from 'node:url';
+
 import { defineConfig } from '@vben/vite-config';
 
 // 自行取消注释来启用按需导入功能
@@ -20,6 +22,85 @@ export default defineConfig(async () => {
         //   ],
         // }),
       ],
+      resolve: {
+        alias: [
+          {
+            find: 'antdv-next/locale',
+            replacement: fileURLToPath(
+              new URL('node_modules/antdv-next/dist/locale', import.meta.url),
+            ),
+          },
+          {
+            find: 'antdv-next',
+            replacement: fileURLToPath(
+              new URL('node_modules/antdv-next', import.meta.url),
+            ),
+          },
+          {
+            find: 'vue-router',
+            replacement: fileURLToPath(
+              new URL('node_modules/vue-router', import.meta.url),
+            ),
+          },
+          {
+            find: '@st/platform-styles/antd',
+            replacement: fileURLToPath(
+              new URL('../../packages/platform-styles/src/antd/index.css', import.meta.url),
+            ),
+          },
+          {
+            find: '@st/platform-styles/vxe-table',
+            replacement: fileURLToPath(
+              new URL(
+                '../../packages/platform-styles/src/vxe-table/index.css',
+                import.meta.url,
+              ),
+            ),
+          },
+          {
+            find: '@st/platform-adapter',
+            replacement: fileURLToPath(
+              new URL('../../packages/platform-adapter/src', import.meta.url),
+            ),
+          },
+          {
+            find: '@st/platform-styles',
+            replacement: fileURLToPath(
+              new URL('../../packages/platform-styles/src', import.meta.url),
+            ),
+          },
+          {
+            find: '@st/platform-types',
+            replacement: fileURLToPath(
+              new URL('../../packages/platform-types/src', import.meta.url),
+            ),
+          },
+          {
+            find: '@st/platform-ui',
+            replacement: fileURLToPath(
+              new URL('../../packages/platform-ui/src', import.meta.url),
+            ),
+          },
+          {
+            find: '@st/platform-utils',
+            replacement: fileURLToPath(
+              new URL('../../packages/platform-utils/src', import.meta.url),
+            ),
+          },
+          {
+            find: '@vben/plugins',
+            replacement: fileURLToPath(
+              new URL('../../packages/effects/plugins/src', import.meta.url),
+            ),
+          },
+          {
+            find: '@vben/icons',
+            replacement: fileURLToPath(
+              new URL('node_modules/@vben/icons', import.meta.url),
+            ),
+          },
+        ],
+      },
       server: {
         proxy: {
           '/api': {

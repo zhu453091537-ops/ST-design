@@ -3,30 +3,18 @@ import type {
   VxeGridPropTypes,
 } from '@vben/plugins/vxe-table';
 
-import { h } from 'vue';
-
-import {
-  setupVbenVxeTable,
-  useVbenVxeGrid as useBaseVbenVxeGrid,
-} from '@vben/plugins/vxe-table';
-
-import { Button, Image } from 'antdv-next';
-
 export * from '@vben/plugins/vxe-table';
 export type * from '@vben/plugins/vxe-table';
 
 type VbenVxeGridOptions = Parameters<UseVbenVxeGrid>[0];
-type PlatformVxeGridOptions = VbenVxeGridOptions & {
+type VbenVxeGridGridOptions = NonNullable<VbenVxeGridOptions['gridOptions']>;
+type VbenVxeGridColumns = VbenVxeGridGridOptions['columns'];
+
+export type PlatformVxeGridOptions = VbenVxeGridOptions & {
   platformIndex?: boolean;
 };
 
-type SetupPlatformVxeTableOptions = {
-  useVbenForm: (...args: any[]) => any;
-};
-
-function withPlatformIndexColumn(
-  columns: NonNullable<VbenVxeGridOptions['gridOptions']>['columns'],
-) {
+function withPlatformIndexColumn(columns: VbenVxeGridColumns) {
   const indexColumn = {
     align: 'center' as const,
     field: '__platform_index',
@@ -43,7 +31,7 @@ function withPlatformIndexColumn(
   return [firstColumn, indexColumn, ...restColumns];
 }
 
-function withPlatformVxeGridOptions(
+export function withPlatformVxeGridOptions(
   options: PlatformVxeGridOptions,
 ): VbenVxeGridOptions {
   const toolbarConfig = options.gridOptions?.toolbarConfig ?? {};
@@ -63,14 +51,14 @@ function withPlatformVxeGridOptions(
     ...options,
     gridOptions: {
       ...options.gridOptions,
-      cellConfig: {
-        height: 44,
-        ...cellConfig,
-      },
       columns: mergedColumns,
       headerCellConfig: {
         height: 44,
         ...headerCellConfig,
+      },
+      cellConfig: {
+        height: 44,
+        ...cellConfig,
       },
       toolbarConfig: {
         custom: true,
@@ -91,103 +79,24 @@ function withPlatformVxeGridOptions(
   };
 }
 
-export function setupPlatformVxeTable({
-  useVbenForm,
-}: SetupPlatformVxeTableOptions) {
-  setupVbenVxeTable({
-    configVxeTable: (vxeUI) => {
-      vxeUI.setConfig({
-        grid: {
-          align: 'center',
-          border: 'inner',
-          cellConfig: {
-            height: 44,
-          },
-          columnConfig: {
-            resizable: true,
-          },
-          customConfig: {
-            storage: false,
-          },
-          formConfig: {
-            enabled: false,
-          },
-          headerCellConfig: {
-            height: 44,
-          },
-          minHeight: 180,
-          pagerConfig: {
-            pageSize: 10,
-            pageSizes: [10, 20, 30, 40, 50],
-          },
-          proxyConfig: {
-            autoLoad: true,
-            response: {
-              list: 'rows',
-              result: 'rows',
-              total: 'total',
-            },
-            showActiveMsg: true,
-            showResponseMsg: false,
-          },
-          round: true,
-          rowConfig: {
-            isCurrent: false,
-            isHover: true,
-          },
-          showOverflow: true,
-          size: 'medium',
-          toolbarConfig: {
-            custom: true,
-            customOptions: {
-              icon: 'vxe-icon-setting',
-            },
-            refresh: true,
-            refreshOptions: {
-              code: 'query',
-            },
-            zoom: true,
-          },
-        },
-      });
-
-      vxeUI.renderer.add('CellImage', {
-        renderTableDefault(renderOpts, params) {
-          const { props } = renderOpts;
-          const { column, row } = params;
-          return h(Image, { src: row[column.field], ...props });
-        },
-      });
-
-      vxeUI.renderer.add('CellLink', {
-        renderTableDefault(renderOpts) {
-          const { props } = renderOpts;
-          return h(
-            Button,
-            { size: 'small', type: 'link' },
-            { default: () => props?.text },
-          );
-        },
-      });
-    },
-    useVbenForm,
-  });
+export function createPlatformVxeGrid(
+  useBaseVbenVxeGrid: UseVbenVxeGrid,
+): UseVbenVxeGrid {
+  return ((options: PlatformVxeGridOptions) =>
+    useBaseVbenVxeGrid(withPlatformVxeGridOptions(options))) as UseVbenVxeGrid;
 }
-
-export const usePlatformVxeGrid = ((options: any) =>
-  useBaseVbenVxeGrid(withPlatformVxeGridOptions(options))) as UseVbenVxeGrid;
 
 /**
  * 判断 vxe-table 的复选框是否选中。
  */
 export function vxeCheckboxChecked(
-  tableApi: ReturnType<typeof usePlatformVxeGrid>[1],
+  tableApi: ReturnType<UseVbenVxeGrid>[1],
 ) {
   return tableApi?.grid?.getCheckboxRecords?.()?.length > 0;
 }
 
 /**
- * 将 vxe-table 排序参数添加到请求参数中。
+ * 将 vxe-table 排序参数转换为后端常用的 orderByColumn / isAsc 参数。
  */
 export function addSortParams(
   params: Record<string, any>,
@@ -196,9 +105,6 @@ export function addSortParams(
   if (sortList.length === 0) {
     return;
   }
-
-  const orderByColumn = sortList.map((item) => item.field).join(',');
-  const isAsc = sortList.map((item) => item.order).join(',');
-  params.orderByColumn = orderByColumn;
-  params.isAsc = isAsc;
+  params.orderByColumn = sortList.map((item) => item.field).join(',');
+  params.isAsc = sortList.map((item) => item.order).join(',');
 }

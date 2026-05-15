@@ -1,12 +1,11 @@
 <script setup lang="ts">
-import type { EchartsUIType } from '@vben/plugins/echarts';
+import type { EchartsUIType } from '@st/platform-adapter/echarts';
 
 import type { ProjectProgressRecord } from '../project-progress-source';
 
 import { computed, onMounted, ref, watch } from 'vue';
 
-import { EchartsUI, useEcharts } from '@vben/plugins/echarts';
-
+import { EchartsUI, useEcharts } from '@st/platform-adapter/echarts';
 import { PlatformSectionTitle } from '@st/platform-ui';
 
 const props = withDefaults(
