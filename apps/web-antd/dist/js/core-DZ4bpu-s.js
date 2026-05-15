@@ -1,1 +1,0 @@
-var e=`/auth/login`,t=[{label:`简体中文`,value:`zh-CN`},{label:`English`,value:`en-US`}],n=`000000`,r=`superadmin`,i=`admin`,a={Enable:`0`,Disable:`1`};export{r as a,e as i,n,t as o,a as r,i as t};

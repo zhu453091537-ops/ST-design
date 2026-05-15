@@ -1,1 +1,0 @@
-function e(e){return e=e||new Map,{all:e,clear(){this.all.clear()},emit(t,n){let r=e==null?void 0:e.get(t);r&&[...r].forEach(e=>{e(n)}),r=e==null?void 0:e.get(`*`),r&&[...r].forEach(e=>{e(t,n)})},off(t,n){let r=e==null?void 0:e.get(t);r&&(n?r.splice(r.indexOf(n)>>>0,1):e==null||e.set(t,[]))},on(t,n){let r=e==null?void 0:e.get(t);r?r.push(n):e==null||e.set(t,[n])}}}export{e as t};

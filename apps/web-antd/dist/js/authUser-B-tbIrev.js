@@ -1,1 +1,0 @@
-import{Pr as e,hr as t,sr as n}from"./antdv-next-B71PqcBr.js";import{t as r}from"./role-assign-CFKz09B8.js";var i=t({__name:`authUser`,setup(t){return(t,i)=>(e(),n(r))}});export{i as default};

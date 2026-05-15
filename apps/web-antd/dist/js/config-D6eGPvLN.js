@@ -1,1 +1,0 @@
-import{Pr as e,hr as t,sr as n}from"./antdv-next-B71PqcBr.js";import{t as r}from"./oss-config-wacCxspV.js";var i=t({__name:`config`,setup(t){return(t,i)=>(e(),n(r))}});export{i as default};

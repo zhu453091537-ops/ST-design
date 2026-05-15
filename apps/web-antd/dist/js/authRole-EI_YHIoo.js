@@ -1,1 +1,0 @@
-import{Pr as e,lr as t}from"./antdv-next-B71PqcBr.js";import{t as n}from"./_plugin-vue_export-helper-DVsqMgR4.js";var r={};function i(n,r){return e(),t(`div`,null," ele版本会使用这个文件 只是为了不报错`未找到对应组件`才新建的这个文件 无实际意义 ")}var a=n(r,[[`render`,i]]);export{a as default};

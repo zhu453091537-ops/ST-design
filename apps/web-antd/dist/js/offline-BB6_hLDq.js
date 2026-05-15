@@ -1,1 +1,0 @@
-import{Hn as e,Pr as t,hi as n,hr as r,sr as i}from"./antdv-next-B71PqcBr.js";import{t as a}from"./fallback-Dd6PAzDu.js";var o=r(e(e({},{name:`FallbackOfflineDemo`}),{},{__name:`offline`,setup(e){return(e,r)=>(t(),i(n(a),{status:`offline`}))}}));export{o as default};

@@ -1,1 +1,0 @@
-import{bt as e,m as t,xt as n}from"./store-BsIo4wQe.js";function r(n){return e()?Promise.resolve():t.get(`/resource/sms/code`,{params:{phonenumber:n}})}function i(){return e()?Promise.resolve(n):t.get(`/auth/code`)}export{r as n,i as t};

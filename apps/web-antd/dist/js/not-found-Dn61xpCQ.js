@@ -1,1 +1,0 @@
-import{Hn as e,Pr as t,hi as n,hr as r,sr as i}from"./antdv-next-B71PqcBr.js";import{t as a}from"./fallback-Dd6PAzDu.js";var o=r(e(e({},{name:`Fallback404Demo`}),{},{__name:`not-found`,setup(e){return(e,r)=>(t(),i(n(a),{status:`404`}))}}));export{o as default};
