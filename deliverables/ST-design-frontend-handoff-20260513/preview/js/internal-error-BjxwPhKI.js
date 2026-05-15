@@ -1,0 +1,1 @@
+import{Lr as e,Wn as t,ur as n,vi as r,vr as i}from"./antdv-next-Cj2QJkvO.js";import{t as a}from"./fallback-DImvPmaa.js";var o=i(t(t({},{name:`Fallback500Demo`}),{},{__name:`internal-error`,setup(t){return(t,i)=>(e(),n(r(a),{status:`500`}))}}));export{o as default};

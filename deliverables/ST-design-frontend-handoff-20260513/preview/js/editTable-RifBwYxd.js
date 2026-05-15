@@ -1,0 +1,1 @@
+import{Lr as e,ur as t,vr as n}from"./antdv-next-Cj2QJkvO.js";import{t as r}from"./edit-gen-Bsg0xbVz.js";var i=n({__name:`editTable`,setup(n){return(n,i)=>(e(),t(r))}});export{i as default};

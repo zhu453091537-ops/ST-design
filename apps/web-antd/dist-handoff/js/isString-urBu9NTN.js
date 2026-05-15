@@ -1,0 +1,1 @@
+import{i as e,r as t}from"./isFunction-DAIfHFfY.js";import{t as n}from"./isArray-BcRsvqfm.js";var r=`[object String]`;function i(i){return typeof i==`string`||!n(i)&&t(i)&&e(i)==r}export{i as t};
