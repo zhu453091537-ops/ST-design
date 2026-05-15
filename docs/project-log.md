@@ -4,6 +4,94 @@
 
 ### 任务名称
 
+今天结束收尾：项目冗余清理二期
+
+### 完成内容
+
+1. 已完成本轮项目冗余文件扫描、确认、执行清理、验证和接续文档同步。
+2. 清理范围保持在缓存、空目录、旧生成资源、已忽略构建产物和已不跟踪依赖产物，不改业务逻辑、不改平台组件实现、不删除配置文件、锁文件、文档或源码入口。
+3. `docs/project-log.md` 已记录清理依据、删除内容、保留可疑文件、验证结果和遗留问题。
+4. `docs/todo-next.md` 已将“项目冗余文件清理二期”和“清理 Git 跟踪依赖产物问题”更新为已完成。
+
+### 修改了哪些文件
+
+1. `docs/project-log.md`
+2. `docs/todo-next.md`
+
+### 验证结果
+
+1. `git ls-files ':(glob)**/node_modules/**' apps/web-antd/dist apps/web-antd/dist-handoff apps/web-antd/dist.zip | wc -l` 结果为 `0`。
+2. `git diff --check -- . ':(exclude)**/node_modules/**'` 通过。
+3. `./node_modules/.bin/vue-tsc --noEmit -p apps/web-antd/tsconfig.json` 通过。
+4. `../../node_modules/.bin/vite build --mode development --outDir /private/tmp/st-design-cleanup-check` 通过；临时构建目录已删除。
+
+### 遗留问题
+
+1. 无必须继续处理的清理阻断项。
+2. 若后续继续瘦身，只建议单独评估 TinyMCE 插件裁剪、`public/LOGO.svg` fallback 是否仍需要，以及是否需要重新生成正式 handoff 包。
+
+### 任务名称
+
+项目冗余文件清理二期：缓存、空目录与生成产物跟踪复核
+
+### 完成内容
+
+1. 按用户要求先检查 `git status --short`，确认清理前工作区干净。
+2. 完成项目文件夹扫描，排查空文件夹、空文件、未引用资源、重复文件、构建产物、缓存文件和明显废弃临时文件。
+3. 删除本地未跟踪缓存与空目录：`.pnpm-store`、`.turbo/cache`、空交付目录 `deliverables/ST-design-frontend-handoff-20260513`。
+4. 删除包化阶段遗留的空源码脚手架目录：`packages/platform-styles/src/design`、`packages/platform-styles/src/global`、`packages/platform-ui/src/deps`。
+5. 清理旧 iconfont 生成 demo/metadata 与旧本地 SVG/public logo 资源；保留运行中仍需要的 `iconfont.css`、字体文件、`LOGO.svg`、TinyMCE public 资源和 `.gitkeep`。
+6. 复核当前 `HEAD` 与索引，确认 `node_modules`、`apps/web-antd/dist`、`apps/web-antd/dist-handoff`、`apps/web-antd/dist.zip` 均已不再被 Git 跟踪，本地目录/产物仍由 `.gitignore` 保护。
+
+### 修改了哪些文件
+
+1. `docs/project-log.md`
+2. `docs/todo-next.md`
+
+### 删除或清理了哪些本地内容
+
+1. `.pnpm-store`
+2. `.turbo/cache`
+3. `deliverables/ST-design-frontend-handoff-20260513`
+4. `packages/platform-styles/src/design`
+5. `packages/platform-styles/src/global`
+6. `packages/platform-ui/src/deps`
+7. `apps/web-antd/src/assets/iconfont/demo_index.html`
+8. `apps/web-antd/src/assets/iconfont/demo.css`
+9. `apps/web-antd/src/assets/iconfont/iconfont.json`
+10. `apps/web-antd/src/assets/iconfont/iconfont.js`
+11. `apps/web-antd/public/LOGO-green.svg`
+12. `apps/web-antd/public/LOGO-white.svg`
+13. `apps/web-antd/src/assets/svg/close.svg`
+14. `apps/web-antd/src/assets/svg/Collapse fullscreen.svg`
+15. `apps/web-antd/src/assets/svg/full screen.svg`
+16. `apps/web-antd/src/assets/svg/pull down.svg`
+
+### 保留了哪些可疑文件
+
+1. `apps/web-antd/public/tinymce/**`：TinyMCE 通过 public 路径动态加载，不能按普通源码 import 判断未引用。
+2. `apps/web-antd/src/assets/iconfont/iconfont.css`、`iconfont.ttf`、`iconfont.woff`、`iconfont.woff2`：`bootstrap.ts` 引入 `iconfont.css`，字体文件由 CSS 继续使用。
+3. `apps/web-antd/public/LOGO.svg`：历史和决策记录中仍作为 public 直链 fallback 资源保留。
+4. `apps/web-antd/src/assets/**/*.gitkeep` 与 `apps/web-antd/src/router/routes/modules/.gitkeep`：用于保留目录结构。
+5. `node_modules`、`apps/web-antd/dist`、`apps/web-antd/dist-handoff`、`apps/web-antd/dist.zip`：作为本地依赖/构建产物保留在工作区，但不进入 Git 跟踪。
+
+### 验证结果
+
+1. 已执行 `git ls-files ':(glob)**/node_modules/**' apps/web-antd/dist apps/web-antd/dist-handoff apps/web-antd/dist.zip | wc -l`，结果为 `0`。
+2. 已执行空目录扫描，排除依赖、构建、交付目录后无剩余空目录。
+3. 已执行 `git diff --check -- . ':(exclude)**/node_modules/**'`，通过。
+4. 已执行 `./node_modules/.bin/vue-tsc --noEmit -p apps/web-antd/tsconfig.json`，通过。
+5. 已执行 `../../node_modules/.bin/vite build --mode development --outDir /private/tmp/st-design-cleanup-check`，构建成功；仅出现既有 lightningcss `@reference` / `@apply` warning。构建重新生成的 `apps/web-antd/dist.zip` 已由 `.gitignore` 忽略。
+6. 清理后 `git status --short` 在更新文档前为干净状态，说明本轮清理未引入业务源码 diff。
+
+### 遗留问题
+
+1. 本轮未删除 `node_modules`、`apps/web-antd/dist`、`apps/web-antd/dist-handoff` 和 `apps/web-antd/dist.zip` 的本地物理文件，避免影响本机开发和后续打包。
+2. 重复配置文件、TinyMCE 内部重复 skin CSS、shadcn dialog/sheet 相似组件、profile 设置页相似组件均不作为本轮删除对象。
+3. 若后续要进一步瘦身交付包，应单独评估 TinyMCE 插件裁剪和 `public/LOGO.svg` fallback 是否仍需要。
+
+### 任务名称
+
 平台组件 workspace 包化治理与无行为变化迁移
 
 ### 完成内容

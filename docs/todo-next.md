@@ -16,7 +16,7 @@
 | 高 | 智能考勤管理 - 档案管理 - 文档列表右侧内容页 | 已完成，待你视觉确认 | 已完成左侧搜索树、右侧标题区、文档列表表格、维护信息和底部固定按钮接入；空白根因已确认并修复为父级菜单 `档案管理` 缺少 `ParentView` 路由承载。下一步只需你确认页面结构和视觉是否符合预期，如需再微调间距或字段展示再继续。 |
 | 高 | 左侧导航箭头间距与全局 size-4 尺寸调整 | 已完成，待浏览器复核 | 已将子菜单箭头 `margin-right` 调整为 `4px`，并把全局 `.size-4` 覆盖到 `calc(var(--spacing) * 5)`；后续需确认左侧导航箭头位置，以及其他使用 `size-4` 的图标是否都符合预期。 |
 | 高 | 智能考勤管理菜单新增档案管理分组 | 已完成，待浏览器复核 | 已在 `智能考勤管理` 下新增 `档案管理`，并补出 `安全学习安排`、`文档管理`、`文档列表` 3 个子菜单；右侧当前统一复用空白页，下一步只需展开左侧菜单确认结构正确。 |
-| 高 | 项目冗余文件清理一期 | 已完成，待二期确认 | 已删除 `apps/platform-showcase 17.36.28`，保留旧 `apps/platform-showcase/dist` 删除状态，并新增根 `.gitignore` 忽略系统文件、依赖目录、构建产物和交付目录；下一步如继续精简，需要确认 `apps/web-antd/dist`、`apps/web-antd/dist-handoff`、`deliverables/` 是否从 Git 跟踪中移除。 |
+| 高 | 项目冗余文件清理二期 | 已完成 | 已完成清理前扫描和保守清理：删除本地未跟踪缓存、空交付目录、空包化脚手架目录、iconfont demo/metadata 与旧 SVG/logo 资源；确认当前 `HEAD` 已不跟踪 `node_modules`、`apps/web-antd/dist`、`apps/web-antd/dist-handoff` 和 `apps/web-antd/dist.zip`，本地依赖与构建产物继续保留并由 `.gitignore` 保护。 |
 | 高 | Windows 优先客户演示与源码联调交付包 | 已完成，待 Windows 实机双击复核 | 已生成 `deliverables/ST-design-frontend-handoff-20260513.zip`；包内含 Windows 主启动器、Mac 备用启动器、`preview/` 和完整 `source/`。本机已完成 HTTP 与隔离浏览器验证，下一步建议在项目经理 Windows 电脑上双击 `Start-Preview-Windows.vbs` 复核一次。 |
 | 高 | 顶部导航与登录页 logo 改为字体图标引用 | 已完成，待浏览器复核 | 已将顶部导航原组件与登录页 logo 的默认引用切为 `iconfont:icon-LOGO-green`，并让 `VbenLogo` 与 `Authentication` 支持该协议；后续只需确认两处视觉尺寸未变且不再走 svg 图片。 |
 | 高 | 前端联调交付压缩包预览入口卡死修复 | 已完成 | 已修正 `preview/` 的 handoff 构建模式、根入口跳转和 logo 资源，双击 `.command` 后可以直接进登录页并进入系统。 |
@@ -156,7 +156,7 @@
 | 高 | 设计稿菜单骨架收敛 | 部分完成 | 顶部一级菜单已按设计稿展示；未开发菜单保留独立 path 并复用 Blank；`人员全生命周期 - 人员总览` 已指向 `/platform/typical-page`；仍需修复 `/system/user` 直访问兼容。 |
 | 高 | `/system/user` 直访问兼容 | 待处理 | 当前浏览器直访 `/system/user` 未正确进入原真实页面。下次先排查 access mode、动态路由注入、mock 菜单源与隐藏路由关系，不要直接改 Vben 核心。 |
 | 高 | 旧 `/system/user` 页面解绑 | 已完成 | 已删除旧页面路由入口和页面壳文件，菜单入口已收口到 `/platform/typical-page`，不再把旧页作为本阶段目标。 |
-| 高 | 清理 Git 跟踪依赖产物问题 | 待确认 | 当前仓库存在 `node_modules` 等依赖产物被 Git 跟踪的问题，后续启动开发服务容易产生无意义变更；需用户确认清理范围和 `.gitignore` 策略。 |
+| 高 | 清理 Git 跟踪依赖产物问题 | 已完成 | 已确认当前 `HEAD` 与索引中 `node_modules`、`apps/web-antd/dist`、`apps/web-antd/dist-handoff`、`apps/web-antd/dist.zip` 均为 `0` 个跟踪文件；后续启动开发服务或构建生成的依赖/产物应继续被 `.gitignore` 忽略。 |
 | 高 | 建立业务页面 Mock 数据组织方式 | 部分完成 | `/project/information` 已采用页面专用 Mock 数据源和本地状态模拟；后续新增业务页继续沿用“页面专用数据源，后续可切接口”的方式。 |
 | 中 | 将接续文档链接到文档入口 | 待处理 | 可考虑在 `README.md` 或内部文档入口中增加 `AGENTS.md` 和 docs 接续文档说明。 |
 | 中 | 建立平台组件和业务页面的治理规则 | 已建立基础规则 | 已沉淀 ant-design-vue 组件改造默认规则和平台组件源头目录；仍需结合真实页面做迁移治理。 |
@@ -165,6 +165,7 @@
 
 | 日期 | 状态 | 说明 |
 | --- | --- | --- |
+| 2026-05-15 | 今天结束收尾完成 | 项目冗余文件清理二期已完成：缓存、空目录、旧生成资源已清理，`node_modules`、`apps/web-antd/dist`、`apps/web-antd/dist-handoff`、`apps/web-antd/dist.zip` 已确认不再被 Git 跟踪；`vue-tsc`、Vite build 和 `git diff --check` 均通过。下一轮如继续，只建议进入真实页面视觉复核或重新生成正式 handoff 包，不需要继续围绕清理项反复扫描。 |
 | 2026-05-15 | 当前安全阶段已完成 | 已完成 `platform-styles` 真实边界拆分和 Antdv 覆盖多文件拆分；Upload 适配层新增 `UploadInfoApi` 查询抽象、`UploadFeedbackAdapter` 反馈抽象和裁剪上传契约类型，应用侧上传组件、头像裁剪 UI、默认 API 与全局反馈实现继续保留在 `apps/web-antd`；历史全量类型错误已治理，`apps/web-antd` 全量 `vue-tsc` 通过。目标 ESLint、内容等价校验、`git diff --check`、Vite build、HTTP 路由检查和 Safari 真实页面检查通过；本轮构建生成的 `apps/web-antd/dist.zip` 已恢复。 |
 | 2026-05-14 | 已收尾，进度约 99% | 平台组件 workspace 包化迁移已完成当前安全阶段：应用源码平台组件导入统一为 `@st/platform-ui`，运行时样式入口切到 `@st/platform-styles/antd`，Vxe 适配入口切到 `@st/platform-adapter/vxe-table`；`node_modules` 与 `apps/web-antd/dist.zip` 生成噪音已从工作区变更中清理，目标 ESLint、`git diff --check` 和构建验证通过。剩余只做真实 token / Antdv 覆盖 / Vxe-ECharts-Upload 适配实现的分阶段迁移。 |
 | 2026-05-08 | 已完成，待视觉复核 | 已按用户截图批注微调 `/personnel/worktime` 的 `超工时人员预警` 区块：标题区仅保留下方 24px padding，预警卡片网格仅保留上方 24px padding；本轮只改页面布局类，不改平台组件、token 或全局样式。 |
