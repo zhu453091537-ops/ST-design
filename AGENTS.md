@@ -124,7 +124,7 @@
 
 1. 平台组件包：`packages/platform-ui`
 2. 迁移过渡兼容出口：`apps/web-antd/src/components/platform/index.ts`
-3. Vben/Vxe 适配层：如 `packages/platform-adapter` 或现有 `#/adapter/vxe-table`
+3. Vben/Vxe 适配层：`packages/platform-adapter`；`apps/web-antd/src/adapter/vxe-table.ts` 只保留业务侧表单注入和兼容导出
 4. 项目全局样式和 token：如 `packages/platform-styles`、`packages/styles`、设计 token
 5. 组件验证页：`apps/web-antd/src/views/platform/typical-page/index.vue`
 

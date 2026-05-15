@@ -117,8 +117,8 @@ import { PlatformTable } from '#/components/platform';
 
 1. `@st/platform-styles`、`@st/platform-adapter`、`@st/platform-types`、`@st/platform-utils` 的 workspace 包骨架已创建。
 2. `apps/web-antd` 运行时样式入口已切到 `@st/platform-styles/antd`；该入口当前只代理 `@vben/styles/antd`，用于先收口引用边界，不改变实际样式内容。
-3. `apps/web-antd/src/adapter/vxe-table.ts` 已切到 `@st/platform-adapter/vxe-table`；该入口当前只代理 `@vben/plugins/vxe-table`，用于先收口适配层引用边界。
-4. 真实 token、Antdv 覆盖、Vxe、ECharts、Upload 等实现仍需后续按页面和验证范围分批迁移，不在本阶段一次性搬空。
+3. `@st/platform-adapter/vxe-table` 已承载 ST-design 默认 Vxe 配置、序号列包装、工具栏默认项、`CellImage` / `CellLink` 渲染器、排序参数辅助方法和复选框选中判断；`apps/web-antd/src/adapter/vxe-table.ts` 只保留业务侧 `useVbenForm` 注入和兼容导出。
+4. 真实 token、Antdv 覆盖、ECharts、Upload 等实现仍需后续按页面和验证范围分批迁移，不在本阶段一次性搬空。
 
 ## 交付包影响
 

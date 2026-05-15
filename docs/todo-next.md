@@ -6,7 +6,7 @@
 
 | 优先级 | 事项 | 状态 | 说明 |
 | --- | --- | --- | --- |
-| 高 | 平台组件 workspace 包化迁移 | 约 99%，应用引用、样式入口和 Vxe 适配入口已收口 | 已明确不使用手工 symlink 和多份组件拷贝；平台组件源码已迁入 `packages/platform-ui/src/**`，应用源码中的平台组件导入已统一为 `@st/platform-ui`，`apps/web-antd/src/components/platform/index.ts` 仅保留兼容出口。`@st/platform-styles`、`@st/platform-adapter`、`@st/platform-types`、`@st/platform-utils` 四个包骨架已补齐，`apps/web-antd` 运行时样式入口已切到 `@st/platform-styles/antd`，Vxe 适配入口已切到 `@st/platform-adapter/vxe-table`。当前两者仍是代理入口，下一步只做真实 token / Antdv 覆盖 / Vxe-ECharts-Upload 适配实现的分阶段迁移。 |
+| 高 | 平台组件 workspace 包化迁移 | 约 99.3%，Vxe 默认适配已进入平台包 | 已明确不使用手工 symlink 和多份组件拷贝；平台组件源码已迁入 `packages/platform-ui/src/**`，应用源码中的平台组件导入已统一为 `@st/platform-ui`，`apps/web-antd/src/components/platform/index.ts` 仅保留兼容出口。`apps/web-antd` 运行时样式入口已切到 `@st/platform-styles/antd`；`@st/platform-adapter/vxe-table` 已承载 ST-design 默认 Vxe 配置、序号列包装、工具栏默认项、`CellImage` / `CellLink` 渲染器和排序/选中辅助方法。下一步只做真实 token / Antdv 覆盖 / ECharts / Upload 适配实现的分阶段迁移。 |
 | 高 | 数据录入平台规则补充与现状审计 | 已完成 | 已在 `AGENTS.md` 与 `docs/decision-records.md` 固化“数据录入必须走平台表单组件体系”的长期规则；已审计当前交付范围，确认上下录入表单统一走 `PlatformEditForm layout=\"vertical\"`，左右录入表单统一走 `PlatformEditForm layout=\"horizontal\" + label-preset=\"inline-compact\"` 或 `PlatformQueryPanel`，当前未发现交付范围内再直接新写原生 `Form / FormItem` 做业务录入。 |
 | 高 | 项目信息管理新建项目弹窗与文档列表维护信息表单微调 | 已完成，待视觉确认 | 已收口 `/project/information` 新建项目弹窗里 `进场信息` 的动态行布局，并补齐“开标日期”所在列的控件满宽；同时已在 `PlatformForm` 新增 `label-preset=\"inline-compact\"` 横向录入预设，把 `施工管理` 那套左右 label 规则沉到平台层，再让 `/battery/archive/document-list` 直接复用。当前仍需在登录态下复核 `项目信息管理` 弹窗视觉，并由你刷新确认 `文档列表` 的标题到输入框间距是否已与 `施工管理` 一致。 |
 | 高 | 平台表格正文文字色与选择列控件可视性优化 | 已完成 | 已将表格正文文字统一提到主文本色，并在表格选择列内把单选框/复选框统一加固为 `20px * 20px`、未选中描边 `#E5E7EB`；本轮已修正到外层 `.ant-radio / .ant-checkbox` 源节点，避免继续改错到 `.inner` 层。 |
@@ -164,6 +164,7 @@
 
 | 日期 | 状态 | 说明 |
 | --- | --- | --- |
+| 2026-05-15 | 已完成，进度约 99.3% | 已将 ST-design Vxe 默认配置、默认序号列包装、工具栏默认项、`CellImage` / `CellLink` 渲染器、排序参数辅助方法和复选框选中判断迁移到 `@st/platform-adapter/vxe-table`；应用侧 `apps/web-antd/src/adapter/vxe-table.ts` 只保留 `useVbenForm` 注入与兼容导出。`node_modules` 与 `apps/web-antd/dist.zip` 生成噪音已从工作区变更中清理，目标 ESLint、`git diff --check` 和构建验证通过。 |
 | 2026-05-14 | 已收尾，进度约 99% | 平台组件 workspace 包化迁移已完成当前安全阶段：应用源码平台组件导入统一为 `@st/platform-ui`，运行时样式入口切到 `@st/platform-styles/antd`，Vxe 适配入口切到 `@st/platform-adapter/vxe-table`；`node_modules` 与 `apps/web-antd/dist.zip` 生成噪音已从工作区变更中清理，目标 ESLint、`git diff --check` 和构建验证通过。剩余只做真实 token / Antdv 覆盖 / Vxe-ECharts-Upload 适配实现的分阶段迁移。 |
 | 2026-05-08 | 已完成，待视觉复核 | 已按用户截图批注微调 `/personnel/worktime` 的 `超工时人员预警` 区块：标题区仅保留下方 24px padding，预警卡片网格仅保留上方 24px padding；本轮只改页面布局类，不改平台组件、token 或全局样式。 |
 | 2026-05-08 | 已完成，待视觉复核 | 已完成 `人员全生命周期 - 变动与流失率统计` 第一版：新增 `/personnel/turnover` 与页面专用数据源；菜单位于 `资质与准入管控` 下方、`工时与兼职管控` 上方；统计卡复用 `PlatformStatCard`，承包商流失率复用 `PlatformEchartsPanel` + ECharts；未改动人员总览、人员档案、资质与工时页面主体；目标 ESLint 与相关路由 HTTP 检查通过，全量 `vue-tsc` 仍因既有错误失败但不包含本轮文件。 |
@@ -247,7 +248,7 @@
 
 1. 用户输入“开工继续”或提出下一个开发需求后，先读取 `AGENTS.md`、`docs/project-log.md`、`docs/decision-records.md`、`docs/todo-next.md`。
 2. 输出项目接续摘要，明确当前项目目标、技术栈、最近完成内容、未完成事项、关键规则和建议执行顺序。
-3. 下一轮第一优先级：在不扩大范围的前提下继续平台包化收尾，只做 `platform-styles` / `platform-adapter` 内真实 token、Antdv 覆盖、Vxe/ECharts/Upload 适配实现的分阶段迁移。
+3. 下一轮第一优先级：在不扩大范围的前提下继续平台包化收尾，优先处理 `platform-styles` 内真实 token / Antdv 覆盖，再按需推进 `platform-adapter` 内 ECharts / Upload 适配实现。
 4. 优先在 `/project/information` 与 `/personnel/overview` 做一次视觉复核，确认顶部筛选区移除后页面节奏正常，且表头筛选仍满足当前演示目的。
 5. 如需新增独立验证页，只能在不影响 `apps/web-antd` 当前开发的前提下单独评估，不批量迁移现有组件或业务页面。
 6. 如继续处理 `/project/evaluation`，优先判断右侧评估记录表格在更窄浏览器宽度下是否还需要进一步微调列宽或响应式策略。
