@@ -76,16 +76,28 @@ function normalizeBoolean(value: unknown) {
   if (typeof value === 'boolean') {
     return value;
   }
+  if (value === '') {
+    return true;
+  }
+  if (value === 'true') {
+    return true;
+  }
+  if (value === 'false') {
+    return false;
+  }
   return undefined;
 }
 
 const drawerAttrs = computed(() => {
   const {
     bodyStyle,
+    'body-style': bodyStyleKebab,
     class: drawerClass,
     closable: _closable,
     destroyOnClose,
+    'destroy-on-close': destroyOnCloseKebab,
     destroyOnHidden,
+    'destroy-on-hidden': destroyOnHiddenKebab,
     height,
     placement,
     size,
@@ -96,12 +108,21 @@ const drawerAttrs = computed(() => {
   } = attrs;
 
   const mergedSemanticStyles = normalizeSemanticStyles(styles);
-  const mergedBodyStyle = normalizeStyle(bodyStyle);
+  const mergedBodyStyle = {
+    ...normalizeStyle(bodyStyle),
+    ...normalizeStyle(bodyStyleKebab),
+  };
   const normalizedPlacement = normalizeDrawerPlacement(placement);
   const compatSize =
     normalizedPlacement === 'top' || normalizedPlacement === 'bottom'
       ? normalizeDrawerSize(height)
       : normalizeDrawerSize(width);
+  const mergedDestroyOnHidden = normalizeBoolean(
+    destroyOnHidden ??
+      destroyOnHiddenKebab ??
+      destroyOnClose ??
+      destroyOnCloseKebab,
+  );
 
   mergedSemanticStyles.header = {
     ...normalizeStyle(mergedSemanticStyles.header),
@@ -120,7 +141,7 @@ const drawerAttrs = computed(() => {
     ...rest,
     class: mergeClassNames('platform-drawer', drawerClass),
     closable: false,
-    destroyOnHidden: normalizeBoolean(destroyOnHidden ?? destroyOnClose),
+    destroyOnHidden: mergedDestroyOnHidden,
     placement: normalizedPlacement,
     size: normalizeDrawerSize(size) ?? compatSize,
     styles: mergedSemanticStyles,

@@ -181,6 +181,8 @@
 
 凡是修改 `PlatformModal`、`PlatformDrawer`、共享标题头、弹窗/抽屉间距、标题区、内容区、footer、全屏逻辑等平台覆盖层，交付前必须至少做一次真实页面浏览器自检，确认实际 DOM 渲染结果与预期一致；如果浏览器实测未完成，不得直接下结论说“已经通过”或“明确生效”。
 
+平台封装组件遇到 Ant Design Vue 新旧语义属性变更时，优先在平台层做兼容转换，例如将历史 `bodyStyle` / `destroyOnClose` / `width` 等调用转换为当前 `styles.body` / `destroyOnHidden` / `size` 等语义；业务页面不得继续复制废弃属性作为新实现。
+
 ### 4.3 组件映射
 
 开发或修改前，按任务复杂度输出组件映射：

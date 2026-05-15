@@ -6809,3 +6809,84 @@ Upload 平台适配入口迁移一期
 1. 下一轮优先处理 Upload 业务依赖拆分方案，或先修复 `tree-select-panel.vue` 的历史类型错误。
 2. 如继续做 Upload 平台化，不要直接把 `FileUpload` / `ImageUpload` 整包搬进 `platform-adapter`。
 3. 如进入视觉确认，再启动隔离浏览器验证 `/platform/typical-page` 和至少一个真实业务页。
+
+### 任务名称
+
+平台包化收尾复核与真实页面视觉验证
+
+### 完成内容
+
+1. 修复 `PlatformModal` 对 Ant Design Vue 废弃属性的兼容：页面仍可传 `bodyStyle` / `body-style`、`destroyOnClose` / `destroy-on-close`，平台层统一转换为 `styles.body` 与 `destroyOnHidden`。
+2. 修复 `PlatformDrawer` 对 `bodyStyle` / `body-style`、`destroyOnClose` / `destroy-on-close`、`width` / `height` 的兼容转换，统一落到 `styles.body`、`destroyOnHidden` 与 `size`。
+3. 复核 `BasicLayout` 中 `LayoutHeader` 未再透传无效 `clear-preferences-and-logout` 监听；登出事件仍保留在 `Preferences` 正确入口。
+4. 修复项目总览页 Antdv `Progress` 废弃 `strokeWidth` 用法，改为 `size`；补回页面缺失的 `Space` 导入。
+5. 复核 `@st/platform-ui` 源码迁移后未发现业务源码继续引用旧 `apps/web-antd/src/components/platform/**` 源文件；Vite 旧 HMR 缓存通过 `--force` 重启清除。
+
+### 修改了哪些文件
+
+1. `packages/platform-ui/src/modal/platform-modal.vue`
+2. `packages/platform-ui/src/drawer/platform-drawer.vue`
+3. `apps/web-antd/src/views/project/overview/index.vue`
+4. `AGENTS.md`
+5. `docs/project-log.md`
+6. `docs/todo-next.md`
+7. `docs/decision-records.md`
+
+### 涉及哪些页面或组件
+
+1. 平台组件：`PlatformModal`、`PlatformDrawer`
+2. Vben 布局：`BasicLayout` 与 `LayoutHeader` 监听边界
+3. 真实页面：`/workbench/index`、`/platform/typical-page`、`/project/information`、`/personnel/overview`
+
+### 验证结果
+
+1. 已执行目标文件 ESLint，通过。
+2. 已执行 `./node_modules/.bin/vue-tsc --noEmit -p apps/web-antd/tsconfig.json`，通过。
+3. 已执行 `git diff --check -- . ':(exclude)**/node_modules/**'`，通过。
+4. 已执行 `curl -I` 检查 `/platform/typical-page`、`/project/information`、`/personnel/overview`、`/workbench/index`，均返回 `200 OK`。
+5. 已用 Safari 真实打开 `/platform/typical-page`，并验证新增人员弹窗和人员详情抽屉可打开/关闭，视觉结构正常。
+6. 已用 Safari 打开 `/workbench/index`，标题为“项目总览 - 委外项目综合管理平台”；Vite 重启后未再出现旧 `/src/components/platform/**` HMR ENOENT、`bodyStyle`、`destroyOnClose`、`clearPreferencesAndLogout` 或 `Progress strokeWidth` 新日志。
+
+### 遗留问题
+
+1. Safari 辅助树在顶部菜单 hover 状态下有时只返回菜单项，真实页面截图可见但自动化 DOM 读取不稳定；后续若要做强视觉回归，仍建议修复隔离浏览器自动化链路。
+2. Playwright 自带浏览器未下载，系统 Chrome headless 在沙箱下启动失败；本轮未使用用户当前 Chrome 窗口。
+3. `node_modules` / Vite cache 仍被 Git 跟踪，`vite --force` 会产生缓存改动，本轮已恢复相关缓存文件。
+
+### 平台治理影响
+
+1. 本轮发现的 ant-design-vue 原生组件问题：`Modal` 的 `bodyStyle` / `destroyOnClose`、`Drawer` 的 `width` / `bodyStyle` / `destroyOnClose`、`Progress` 的 `strokeWidth` 已触发废弃 warning。
+2. 已通过平台层解决的问题：平台弹窗和抽屉封装统一兼容旧调用写法并转换为 Antdv 新语义属性。
+3. 哪些仍是页面临时实现：项目总览页进度条仍是页面内 Antdv `Progress`，本轮只修废弃属性，不抽成平台组件。
+4. 哪些页面子组件未来必须回收为平台组件：若进度条在项目、合同、施工等页面继续重复，应评估统一为 `PlatformProgress` 或平台进度展示配置。
+5. 后续新页面禁止继续复制哪些实现：不要在业务页面继续传 Antdv 已废弃属性；如历史调用必须保留，优先由平台封装兼容转换。
+6. 哪些样式应进入主题变量或统一样式入口：弹窗/抽屉内容区、footer、标题栏和遮罩层继续由平台组件与 token 维护，不回写页面 scoped CSS。
+7. 当前仍存在的页面级样式债务：项目总览进度条的业务呈现尚未平台化，后续按复用频率再治理。
+
+### 任务名称
+
+平台包化遗留风险项收尾
+
+### 完成内容
+
+1. 处理 Vite 预构建缓存被 Git 跟踪的问题：`apps/web-antd/node_modules/.vite/**` 已从 Git 索引移除，但本地文件保留，不影响开发服务运行。
+2. 复核 `.gitignore` 已覆盖 `node_modules/` 和 `apps/*/node_modules/`，后续 Vite `--force` 或依赖预构建不会再把 `.vite/deps/_metadata.json` 作为源码改动反复冒出来。
+3. 复核 `Progress` 当前只在 `/workbench/index` 项目总览页使用两处，尚未形成跨页面复用；本轮不新增 `PlatformProgress`，避免为了单页问题扩展平台组件。
+4. 继续保留浏览器验证隔离规则：本轮不下载 Playwright 浏览器，也不切换用户当前 Chrome，真实页面复核仍优先 Safari 或隔离浏览器。
+
+### 修改了哪些文件
+
+1. `apps/web-antd/node_modules/.vite/**`（仅从 Git 索引移除，工作区文件保留）
+2. `docs/project-log.md`
+3. `docs/todo-next.md`
+
+### 验证结果
+
+1. 已确认 `git ls-files apps/web-antd/node_modules/.vite` 无输出。
+2. 已确认 `apps/web-antd/node_modules/.vite/deps/_metadata.json` 本地文件仍存在。
+3. 已执行 `rg -n "<Progress|h\\(Progress|Progress," apps/web-antd/src packages --glob '!**/node_modules/**'`，确认业务源码内 `Progress` 真实使用集中在 `/workbench/index`。
+
+### 遗留问题
+
+1. 浏览器自动化链路仍未作为本项目默认验证方案修复；后续如要强视觉回归，可单独处理 Playwright / Browser Use 环境。
+2. `PlatformProgress` 暂不新增；等第二个以上真实业务页面出现同类进度展示并需要统一视觉/API 时，再按平台组件新增规则单独确认。

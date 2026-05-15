@@ -28,7 +28,7 @@ import {
   PlatformTableToolbar,
   PlatformViewToolbar,
 } from '@st/platform-ui';
-import { Popconfirm, Progress } from 'antdv-next';
+import { Popconfirm, Progress, Space } from 'antdv-next';
 
 import {
   archiveProjectOverviewProject,
@@ -192,9 +192,8 @@ const detailDescriptionItems = computed<DescriptionsProps['items']>(() => {
           class: 'project-detail-progress',
           percent: record.progress,
           showInfo: false,
-          size: 'small',
+          size: ['100%', 6],
           strokeColor: 'hsl(var(--primary))',
-          strokeWidth: 6,
         }),
         h('span', `${record.progress}%`),
       ]),
@@ -444,9 +443,8 @@ onMounted(loadOverview);
                 <Progress
                   :percent="record.progress"
                   :show-info="false"
-                  :stroke-width="6"
+                  :size="['100%', 6]"
                   class="project-progress"
-                  size="small"
                 />
                 <span>{{ record.progress }}%</span>
               </div>

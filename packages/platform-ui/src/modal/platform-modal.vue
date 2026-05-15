@@ -75,16 +75,28 @@ function normalizeBoolean(value: unknown) {
   if (typeof value === 'boolean') {
     return value;
   }
+  if (value === '') {
+    return true;
+  }
+  if (value === 'true') {
+    return true;
+  }
+  if (value === 'false') {
+    return false;
+  }
   return undefined;
 }
 
 const modalAttrs = computed(() => {
   const {
     bodyStyle,
+    'body-style': bodyStyleKebab,
     class: modalClass,
     closable: _closable,
     destroyOnClose,
+    'destroy-on-close': destroyOnCloseKebab,
     destroyOnHidden,
+    'destroy-on-hidden': destroyOnHiddenKebab,
     style,
     styles,
     title: _title,
@@ -106,8 +118,17 @@ const modalAttrs = computed(() => {
   );
 
   const mergedStyle = normalizeStyle(style);
-  const mergedBodyStyle = normalizeStyle(bodyStyle);
+  const mergedBodyStyle = {
+    ...normalizeStyle(bodyStyle),
+    ...normalizeStyle(bodyStyleKebab),
+  };
   const mergedSemanticStyles = normalizeSemanticStyles(styles);
+  const mergedDestroyOnHidden = normalizeBoolean(
+    destroyOnHidden ??
+      destroyOnHiddenKebab ??
+      destroyOnClose ??
+      destroyOnCloseKebab,
+  );
 
   mergedSemanticStyles.body = {
     ...mergedBodyStyle,
@@ -156,7 +177,7 @@ const modalAttrs = computed(() => {
     ...rest,
     class: mergedClassName,
     closable: false,
-    destroyOnHidden: normalizeBoolean(destroyOnHidden ?? destroyOnClose),
+    destroyOnHidden: mergedDestroyOnHidden,
     style: mergedStyle,
     styles: mergedSemanticStyles,
     width: isFullscreen.value ? '100vw' : normalizeModalWidth(width),

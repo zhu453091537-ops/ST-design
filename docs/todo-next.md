@@ -7,6 +7,7 @@
 | 优先级 | 事项 | 状态 | 说明 |
 | --- | --- | --- | --- |
 | 高 | 平台组件 workspace 包化迁移 | 当前安全阶段已完成 | 已明确不使用手工 symlink 和多份组件拷贝；平台组件源码已迁入 `packages/platform-ui/src/**`，应用源码中的平台组件导入已统一为 `@st/platform-ui`，`apps/web-antd/src/components/platform/index.ts` 仅保留兼容出口。`@st/platform-styles/tokens` 已承载平台 CSS 变量，`@st/platform-styles/antd` 承载 Ant Design Vue 全局覆盖并已按覆盖对象拆成 `base / button / field / form / tree / table / pagination / overlay / tag / platform-common / feedback / validation / utilities` 等分文件，`@st/platform-styles/vxe-table` 承载 Vxe 专属覆盖；`@st/platform-adapter/vxe-table` 已承载默认序号列、工具栏默认项、刷新方式、复选状态和排序参数转换；`@st/platform-adapter/echarts` 为无行为变化 ECharts 入口；`@st/platform-adapter/upload` 已收口上传纯类型、默认 accept、默认文件预览、`UploadInfoApi` 查询抽象、`UploadFeedbackAdapter` 反馈抽象和裁剪上传契约类型，应用侧 `FileUpload/ImageUpload`、默认 `uploadApi`、默认 `ossInfo`、全局反馈实现、裁剪 UI 和头像业务接口继续留在 `apps/web-antd`。当前 Vite build、目标 ESLint、HTTP 路由检查、Safari 真实页面检查和全量 `vue-tsc` 已通过。下一步如继续 Upload，只能继续做稳定契约或注入点审计，不能直接把应用侧上传组件或裁剪 UI 整包搬进 `platform-adapter`。 |
+| 高 | 平台包化收尾复核与真实页面验证 | 已完成，进度约 99% | 已修复 `PlatformModal` / `PlatformDrawer` 对 Antdv 新旧语义属性的兼容转换，修复 `/workbench/index` 进度条废弃属性 warning，并用 Safari 验证 `/platform/typical-page` 人员弹窗、人员详情抽屉和 `/workbench/index` 页面可用。`apps/web-antd/node_modules/.vite/**` 已从 Git 索引移除并继续保留本地文件，后续 Vite 缓存不会再作为源码 diff 反复出现；剩余 1% 主要是隔离浏览器自动化链路。后续不要因为 HMR 缓存里出现旧 `/src/components/platform/**` 请求就回退包化迁移，应先强制重启 Vite 并确认源码引用。 |
 | 高 | 数据录入平台规则补充与现状审计 | 已完成 | 已在 `AGENTS.md` 与 `docs/decision-records.md` 固化“数据录入必须走平台表单组件体系”的长期规则；已审计当前交付范围，确认上下录入表单统一走 `PlatformEditForm layout=\"vertical\"`，左右录入表单统一走 `PlatformEditForm layout=\"horizontal\" + label-preset=\"inline-compact\"` 或 `PlatformQueryPanel`，当前未发现交付范围内再直接新写原生 `Form / FormItem` 做业务录入。 |
 | 高 | 项目信息管理新建项目弹窗与文档列表维护信息表单微调 | 已完成，待视觉确认 | 已收口 `/project/information` 新建项目弹窗里 `进场信息` 的动态行布局，并补齐“开标日期”所在列的控件满宽；同时已在 `PlatformForm` 新增 `label-preset=\"inline-compact\"` 横向录入预设，把 `施工管理` 那套左右 label 规则沉到平台层，再让 `/battery/archive/document-list` 直接复用。当前仍需在登录态下复核 `项目信息管理` 弹窗视觉，并由你刷新确认 `文档列表` 的标题到输入框间距是否已与 `施工管理` 一致。 |
 | 高 | 平台表格正文文字色与选择列控件可视性优化 | 已完成 | 已将表格正文文字统一提到主文本色，并在表格选择列内把单选框/复选框统一加固为 `20px * 20px`、未选中描边 `#E5E7EB`；本轮已修正到外层 `.ant-radio / .ant-checkbox` 源节点，避免继续改错到 `.inner` 层。 |
@@ -248,7 +249,7 @@
 
 1. 用户输入“开工继续”或提出下一个开发需求后，先读取 `AGENTS.md`、`docs/project-log.md`、`docs/decision-records.md`、`docs/todo-next.md`。
 2. 输出项目接续摘要，明确当前项目目标、技术栈、最近完成内容、未完成事项、关键规则和建议执行顺序。
-3. 下一轮第一优先级：在不扩大范围的前提下做平台包化收尾复核，或转入真实页面视觉/交互复核；如继续 Upload，只做稳定注入点审计，不要直接把应用侧上传组件或裁剪 UI 整包搬进平台包。
+3. 下一轮第一优先级：平台包化源码迁移已进入收尾态，优先转入真实页面视觉/交互复核；如继续 Upload，只做稳定注入点审计，不要直接把应用侧上传组件或裁剪 UI 整包搬进平台包。
 4. 优先在 `/project/information` 与 `/personnel/overview` 做一次视觉复核，确认顶部筛选区移除后页面节奏正常，且表头筛选仍满足当前演示目的。
 5. 如需新增独立验证页，只能在不影响 `apps/web-antd` 当前开发的前提下单独评估，不批量迁移现有组件或业务页面。
 6. 如继续处理 `/project/evaluation`，优先判断右侧评估记录表格在更窄浏览器宽度下是否还需要进一步微调列宽或响应式策略。
@@ -313,3 +314,5 @@
 25. 如果一开始就批量迁移 `web-antd` 组件或业务页，可能打断当前业务开发；后续如有新增独立验证页，也必须先评估边界再接入。
 26. “打开浏览器”“打开页面”“打开本地预览”现已固化为固定口令：默认直开 `http://127.0.0.1:5173/`，服务未启动则先拉起 Vite，再直接执行打开，不再重复确认。
 27. 平台组件包化期间，如果只交付 `apps/web-antd` 源码而不带 `packages/platform-ui`、根 `package.json`、`pnpm-workspace.yaml` 和 `pnpm-lock.yaml`，前端联调环境会无法解析 workspace 平台包。
+28. `apps/web-antd/node_modules/.vite/**` 已从 Git 索引移除且由 `.gitignore` 覆盖，本地文件仍保留；后续若仍出现 `node_modules` 相关 diff，先确认是否还有其它已跟踪缓存文件，不要把缓存改动当作源码成果。
+29. `PlatformProgress` 暂不新增：当前业务源码内 `Progress` 真实使用集中在 `/workbench/index`，未形成跨页面复用；等第二个以上真实业务页出现同类进度展示，再按平台组件新增规则单独确认。
